@@ -1,0 +1,37 @@
+{
+  "name": "editorjs-mathlive",
+  "version": "1.0.0",
+  "description": "math editor for editorjs",
+  "repository": "https://github.com/uk2459644/editorjs-mathlive",
+  "author": {
+    "name": "Upendra Kumar",
+    "email": "uk2459644@gmail.com"
+  },
+  "keywords": [
+    "codex",
+    "codex-editor",
+    "mathlive",
+    "editorjs-mathlive",
+    "editor.js",
+    "editorjs"
+  ],
+  "license": "MIT",
+  "main": "./dist/bundle.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.7.3",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "boxicons": "^2.1.4",
+    "mathlive": "^0.87.0"
+  }
+}

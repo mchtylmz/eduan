@@ -1,0 +1,186 @@
+* {
+    outline: 0;
+}
+.float-whatsapp {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 60px;
+    left: 30px;
+    background-color: #25d366;
+    color: #FFF !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    z-index: 100;
+    border: solid 1px rgba(255, 255, 255, 0.5);
+}
+.float-whatsapp:hover {
+    background-color: #222 !important;
+    color: #FFF !important;
+}
+.h10_category-item-btn a {
+    border: 1px solid var(--clr-theme-primary);
+    color: var(--clr-theme-primary);
+}
+.h10_category-item-btn a:hover {
+    background-color: var(--clr-theme-primary-5);
+    border: 1px solid var(--clr-theme-primary-5);
+    color: #fff;
+}
+.breadcrumb-area {
+    height: 154px !important;
+    min-height: 154px !important;
+    object-fit: cover;
+}
+.account-wrap {
+    box-shadow: 0 0 0 0;
+    margin-bottom: 0;
+}
+.contact-wrap {
+    box-shadow: 0 0 0 0;
+    margin-bottom: 0;
+    padding: 40px;
+}
+.contact-social ul li a.active {
+    background: var(--clr-theme-primary);
+    color: #fff;
+}
+.mean-container .mean-nav ul li:hover > a {
+    color: #fff !important;
+}
+.btn-check:checked+.btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check)+.btn:active,
+.btn-check:checked+.btn
+{
+    color: #FFF;
+    background-color: #000;
+    border-color: #000;
+}
+.btn-check+.btn:hover
+{
+    color: #FFF;
+    background-color: rgba(0,0,0,0.5);
+    border-color: rgba(0,0,0,0.5);
+}
+.theme-btn-locale {
+    border: solid 1px var(--clr-theme-primary);
+    color: var(--clr-theme-primary);
+    background: transparent;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+.dropdown-item.active, .dropdown-item:active {
+    color: #000;
+    background-color: #EFEFEF;
+}
+.h2_course-item, .h2_blog-content, .blog_details-top, .blog_details-widget {
+    box-shadow: 0 0 0 0;
+}
+.blog_details-category::before {
+    display: none;
+}
+.pagination-area ul li a:hover, .pagination-area ul li a.active {
+    background-color: var(--clr-theme-primary);
+    border: 1px solid var(--clr-theme-primary);
+    color: #fff;
+}
+.pagination-area ul li a.disabled {
+    background-color: #EFEFEF !important;
+    border: 1px solid #EFEFEF !important;
+    color: #000 !important;
+    cursor: not-allowed;
+}
+.account-form-input input {
+    font-size: 1rem;
+}
+.h10_category-item.active {
+    border-color: var(--clr-theme-primary);
+    border-width: 2px;
+}
+@media only screen and (min-width: 960px) {
+    .solve-right-sticky {
+        position: sticky;
+        top: 112px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .h2_banner-meta-info {
+        right: -30px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .breadcrumb-list {
+        display: grid;
+        text-align: start;
+    }
+}
+.bookmark:hover, .bookmark.active {
+    background-color: var(--clr-theme-primary);
+    border: 1px solid var(--clr-theme-primary);
+    color: #fff;
+}
+.event_details-sidebar {
+    margin-top: 10px;
+}
+.course_details-tab-button .nav .nav-item {
+    width: 50%;
+}
+.spinner {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(farthest-side,var(--clr-theme-primary) 94%,#0000) top/3.8px 3.8px no-repeat,
+    conic-gradient(#0000 30%,var(--clr-theme-primary));
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 3.8px),#000 0);
+    animation: spinner-c7wet2 0.8s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+.bootstrap-select>.dropdown-toggle {
+    height: 40px;
+    padding-top: 9px;
+}
+.bootstrap-select .dropdown-toggle:focus, .bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
+    outline: 0 !important;
+}
+.bootstrap-select>.dropdown-toggle.btn.show,
+.bootstrap-select>.dropdown-toggle.bs-placeholder:active,
+.bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+    color: #fff;
+}
+.exam-question .answers label.correct {
+    border: solid 1px green;
+    color: white;
+    background-color: green;
+}
+.btn-check:disabled+.btn, .btn-check[disabled]+.btn {
+    opacity: .4;
+}
+.bg-body-light {
+    background-color: #EFEFEF;
+    border-color: #EFEFEF;
+}
+.h2_blog-img img {
+    height: 225px;
+    object-fit: cover;
+}
+@media only screen and (min-width: 840px) {
+    .h2_banner-content .section-title {
+        font-size: 48px;
+    }
+}
+.h2_banner-form input {
+    font-size: 16px;
+}
