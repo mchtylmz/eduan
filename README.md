@@ -44,6 +44,14 @@ composer require archtechx/enums
 ```
 
 ```
+composer require spatie/laravel-translatable
+```
+
+```
+druc/laravel-langscanner
+```
+
+```
 https://github.com/wotzebra/livewire-sortablejs
 ```
 
