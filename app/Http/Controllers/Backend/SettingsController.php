@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
-
     public function index()
     {
         $activeTab = SettingsTabsEnum::tryFrom(request('activeTab')) ?? SettingsTabsEnum::GENERAL;
@@ -32,6 +31,13 @@ class SettingsController extends Controller
         return response()->json([
             'message' => __('Ayarlar başarıyla kayıt edildi'),
             'refresh' => true
+        ]);
+    }
+
+    public function logs()
+    {
+        return view('backend.settings.logs', [
+            'title' => __('Loglar')
         ]);
     }
 }

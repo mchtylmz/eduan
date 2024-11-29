@@ -188,21 +188,19 @@
 
     @can('settings:view')
         <li class="nav-main-item">
-            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.*')])
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.index')])
                href="{{ route('admin.settings.index') }}">
                 <i class="nav-main-link-icon si si-settings"></i>
                 <span class="nav-main-link-name">{{ __('Ayarlar') }}</span>
             </a>
         </li>
-        {{-----
         <li class="nav-main-item">
-            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.*')])
-               href="{{ route('admin.settings.index') }}">
-                <i class="nav-main-link-icon si si-bar-chart"></i>
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.logs')])
+               href="{{ route('admin.settings.logs') }}">
+                <i class="nav-main-link-icon si si-chart"></i>
                 <span class="nav-main-link-name">{{ __('Loglar') }}</span>
             </a>
         </li>
-        -----}}
     @endcan
 
 </ul>

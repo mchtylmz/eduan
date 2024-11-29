@@ -35,7 +35,7 @@ class ReviewsTable extends DataTableComponent
         $this->exam = $exam;
         $this->user = $user;
 
-        $this->setSortDesc('id');
+        $this->setSortDesc('exam_reviews.created_at');
     }
 
     public function builder(): Builder

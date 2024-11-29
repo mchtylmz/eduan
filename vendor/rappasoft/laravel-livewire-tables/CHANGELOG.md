@@ -2,6 +2,76 @@
 
 All notable changes to `laravel-livewire-tables` will be documented in this file
 
+## [v3.5.6] - 2024-11-28
+### New Features
+- Add Icon to Search Input by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2092
+
+### Tweaks
+- Search - Rationalisation of blades into files by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2094
+- Columns() Setup Improvements by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2089
+- Typehinting in blade components by @edwinvdpol in https://github.com/rappasoft/laravel-livewire-tables/pull/2081
+
+### Testing
+- Tweak Workflows to use an env key by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2090
+
+## [v3.5.5] - 2024-11-22
+### Bug Fixes
+- Fix date range filter default value by @edwinvdpol in https://github.com/rappasoft/laravel-livewire-tables/pull/2082
+
+## [v3.5.4] - 2024-11-21
+### Bug Fixes
+- Allow JSON and PHP type localisations by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2071
+- Allow lazy loading of tables by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2072
+
+### Testing
+- RemoveConfigFileFromCoverage by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2080
+- Test for ViewComponentColumn - Cannot return non-array attributes  by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2078
+- BooleanFilter - Add Tests for Null in IsEmpty and Validate by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2077
+- Add Attributes Check For ViewComponentColumn by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2076
+- Add ViewComponentColumn label test  by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2075
+- Add ColorColumnTests by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2074
+
+## [v3.5.3] - 2024-11-18
+### Bug Fixes
+- FixSetDefaultPerPage by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2067
+- Fix BooleanColumn unexpected truthy behaviour by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2066
+- Adjustment for DateRangeFilter by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2064
+
+### Testing
+- Adjust SessionStorageHelpersTest by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2065
+- Add updatedSelectedColumns test for Event by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2060
+- Add test for FilterApplied Event being dispatched by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2059
+- Add Simple updatedSearch tests by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2058
+- Add test for No Columns defined - throws correct Exception by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2057
+
+## [v3.5.2] - 2024-11-09
+## Bug Fixes
+- Migrate Localisation back to PHP Files from JSON by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2038
+
+## [v3.5.1] - 2024-11-09
+### Bug Fixes
+- Fix NumberFilter bug for string values by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2034
+- Fixes for Filter Pills - Split blades, and ensure invalid filter alues are removed by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2035
+
+## [v3.5.0] - 2024-11-06
+### Bug Fixes
+- Issue in multiple places where there is incorrect brackets in conjunction with coalescing operator (??) by @mrl22 in https://github.com/rappasoft/laravel-livewire-tables/pull/2021
+- Add Value to BooleanColumn custom view by @lrjoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2010
+- Add config option to bypass setting User on Events. by @me-julian in https://github.com/rappasoft/laravel-livewire-tables/pull/2006
+- Livewire column doesn't have title() method by @ChrisThompsonTLDR in https://github.com/rappasoft/laravel-livewire-tables/pull/2002
+- Loading Placeholder Adjustments by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/1987
+
+### New Features
+- Add Sort in QueryString by @lrjoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2018
+- Add Search in QueryString by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2017
+- Add Filter in QueryString by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2011
+- BETA: Livewire Custom Filter (Array)  by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/2025
+
+### Localisation
+- Adds Swedish translations by @Aiiion in https://github.com/rappasoft/laravel-livewire-tables/pull/2027
+- Fix missing i18n keys for FR, IT, EN, DE by @khwadj in https://github.com/rappasoft/laravel-livewire-tables/pull/1993
+- Add lang Norwegian and Albanian by @channor in https://github.com/rappasoft/laravel-livewire-tables/pull/1988
+
 ## [v3.4.22] - 2024-09-29
 ### Bug Fixes
 - Fix Loading Placeholder Bug - Breaking Table by @lrljoe in https://github.com/rappasoft/laravel-livewire-tables/pull/1969

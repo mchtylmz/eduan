@@ -62,7 +62,11 @@ trait ComponentHelpers
      */
     public function getEmptyMessage(): string
     {
-        return __($this->emptyMessage);
+        if ($this->emptyMessage == 'No items found, try to broaden your search') {
+            return __($this->getLocalisationPath().'No items found, try to broaden your search');
+        }
+
+        return $this->emptyMessage;
     }
 
     public function getOfflineIndicatorStatus(): bool

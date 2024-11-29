@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-
 use App\Models\Log;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +20,10 @@ trait Loggable
             'log_type'   => $logType,
             'ip'         => request()->ip(),
             'data_id'    => $model->id ?? 0,
-            'data'       => json_encode($logType == 'create' ? $model : $model->getRawOriginal())
+            'data'       => json_encode($logType == 'create' ? $model : $model->getRawOriginal()),
+            'agent'      => request()->server('HTTP_USER_AGENT'),
+            'browser'    => request()->server('HTTP_SEC_CH_UA'),
+            'device'     => request()->server('HTTP_SEC_CH_UA_PLATFORM')
         ]);
     }
 
@@ -51,7 +53,10 @@ trait Loggable
             'log_type'   => $logType,
             'ip'         => request()->ip(),
             'data_id'    => $data['id'] ?? 0,
-            'data'       => json_encode($data)
+            'data'       => json_encode($data),
+            'agent'      => request()->server('HTTP_USER_AGENT'),
+            'browser'    => request()->server('HTTP_SEC_CH_UA'),
+            'device'     => request()->server('HTTP_SEC_CH_UA_PLATFORM')
         ]);
     }
 }

@@ -72,10 +72,14 @@
                             </div>
                         </div>
                         <div class="h2_course-content-bottom">
-                            <span>
-                                <i class="fa-light fa-question-circle me-1"></i>
-                                {{ $test->questions_count }} {{ __('Soru') }}
-                            </span>
+                                <span>
+                                    <i class="fa-light fa-question-circle me-1"></i>
+                                    {{ $test->questions_count }} {{ __('Soru') }}
+                                </span>
+                                <span>
+                                    <i class="fa-light fa-comments me-1"></i>
+                                    {{ $test->reviews_count }}
+                                </span>
                             @if(auth()->check() && count($test->userResults))
                                 <span>
                                     <i class="fa-light fa-poll me-1"></i>

@@ -35,7 +35,7 @@ class HomeController extends Controller
     public function page(Page $page)
     {
         if (PageTypeEnum::SYSTEM->is($page->type)) {
-            abort(404);
+            return redirect()->to('/');
         }
 
         if (PageMenuEnum::FOOTER->isNot($page->menu)) {

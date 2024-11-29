@@ -3,6 +3,7 @@
 namespace App\Livewire\Frontend\Tests;
 
 use App\Actions\Exams\UpdateExamFavoriteForUserAction;
+use App\Enums\ReviewVisibilityEnum;
 use App\Models\Exam;
 use App\Models\Lesson;
 use App\Models\Topic;
@@ -70,7 +71,8 @@ class ListTests extends Component
             60 * 60 * 60 * 365,
             function () {
                 return Exam::withCount([
-                        'questions' => fn($query) => $query->active()
+                        'questions' => fn($query) => $query->active(),
+                        'reviews' => fn($query) => $query->where('visibility', ReviewVisibilityEnum::PUBLIC),
                     ])
                     ->with(['language', 'userResults'])
                     ->when(!empty($this->lesson_id), function ($query) {

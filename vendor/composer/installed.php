@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'laravel/laravel',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '6da3ac1c6719a7a56b2e19a136a27ecd8d773172',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -449,9 +449,9 @@
             'dev_requirement' => false,
         ),
         'laravel/laravel' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '6da3ac1c6719a7a56b2e19a136a27ecd8d773172',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -918,9 +918,9 @@
             'dev_requirement' => false,
         ),
         'rappasoft/laravel-livewire-tables' => array(
-            'pretty_version' => 'v3.4.22',
-            'version' => '3.4.22.0',
-            'reference' => '7d265a320e93c01ad18c04c8686a13c893eae1d9',
+            'pretty_version' => 'v3.5.6',
+            'version' => '3.5.6.0',
+            'reference' => '72db36deca28ab30b5adda5144f58f2e5692ed6a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../rappasoft/laravel-livewire-tables',
             'aliases' => array(),

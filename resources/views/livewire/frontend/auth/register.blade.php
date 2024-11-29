@@ -84,7 +84,11 @@
             </div>
             <div class="account-form-condition col-lg-12">
                 <label class="condition_label">
-                    {{ __('Site kullanım koşullarını ve gizlilik kurallarını okudum, kabul ediyorum.') }}
+                    @if($page = \App\Models\Page::find(settings()->privacyPage ?? 0))
+                        <a class="text-decoration-underline" target="_blank" href="{{ route('frontend.page', $page->slug) }}">{{ __('Site kullanım koşullarını ve gizlilik kurallarını okudum, kabul ediyorum.') }}</a>
+                    @else
+                        {{ __('Site kullanım koşullarını ve gizlilik kurallarını okudum, kabul ediyorum.') }}
+                    @endif
                     <input type="checkbox" wire:model="acceptTerms" @checked($acceptTerms)>
                     <span class="check_mark"></span>
                 </label>

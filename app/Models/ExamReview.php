@@ -4,12 +4,15 @@ namespace App\Models;
 
 use App\Enums\ReviewVisibilityEnum;
 use App\Enums\YesNoEnum;
+use App\Traits\DefaultOrderBy;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ExamReview extends Model
 {
-    use Loggable;
+    use Loggable, DefaultOrderBy;
+
+    protected string $orderByColumn = 'id';
 
     public $fillable = ['user_id', 'exam_id', 'comment', 'ip', 'visibility', 'reply_id', 'has_read'];
 

@@ -7,13 +7,13 @@ use ArchTech\Enums\InvokableCases;
 use ArchTech\Enums\Names;
 use ArchTech\Enums\Values;
 
-enum ReviewVisibilityEnum: int
+enum ReviewVisibilityEnum: string
 {
     use Names, Values, InvokableCases, Comparable;
 
-    case HIDE = 0;
-    case PUBLIC = 1;
-    case PRIVATE = 2;
+    case HIDE = 'hide';
+    case PUBLIC = 'public';
+    case PRIVATE = 'private';
 
     public static function options(): array
     {

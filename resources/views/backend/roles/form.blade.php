@@ -17,6 +17,7 @@
         'topics' => __('Konular'),
         'questions' => __('Soru Havuzu'),
         'exams' => __('Testler'),
+        'exams-reviews' => __('Değerlendirmeler'),
         'users' => __('Kullanıcılar'),
         'roles' => __('Yetkiler'),
         'pages' => __('Sayfalar'),
@@ -28,7 +29,7 @@
     ]
 ])
 @php
-$groups = collect($permissions)->mapToGroups(function ($item) {
+$groups = collect($permissions ?? [])->mapToGroups(function ($item) {
     return [explode(':', $item->name)[0] => explode(':', $item->name)[1]];
 })->all();
 @endphp

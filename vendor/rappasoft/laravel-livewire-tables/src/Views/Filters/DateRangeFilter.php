@@ -28,7 +28,7 @@ class DateRangeFilter extends Filter
         return ['minDate' => '', 'maxDate' => ''];
     }
 
-    public function validate(array|string $values): array|bool
+    public function validate(array|string|null $values): array|bool
     {
         $this->getOptions();
         $this->getConfigs();
@@ -74,7 +74,7 @@ class DateRangeFilter extends Filter
     {
         $earliestDateString = ($this->getConfig('earliestDate') != '') ? $this->getConfig('earliestDate') : null;
         $latestDateString = ($this->getConfig('latestDate') != '') ? $this->getConfig('latestDate') : null;
-        if ($earliestDateString != '' && ! is_null($earliestDateString) && $latestDateString != '' && ! is_null($latestDateString)) {
+        if (! is_null($earliestDateString) && $earliestDateString != '' && ! is_null($latestDateString) && $latestDateString != '') {
             $dateLimits = ['earliest' => $earliestDateString, 'latest' => $latestDateString];
             $earlyLateValidator = Validator::make($dateLimits, [
                 'earliest' => 'date_format:'.$dateFormat,
@@ -133,7 +133,7 @@ class DateRangeFilter extends Filter
 
     public function getDefaultValue(): array
     {
-        return [];
+        return $this->getFilterDefaultValue();
     }
 
     public function getFilterDefaultValue(): array
@@ -189,7 +189,7 @@ class DateRangeFilter extends Filter
 
             if (($minDate instanceof Carbon) && $maxDate instanceof Carbon) {
                 return $this->outputTranslatedDate($minDate)
-                        .' '.__('livewire-tables::to').' '.
+                        .' '.__($this->getLocalisationPath().'to').' '.
                         $this->outputTranslatedDate($maxDate);
             }
         }
@@ -197,7 +197,7 @@ class DateRangeFilter extends Filter
         return '';
     }
 
-    public function isEmpty(array|string $value): bool
+    public function isEmpty(array|string|null $value): bool
     {
         $values = [];
         if (is_array($value)) {

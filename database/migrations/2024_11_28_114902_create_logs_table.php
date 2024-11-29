@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('table_name',50)->nullable();
             $table->string('log_type',50);
             $table->string('ip')->nullable();
+            $table->longText('agent')->nullable();
+            $table->longText('browser')->nullable();
+            $table->longText('device')->nullable();
             $table->unsignedBigInteger('data_id')->default(0);
             $table->longText('data');
         });

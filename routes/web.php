@@ -1,9 +1,6 @@
 <?php
 
-use App\Mail\EmailVerificationMail;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
 
 /* ***************************************** */
 // backend login

@@ -66,7 +66,7 @@ class ReviewFormAndList extends Component
         CreateReviewAction::run(
             data: [
                 'user_id' => $this->user->id,
-                'comment' => ($this->message),
+                'comment' => $this->message,
                 'visibility' => ReviewVisibilityEnum::PUBLIC
             ],
             exam: $this->exam

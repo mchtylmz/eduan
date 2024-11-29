@@ -52,6 +52,15 @@
                 @endforeach
             </select>
         </div>
+        <div class="col-lg-6 mb-3">
+            <label class="form-label" for="privacyPage">{{ __('Site Kuralları ve Gizlilik Politikası Sayfası') }}</label>
+            <select id="privacyPage" class="form-control" name="settings[privacyPage]">
+                <option value="" hidden>{{ __('Seçiniz') }}</option>
+                @foreach(\App\Models\Page::all() as $page)
+                    <option value="{{ $page->id }}" @selected($page->id == settings()->privacyPage)>{{ $page->title }}</option>
+                @endforeach
+            </select>
+        </div>
     </div>
 
     <!-- row -->

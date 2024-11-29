@@ -26,6 +26,7 @@ trait LivewireTableConfigure
             ->setQueryStringEnabled()
             ->setRememberColumnSelectionDisabled()
             ->setColumnSelectDisabled()
+            ->setEmptyMessage(__('Kayıt bulunamadı'))
             ->useComputedPropertiesDisabled();
 
         // RoleTable
@@ -33,6 +34,16 @@ trait LivewireTableConfigure
             $this->setThAttributes(
                 fn(Column $column) => $column->isField('id') ? ['class' => 'mw-100 w-50'] : []
             );
+        }
+        // LogsTable
+        if (str_contains($class, 'LogsTable')) {
+            $this->setThAttributes(function (Column $column) {
+                if ($column->isField('agent') || $column->isField('browser')) {
+                    return ['class' => 'mw-100 w-20'];
+                }
+
+                return [];
+            });
         }
     }
 }
