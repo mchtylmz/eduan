@@ -19,7 +19,7 @@
 
         <div class="mb-3">
             <label class="form-label" for="username">{{ __('Kullanıcı Adı') }} / {{ __('E-posta Adresi') }}</label>
-            <input type="text" class="form-control" id="username" wire:model="username" placeholder="{{ __('Kullanıcı Adı') }}..">
+            <input type="email" class="form-control" id="username" wire:model="username" placeholder="{{ __('Kullanıcı Adı') }}..">
             <x-badge.error field="username"/>
         </div>
 

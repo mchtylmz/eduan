@@ -73,6 +73,7 @@ class UserForm extends Component
             'username' => [
                 'required',
                 'string',
+                'email:rfc,dns',
                 Rule::unique('users', 'username')->ignore($this->user?->id),
             ],
             'password' => [
