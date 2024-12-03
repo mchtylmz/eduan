@@ -65,17 +65,17 @@ class Exam extends Model
 
     public function reviews(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->HasMany(ExamReview::class);
+        return $this->hasMany(ExamReview::class);
     }
 
     public function results(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->HasMany(ExamResult::class);
+        return $this->hasMany(ExamResult::class);
     }
 
     public function userResults(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->HasMany(ExamResult::class)->where('user_id', auth()->id());
+        return $this->hasMany(ExamResult::class)->where('user_id', auth()->id())->groupBy('exam_id');
     }
 
     public function publicReviewsCount(): int

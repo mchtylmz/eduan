@@ -54,6 +54,7 @@ class QuestionForm extends Component
                 ->get();
 
             $this->locale = $this->question->locale;
+            $this->title = $this->question->title;
             $this->code = $this->question->code;
             $this->sort = $this->question->sort;
             $this->time = $this->question->time;
@@ -69,8 +70,11 @@ class QuestionForm extends Component
             $this->locale = settings()->examlanguageCode ?? app()->getLocale();
             $this->time = settings()->examTime ?? 300;
 
-            for ($i = 1; $i <= settings()->examAnswerCount ?? 4; $i++)
+            $defaultQuestionCount = settings()->examAnswerCount ?? 4;
+            for ($i = 1; $i <= $defaultQuestionCount; $i++) {
                 $this->answerAdd();
+            }
+
         }
     }
 
@@ -132,6 +136,7 @@ class QuestionForm extends Component
             'lesson_id' => 'required|integer|exists:lessons,id',
             'topic_id' => 'required|integer|exists:topics,id',
             'locale' => 'required|string|exists:languages,code',
+            'title' => 'nullable|string',
             'code' => ['required', Rule::unique('questions', 'code')->ignore($this->question->id ?? 0)],
             'time' => 'required|integer',
             'sort' => 'required|integer',
@@ -185,6 +190,7 @@ class QuestionForm extends Component
             'lesson_id' => __('Ders'),
             'topic_id' => __('Konu'),
             'locale' => __('Dil'),
+            'title' => __('Soru Metni'),
             'time' => __('Süre'),
             'code' => __('Kodu'),
             'sort' => __('Sıra'),

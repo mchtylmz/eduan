@@ -57,7 +57,7 @@
                             <div class="blog_details-content-tag">
                                 <ul>
                                     @foreach(explode(',', $blog->keywords) as $keyword)
-                                        <li><a>{{ $keyword }}</a></li>
+                                        @if(trim($keyword)) <li><a>{{ $keyword }}</a></li> @endif
                                     @endforeach
                                 </ul>
                             </div>

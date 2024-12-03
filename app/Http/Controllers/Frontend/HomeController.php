@@ -55,4 +55,12 @@ class HomeController extends Controller
             'page' => $page
         ]);
     }
+
+    public function sitemap()
+    {
+        return response()
+            ->view('frontend.home.sitemap')
+            ->header('Content-Type', 'text/xml');
+
+    }
 }

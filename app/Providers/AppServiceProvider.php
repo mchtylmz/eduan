@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Enums\LocaleEnum;
 use App\Enums\RoleTypeEnum;
 use App\Models\Language;
 use Carbon\Carbon;

@@ -128,4 +128,21 @@ class FilterHelper extends DataHelper
                 ->toArray()
         );
     }
+
+    public function logTypes(string $value = null): string|array
+    {
+        $types = [
+            '' => __('Tümü'),
+            'login' => __('Giriş'),
+            'logout' => __('Çıkış'),
+            'create' => __('Ekle'),
+            'edit' => __('Düzenle'),
+            'delete' => __('Sil / Kaldır'),
+        ];
+        if (!is_null($value)) {
+            return $types[$value] ?? $value;
+        }
+
+        return $types;
+    }
 }

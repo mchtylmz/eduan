@@ -19,6 +19,8 @@ Route::get('search', [\App\Http\Controllers\Frontend\HomeController::class,'sear
     ->name('search');
 Route::get('page/{page:slug}', [\App\Http\Controllers\Frontend\HomeController::class,'page'])
     ->name('page');
+Route::get('sitemap.xml', [\App\Http\Controllers\Frontend\HomeController::class,'sitemap'])
+    ->name('sitemap');
 
 Route::get('tests/{topic:code?}', [\App\Http\Controllers\Frontend\TestController::class,'index'])
     ->name('tests');

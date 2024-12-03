@@ -31,7 +31,12 @@ class LogsTable extends DataTableComponent
         return [
             $this->usersFilter(
                 fn(Builder $builder, array $value) => $builder->whereIn('logs.user_id', $value)
-            )
+            ),
+            SelectFilter::make(__('İşlem'), 'log_type')
+                ->options(data()->filters()->logTypes())
+                ->filter(function (Builder $builder, string $value) {
+                    $builder->where('log_type', $value);
+                })
         ];
     }
 
@@ -47,15 +52,12 @@ class LogsTable extends DataTableComponent
                 ->collapseOnMobile()
                 ->searchable()
                 ->sortable(),
-            /*
-            Column::make(__('Tablo'), "table_name")
-                ->collapseOnMobile()
-                ->searchable()
-                ->sortable(),
-            */
+            Column::make(__('Tablo'), "table_name")->hideIf(true),
             Column::make(__('İşlem'), "log_type")
+                ->format(fn($value, $row) => sprintf('>> %s<br>%s', data()->filters()->logTypes($value), $row->table_name))
                 ->collapseOnMobile()
                 ->searchable()
+                ->html()
                 ->sortable(),
             Column::make(__('Agent'), "agent")
                 ->collapseOnMobile()

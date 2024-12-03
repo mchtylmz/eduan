@@ -51,9 +51,7 @@ class ListTopics extends Component
                                 ->orWhere('title', 'like', "%{$this->word}%");
                         });
                     })
-                    ->with([
-                        'exams' => fn($query) => $query->groupBy('id')
-                    ])
+                    ->with('exams')
                     ->active()
                     ->orderBy('sort')
                     ->paginate(21);

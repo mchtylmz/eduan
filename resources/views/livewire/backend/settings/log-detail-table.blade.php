@@ -3,7 +3,7 @@
         {{ __('İsim Soyisim') }}: <p class="mb-0 fw-semibold ms-2">{{ $log->user->display_name }}</p>
     </div>
     <div class="bg-body-light p-2 px-3 mb-1 d-flex align-items-start">
-        {{ __('İşlem') }}: <p class="mb-0 fw-semibold ms-2">{{ $log->log_type }}</p>
+        {{ __('İşlem') }}: <p class="mb-0 fw-semibold ms-2">{{ data()->filters()->logTypes($log->log_type) }}</p>
     </div>
     <div class="bg-body-light p-2 px-3 mb-1 d-flex align-items-start">
         {{ __('Agent') }}: <p class="mb-0 fw-semibold ms-2">{{ $log->agent }}</p>

@@ -75,6 +75,12 @@
 
             <div class="col-lg-12"><hr></div>
 
+            <div class="col-lg-12 mb-3">
+                <label class="form-label" for="title">{{ __('Soru Metni') }}</label>
+                <textarea rows="2" class="form-control" id="title" wire:model="title" placeholder="{{ __('Metni') }}.."></textarea>
+                <x-badge.error field="title"/>
+            </div>
+
             <div class="col-lg-6 mb-3" wire:ignore>
                 <label class="form-label" for="attachment">{{ __('Soru Resmi') }}</label>
                 <input type="file" class="dropify" id="attachment" wire:model.live="attachment"
