@@ -16,6 +16,7 @@
         "lorisleiva/laravel-actions": "^2.8",
         "pharaonic/laravel-settings": "^1.2",
         "rappasoft/laravel-livewire-tables": "*",
+        "spatie/laravel-backup": "^9.1",
         "spatie/laravel-permission": "^6.9",
         "spatie/laravel-translatable": "*",
         "zoha/laravel-meta": "^2.0"

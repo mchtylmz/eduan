@@ -22,6 +22,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'livewire/*',
         ]);
     })
+    ->withSchedule(function () {
+        Schedule::command('backup:run --only-db')
+            ->wednesdays()
+            ->saturdays()
+            ->at('00:15');
+
+        Schedule::command('backup:run')
+            ->mondays()
+            ->at('03:00');
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

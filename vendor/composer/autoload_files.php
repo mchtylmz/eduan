@@ -41,6 +41,7 @@ return array(
     'a1cfe24d14977df6878b9bf804af2d1c' => $vendorDir . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
     '4740f5fcc89f43bdfaf007c528d93ea5' => $vendorDir . '/pharaonic/laravel-settings/src/helpers.php',
     'ec07570ca5a812141189b1fa81503674' => $vendorDir . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
+    '0c3c22e27afa83be19b4c938f4c6e9ea' => $vendorDir . '/spatie/laravel-backup/src/Helpers/functions.php',
     '377b22b161c09ed6e5152de788ca020a' => $vendorDir . '/spatie/laravel-permission/src/helpers.php',
     'cd6300adadbd4f8fd3c2a0a1b3efa58a' => $baseDir . '/app/Helpers/Functions.php',
 );
