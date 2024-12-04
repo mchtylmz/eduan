@@ -125,4 +125,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'public_path' => env('APP_PUBLIC_PATH', 'public'),
 ];

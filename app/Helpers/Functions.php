@@ -82,8 +82,6 @@ if (!function_exists('getImage')) {
      */
     function getImage(?string $image, ?string $default = null): string
     {
-
-
         if (!is_file(public_path($image))) {
             return asset($default ?: settings()->siteLogo);
         }

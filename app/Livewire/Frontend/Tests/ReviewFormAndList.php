@@ -27,7 +27,9 @@ class ReviewFormAndList extends Component
     public function mount(Exam $exam, ?User $user = null): void
     {
         $this->exam = $exam;
-        $this->user = !empty($user) && $user->exists ? $user : auth()->user();
+        if (auth()->check()) {
+            $this->user = !empty($user) && $user->exists ? $user : User::find(auth()->id());
+        }
     }
 
     public function updateBadge(): void

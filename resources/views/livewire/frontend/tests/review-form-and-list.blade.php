@@ -1,4 +1,5 @@
 <div>
+    @if(auth()->check() && !empty($user))
     <form wire:submit.prevent="save" novalidate class="contact-form">
         @csrf
         <div class="row">
@@ -25,7 +26,7 @@
             </div>
         </div>
     </form>
-
+    @endif
 
     <div class="mt-3">
         @if(count($reviews = $this->reviews()))

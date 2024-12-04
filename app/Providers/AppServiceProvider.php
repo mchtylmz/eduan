@@ -28,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->bindings();
+
         RedirectIfAuthenticated::redirectUsing(function () {
             if (request()->user()->can('dashboard:access')) {
                 return route('admin.home.index');
@@ -83,5 +85,12 @@ class AppServiceProvider extends ServiceProvider
         setlocale(LC_TIME, app()->getLocale().'.utf8');
         Carbon::setLocale(app()->getLocale());
         date_default_timezone_set(config('app.timezone'));
+    }
+
+    protected function bindings(): void
+    {
+        if ($public_path = config('app.public_path')) {
+            $this->app->usePublicPath(base_path() . '/' . $public_path);
+        }
     }
 }
