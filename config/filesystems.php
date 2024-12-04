@@ -39,7 +39,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('uploads'),
+            //'root' => public_path('uploads'),
+            'root' => base_path(sprintf('%s/uploads', config('app.public_path', 'public'))),
             'url' => env('APP_URL'),
             'visibility' => 'public',
             'throw' => false,

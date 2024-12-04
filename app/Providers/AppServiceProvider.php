@@ -90,7 +90,8 @@ class AppServiceProvider extends ServiceProvider
     protected function bindings(): void
     {
         if ($public_path = config('app.public_path')) {
-            $this->app->usePublicPath(base_path() . '/' . $public_path);
+            //$this->app->instance('path.public', base_path($public_path));
+            $this->app->usePublicPath(base_path($public_path));
         }
     }
 }
