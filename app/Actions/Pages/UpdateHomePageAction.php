@@ -25,7 +25,7 @@ class UpdateHomePageAction
         if (!empty($data['keywords']) && is_array($data['keywords'])) {
             $data['keywords'] = json_encode($data['keywords']);
         }
-        flush();
+       resetCache();
 
         return Page::where('menu', PageMenuEnum::HOME)
             ->where('type', PageTypeEnum::SYSTEM)

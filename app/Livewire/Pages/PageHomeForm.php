@@ -84,7 +84,7 @@ class PageHomeForm extends Component
             'sort' => $this->sort,
         ]);
 
-        flush();
+       resetCache();
 
         return redirect()->route('admin.pages.home')->with([
             'status' => 'success',

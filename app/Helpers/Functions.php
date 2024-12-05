@@ -169,8 +169,17 @@ if (!function_exists('flush')) {
     {
         cache()->flush();
         cache()->clear();
-        //Artisan::call('cache:clear');
-        //Artisan::call('view:clear');
+    }
+}
+
+if (!function_exists('resetCache')) {
+    /**
+     * @return void
+     */
+    function resetCache(): void
+    {
+        cache()->flush();
+        cache()->clear();
         Artisan::call('optimize:clear');
     }
 }

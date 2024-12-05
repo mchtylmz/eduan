@@ -16,7 +16,7 @@ class CreateQuestionAction
             $question->answers()->createMany($answers);
         }
 
-        flush();
+       resetCache();
 
         return $question;
     }

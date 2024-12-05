@@ -24,7 +24,7 @@ class CreateOrUpdateLessonAction
             $lesson->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $lesson;
     }

@@ -64,7 +64,7 @@ class NewsletterSendForm extends Component
             content: $this->content,
         );
 
-        flush();
+       resetCache();
 
         return redirect()->route('admin.newsletter.index')->with([
             'status' => 'success',

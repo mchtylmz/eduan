@@ -23,7 +23,7 @@ class CreateOrUpdateUserAction
             $user->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $user;
     }

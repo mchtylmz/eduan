@@ -243,7 +243,7 @@ class QuestionForm extends Component
             );
         }
 
-        flush();
+       resetCache();
 
         return redirect()->route('admin.questions.index')->with([
             'status' => 'success',

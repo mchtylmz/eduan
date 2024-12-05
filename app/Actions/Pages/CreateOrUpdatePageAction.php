@@ -19,7 +19,7 @@ class CreateOrUpdatePageAction
             $page->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $page;
     }

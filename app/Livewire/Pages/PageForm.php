@@ -95,7 +95,7 @@ class PageForm extends Component
             page: !empty($this->page) && $this->page->exists ? $this->page : null,
         );
 
-        flush();
+       resetCache();
 
         return redirect()->route('admin.pages.all')->with([
             'status' => 'success',

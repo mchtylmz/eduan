@@ -22,7 +22,7 @@ class CreateOrUpdateTopicAction
             $topic->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $topic;
     }

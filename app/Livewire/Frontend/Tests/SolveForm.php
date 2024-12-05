@@ -161,7 +161,7 @@ class SolveForm extends Component
             $this->dispatch('endTest');
         }
 
-        flush();
+       resetCache();
         return true;
     }
 

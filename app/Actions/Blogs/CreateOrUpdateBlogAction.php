@@ -18,7 +18,7 @@ class CreateOrUpdateBlogAction
             $blog->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $blog;
     }

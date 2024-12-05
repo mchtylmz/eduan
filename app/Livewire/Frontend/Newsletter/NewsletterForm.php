@@ -42,7 +42,7 @@ class NewsletterForm extends Component
             'accept_terms' => $this->acceptTerms,
         ]);
 
-        flush();
+       resetCache();
         $this->reset(['email']);
 
         $this->message(__('Bülten aboneliğiniz kayıt edilid!'))->success();

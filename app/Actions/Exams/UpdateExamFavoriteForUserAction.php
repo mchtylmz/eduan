@@ -17,7 +17,7 @@ class UpdateExamFavoriteForUserAction
             'detach' => $exam->favorites()->detach($user->id)
         };
 
-        flush();
+       resetCache();
 
         return $exam;
     }

@@ -22,7 +22,7 @@ class GetUserFromPasswordTokenAction
         if (!$user) {
             return false;
         }
-        flush();
+       resetCache();
 
         return $user;
     }

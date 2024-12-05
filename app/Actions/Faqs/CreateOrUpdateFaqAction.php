@@ -17,7 +17,7 @@ class CreateOrUpdateFaqAction
             $faq->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $faq;
     }

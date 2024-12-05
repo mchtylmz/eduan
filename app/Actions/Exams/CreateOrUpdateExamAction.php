@@ -26,7 +26,7 @@ class CreateOrUpdateExamAction
             $exam->update($data);
         }
 
-        flush();
+       resetCache();
 
         return $exam;
     }

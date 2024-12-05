@@ -12,7 +12,7 @@ class CreateNewsLetterAction
 
     public function handle(array $data)
     {
-        flush();
+       resetCache();
 
         return Newsletter::create([
             ...$data,
