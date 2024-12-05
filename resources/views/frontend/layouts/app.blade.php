@@ -10,7 +10,7 @@
     <meta name="app-version" content="{{ config('app.version') }}">
     <meta name="theme-color" content="{{ settings()->primaryColor ?? '#000' }}" />
     <meta name="ip-address" content="{{ request()->ip() }}" />
-    <meta name="canonical" content="{{ url('/') }}" />
+    <meta name="canonical" content="{{ request()->fullUrl() }}" />
     <meta name="robots" content="index, follow" />
 
     <!-- default stack for seo -->

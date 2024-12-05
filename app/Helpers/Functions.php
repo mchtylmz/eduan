@@ -168,6 +168,10 @@ if (!function_exists('flush')) {
     function flush(): void
     {
         cache()->flush();
+        cache()->clear();
+        //Artisan::call('cache:clear');
+        //Artisan::call('view:clear');
+        Artisan::call('optimize:clear');
     }
 }
 
