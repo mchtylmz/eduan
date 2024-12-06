@@ -35,46 +35,31 @@
             </div>
 
             <div class="col-lg-12">
-                <ul class="nav nav-tabs nav-tabs-alt bg-body-light" role="tablist">
+                <div class="row">
                     @foreach($languages = data()->languages(active: true) as $locale)
-                        <li class="nav-item" role="presentation">
-                            <button type="button" class="nav-link {{ $loop->index == 0 ? 'active': '' }}"
-                                    id="page-content-{{ $locale->code }}-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#page-content-{{ $locale->code }}"
-                                    role="tab"
-                                    aria-controls="page-content-{{ $locale->code }}"
-                                    aria-selected="{{ $loop->index ? 'true': 'false' }}">
-                                {{ str($locale->code)->upper() }} - {{ $locale->name }}
-                            </button>
-                        </li>
-                    @endforeach
-                </ul>
-                <div class="block-content tab-content">
-                    @foreach($languages = data()->languages(active: true) as $locale)
-                        <div class="tab-pane row py-1 {{ $loop->index == 0 ? 'active show': '' }}"
-                             id="page-content-{{ $locale->code }}"
-                             role="tabpanel"
-                             aria-labelledby="page-content-{{ $locale->code }}"
-                             tabindex="0">
+                        <div class="col-lg-6">
+                            <div class="col-12 my-3 bg-body-light p-3">
+                                <h5 class="mb-0">{{ str($locale->code)->upper() }} - {{ $locale->name }}</h5>
+                            </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="title">{{ __('Sayfa Başlığı') }} ({{ str($locale->code)->upper() }})</label>
+                                <label class="form-label" for="title.{{ $locale->code }}">{{ __('Sayfa Başlığı') }} ({{ str($locale->code)->upper() }})</label>
                                 <textarea rows="1"
                                           class="form-control"
-                                          id="title"
-                                          wire:model.live="title"
+                                          id="title.{{ $locale->code }}"
+                                          @if($loop->index == 0) wire:model.live="title.{{ $locale->code }}" @endif
+                                          @if($loop->index != 0) wire:model="title.{{ $locale->code }}" @endif
                                           placeholder="{{ __('Sayfa Başlığı') }}.."
                                 ></textarea>
                                 <x-badge.error field="title"/>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="brief">{{ __('Kısa Açıklama') }} ({{ str($locale->code)->upper() }})</label>
+                                <label class="form-label" for="brief.{{ $locale->code }}">{{ __('Kısa Açıklama') }} ({{ str($locale->code)->upper() }})</label>
                                 <textarea rows="2"
                                           class="form-control"
-                                          id="brief"
-                                          wire:model="brief"
+                                          id="brief.{{ $locale->code }}"
+                                          wire:model="brief.{{ $locale->code }}"
                                           placeholder="{{ __('Kısa Açıklama') }}.."
                                 ></textarea>
                                 <x-badge.error field="brief"/>
@@ -98,25 +83,25 @@
                                 </div>
                                 @if(\App\Enums\YesNoEnum::YES->is($linkStatus))
                                     <div class="col-lg-10 mb-3">
-                                        <label class="form-label" for="link">{{ __('Yönlendirme Linki') }}</label>
-                                        <input type="text" class="form-control" id="link" wire:model="link"
-                                               placeholder="{{ __('https...') }}.." required/>
+                                        <label class="form-label" for="link.{{ $locale->code }}">{{ __('Yönlendirme Linki') }}</label>
+                                        <input type="text" class="form-control" id="link.{{ $locale->code }}" wire:model="link.{{ $locale->code }}"
+                                               placeholder="{{ __('https...') }}.." />
                                         <x-badge.error field="link"/>
                                     </div>
                                 @endif
                             </div>
 
                             <div class="mb-3" wire:ignore>
-                                <label class="form-label" for="content">{{ __('Sayfa İçeriği') }} ({{ str($locale->code)->upper() }})</label>
-                                <x-tinymce.editor name="content" value="{{ $content }}"/>
+                                <label class="form-label" for="content.{{ $locale->code }}">{{ __('Sayfa İçeriği') }} ({{ str($locale->code)->upper() }})</label>
+                                <x-tinymce.editor name="{{ $locale->code == 'tr' ? 'slug1':'slug2' }}" value="{!! html_entity_decode($content[$locale->code] ?? '') !!}"/>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="keywords">{{ __('Anahtar Kelimeler') }} ({{ str($locale->code)->upper() }})</label>
+                                <label class="form-label" for="keywords.{{ $locale->code }}">{{ __('Anahtar Kelimeler') }} ({{ str($locale->code)->upper() }})</label>
                                 <textarea rows="1"
                                           class="form-control"
-                                          id="keywords"
-                                          wire:model="keywords"
+                                          id="keywords.{{ $locale->code }}"
+                                          wire:model="keywords.{{ $locale->code }}"
                                           placeholder="{{ __('Anahtar Kelimeler') }}.."
                                 ></textarea>
                                 <x-badge.error field="keywords"/>

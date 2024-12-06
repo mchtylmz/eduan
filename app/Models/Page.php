@@ -16,7 +16,7 @@ class Page extends Model
 
     protected $fillable = ['slug', 'title', 'brief', 'content', 'keywords', 'sort', 'link', 'menu', 'type', 'status'];
 
-    protected array $translatable = ['title', 'brief', 'content', 'keywords'];
+    protected array $translatable = ['title', 'brief', 'content', 'keywords', 'link'];
 
     protected function casts(): array
     {

@@ -52,6 +52,9 @@ class ListLessons extends Component
                         'topics' => fn($query) => $query->active(),
                         'exams' => fn($query) => $query->active()
                     ])
+                    ->with([
+                        'exams' => fn($query) => $query->active()
+                    ])
                     ->when($this->search, function ($query) {
                         $query->where('code', 'like', "%{$this->word}%")
                             ->orWhere('name', 'like', "%{$this->word}%");

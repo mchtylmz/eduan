@@ -104,7 +104,7 @@ class ExamForm extends Component
             ->where('topic_id', $this->topic_id)
             ->where('lesson_id', $this->lesson_id)
             ->latest()
-            ->paginate(8);
+            ->paginate(12);
     }
 
     #[Computed]

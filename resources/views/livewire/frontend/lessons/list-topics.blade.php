@@ -48,7 +48,7 @@
                             <a href="{{ route('frontend.tests', $topic->code) }}">
                                 <span>
                                     <i class="fa-light fa-question-circle me-2"></i>
-                                    {{ count($topic->exams) }} {{ __('Test') }}
+                                    {{ collect($topic->exams)->groupBy('id')->count() }} {{ __('Test') }}
                                 </span>
                             </a>
                             @if(auth()->check())
@@ -56,7 +56,7 @@
                                     <i class="fa-light fa-poll me-2"></i>
                                     <span>{{ $topic->userResults()->count() }}</span>
                                     <span>/</span>
-                                    <span>{{ count($topic->exams) }}</span>
+                                    <span>{{ collect($topic->exams)->groupBy('id')->count() }}</span>
                                 </span>
                             @endif
                         </div>

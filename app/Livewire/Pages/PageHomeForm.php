@@ -10,10 +10,11 @@ use App\Traits\CustomLivewireAlert;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class PageHomeForm extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, WithFileUploads;
 
     public Page $page;
 

@@ -52,7 +52,7 @@
                             </a>
                             <p>
                                 <i class="fa-light fa-pen mx-1"></i>
-                                <span>{{ $lesson->exams_count ?? 0 }} {{ __('Test') }}</span>
+                                <span>{{ collect($lesson->exams)->groupBy('id')->count() }} {{ __('Test') }}</span>
                             </p>
                         </div>
                     </div>

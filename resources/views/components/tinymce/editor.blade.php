@@ -12,14 +12,16 @@
         .tox .tox-promotion {display: none !important;}
     </style>
 @endpush
-
-<textarea
-    id="editor{{ $id }}"
-    class="form-control tinymce"
-    name="{{ $name }}"
-    @if($livewire) wire:model="{{ $name }}" @endif
-    placeholder="{{ $placeholder }}"
->{!! $value !!}</textarea>
+<div wire:ignore>
+    <textarea
+        id="editor{{ $id }}"
+        class="form-control tinymce"
+        name="{{ $name }}"
+        wire:key="{{ $name }}"
+        @if($livewire) wire:model.live="{{ $name }}" @endif
+        placeholder="{{ $placeholder }}"
+    >{!! $value !!}</textarea>
+</div>
 
 @push('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/tinymce.min.js"></script>
@@ -32,10 +34,12 @@
             function setup(editor) {
                 editor.on('init change', function () {
                     editor.save();
-                    @this.set('{{ $name }}', editor.getContent());
+                    var content = tinymce.activeEditor.getContent();
+                    @this.set('{{ $name }}', content);
                 });
                 editor.on('keypress', function (e) {
-                    @this.set('{{ $name }}', editor.getContent());
+                    var content = tinymce.activeEditor.getContent();
+                    @this.set('{{ $name }}', content);
                 });
             }
         </script>

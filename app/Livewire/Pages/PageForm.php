@@ -17,11 +17,13 @@ class PageForm extends Component
     public Page $page;
 
     public string $slug;
-    public string $title;
-    public string $brief = '';
-    public string $content;
-    public string $keywords = '';
-    public ?string $link;
+    public string $slug1 = '';
+    public string $slug2 = '';
+    public array $title;
+    public array $brief = [];
+    public array $content = [];
+    public array $keywords = [];
+    public array $link = [];
     public int $sort = 1;
     public StatusEnum $status = StatusEnum::ACTIVE;
     public YesNoEnum $linkStatus = YesNoEnum::NO;
@@ -32,28 +34,33 @@ class PageForm extends Component
     {
         if ($pageId && $this->page = Page::find($pageId)) {
             $this->slug = $this->page->slug;
-            $this->title = $this->page->title;
-            $this->brief = $this->page->brief;
-            $this->content = html_entity_decode($this->page->content);
-            $this->keywords = $this->page->keywords;
+            $this->title = $this->page->getTranslations('title');
+            $this->brief = $this->page->getTranslations('brief');
+            $this->content = $this->page->getTranslations('content');
+            $this->keywords = $this->page->getTranslations('keywords');
             $this->sort = $this->page->sort;
             $this->status = $this->page->status;
-            $this->link = $this->page->link ?? '';
+            $this->link = $this->page->getTranslations('link');
             $this->linkStatus = !empty($this->link) ? YesNoEnum::YES : YesNoEnum::NO;
 
             $this->permission = 'pages:update';
         }
     }
 
+    public function updated($value, $field)
+    {
+        //dd($value, $field);
+    }
+
     public function rules(): array
     {
         return [
             'slug' => ['required', 'string', Rule::unique('pages', 'slug')->ignore($this->page->id ?? 0)],
-            'title' => 'required|string|min:1',
-            'brief' => 'nullable|string',
-            'content' => 'nullable|string',
-            'keywords' => 'nullable|string',
-            'link' => [Rule::when(YesNoEnum::YES->is($this->linkStatus), 'required', 'nullable') ,'url:http,https'],
+            'title' => 'required|array|min:1',
+            'brief' => 'nullable|array',
+            'content' => 'nullable|array',
+            'keywords' => 'nullable|array',
+            'link' => [Rule::when(YesNoEnum::YES->is($this->linkStatus), 'required|array', 'nullable')],
             'sort' => 'required|integer',
             'status' => [
                 'required',
@@ -80,14 +87,30 @@ class PageForm extends Component
     {
         $this->validate();
 
+        dd(
+            [
+                'slug' => Str::slug($this->slug),
+                'title' => $this->title,
+                'brief' => $this->brief,
+                'content' => $this->content,
+                'keywords' => $this->keywords ?? [],
+                'link' => $this->link ?? [],
+                'sort' => $this->sort,
+                'status' => $this->status,
+                'type' => PageTypeEnum::CUSTOM,
+                'slug1' => $this->slug1,
+                'slug2' => $this->slug2,
+            ]
+        );
+
         CreateOrUpdatePageAction::run(
             data: [
                 'slug' => Str::slug($this->slug),
                 'title' => $this->title,
                 'brief' => $this->brief,
                 'content' => $this->content,
-                'keywords' => $this->keywords ?? '',
-                'link' => $this->link ?? '',
+                'keywords' => $this->keywords ?? [],
+                'link' => $this->link ?? [],
                 'sort' => $this->sort,
                 'status' => $this->status,
                 'type' => PageTypeEnum::CUSTOM

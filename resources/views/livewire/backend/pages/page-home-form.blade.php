@@ -27,7 +27,7 @@
 
         </div>
 
-        <ul class="nav nav-tabs nav-tabs-alt bg-body-light" role="tablist">
+        <ul class="nav nav-tabs nav-tabs-alt bg-body-light" role="tablist" wire:ignore>
             @foreach($languages = data()->languages(active: true) as $language)
                 <li class="nav-item" role="presentation">
                     <button type="button" class="nav-link {{ $loop->index == 0 ? 'active': '' }}"
@@ -48,7 +48,7 @@
                      id="page-tab-{{ $language->code }}"
                      role="tabpanel"
                      aria-labelledby="page-tab-{{ $language->code }}"
-                     tabindex="0">
+                     tabindex="0" wire:ignore>
 
                     <div class="row">
                         <div class="col-lg-12 mb-3">
