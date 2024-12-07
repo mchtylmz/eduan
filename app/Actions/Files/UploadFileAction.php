@@ -5,8 +5,6 @@ namespace App\Actions\Files;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Http\UploadedFile;
-use Spatie\Image\Enums\Fit;
-use Spatie\Image\Image;
 
 class UploadFileAction
 {

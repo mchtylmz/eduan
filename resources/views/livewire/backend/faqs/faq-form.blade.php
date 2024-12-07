@@ -47,7 +47,7 @@
             </div>
             <div class="col-lg-12 mb-3" wire:ignore>
                 <label class="form-label" for="content">{{ __('Açıklama') }}</label>
-                <x-tinymce.editor name="content" value="{{ $content }}"/>
+                <x-tinymce.editor name="content" value="{!! html_entity_decode($content) !!}"/>
             </div>
 
         </div>

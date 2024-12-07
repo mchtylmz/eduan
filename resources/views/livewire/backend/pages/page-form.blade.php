@@ -93,7 +93,7 @@
 
                             <div class="mb-3" wire:ignore>
                                 <label class="form-label" for="content.{{ $locale->code }}">{{ __('Sayfa İçeriği') }} ({{ str($locale->code)->upper() }})</label>
-                                <x-tinymce.editor name="{{ $locale->code == 'tr' ? 'slug1':'slug2' }}" value="{!! html_entity_decode($content[$locale->code] ?? '') !!}"/>
+                                <x-tinymce.editor name="content.{{ $locale->code }}" value="{!! html_entity_decode($content[$locale->code] ?? '') !!}"/>
                             </div>
 
                             <div class="mb-3">

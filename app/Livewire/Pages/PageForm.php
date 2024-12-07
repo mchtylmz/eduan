@@ -17,8 +17,6 @@ class PageForm extends Component
     public Page $page;
 
     public string $slug;
-    public string $slug1 = '';
-    public string $slug2 = '';
     public array $title;
     public array $brief = [];
     public array $content = [];
@@ -47,9 +45,11 @@ class PageForm extends Component
         }
     }
 
-    public function updated($value, $field)
+    public function updated(string $key, mixed $value): void
     {
-        //dd($value, $field);
+        if (str_contains($key, 'title.'.settings()->defaultLocale)) {
+            $this->slug = Str::slug($value);
+        }
     }
 
     public function rules(): array
@@ -87,28 +87,12 @@ class PageForm extends Component
     {
         $this->validate();
 
-        dd(
-            [
-                'slug' => Str::slug($this->slug),
-                'title' => $this->title,
-                'brief' => $this->brief,
-                'content' => $this->content,
-                'keywords' => $this->keywords ?? [],
-                'link' => $this->link ?? [],
-                'sort' => $this->sort,
-                'status' => $this->status,
-                'type' => PageTypeEnum::CUSTOM,
-                'slug1' => $this->slug1,
-                'slug2' => $this->slug2,
-            ]
-        );
-
         CreateOrUpdatePageAction::run(
             data: [
                 'slug' => Str::slug($this->slug),
                 'title' => $this->title,
                 'brief' => $this->brief,
-                'content' => $this->content,
+                'content' => $this->content ?? [],
                 'keywords' => $this->keywords ?? [],
                 'link' => $this->link ?? [],
                 'sort' => $this->sort,

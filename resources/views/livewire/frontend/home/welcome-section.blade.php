@@ -33,7 +33,7 @@
                             @endif
                         </div>
                     </div>
-                    @if($image = data_get($content, 'image'))
+                    @if($image = data_get($page->images, 'slider'))
                         <div class="col-10 col-xl-6 col-lg-6 d-block">
                             <div class="h2_banner-right pl-80">
                                 @if($image = getImage($image, false))

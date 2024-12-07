@@ -17,6 +17,7 @@ return new class extends Migration
             $table->longText('title');
             $table->longText('brief')->nullable();
             $table->longText('content')->nullable();
+            $table->longText('images')->nullable();
             $table->text('keywords')->nullable();
             $table->tinyInteger('sort')->default(1);
             $table->string('menu')->default(\App\Enums\PageMenuEnum::FOOTER);

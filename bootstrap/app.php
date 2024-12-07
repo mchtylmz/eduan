@@ -24,13 +24,21 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function () {
         Schedule::command('backup:run --only-db')
+            ->timezone(config('app.timezone'))
             ->wednesdays()
             ->saturdays()
             ->at('00:15');
 
         Schedule::command('backup:run')
+            ->timezone(config('app.timezone'))
             ->mondays()
-            ->at('03:00');
+            ->at('02:00');
+
+        Schedule::job(\App\Jobs\UploadBackupToCloudflare::class)
+            ->timezone(config('app.timezone'))
+            ->mondays()
+            ->saturdays()
+            ->at('04:00');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

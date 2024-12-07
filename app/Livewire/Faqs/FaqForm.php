@@ -31,7 +31,7 @@ class FaqForm extends Component
             $this->sort = $this->faq->sort;
             $this->status = $this->faq->status;
 
-            $this->permission = 'faqs:update';
+            $this->permission = 'pages:update';
         }
     }
 
@@ -73,7 +73,7 @@ class FaqForm extends Component
             faq: !empty($this->faq) && $this->faq->exists ? $this->faq : null
         );
 
-        return redirect()->route('admin.faqs.index')->with([
+        return redirect()->route('admin.pages.faqs.index')->with([
             'status' => 'success',
             'message' => __('Sıkça sorulan soru kayıt edildi!')
         ]);

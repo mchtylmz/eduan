@@ -2,7 +2,7 @@
     <div class="h4_faq-area pt-75 pb-75">
         <div class="container">
             <div class="row align-items-center">
-                @if($image = data_get($content, 'faqImage'))
+                @if($image = data_get($page->images, 'faq'))
                     <div class="col-lg-6">
                         @if($image = getImage($image, false))
                             <div class="h4_faq-img w_img mb-50">

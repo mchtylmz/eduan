@@ -11,7 +11,7 @@
 
         <div class="row">
 
-            <div class="col-lg-6 mb-3">
+            <div class="col-lg-4 mb-3">
                 <label class="form-label" for="slug">{{ __('Slug (URL)') }}</label>
                 <input type="text" class="form-control" id="slug" wire:model="slug"
                        placeholder="{{ __('Slug (URL)') }}.."/>
@@ -27,28 +27,12 @@
 
         </div>
 
-        <ul class="nav nav-tabs nav-tabs-alt bg-body-light" role="tablist" wire:ignore>
+        <div class="row">
             @foreach($languages = data()->languages(active: true) as $language)
-                <li class="nav-item" role="presentation">
-                    <button type="button" class="nav-link {{ $loop->index == 0 ? 'active': '' }}"
-                            id="page-tab-{{ $language->code }}-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#page-tab-{{ $language->code }}"
-                            role="tab"
-                            aria-controls="page-tab-{{ $language->code }}"
-                            aria-selected="{{ $loop->index ? 'true': 'false' }}">
-                        {{ str($language->code)->upper() }} - {{ $language->name }}
-                    </button>
-                </li>
-            @endforeach
-        </ul>
-        <div class="block-content tab-content">
-            @foreach($languages = data()->languages(active: true) as $language)
-                <div class="tab-pane row py-1 {{ $loop->index == 0 ? 'active show': '' }}"
-                     id="page-tab-{{ $language->code }}"
-                     role="tabpanel"
-                     aria-labelledby="page-tab-{{ $language->code }}"
-                     tabindex="0" wire:ignore>
+                <div class="col-lg-6" wire:ignore>
+                    <div class="col-12 my-3 bg-body-light p-3">
+                        <h5 class="mb-0">{{ str($language->code)->upper() }} - {{ $language->name }}</h5>
+                    </div>
 
                     <div class="row">
                         <div class="col-lg-12 mb-3">
@@ -83,18 +67,19 @@
                             ></textarea>
                         </div>
 
+                        <div class="col-lg-12"><hr></div>
 
                         <div class="col-lg-12 my-3">
                             <div class="bg-body-light p-2 px-3">
-                                <h5 class="mb-0">{{ __('Karşılama Alanı') }}</h5>
+                                <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Karşılama Alanı') }}</h5>
                             </div>
                         </div>
-                        <div class="col-lg-7">
+                        <div class="col-lg-6">
                             <div class="mb-2">
                                 <label class="form-label" for="content.{{ $language->code }}.welcomeTitle">
                                     {{ __('Başlık') }}
                                 </label>
-                                <textarea rows="1"
+                                <textarea rows="2"
                                           class="form-control"
                                           id="content.{{ $language->code }}.welcomeTitle"
                                           wire:model="content.{{ $language->code }}.welcomeTitle"
@@ -105,7 +90,7 @@
                                 <label class="form-label" for="content.{{ $language->code }}.welcomeDescription">
                                     {{ __('Kısa Açıklama') }}
                                 </label>
-                                <textarea rows="2"
+                                <textarea rows="3"
                                           class="form-control"
                                           id="content.{{ $language->code }}.welcomeDescription"
                                           wire:model="content.{{ $language->code }}.welcomeDescription"
@@ -122,24 +107,27 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-5 mb-3" wire:ignore>
+
+                        <div class="col-lg-6 mb-3" wire:ignore>
                             <label class="form-label" for="content.{{ $language->code }}.image">{{ __('Görsel') }}</label>
                             <input type="file" class="dropify" id="content.{{ $language->code }}.image"
-                                   wire:model="content.{{ $language->code }}.image"
+                                   wire:model="images.{{ $language->code }}.slider"
                                    data-show-remove="false"
                                    data-show-errors="true"
                                    data-allowed-file-extensions="jpg png jpeg webp"
                                    accept=".jpg,.png,.jpeg,.webp"
                                    data-max-file-size="10M"
-                                   @if(!empty($content[$language->code]['image']))
-                                       data-default-file="{{ asset($content[$language->code]['image']) }}"
+                                   @if(!empty($imageTranslations[$language->code]['slider']))
+                                       data-default-file="{{ asset($imageTranslations[$language->code]['slider']) }}"
                                    @endif
                             />
                         </div>
 
+                        <div class="col-lg-12"><hr></div>
+
                         <div class="col-lg-12 my-3">
                             <div class="bg-body-light p-2 px-3">
-                                <h5 class="mb-0">{{ __('Dersler') }}</h5>
+                                <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Dersler') }}</h5>
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -180,9 +168,11 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-12"><hr></div>
+
                         <div class="col-lg-12 my-3">
                             <div class="bg-body-light p-2 px-3">
-                                <h5 class="mb-0">{{ __('Testler') }}</h5>
+                                <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Testler') }}</h5>
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -223,27 +213,29 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-12"><hr></div>
+
                         <div class="col-lg-12 my-3">
                             <div class="bg-body-light p-2 px-3">
-                                <h5 class="mb-0">{{ __('Sıkça Sorulan Sorular') }}</h5>
+                                <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Sıkça Sorulan Sorular') }}</h5>
                             </div>
                         </div>
 
-                        <div class="col-lg-5 mb-3" wire:ignore>
+                        <div class="col-lg-6 mb-3" wire:ignore>
                             <label class="form-label" for="content.{{ $language->code }}.faqImage">{{ __('Sol Görsel') }}</label>
                             <input type="file" class="dropify" id="content.{{ $language->code }}.faqImage"
-                                   wire:model="content.{{ $language->code }}.faqImage"
+                                   wire:model="images.{{ $language->code }}.faq"
                                    data-show-remove="false"
                                    data-show-errors="true"
                                    data-allowed-file-extensions="jpg png jpeg webp"
                                    accept=".jpg,.png,.jpeg,.webp"
                                    data-max-file-size="10M"
-                                   @if(!empty($content[$language->code]['faqImage']))
-                                       data-default-file="{{ asset($content[$language->code]['faqImage']) }}"
-                                @endif
+                                   @if(!empty($imageTranslations[$language->code]['faq']))
+                                       data-default-file="{{ asset($imageTranslations[$language->code]['faq']) }}"
+                                   @endif
                             />
                         </div>
-                        <div class="col-lg-7">
+                        <div class="col-lg-6">
                             <div class="mb-2">
                                 <label class="form-label" for="content.{{ $language->code }}.faqTitle">
                                     {{ __('Başlık') }}
