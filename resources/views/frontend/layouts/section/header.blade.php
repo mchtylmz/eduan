@@ -1,5 +1,5 @@
 <header>
-    <div class="h2_header-area header-sticky border-bottom">
+    <div class="h2_header-area border-bottom">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-xl-3 col-sm-7 col-6">

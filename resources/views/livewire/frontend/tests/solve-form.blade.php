@@ -12,7 +12,7 @@
         <div class="attachment text-center">
             @if($attachment = $question->attachment)
             <img class="w-100"
-                 style="max-width: 720px; object-fit: contain"
+                 style="max-width: 600px; object-fit: contain"
                  src="{{ getImage($attachment) }}"
                  alt="{{ __('Soru') }}"/>
             @endif
@@ -59,7 +59,7 @@
 
                 <div class="attachment text-center">
                     <img class="w-100"
-                         style="max-width: 720px; object-fit: contain"
+                         style="max-width: 600px; object-fit: contain"
                          src="{{ getImage($question->solution) }}"
                          alt="{{ __('Soru Çözümü') }}"/>
                 </div>

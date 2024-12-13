@@ -100,8 +100,13 @@ class ListTests extends Component
         );
     }
 
-    public function toggleBookmark(Exam $exam): void
+    public function toggleBookmark(Exam $exam): bool
     {
+        if (!auth()->check()) {
+            $this->message(__('Üye girişi yapılmalıdır.'))->error();
+            return false;
+        }
+
         $isAttach = !in_array($exam->id, $this->userFavoritesTests);
 
         UpdateExamFavoriteForUserAction::run(
@@ -122,6 +127,7 @@ class ListTests extends Component
         $this->message(
             $isAttach ? __('Seçilen test favori olarak eklendi.') : __('Seçilen test favoriden çıkarıldı.')
         )->success();
+        return true;
     }
 
     public function render()

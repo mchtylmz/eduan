@@ -10,6 +10,7 @@ use App\Mail\EmailVerificationMail;
 use App\Traits\CustomLivewireAlert;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
@@ -43,7 +44,9 @@ class Register extends Component
                 Rule::unique('users', 'username')->ignore($this->email ?? ''),
             ],
             'phone' => 'nullable|string',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required', 'string', 'confirmed', Password::min(6)->mixedCase()->numbers()->symbols()
+            ],
             'acceptTerms' => ['required', 'accepted'],
         ];
     }
