@@ -71,4 +71,9 @@ class Question extends Model
     {
         return $this->HasMany(Answer::class);
     }
+
+    public function exams(): \Illuminate\Database\Eloquent\Relations\belongsToMany
+    {
+        return $this->belongsToMany(Exam::class, 'exams_questions');
+    }
 }

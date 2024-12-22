@@ -178,7 +178,7 @@
                                                 </div>
                                             </button>
                                         @endif
-                                        TODO: // kaç teste eklendi yazacak
+                                        <p class="my-1 text-end text-sm">{{ __('Daha önce') }} {{ $question->exams_count }} {{ __('teste eklendi') }}</p>
                                     </div>
                                 </div>
                             </div>

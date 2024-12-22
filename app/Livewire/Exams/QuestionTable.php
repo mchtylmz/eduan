@@ -36,6 +36,7 @@ class QuestionTable extends DataTableComponent
     {
         $this->examId = $examId;
         $this->resetPage($this->getComputedPageName());
+        $this->clearSearch();
 
         //$this->setFilter('status', StatusEnum::ACTIVE->value);
         $this->setSortAsc('status');
@@ -43,7 +44,7 @@ class QuestionTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return Exam::find($this->examId)?->questions()->getQuery();
+        return Exam::find($this->examId)?->questions()->select('*, order')->getQuery();
     }
 
     public function filters(): array
@@ -56,6 +57,9 @@ class QuestionTable extends DataTableComponent
     public function columns(): array
     {
         return [
+            Column::make(__('Dil'), "language.name")
+                ->searchable()
+                ->sortable(),
             Column::make(__('Dil'), "language.name")
                 ->searchable()
                 ->sortable(),

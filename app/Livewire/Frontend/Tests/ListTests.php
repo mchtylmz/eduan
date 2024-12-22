@@ -66,7 +66,8 @@ class ListTests extends Component
                 ($this->topic_id ?? 0),
                 $this->word,
                 intval($this->showHits),
-                $this->paginate
+                $this->paginate,
+                auth()->check() ? auth()->id() : 'not_auth',
             ]),
             60 * 60 * 60 * 365,
             function () {

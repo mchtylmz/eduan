@@ -103,6 +103,11 @@ class ExamForm extends Component
         return Question::active()
             ->where('topic_id', $this->topic_id)
             ->where('lesson_id', $this->lesson_id)
+            ->addSelect([
+                'exams_count' => Question::selectRaw('COUNT(question_id)')
+                    ->from('exams_questions')
+                    ->whereColumn('question_id', 'questions.id')
+            ])
             ->latest()
             ->paginate(12);
     }
@@ -141,7 +146,7 @@ class ExamForm extends Component
             unset($this->examQuestions[$questionId]);
         } else {
             $this->examQuestions[$questionId] = [
-                'order' => 1,
+                'order' => 0,
                 'question' => Question::find($questionId)
             ];
         }
@@ -201,13 +206,18 @@ class ExamForm extends Component
 
     public function updateExamRelations(Exam $exam): void
     {
-        UpdateExamQuestionsAction::run(
-            exam: $exam,
-            questions: $this->examQuestions()->map(fn($item) => [
-                'order' => $item['order'],
+        $examQuestions = [];
+        foreach ($this->examQuestions()->values() as $index => $item) {
+            $examQuestions[$item['question']->id] = [
+                'order' => $item['order'] ?: $index + 1,
                 'lesson_id' => $item['question']->lesson_id ?? 0,
                 'topic_id' => $item['question']->topic_id ?? 0,
-            ])->toArray()
+            ];
+        }
+
+        UpdateExamQuestionsAction::run(
+            exam: $exam,
+            questions: $examQuestions
         );
     }
 

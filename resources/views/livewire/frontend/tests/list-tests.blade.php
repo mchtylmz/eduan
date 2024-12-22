@@ -47,7 +47,7 @@
         <div class="row">
             @foreach($tests as $test)
                 <div class="col-xl-4 col-lg-6 col-md-6">
-                    <div class="h2_course-item mb-20 border {{ auth()->check() && count($test->userResults) ? 'border-danger' : '' }}">
+                    <div class="h2_course-item mb-20 border {{ auth()->check() && count($test->userResults) ? 'border-primary' : '' }}">
                         <div class="h2_course-content pb-4">
                             <div class="h2_course-content-top">
                                 <div class="h2_course-rating">

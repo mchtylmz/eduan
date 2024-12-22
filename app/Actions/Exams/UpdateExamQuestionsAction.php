@@ -17,7 +17,16 @@ class UpdateExamQuestionsAction
          * [5 => [order => 1], 6 => [order => 2]]
          * */
 
-        $exam->questions()->sync($questions);
+        $formattedQuestions = [];
+        foreach ($questions as $questionId => $questionData) {
+            $formattedQuestions[$questionId] = [
+                'order' => $questionData['order'] ?? 1,
+                'lesson_id' => $questionData['lesson_id'],
+                'topic_id' => $questionData['topic_id'],
+            ];
+        }
+
+        $exam->questions()->sync($formattedQuestions);
 
         return $exam;
     }
