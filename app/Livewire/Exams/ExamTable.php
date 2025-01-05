@@ -37,7 +37,7 @@ class ExamTable extends DataTableComponent
                 fn(Builder $builder, array $value) => $builder->whereHas('lessons', fn($query) => $query->where('lesson_id', $value))
             ),
             $this->activeTopicFilter(
-                fn(Builder $builder, array $value) => $builder->whereHas('topics', fn($query) => $query->where('lesson_id', $value))
+                fn(Builder $builder, array $value) => $builder->whereHas('topics', fn($query) => $query->where('topic_id', $value))
             ),
             $this->languageColumnFilter('exams.locale'),
             $this->visibilityFilter('exams.visibility'),

@@ -39,6 +39,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->mondays()
             ->saturdays()
             ->at('04:00');
+
+        Schedule::command('optimize:clear')
+            ->timezone(config('app.timezone'))
+            ->hourlyAt(15);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

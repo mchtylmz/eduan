@@ -30,24 +30,27 @@ trait Loggable
     public static function bootLoggable(): void
     {
         self::updated(function ($model) {
+            resetCache();
             self::insertLog($model, 'edit');
         });
 
 
         self::deleted(function ($model) {
             self::insertLog($model, 'delete');
+            resetCache();
         });
 
 
         self::created(function ($model) {
             self::insertLog($model, 'create');
+            resetCache();
         });
     }
 
     public function customLog(string $table, string $logType, array $data = []): void
     {
         Log::insert([
-            'user_id'    => auth()->id(),
+            'user_id'    => auth()->check() ? auth()->id() : 0,
             'log_date'   => now(),
             'table_name' => $table,
             'log_type'   => $logType,
