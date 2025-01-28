@@ -44,7 +44,7 @@ class QuestionTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return Exam::find($this->examId)?->questions()->select('*, order')->getQuery();
+        return Exam::find($this->examId)?->questions()->getQuery();
     }
 
     public function filters(): array
@@ -57,9 +57,6 @@ class QuestionTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('Dil'), "language.name")
-                ->searchable()
-                ->sortable(),
             Column::make(__('Dil'), "language.name")
                 ->searchable()
                 ->sortable(),

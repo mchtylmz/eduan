@@ -19,7 +19,7 @@
 
                             @if(settings()->registerStatus == \App\Enums\StatusEnum::ACTIVE->value)
                                 <div class="account-break">
-                                    <span>VEYA</span>
+                                    <span>{{ __('VEYA') }}</span>
                                 </div>
                                 <div class="account-bottom">
                                     <div class="account-option">
