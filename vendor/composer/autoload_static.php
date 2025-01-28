@@ -38,6 +38,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         '8a9dc1de0ca7e01f3e08231539562f61' => __DIR__ . '/..' . '/aws/aws-sdk-php/src/functions.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
+        'fb4ca2d97fe7ba6af750497425204e70' => __DIR__ . '/..' . '/sentry/sentry/src/functions.php',
         '4a1f389d6ce373bda9e57857d3b61c84' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/helpers.php',
         'c72349b1fe8d0deeedd3a52e8aa814d8' => __DIR__ . '/..' . '/mockery/mockery/library/helpers.php',
         'ce9671a430e4846b44e1c68c7611f9f5' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
@@ -89,6 +90,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
             'Symfony\\Component\\String\\' => 25,
             'Symfony\\Component\\Routing\\' => 26,
             'Symfony\\Component\\Process\\' => 26,
+            'Symfony\\Component\\OptionsResolver\\' => 34,
             'Symfony\\Component\\Mime\\' => 23,
             'Symfony\\Component\\Mailer\\' => 25,
             'Symfony\\Component\\HttpKernel\\' => 29,
@@ -99,6 +101,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Clock\\' => 24,
+            'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
             'Spatie\\Translatable\\' => 20,
             'Spatie\\TemporaryDirectory\\' => 26,
             'Spatie\\SignalAwareCommand\\' => 26,
@@ -106,6 +109,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
             'Spatie\\LaravelPackageTools\\' => 27,
             'Spatie\\DbDumper\\' => 16,
             'Spatie\\Backup\\' => 14,
+            'Sentry\\' => 7,
         ),
         'R' => 
         array (
@@ -129,6 +133,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         ),
         'N' => 
         array (
+            'Nyholm\\Psr7\\' => 12,
             'NunoMaduro\\Collision\\' => 21,
         ),
         'M' => 
@@ -156,6 +161,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'J' => 
         array (
             'JmesPath\\' => 9,
+            'Jean85\\' => 7,
             'Jantinnerezo\\LivewireAlert\\' => 27,
         ),
         'I' => 
@@ -316,6 +322,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         array (
             0 => __DIR__ . '/..' . '/symfony/process',
         ),
+        'Symfony\\Component\\OptionsResolver\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
         'Symfony\\Component\\Mime\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/mime',
@@ -356,6 +366,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         array (
             0 => __DIR__ . '/..' . '/symfony/clock',
         ),
+        'Symfony\\Bridge\\PsrHttpMessage\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/psr-http-message-bridge',
+        ),
         'Spatie\\Translatable\\' => 
         array (
             0 => __DIR__ . '/..' . '/spatie/laravel-translatable/src',
@@ -383,6 +397,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Spatie\\Backup\\' => 
         array (
             0 => __DIR__ . '/..' . '/spatie/laravel-backup/src',
+        ),
+        'Sentry\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sentry/sentry/src',
         ),
         'Rappasoft\\LaravelLivewireTables\\' => 
         array (
@@ -440,6 +458,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Pharaonic\\Laravel\\Settings\\' => 
         array (
             0 => __DIR__ . '/..' . '/pharaonic/laravel-settings/src',
+        ),
+        'Nyholm\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nyholm/psr7/src',
         ),
         'NunoMaduro\\Collision\\' => 
         array (
@@ -512,6 +534,10 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'JmesPath\\' => 
         array (
             0 => __DIR__ . '/..' . '/mtdowling/jmespath.php/src',
+        ),
+        'Jean85\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jean85/pretty-package-versions/src',
         ),
         'Jantinnerezo\\LivewireAlert\\' => 
         array (
@@ -645,6 +671,16 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         array (
             0 => __DIR__ . '/../..' . '/app',
             1 => __DIR__ . '/..' . '/laravel/pint/app',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'S' => 
+        array (
+            'Sentry\\Laravel\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/sentry/sentry-laravel/src',
+            ),
         ),
     );
 
@@ -4462,6 +4498,11 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Jantinnerezo\\LivewireAlert\\Exceptions\\AlertException' => __DIR__ . '/..' . '/jantinnerezo/livewire-alert/src/Exceptions/AlertException.php',
         'Jantinnerezo\\LivewireAlert\\LivewireAlert' => __DIR__ . '/..' . '/jantinnerezo/livewire-alert/src/LivewireAlert.php',
         'Jantinnerezo\\LivewireAlert\\LivewireAlertServiceProvider' => __DIR__ . '/..' . '/jantinnerezo/livewire-alert/src/LivewireAlertServiceProvider.php',
+        'Jean85\\Exception\\ProvidedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ProvidedPackageException.php',
+        'Jean85\\Exception\\ReplacedPackageException' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/ReplacedPackageException.php',
+        'Jean85\\Exception\\VersionMissingExceptionInterface' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Exception/VersionMissingExceptionInterface.php',
+        'Jean85\\PrettyVersions' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/PrettyVersions.php',
+        'Jean85\\Version' => __DIR__ . '/..' . '/jean85/pretty-package-versions/src/Version.php',
         'JmesPath\\AstRuntime' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/AstRuntime.php',
         'JmesPath\\CompilerRuntime' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/CompilerRuntime.php',
         'JmesPath\\DebugRuntime' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/DebugRuntime.php',
@@ -5544,6 +5585,17 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'NunoMaduro\\Collision\\Provider' => __DIR__ . '/..' . '/nunomaduro/collision/src/Provider.php',
         'NunoMaduro\\Collision\\SolutionsRepositories\\NullSolutionsRepository' => __DIR__ . '/..' . '/nunomaduro/collision/src/SolutionsRepositories/NullSolutionsRepository.php',
         'NunoMaduro\\Collision\\Writer' => __DIR__ . '/..' . '/nunomaduro/collision/src/Writer.php',
+        'Nyholm\\Psr7\\Factory\\HttplugFactory' => __DIR__ . '/..' . '/nyholm/psr7/src/Factory/HttplugFactory.php',
+        'Nyholm\\Psr7\\Factory\\Psr17Factory' => __DIR__ . '/..' . '/nyholm/psr7/src/Factory/Psr17Factory.php',
+        'Nyholm\\Psr7\\MessageTrait' => __DIR__ . '/..' . '/nyholm/psr7/src/MessageTrait.php',
+        'Nyholm\\Psr7\\Request' => __DIR__ . '/..' . '/nyholm/psr7/src/Request.php',
+        'Nyholm\\Psr7\\RequestTrait' => __DIR__ . '/..' . '/nyholm/psr7/src/RequestTrait.php',
+        'Nyholm\\Psr7\\Response' => __DIR__ . '/..' . '/nyholm/psr7/src/Response.php',
+        'Nyholm\\Psr7\\ServerRequest' => __DIR__ . '/..' . '/nyholm/psr7/src/ServerRequest.php',
+        'Nyholm\\Psr7\\Stream' => __DIR__ . '/..' . '/nyholm/psr7/src/Stream.php',
+        'Nyholm\\Psr7\\StreamTrait' => __DIR__ . '/..' . '/nyholm/psr7/src/StreamTrait.php',
+        'Nyholm\\Psr7\\UploadedFile' => __DIR__ . '/..' . '/nyholm/psr7/src/UploadedFile.php',
+        'Nyholm\\Psr7\\Uri' => __DIR__ . '/..' . '/nyholm/psr7/src/Uri.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
         'PHPUnit\\Event\\Application\\Finished' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Finished.php',
         'PHPUnit\\Event\\Application\\FinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/FinishedSubscriber.php',
@@ -7593,6 +7645,163 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Sentry\\Breadcrumb' => __DIR__ . '/..' . '/sentry/sentry/src/Breadcrumb.php',
+        'Sentry\\CheckIn' => __DIR__ . '/..' . '/sentry/sentry/src/CheckIn.php',
+        'Sentry\\CheckInStatus' => __DIR__ . '/..' . '/sentry/sentry/src/CheckInStatus.php',
+        'Sentry\\Client' => __DIR__ . '/..' . '/sentry/sentry/src/Client.php',
+        'Sentry\\ClientBuilder' => __DIR__ . '/..' . '/sentry/sentry/src/ClientBuilder.php',
+        'Sentry\\ClientInterface' => __DIR__ . '/..' . '/sentry/sentry/src/ClientInterface.php',
+        'Sentry\\Context\\OsContext' => __DIR__ . '/..' . '/sentry/sentry/src/Context/OsContext.php',
+        'Sentry\\Context\\RuntimeContext' => __DIR__ . '/..' . '/sentry/sentry/src/Context/RuntimeContext.php',
+        'Sentry\\Dsn' => __DIR__ . '/..' . '/sentry/sentry/src/Dsn.php',
+        'Sentry\\ErrorHandler' => __DIR__ . '/..' . '/sentry/sentry/src/ErrorHandler.php',
+        'Sentry\\Event' => __DIR__ . '/..' . '/sentry/sentry/src/Event.php',
+        'Sentry\\EventHint' => __DIR__ . '/..' . '/sentry/sentry/src/EventHint.php',
+        'Sentry\\EventId' => __DIR__ . '/..' . '/sentry/sentry/src/EventId.php',
+        'Sentry\\EventType' => __DIR__ . '/..' . '/sentry/sentry/src/EventType.php',
+        'Sentry\\ExceptionDataBag' => __DIR__ . '/..' . '/sentry/sentry/src/ExceptionDataBag.php',
+        'Sentry\\ExceptionMechanism' => __DIR__ . '/..' . '/sentry/sentry/src/ExceptionMechanism.php',
+        'Sentry\\Exception\\EventCreationException' => __DIR__ . '/..' . '/sentry/sentry/src/Exception/EventCreationException.php',
+        'Sentry\\Exception\\FatalErrorException' => __DIR__ . '/..' . '/sentry/sentry/src/Exception/FatalErrorException.php',
+        'Sentry\\Exception\\JsonException' => __DIR__ . '/..' . '/sentry/sentry/src/Exception/JsonException.php',
+        'Sentry\\Exception\\SilencedErrorException' => __DIR__ . '/..' . '/sentry/sentry/src/Exception/SilencedErrorException.php',
+        'Sentry\\Frame' => __DIR__ . '/..' . '/sentry/sentry/src/Frame.php',
+        'Sentry\\FrameBuilder' => __DIR__ . '/..' . '/sentry/sentry/src/FrameBuilder.php',
+        'Sentry\\HttpClient\\HttpClient' => __DIR__ . '/..' . '/sentry/sentry/src/HttpClient/HttpClient.php',
+        'Sentry\\HttpClient\\HttpClientInterface' => __DIR__ . '/..' . '/sentry/sentry/src/HttpClient/HttpClientInterface.php',
+        'Sentry\\HttpClient\\Request' => __DIR__ . '/..' . '/sentry/sentry/src/HttpClient/Request.php',
+        'Sentry\\HttpClient\\Response' => __DIR__ . '/..' . '/sentry/sentry/src/HttpClient/Response.php',
+        'Sentry\\Integration\\AbstractErrorListenerIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/AbstractErrorListenerIntegration.php',
+        'Sentry\\Integration\\EnvironmentIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/EnvironmentIntegration.php',
+        'Sentry\\Integration\\ErrorListenerIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/ErrorListenerIntegration.php',
+        'Sentry\\Integration\\ExceptionListenerIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/ExceptionListenerIntegration.php',
+        'Sentry\\Integration\\FatalErrorListenerIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/FatalErrorListenerIntegration.php',
+        'Sentry\\Integration\\FrameContextifierIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/FrameContextifierIntegration.php',
+        'Sentry\\Integration\\IntegrationInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/IntegrationInterface.php',
+        'Sentry\\Integration\\IntegrationRegistry' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/IntegrationRegistry.php',
+        'Sentry\\Integration\\ModulesIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/ModulesIntegration.php',
+        'Sentry\\Integration\\OptionAwareIntegrationInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/OptionAwareIntegrationInterface.php',
+        'Sentry\\Integration\\RequestFetcher' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/RequestFetcher.php',
+        'Sentry\\Integration\\RequestFetcherInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/RequestFetcherInterface.php',
+        'Sentry\\Integration\\RequestIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/RequestIntegration.php',
+        'Sentry\\Integration\\TransactionIntegration' => __DIR__ . '/..' . '/sentry/sentry/src/Integration/TransactionIntegration.php',
+        'Sentry\\Laravel\\BaseServiceProvider' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/BaseServiceProvider.php',
+        'Sentry\\Laravel\\Console\\AboutCommandIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Console/AboutCommandIntegration.php',
+        'Sentry\\Laravel\\Console\\PublishCommand' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Console/PublishCommand.php',
+        'Sentry\\Laravel\\Console\\TestCommand' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Console/TestCommand.php',
+        'Sentry\\Laravel\\EventHandler' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/EventHandler.php',
+        'Sentry\\Laravel\\Facade' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Facade.php',
+        'Sentry\\Laravel\\Features\\CacheIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/CacheIntegration.php',
+        'Sentry\\Laravel\\Features\\Concerns\\ResolvesEventOrigin' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Concerns/ResolvesEventOrigin.php',
+        'Sentry\\Laravel\\Features\\Concerns\\TracksPushedScopesAndSpans' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Concerns/TracksPushedScopesAndSpans.php',
+        'Sentry\\Laravel\\Features\\Concerns\\WorksWithSpans' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Concerns/WorksWithSpans.php',
+        'Sentry\\Laravel\\Features\\ConsoleIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/ConsoleIntegration.php',
+        'Sentry\\Laravel\\Features\\ConsoleSchedulingIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/ConsoleSchedulingIntegration.php',
+        'Sentry\\Laravel\\Features\\Feature' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Feature.php',
+        'Sentry\\Laravel\\Features\\FolioPackageIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/FolioPackageIntegration.php',
+        'Sentry\\Laravel\\Features\\HttpClientIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/HttpClientIntegration.php',
+        'Sentry\\Laravel\\Features\\LivewirePackageIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/LivewirePackageIntegration.php',
+        'Sentry\\Laravel\\Features\\LogIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/LogIntegration.php',
+        'Sentry\\Laravel\\Features\\NotificationsIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/NotificationsIntegration.php',
+        'Sentry\\Laravel\\Features\\QueueIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/QueueIntegration.php',
+        'Sentry\\Laravel\\Features\\Storage\\CloudFilesystemDecorator' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/CloudFilesystemDecorator.php',
+        'Sentry\\Laravel\\Features\\Storage\\FilesystemAdapterDecorator' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/FilesystemAdapterDecorator.php',
+        'Sentry\\Laravel\\Features\\Storage\\FilesystemDecorator' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/FilesystemDecorator.php',
+        'Sentry\\Laravel\\Features\\Storage\\Integration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/Integration.php',
+        'Sentry\\Laravel\\Features\\Storage\\SentryCloudFilesystem' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/SentryCloudFilesystem.php',
+        'Sentry\\Laravel\\Features\\Storage\\SentryFilesystem' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/SentryFilesystem.php',
+        'Sentry\\Laravel\\Features\\Storage\\SentryFilesystemAdapter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/SentryFilesystemAdapter.php',
+        'Sentry\\Laravel\\Features\\Storage\\SentryS3V3Adapter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Features/Storage/SentryS3V3Adapter.php',
+        'Sentry\\Laravel\\Http\\FlushEventsMiddleware' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Http/FlushEventsMiddleware.php',
+        'Sentry\\Laravel\\Http\\LaravelRequestFetcher' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Http/LaravelRequestFetcher.php',
+        'Sentry\\Laravel\\Http\\SetRequestIpMiddleware' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Http/SetRequestIpMiddleware.php',
+        'Sentry\\Laravel\\Http\\SetRequestMiddleware' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Http/SetRequestMiddleware.php',
+        'Sentry\\Laravel\\Integration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration.php',
+        'Sentry\\Laravel\\Integration\\ExceptionContextIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/ExceptionContextIntegration.php',
+        'Sentry\\Laravel\\Integration\\LaravelContextIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/LaravelContextIntegration.php',
+        'Sentry\\Laravel\\Integration\\ModelViolations\\DiscardedAttributeViolationReporter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/ModelViolations/DiscardedAttributeViolationReporter.php',
+        'Sentry\\Laravel\\Integration\\ModelViolations\\LazyLoadingModelViolationReporter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/ModelViolations/LazyLoadingModelViolationReporter.php',
+        'Sentry\\Laravel\\Integration\\ModelViolations\\MissingAttributeModelViolationReporter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/ModelViolations/MissingAttributeModelViolationReporter.php',
+        'Sentry\\Laravel\\Integration\\ModelViolations\\ModelViolationReporter' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Integration/ModelViolations/ModelViolationReporter.php',
+        'Sentry\\Laravel\\LogChannel' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/LogChannel.php',
+        'Sentry\\Laravel\\SentryHandler' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/SentryHandler.php',
+        'Sentry\\Laravel\\ServiceProvider' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/ServiceProvider.php',
+        'Sentry\\Laravel\\Tracing\\BacktraceHelper' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/BacktraceHelper.php',
+        'Sentry\\Laravel\\Tracing\\EventHandler' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/EventHandler.php',
+        'Sentry\\Laravel\\Tracing\\Integrations\\LighthouseIntegration' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/Integrations/LighthouseIntegration.php',
+        'Sentry\\Laravel\\Tracing\\Middleware' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/Middleware.php',
+        'Sentry\\Laravel\\Tracing\\Routing\\TracingCallableDispatcherTracing' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/Routing/TracingCallableDispatcherTracing.php',
+        'Sentry\\Laravel\\Tracing\\Routing\\TracingControllerDispatcherTracing' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/Routing/TracingControllerDispatcherTracing.php',
+        'Sentry\\Laravel\\Tracing\\Routing\\TracingRoutingDispatcher' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/Routing/TracingRoutingDispatcher.php',
+        'Sentry\\Laravel\\Tracing\\ServiceProvider' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/ServiceProvider.php',
+        'Sentry\\Laravel\\Tracing\\TransactionFinisher' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/TransactionFinisher.php',
+        'Sentry\\Laravel\\Tracing\\ViewEngineDecorator' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Tracing/ViewEngineDecorator.php',
+        'Sentry\\Laravel\\Util\\Filesize' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Util/Filesize.php',
+        'Sentry\\Laravel\\Version' => __DIR__ . '/..' . '/sentry/sentry-laravel/src/Sentry/Laravel/Version.php',
+        'Sentry\\Logger\\DebugFileLogger' => __DIR__ . '/..' . '/sentry/sentry/src/Logger/DebugFileLogger.php',
+        'Sentry\\Logger\\DebugStdOutLogger' => __DIR__ . '/..' . '/sentry/sentry/src/Logger/DebugStdOutLogger.php',
+        'Sentry\\Metrics\\Metrics' => __DIR__ . '/..' . '/sentry/sentry/src/Metrics/Metrics.php',
+        'Sentry\\Metrics\\MetricsUnit' => __DIR__ . '/..' . '/sentry/sentry/src/Metrics/MetricsUnit.php',
+        'Sentry\\MonitorConfig' => __DIR__ . '/..' . '/sentry/sentry/src/MonitorConfig.php',
+        'Sentry\\MonitorSchedule' => __DIR__ . '/..' . '/sentry/sentry/src/MonitorSchedule.php',
+        'Sentry\\MonitorScheduleUnit' => __DIR__ . '/..' . '/sentry/sentry/src/MonitorScheduleUnit.php',
+        'Sentry\\Monolog\\BreadcrumbHandler' => __DIR__ . '/..' . '/sentry/sentry/src/Monolog/BreadcrumbHandler.php',
+        'Sentry\\Monolog\\CompatibilityProcessingHandlerTrait' => __DIR__ . '/..' . '/sentry/sentry/src/Monolog/CompatibilityProcessingHandlerTrait.php',
+        'Sentry\\Monolog\\Handler' => __DIR__ . '/..' . '/sentry/sentry/src/Monolog/Handler.php',
+        'Sentry\\Options' => __DIR__ . '/..' . '/sentry/sentry/src/Options.php',
+        'Sentry\\Profiling\\Profile' => __DIR__ . '/..' . '/sentry/sentry/src/Profiling/Profile.php',
+        'Sentry\\Profiling\\Profiler' => __DIR__ . '/..' . '/sentry/sentry/src/Profiling/Profiler.php',
+        'Sentry\\SentrySdk' => __DIR__ . '/..' . '/sentry/sentry/src/SentrySdk.php',
+        'Sentry\\Serializer\\AbstractSerializer' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/AbstractSerializer.php',
+        'Sentry\\Serializer\\EnvelopItems\\CheckInItem' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/EnvelopItems/CheckInItem.php',
+        'Sentry\\Serializer\\EnvelopItems\\EnvelopeItemInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/EnvelopItems/EnvelopeItemInterface.php',
+        'Sentry\\Serializer\\EnvelopItems\\EventItem' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/EnvelopItems/EventItem.php',
+        'Sentry\\Serializer\\EnvelopItems\\ProfileItem' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/EnvelopItems/ProfileItem.php',
+        'Sentry\\Serializer\\EnvelopItems\\TransactionItem' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/EnvelopItems/TransactionItem.php',
+        'Sentry\\Serializer\\PayloadSerializer' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/PayloadSerializer.php',
+        'Sentry\\Serializer\\PayloadSerializerInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/PayloadSerializerInterface.php',
+        'Sentry\\Serializer\\RepresentationSerializer' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/RepresentationSerializer.php',
+        'Sentry\\Serializer\\RepresentationSerializerInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/RepresentationSerializerInterface.php',
+        'Sentry\\Serializer\\SerializableInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/SerializableInterface.php',
+        'Sentry\\Serializer\\Serializer' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/Serializer.php',
+        'Sentry\\Serializer\\SerializerInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/SerializerInterface.php',
+        'Sentry\\Serializer\\Traits\\BreadcrumbSeralizerTrait' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/Traits/BreadcrumbSeralizerTrait.php',
+        'Sentry\\Serializer\\Traits\\StacktraceFrameSeralizerTrait' => __DIR__ . '/..' . '/sentry/sentry/src/Serializer/Traits/StacktraceFrameSeralizerTrait.php',
+        'Sentry\\Severity' => __DIR__ . '/..' . '/sentry/sentry/src/Severity.php',
+        'Sentry\\Spotlight\\SpotlightClient' => __DIR__ . '/..' . '/sentry/sentry/src/Spotlight/SpotlightClient.php',
+        'Sentry\\Stacktrace' => __DIR__ . '/..' . '/sentry/sentry/src/Stacktrace.php',
+        'Sentry\\StacktraceBuilder' => __DIR__ . '/..' . '/sentry/sentry/src/StacktraceBuilder.php',
+        'Sentry\\State\\Hub' => __DIR__ . '/..' . '/sentry/sentry/src/State/Hub.php',
+        'Sentry\\State\\HubAdapter' => __DIR__ . '/..' . '/sentry/sentry/src/State/HubAdapter.php',
+        'Sentry\\State\\HubInterface' => __DIR__ . '/..' . '/sentry/sentry/src/State/HubInterface.php',
+        'Sentry\\State\\Layer' => __DIR__ . '/..' . '/sentry/sentry/src/State/Layer.php',
+        'Sentry\\State\\Scope' => __DIR__ . '/..' . '/sentry/sentry/src/State/Scope.php',
+        'Sentry\\Tracing\\DynamicSamplingContext' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/DynamicSamplingContext.php',
+        'Sentry\\Tracing\\GuzzleTracingMiddleware' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/GuzzleTracingMiddleware.php',
+        'Sentry\\Tracing\\PropagationContext' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/PropagationContext.php',
+        'Sentry\\Tracing\\SamplingContext' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/SamplingContext.php',
+        'Sentry\\Tracing\\Span' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/Span.php',
+        'Sentry\\Tracing\\SpanContext' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/SpanContext.php',
+        'Sentry\\Tracing\\SpanId' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/SpanId.php',
+        'Sentry\\Tracing\\SpanRecorder' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/SpanRecorder.php',
+        'Sentry\\Tracing\\SpanStatus' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/SpanStatus.php',
+        'Sentry\\Tracing\\TraceId' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/TraceId.php',
+        'Sentry\\Tracing\\Transaction' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/Transaction.php',
+        'Sentry\\Tracing\\TransactionContext' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/TransactionContext.php',
+        'Sentry\\Tracing\\TransactionMetadata' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/TransactionMetadata.php',
+        'Sentry\\Tracing\\TransactionSource' => __DIR__ . '/..' . '/sentry/sentry/src/Tracing/TransactionSource.php',
+        'Sentry\\Transport\\HttpTransport' => __DIR__ . '/..' . '/sentry/sentry/src/Transport/HttpTransport.php',
+        'Sentry\\Transport\\RateLimiter' => __DIR__ . '/..' . '/sentry/sentry/src/Transport/RateLimiter.php',
+        'Sentry\\Transport\\Result' => __DIR__ . '/..' . '/sentry/sentry/src/Transport/Result.php',
+        'Sentry\\Transport\\ResultStatus' => __DIR__ . '/..' . '/sentry/sentry/src/Transport/ResultStatus.php',
+        'Sentry\\Transport\\TransportInterface' => __DIR__ . '/..' . '/sentry/sentry/src/Transport/TransportInterface.php',
+        'Sentry\\UserDataBag' => __DIR__ . '/..' . '/sentry/sentry/src/UserDataBag.php',
+        'Sentry\\Util\\Http' => __DIR__ . '/..' . '/sentry/sentry/src/Util/Http.php',
+        'Sentry\\Util\\JSON' => __DIR__ . '/..' . '/sentry/sentry/src/Util/JSON.php',
+        'Sentry\\Util\\PHPConfiguration' => __DIR__ . '/..' . '/sentry/sentry/src/Util/PHPConfiguration.php',
+        'Sentry\\Util\\PHPVersion' => __DIR__ . '/..' . '/sentry/sentry/src/Util/PHPVersion.php',
+        'Sentry\\Util\\PrefixStripper' => __DIR__ . '/..' . '/sentry/sentry/src/Util/PrefixStripper.php',
+        'Sentry\\Util\\SentryUid' => __DIR__ . '/..' . '/sentry/sentry/src/Util/SentryUid.php',
         'Spatie\\Backup\\BackupDestination\\Backup' => __DIR__ . '/..' . '/spatie/laravel-backup/src/BackupDestination/Backup.php',
         'Spatie\\Backup\\BackupDestination\\BackupCollection' => __DIR__ . '/..' . '/spatie/laravel-backup/src/BackupDestination/BackupCollection.php',
         'Spatie\\Backup\\BackupDestination\\BackupDestination' => __DIR__ . '/..' . '/spatie/laravel-backup/src/BackupDestination/BackupDestination.php',
@@ -7732,6 +7941,13 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Spatie\\Translatable\\Translatable' => __DIR__ . '/..' . '/spatie/laravel-translatable/src/Translatable.php',
         'Spatie\\Translatable\\TranslatableServiceProvider' => __DIR__ . '/..' . '/spatie/laravel-translatable/src/TranslatableServiceProvider.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\ArgumentValueResolver\\PsrServerRequestResolver' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/ArgumentValueResolver/PsrServerRequestResolver.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\EventListener\\PsrResponseListener' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/EventListener/PsrResponseListener.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Factory\\PsrHttpFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/PsrHttpFactory.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\Factory\\UploadedFile' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/UploadedFile.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\HttpFoundationFactoryInterface' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/HttpFoundationFactoryInterface.php',
+        'Symfony\\Bridge\\PsrHttpMessage\\HttpMessageFactoryInterface' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/HttpMessageFactoryInterface.php',
         'Symfony\\Component\\Clock\\Clock' => __DIR__ . '/..' . '/symfony/clock/Clock.php',
         'Symfony\\Component\\Clock\\ClockAwareTrait' => __DIR__ . '/..' . '/symfony/clock/ClockAwareTrait.php',
         'Symfony\\Component\\Clock\\ClockInterface' => __DIR__ . '/..' . '/symfony/clock/ClockInterface.php',
@@ -8363,6 +8579,19 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         'Symfony\\Component\\Mime\\Test\\Constraint\\EmailHtmlBodyContains' => __DIR__ . '/..' . '/symfony/mime/Test/Constraint/EmailHtmlBodyContains.php',
         'Symfony\\Component\\Mime\\Test\\Constraint\\EmailSubjectContains' => __DIR__ . '/..' . '/symfony/mime/Test/Constraint/EmailSubjectContains.php',
         'Symfony\\Component\\Mime\\Test\\Constraint\\EmailTextBodyContains' => __DIR__ . '/..' . '/symfony/mime/Test/Constraint/EmailTextBodyContains.php',
+        'Symfony\\Component\\OptionsResolver\\Debug\\OptionsResolverIntrospector' => __DIR__ . '/..' . '/symfony/options-resolver/Debug/OptionsResolverIntrospector.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\AccessException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/AccessException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\InvalidOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/InvalidOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\MissingOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/MissingOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\NoConfigurationException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/NoConfigurationException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\NoSuchOptionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/NoSuchOptionException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\OptionDefinitionException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/OptionDefinitionException.php',
+        'Symfony\\Component\\OptionsResolver\\Exception\\UndefinedOptionsException' => __DIR__ . '/..' . '/symfony/options-resolver/Exception/UndefinedOptionsException.php',
+        'Symfony\\Component\\OptionsResolver\\OptionConfigurator' => __DIR__ . '/..' . '/symfony/options-resolver/OptionConfigurator.php',
+        'Symfony\\Component\\OptionsResolver\\Options' => __DIR__ . '/..' . '/symfony/options-resolver/Options.php',
+        'Symfony\\Component\\OptionsResolver\\OptionsResolver' => __DIR__ . '/..' . '/symfony/options-resolver/OptionsResolver.php',
         'Symfony\\Component\\Process\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/process/Exception/ExceptionInterface.php',
         'Symfony\\Component\\Process\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/process/Exception/InvalidArgumentException.php',
         'Symfony\\Component\\Process\\Exception\\LogicException' => __DIR__ . '/..' . '/symfony/process/Exception/LogicException.php',
@@ -8802,6 +9031,7 @@ class ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit7e8c3c14ff33b199b4a0838993eb8423::$classMap;
 
         }, null, ClassLoader::class);
