@@ -42,7 +42,7 @@ class TestController extends Controller
         return view('frontend.tests.solutions', [
             'title' => $exam->name,
             'exam' => $exam,
-            'results' => $exam->userResults()->with('details')->orderBy('id')->get()
+            'results' => $exam->userResultsWithoutGroupBy()->with('details')->orderBy('id')->get()
         ]);
     }
 }

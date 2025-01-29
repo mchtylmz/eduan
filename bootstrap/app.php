@@ -44,7 +44,10 @@ return Application::configure(basePath: dirname(__DIR__))
         Schedule::command('optimize:clear')
             ->timezone(config('app.timezone'))
             ->hourlyAt(15);
+
+        Schedule::command('telescope:prune --hours=72')
+            ->dailyAt('05:30');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        Integration::handles($exceptions);
+        //Integration::handles($exceptions);
     })->create();

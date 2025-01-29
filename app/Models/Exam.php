@@ -78,6 +78,11 @@ class Exam extends Model
         return $this->hasMany(ExamResult::class)->where('user_id', auth()->id())->groupBy('exam_id');
     }
 
+    public function userResultsWithoutGroupBy(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ExamResult::class)->where('user_id', auth()->id());
+    }
+
     public function publicReviewsCount(): int
     {
         return $this->reviews()->where('visibility', '!=', ReviewVisibilityEnum::HIDE)->count();

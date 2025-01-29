@@ -1,10 +1,10 @@
 <div>
-    @if(count($exam->userResults))
+    @if(count($userResultsWithoutGroupBy = $exam->userResultsWithoutGroupBy))
         @php
-            $results_count = collect($exam->userResults)->count();
-            $question_count = collect($exam->userResults)->sum('question_count');
-            $correct_count = collect($exam->userResults)->sum('correct_count');
-            $incorrect_count = collect($exam->userResults)->sum('incorrect_count');
+            $results_count = collect($userResultsWithoutGroupBy)->count();
+            $question_count = collect($userResultsWithoutGroupBy)->sum('question_count');
+            $correct_count = collect($userResultsWithoutGroupBy)->sum('correct_count');
+            $incorrect_count = collect($userResultsWithoutGroupBy)->sum('incorrect_count');
         @endphp
     <div class="course_details-sidebar mb-3 pt-0 pb-0">
         <div class="course_details-list">
