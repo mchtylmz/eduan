@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Exception;
 use Generator;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Spatie\Backup\Config\Config;
@@ -42,6 +43,9 @@ class BackupJob
 
     protected bool $signals = true;
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function __construct(protected Config $config)
     {
         $this
@@ -50,6 +54,7 @@ class BackupJob
             ->setDefaultFilename();
 
         $this->backupDestinations = new Collection;
+        $this->temporaryDirectory = app()->make('backup-temporary-project');
     }
 
     public function dontBackupFilesystem(): self
@@ -146,9 +151,7 @@ class BackupJob
     /** @throws Exception */
     public function run(): void
     {
-        $temporaryDirectoryPath = $this->config->backup->temporaryDirectory ?? storage_path('app/backup-temp');
-
-        $this->temporaryDirectory = (new TemporaryDirectory($temporaryDirectoryPath))
+        $this->temporaryDirectory
             ->name('temp')
             ->force()
             ->create()

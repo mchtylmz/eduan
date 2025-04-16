@@ -56,6 +56,22 @@
                 </a>
             </li>
         @endcan
+        @can('tests:view')
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.index')])
+                   href="{{ route('admin.exams.index') }}">
+                    <i class="nav-main-link-icon fa fa-book-open-reader"></i>
+                    <span class="nav-main-link-name">{{ __('Sınavlar') }}</span>
+                </a>
+            </li>
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.results')])
+                   href="{{ route('admin.exams.results') }}">
+                    <i class="nav-main-link-icon fa fa-book-bookmark"></i>
+                    <span class="nav-main-link-name">{{ __('Sınav Sonuçları') }}</span>
+                </a>
+            </li>
+        @endcan
         @can('exams-reviews:view')
             <li class="nav-main-item">
                 <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.reviews')])
@@ -144,6 +160,16 @@
             </li>
         @endcan
     @endcanany
+
+    @can('stats:view')
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.stats.index')])
+               href="{{ route('admin.stats.index') }}">
+                <i class="nav-main-link-icon fa fa-chart-area"></i>
+                <span class="nav-main-link-name">{{ __('İstatistik Raporu') }}</span>
+            </a>
+        </li>
+    @endcan
 
     @canany(['users:view', 'roles:view'])
         <li class="nav-main-heading">{{ __('Kullanıcı İşlemleri') }}</li>

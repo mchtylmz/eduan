@@ -28,7 +28,7 @@ return [
     /**
      * Enable Blade Directives (Not required if automatically injecting or using bundler approaches)
      */
-    'enable_blade_directives' => false,
+    'enable_blade_directives' => true,
 
     /**
      * Use JSON Translations instead of PHP Array
@@ -77,7 +77,7 @@ return [
             'dateFormat' => 'Y-m-d', // Date format that will be received by the filter
             'earliestDate' => null, // The earliest acceptable date
             'latestDate' => null, // The latest acceptable date
-            'locale' => app()->getLocale(), // The default locale
+            'locale' => 'en', // The default locale
         ],
     ],
 
@@ -126,7 +126,7 @@ return [
         /**
          * Enable or disable passing the user from Laravel's Auth service to events
          */
-        'enableUserForEvent' => false,
+        'enableUserForEvent' => true,
     ],
 
 ];

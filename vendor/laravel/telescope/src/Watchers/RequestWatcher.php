@@ -111,11 +111,15 @@ class RequestWatcher extends Watcher
     /**
      * Format the given payload.
      *
-     * @param  array  $payload
-     * @return array
+     * @param  array|string  $payload
+     * @return array|string
      */
     protected function payload($payload)
     {
+        if (is_string($payload)) {
+            return $payload;
+        }
+
         return $this->hideParameters($payload,
             Telescope::$hiddenRequestParameters
         );
@@ -154,10 +158,14 @@ class RequestWatcher extends Watcher
      * Extract the input from the given request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * @return array|string
      */
     private function input(Request $request)
     {
+        if (Str::startsWith(strtolower($request->headers->get('Content-Type') ?? ''), 'text/plain')) {
+            return (string) $request->getContent();
+        }
+
         $files = $request->files->all();
 
         array_walk_recursive($files, function (&$file) {
@@ -238,7 +246,9 @@ class RequestWatcher extends Watcher
             } elseif (is_object($value)) {
                 return [
                     'class' => get_class($value),
-                    'properties' => json_decode(json_encode($value), true),
+                    'properties' => method_exists($value, 'formatForTelescope')
+                        ? $value->formatForTelescope()
+                        : json_decode(json_encode($value), true),
                 ];
             } else {
                 return json_decode(json_encode($value), true);

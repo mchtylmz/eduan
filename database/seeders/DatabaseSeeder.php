@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             FaqSeeder::class,
             BlogSeeder::class,
-            ExamReviewSeeder::class
+            ExamReviewSeeder::class,
+            TestSeeder::class,
         ]);
 
         DB::statement("UPDATE questions SET status = 'passive' WHERE id NOT IN(SELECT question_id FROM answers)");

@@ -80,6 +80,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionBackup(array $args = [])
  * @method \Aws\BackupGateway\BackupGatewayClient createBackupGateway(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionBackupGateway(array $args = [])
+ * @method \Aws\BackupSearch\BackupSearchClient createBackupSearch(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionBackupSearch(array $args = [])
  * @method \Aws\Batch\BatchClient createBatch(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionBatch(array $args = [])
  * @method \Aws\Bedrock\BedrockClient createBedrock(array $args = [])
@@ -282,8 +284,6 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionElastiCache(array $args = [])
  * @method \Aws\ElasticBeanstalk\ElasticBeanstalkClient createElasticBeanstalk(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionElasticBeanstalk(array $args = [])
- * @method \Aws\ElasticInference\ElasticInferenceClient createElasticInference(array $args = [])
- * @method \Aws\MultiRegionClient createMultiRegionElasticInference(array $args = [])
  * @method \Aws\ElasticLoadBalancing\ElasticLoadBalancingClient createElasticLoadBalancing(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionElasticLoadBalancing(array $args = [])
  * @method \Aws\ElasticLoadBalancingV2\ElasticLoadBalancingV2Client createElasticLoadBalancingV2(array $args = [])
@@ -318,6 +318,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionFreeTier(array $args = [])
  * @method \Aws\GameLift\GameLiftClient createGameLift(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionGameLift(array $args = [])
+ * @method \Aws\GameLiftStreams\GameLiftStreamsClient createGameLiftStreams(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionGameLiftStreams(array $args = [])
  * @method \Aws\GeoMaps\GeoMapsClient createGeoMaps(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionGeoMaps(array $args = [])
  * @method \Aws\GeoPlaces\GeoPlacesClient createGeoPlaces(array $args = [])
@@ -364,10 +366,6 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionInternetMonitor(array $args = [])
  * @method \Aws\Invoicing\InvoicingClient createInvoicing(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionInvoicing(array $args = [])
- * @method \Aws\IoT1ClickDevicesService\IoT1ClickDevicesServiceClient createIoT1ClickDevicesService(array $args = [])
- * @method \Aws\MultiRegionClient createMultiRegionIoT1ClickDevicesService(array $args = [])
- * @method \Aws\IoT1ClickProjects\IoT1ClickProjectsClient createIoT1ClickProjects(array $args = [])
- * @method \Aws\MultiRegionClient createMultiRegionIoT1ClickProjects(array $args = [])
  * @method \Aws\IoTAnalytics\IoTAnalyticsClient createIoTAnalytics(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIoTAnalytics(array $args = [])
  * @method \Aws\IoTDeviceAdvisor\IoTDeviceAdvisorClient createIoTDeviceAdvisor(array $args = [])
@@ -382,6 +380,8 @@ namespace Aws;
  * @method \Aws\MultiRegionClient createMultiRegionIoTFleetWise(array $args = [])
  * @method \Aws\IoTJobsDataPlane\IoTJobsDataPlaneClient createIoTJobsDataPlane(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIoTJobsDataPlane(array $args = [])
+ * @method \Aws\IoTManagedIntegrations\IoTManagedIntegrationsClient createIoTManagedIntegrations(array $args = [])
+ * @method \Aws\MultiRegionClient createMultiRegionIoTManagedIntegrations(array $args = [])
  * @method \Aws\IoTSecureTunneling\IoTSecureTunnelingClient createIoTSecureTunneling(array $args = [])
  * @method \Aws\MultiRegionClient createMultiRegionIoTSecureTunneling(array $args = [])
  * @method \Aws\IoTSiteWise\IoTSiteWiseClient createIoTSiteWise(array $args = [])
@@ -813,7 +813,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.334.1';
+    const VERSION = '3.342.27';
 
     /** @var array Arguments for creating clients */
     private $args;

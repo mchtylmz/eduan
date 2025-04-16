@@ -50,6 +50,10 @@ AutoRoute::auto('roles', \App\Http\Controllers\Backend\RolesController::class, [
     'name' => 'roles',
     'middleware' => ['can:roles:view'],
 ]);
+AutoRoute::auto('stats', \App\Http\Controllers\Backend\StatsController::class, [
+    'name' => 'stats',
+    'middleware' => ['can:stats:view'],
+]);
 AutoRoute::auto('settings', \App\Http\Controllers\Backend\SettingsController::class, [
     'name' => 'settings',
     'middleware' => ['can:settings:view'],

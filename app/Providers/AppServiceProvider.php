@@ -49,8 +49,11 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrapFive();
 
-        $this->overrideTimezone();
-        $this->overrideMailConfig();
+        if (app()->environment('production')) {
+            $this->overrideTimezone();
+            $this->overrideMailConfig();
+        }
+
         $this->viewComposer();
         $this->registerMacros();
     }
