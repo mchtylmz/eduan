@@ -16,6 +16,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^3.5",
         "lorisleiva/laravel-actions": "^2.8",
+        "maatwebsite/excel": "^3.1",
         "pharaonic/laravel-settings": "^1.2",
         "rappasoft/laravel-livewire-tables": "3.5.6",
         "sentry/sentry-laravel": "^4.11",

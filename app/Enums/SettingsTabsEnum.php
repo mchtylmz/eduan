@@ -15,6 +15,7 @@ enum SettingsTabsEnum: string
     case STYLE = 'style';
     case COVER = 'cover';
     case EXAM = 'exam';
+    case TEST = 'test';
     case MAIL = 'email';
     case EMAIL = 'emailTemplate';
     case USER = 'user';
@@ -27,6 +28,7 @@ enum SettingsTabsEnum: string
             self::LOGO->value => __('Logo Ayarları'),
             self::STYLE->value => __('Stil Ayarları'),
             self::EXAM->value => __('Test & Soru Ayarları'),
+            self::TEST->value => __('Sınav Ayarları'),
             self::MAIL->value => __('Mail Gönderim Ayarları'),
             self::USER->value => __('Kullanıcı / Kişi Ayarları'),
             self::COVER->value => __('Sayfa Kapak Görseli Ayarları'),
@@ -47,6 +49,7 @@ enum SettingsTabsEnum: string
             self::LOGO->value => 'fa-image',
             self::STYLE->value => 'fa-palette',
             self::EXAM->value => 'fa-pen',
+            self::TEST->value => 'fa-book-open-reader',
             self::COVER->value => 'fa-images',
             self::USER->value => 'fa-user-cog',
             self::MAIL->value => 'fa-envelope-circle-check',

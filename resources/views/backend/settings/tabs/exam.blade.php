@@ -19,6 +19,7 @@
         <div class="col-lg-4 mb-3">
             <label class="form-label" for="examTime">{{ __('Soru Süresi') }}</label>
             <input type="number" min="1" class="form-control" id="examTime" name="settings[examTime]" placeholder="{{ __('Süre') }}.." value="{{ settings()->examTime ?? 300 }}" required>
+            <small>{{ __('Soru süresi saniye olarak girilmelidir. 60 saniye = 1 dakika') }}</small>
         </div>
     </div>
 

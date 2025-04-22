@@ -25,9 +25,23 @@ return new class extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('tests_sections', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('test_id')->index();
+            $table->unsignedBigInteger('parent_id')->nullable(0);
+            $table->string('type', 16)->default(\App\Enums\TestSectionTypeEnum::TOPIC)->index();
+            $table->text('name')->nullable();
+            $table->unsignedBigInteger('order')->default(1)->index();
+            $table->timestamps();
+        });
+
         Schema::create('tests_questions', function (Blueprint $table) {
             $table->unsignedBigInteger('test_id')->index();
-
+            $table->unsignedBigInteger('section_id')->index();
+            $table->unsignedBigInteger('question_id')->index();
+            $table->unsignedBigInteger('lesson_id')->index();
+            $table->unsignedBigInteger('topic_id')->index();
+            $table->unsignedBigInteger('order')->default(1)->index();
         });
     }
 
@@ -37,6 +51,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('tests');
-        //Schema::dropIfExists('tests');
+        Schema::dropIfExists('tests_sections');
+        Schema::dropIfExists('tests_questions');
+        Schema::dropIfExists('tests');
     }
 };

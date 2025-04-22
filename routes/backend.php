@@ -42,6 +42,10 @@ AutoRoute::auto('exams', \App\Http\Controllers\Backend\ExamController::class, [
     'name' => 'exams',
     'middleware' => ['can:exams:view'],
 ]);
+AutoRoute::auto('tests', \App\Http\Controllers\Backend\TestsController::class, [
+    'name' => 'tests',
+    'middleware' => ['can:tests:view'],
+]);
 AutoRoute::auto('users', \App\Http\Controllers\Backend\UsersController::class, [
     'name' => 'users',
     'middleware' => ['can:users:view'],

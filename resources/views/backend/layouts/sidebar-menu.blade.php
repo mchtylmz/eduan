@@ -29,7 +29,7 @@
         @endcan
     @endcanany
 
-    @canany(['questions:view', 'exams:view', 'exams-reviews:view'])
+    @canany(['questions:view', 'exams:view', 'exams-reviews:view', 'tests:view', 'stats:view'])
         <li class="nav-main-heading">{{ __('Soru İşlemleri') }}</li>
         @can('questions:view')
             <li class="nav-main-item">
@@ -58,8 +58,8 @@
         @endcan
         @can('tests:view')
             <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.index')])
-                   href="{{ route('admin.exams.index') }}">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.index')])
+                   href="{{ route('admin.tests.index') }}">
                     <i class="nav-main-link-icon fa fa-book-open-reader"></i>
                     <span class="nav-main-link-name">{{ __('Sınavlar') }}</span>
                 </a>
@@ -69,6 +69,15 @@
                    href="{{ route('admin.exams.results') }}">
                     <i class="nav-main-link-icon fa fa-book-bookmark"></i>
                     <span class="nav-main-link-name">{{ __('Sınav Sonuçları') }}</span>
+                </a>
+            </li>
+        @endcan
+        @can('stats:view')
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.stats.index')])
+                   href="{{ route('admin.stats.index') }}">
+                    <i class="nav-main-link-icon fa fa-chart-area"></i>
+                    <span class="nav-main-link-name">{{ __('İstatistikler') }}</span>
                 </a>
             </li>
         @endcan
@@ -160,16 +169,6 @@
             </li>
         @endcan
     @endcanany
-
-    @can('stats:view')
-        <li class="nav-main-item">
-            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.stats.index')])
-               href="{{ route('admin.stats.index') }}">
-                <i class="nav-main-link-icon fa fa-chart-area"></i>
-                <span class="nav-main-link-name">{{ __('İstatistik Raporu') }}</span>
-            </a>
-        </li>
-    @endcan
 
     @canany(['users:view', 'roles:view'])
         <li class="nav-main-heading">{{ __('Kullanıcı İşlemleri') }}</li>

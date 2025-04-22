@@ -33,6 +33,7 @@ return array(
     '493c6aea52f6009bab023b26c21a386a' => $vendorDir . '/laravel/framework/src/Illuminate/Support/functions.php',
     '58571171fd5812e6e447dce228f52f4d' => $vendorDir . '/laravel/framework/src/Illuminate/Support/helpers.php',
     '29ffe97919493792170d47eb03a68da9' => $vendorDir . '/blade-ui-kit/blade-icons/src/helpers.php',
+    '2cffec82183ee1cea088009cef9a6fc3' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     '40275907c8566c390185147049ef6e5d' => $vendorDir . '/livewire/livewire/src/helpers.php',
     'b067bc7112e384b61c701452d53a14a8' => $vendorDir . '/mtdowling/jmespath.php/src/JmesPath.php',
     '8a9dc1de0ca7e01f3e08231539562f61' => $vendorDir . '/aws/aws-sdk-php/src/functions.php',

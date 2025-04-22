@@ -26,16 +26,23 @@ class ResultsTable extends DataTableComponent
     public ?Exam $exam = null;
     public ?User $user = null;
 
-    public function mount(?Exam $exam = null, ?User $user = null): void
+    public ?bool $incorrectCount = false;
+
+    public function mount(?Exam $exam = null, ?User $user = null, ?bool $incorrectCount = false): void
     {
         $this->exam = $exam;
         $this->user = $user;
+        $this->incorrectCount = $incorrectCount;
 
         $this->setSortAsc('time');
     }
 
     public function builder(): Builder
     {
+        if ($this->incorrectCount) {
+            return ExamResult::with(['user', 'exam'])->whereRaw('question_count = correct_count');
+        }
+
         return ExamResult::with(['user', 'exam'])
             ->when($this->exam->exists, fn($query) => $query->where('exam_id', $this->exam->id))
             ->when($this->user->exists, fn($query) => $query->where('user_id', $this->user->id));
@@ -52,7 +59,7 @@ class ResultsTable extends DataTableComponent
             );
         }
 
-        if (!$this->exam->exists) {
+        if (!$this->exam->exists && !$this->incorrectCount) {
             $filters[] = $this->examsInResultsFilter(
                 fn(Builder $builder, array $value) => $builder->whereIn('exam_results.exam_id', $value)
             );

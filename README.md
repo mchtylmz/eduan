@@ -52,6 +52,11 @@ druc/laravel-langscanner
 ```
 
 ```
+composer require zoha/laravel-meta
+php artisan vendor:publish --provider="Zoha\Meta\MetaServiceProvider" --tag=config
+```
+
+```
 https://github.com/wotzebra/livewire-sortablejs
 ```
 

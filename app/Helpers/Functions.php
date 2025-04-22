@@ -184,6 +184,20 @@ if (!function_exists('resetCache')) {
     }
 }
 
+if (!function_exists('secondToMinutes')) {
+
+    /**
+     * @param int|null $seconds
+     * @return string
+     */
+    function secondToMinutes(int|null $seconds = 0): string
+    {
+        $minute = floor(($seconds ?? 0) / 60);
+        $restSecond = $seconds % 60;
+        return $minute . ':' . str_pad($restSecond, 2, '0', STR_PAD_LEFT);
+    }
+}
+
 if (!function_exists('randomBackgroundClass')) {
     /**
      * @return string

@@ -14,7 +14,9 @@ class UsersController extends Controller
         'password',
         'favorite',
         'tests',
-        'mailing'
+        'mailing',
+        'topicsNotResult',
+        'topicsStats',
     ];
 
     public function index()

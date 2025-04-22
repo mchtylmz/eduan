@@ -127,7 +127,7 @@ class ExamTable extends DataTableComponent
                 ->location(fn($row) => 'javascript:void(0)')
                 ->attributes(fn($row) => [
                     'class' => 'dropdown-item text-danger',
-                    'wire:confirm' => __('Soru silinecektir, soruya bağlı öğeler silinmeyecektir, işleme devam edilsin mi?'),
+                    'wire:confirm' => __('Test silinecektir, soruya bağlı öğeler silinmeyecektir, işleme devam edilsin mi?'),
                     'wire:click' => 'delete('.$row->id.')'
                 ])
                 ->html();

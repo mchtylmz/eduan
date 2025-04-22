@@ -30,15 +30,16 @@
             Örneğin; Orjinal Metin: "Home :page" > Çeviri Metin: "Anasayfa :page"
         </div>
 
-        <table class="table table-responsive table-striped table-bordered w-100">
-            <thead>
-            <tr>
-                <th scope="col" class="bg-secondary text-white"></th>
-                <th scope="col" class="w-30 bg-secondary text-white">{{ __('Orjinal Metin') }}</th>
-                <th scope="col" class="w-60 bg-secondary text-white">{{ __('Çeviri Metni') }}</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="table-responsive">
+            <table class="table table-responsive table-striped table-bordered w-100">
+                <thead>
+                <tr>
+                    <th scope="col" class="bg-secondary text-white"></th>
+                    <th scope="col" class="w-30 bg-secondary text-white">{{ __('Orjinal Metin') }}</th>
+                    <th scope="col" class="w-60 bg-secondary text-white">{{ __('Çeviri Metni') }}</th>
+                </tr>
+                </thead>
+                <tbody>
                 <tr>
                     <th scope="col"></th>
                     <th scope="col" class="w-30">
@@ -56,25 +57,26 @@
                         </div>
                     </th>
                 </tr>
-            @if($languageTranslations = $this->translations())
-                @foreach($languageTranslations as $languageTranslation)
-                    <tr>
-                        <th scope="row">{{ $languageTranslation->id }}</th>
-                        <td>{{ $languageTranslation->key }}</td>
-                        <td>
+                @if($languageTranslations = $this->translations())
+                    @foreach($languageTranslations as $languageTranslation)
+                        <tr>
+                            <th scope="row">{{ $languageTranslation->id }}</th>
+                            <td>{{ $languageTranslation->key }}</td>
+                            <td>
                         <textarea rows="{{ strlen($languageTranslation->key) >= 104 ? 2 : 1}}"
                                   class="form-control"
                                   id="translations.{{ $languageTranslation->id }}"
                                   wire:model.blur="translations.{{ $languageTranslation->id }}.value"
                                   placeholder="{{ $languageTranslation->key }}.."
                         ></textarea>
-                        </td>
-                    </tr>
-                @endforeach
-            @else
-            @endif
-            </tbody>
-        </table>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                @endif
+                </tbody>
+            </table>
+        </div>
 
         <div>
             {{ $languageTranslations->links() }}

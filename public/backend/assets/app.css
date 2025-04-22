@@ -224,6 +224,12 @@ th.created_at {
     background-color: rgba(0,0,0,0.5);
 }
 
+.nav-tabs-alt .nav-link:hover {
+    color: #FFF;
+    background-color: #2356d7;
+    border-color: #FFF;
+}
+
 .popover-header {
     background-color: #efefef;
     color: #000;
