@@ -19,6 +19,10 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/flatpickr/flatpickr.min.css') }}">
     <!-- bootstrap-select -->
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
+    @if(!empty($tinymce))
+    <!-- tinymce -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/skins/ui/tinymce-5/content.min.css" />
+    @endif
     <!-- oneui -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/oneui.min.css') }}">
     <!-- app -->
@@ -67,6 +71,14 @@
 <!-- bootstrap-select -->
 <script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/i18n/defaults-'.app()->getLocale().'_'.str(app()->getLocale())->upper().'.min.js') }}"></script>
+@if(!empty($tinymce))
+<!-- tinymce -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/tinymce.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/media/plugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/image/plugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/help/js/i18n/keynav/tr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.5.1/plugins/fullscreen/plugin.min.js"></script>
+@endif
 <!-- app -->
 <script src="{{ asset('backend/assets/app.js') }}?v={{ config('app.version') }}"></script>
 
@@ -90,10 +102,84 @@
         });
         livewireModal.addEventListener('hidden.bs.modal', function () {
             Livewire.dispatch('closeModal');
+
+            @if(!empty($tinymce))
+            if (tinymce.get('editorcontent')) {
+                tinymce.get('editorcontent').remove();
+            }
+            @endif
         });
         livewireModal.addEventListener('shown.bs.modal', function () {
             $('.selectpicker').selectpicker();
+
+            @if(!empty($tinymce))
+            if (tinymce.get('editorcontent')) {
+                tinymce.get('editorcontent').remove();
+            }
+
+            tinymce.init({
+                license_key: 'gpl',
+                selector: '#editorcontent',
+                width: "100%",
+                height: '400px',
+                resize: true,
+                language_url: '{{ asset('backend/assets/langs/tinymce_tr.js') }}',
+                language: '{{ app()->getLocale() }}',
+                powerpaste_allow_local_images: true,
+                toolbar_sticky: true,
+                autosave_restore_when_empty: false,
+                autosave_ask_before_unload: true,
+                autosave_interval: '5s',
+                image_caption: true,
+                menubar: true,
+                forced_root_block: false,
+                fullscreen_native: true,
+                visual_table_class: 'tinymce-table',
+                plugins: [
+                    'advlist', 'anchor', 'autolink',
+                    'image', 'lists', 'link', 'media', 'preview',
+                    'table', 'wordcount', 'quickbars', 'autosave', 'fullscreen'
+                ],
+                toolbar: 'fullscreen | undo redo | bold italic fontsize forecolor backcolor table alignleft aligncenter alignright alignjustify bullist numlist',
+                content_style: 'body { font-family:Arial,sans-serif; font-size:16px }',
+                automatic_uploads: true,
+                file_picker_types: 'image',
+                font_size_formats: '10px 11px 12px 14px 16px 18px 24px 32px 36px 48px 64px',
+                font_size_input_default_unit: "px",
+                setup: function setup(editor) {
+                    editor.on('Change KeyUp', function () {
+                        let content = editor.getContent();
+                        let component = Livewire.find($('#editorcontent').closest('[wire\\:id]').attr('wire:id'));
+                        component.set('content', content);
+                    });
+                },
+                file_picker_callback: (cb, value, meta) => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
+
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+
+                        const reader = new FileReader();
+                        reader.addEventListener('load', () => {
+                            const id = 'blobid' + (new Date()).getTime();
+                            const blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                            const base64 = reader.result.split(',')[1];
+                            const blobInfo = blobCache.create(id, file, base64);
+                            blobCache.add(blobInfo);
+                            cb(blobInfo.blobUri(), { title: file.name });
+                        });
+                        reader.readAsDataURL(file);
+                    });
+
+                    input.click();
+                },
+            });
+            @endif
+
         });
+
 
         Livewire.on('showOffcanvas', function () {
             let offcanvas = new bootstrap.Offcanvas(livewireOffcanvas);
@@ -111,7 +197,23 @@
         });
         Livewire.hook('element.init', ({ component, el }) => {
             $('.selectpicker').selectpicker();
-        })
+        });
+        Livewire.on('scrollToEndContent', function () {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight + 250,
+                    behavior: 'smooth'
+                });
+            }, 100)
+        });
+
+        document.addEventListener('livewire:load', function () {
+            Livewire.hook('message.processed', (message, component) => {
+                if ($('#livewireModal').is(':visible')) {
+                    $('#livewireModal').trigger('shown.bs.modal'); // yeniden init etmek için tetikle
+                }
+            });
+        });
     });
 </script>
 @if($message = session('message'))

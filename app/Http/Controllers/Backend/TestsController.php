@@ -34,7 +34,8 @@ class TestsController extends Controller
     {
         return view('backend.tests.sections', [
             'title' => __('Sınavı Bölümleri'),
-            'test' => $test
+            'test' => $test,
+            'tinymce' => true,
         ]);
     }
 }

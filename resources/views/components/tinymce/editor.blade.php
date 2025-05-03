@@ -65,16 +65,6 @@
                     setup: function setup(editor) {
                         editor.on('init change', function () {
                             editor.save();
-
-                            console.log(
-                                textarea.id
-                            );
-                            console.log(
-                                textarea.getAttribute('wire:model')
-                            );
-                            console.log(
-                                textarea.getAttribute('wire:model').split('.')
-                            );
                             @this.set(textarea.getAttribute('wire:model').split('.').join('.'), editor.getContent());
                         });
                         editor.on('keypress', function (e) {

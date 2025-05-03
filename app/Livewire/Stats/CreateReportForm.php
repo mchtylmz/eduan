@@ -8,6 +8,6 @@ class CreateReportForm extends Component
 {
     public function render()
     {
-        return view('livewire.stats.create-report-form');
+        return view('livewire.backend.stats.create-report-form');
     }
 }

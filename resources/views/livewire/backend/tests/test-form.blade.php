@@ -34,7 +34,7 @@
                         <span class="input-group-text">{{ __('saniye') }}</span>
                     </div>
                     <p class="m-0 bg-light py-1 px-3 rounded-0">
-                       {{ $duration ?: 0 }} {{ __('saniye') }}  = {{ secondToMinutes($duration) }} {{ __('dakika') }}
+                       {{ $duration ?: 0 }} {{ __('saniye') }}  = {{ secondToTime($duration) }} {{ __('dakika') }}
                     </p>
                     <x-badge.error field="duration" />
                 </div>

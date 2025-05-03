@@ -43,8 +43,18 @@ class Test extends Model
         return $this->hasMany(TestsSection::class);
     }
 
+    public function sectionsWithNoParent(): HasMany
+    {
+        return $this->hasMany(TestsSection::class)->where('parent_id', 0);
+    }
+
     public function questions(): HasMany
     {
         return $this->hasMany(TestsQuestion::class);
+    }
+
+    public function questionsWithQuestion(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Question::class, 'tests_questions')->orderBy('order');
     }
 }

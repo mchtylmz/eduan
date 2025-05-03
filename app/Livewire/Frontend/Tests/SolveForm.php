@@ -87,9 +87,9 @@ class SolveForm extends Component
     public function updated($field, $value): void
     {
         if (str_ends_with($field, '.userAnswer')) {
-            $this->results[$this->questionIndex]['userAnswer'] = (int) $value;
+            $this->results[$this->questionIndex]['userAnswer'] = (int)$value;
 
-            $this->evaluateAnswer((int) $value);
+            $this->evaluateAnswer((int)$value);
             $this->diffTime();
             $this->saveAnswer();
 
@@ -161,7 +161,7 @@ class SolveForm extends Component
             $this->dispatch('endTest');
         }
 
-       resetCache();
+        resetCache();
         return true;
     }
 

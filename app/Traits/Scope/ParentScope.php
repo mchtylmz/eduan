@@ -25,4 +25,9 @@ trait ParentScope
     {
         $query->orWhere('parent_id', 0);
     }
+
+    public function scopeParentIsNotZero(Builder $query): void
+    {
+        $query->where('parent_id', '!=', 0);
+    }
 }

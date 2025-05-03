@@ -116,9 +116,15 @@
                         @foreach($questions as $question)
                             <div class="col-lg-4 px-1">
                                 <div class="block block-rounded border">
-                                    <h5 class="fs-base fw-semibold text-dark mb-0 py-2 px-3">
-                                        {{ __('Kodu') }}: {{ $question->code }}
-                                    </h5>
+                                    <div class="d-flex align-items-center justify-content-between p-0">
+                                        <h5 class="fs-base fw-semibold text-dark mb-0 py-2 px-3">
+                                            {{ __('Kodu') }}: {{ $question->code }}
+                                        </h5>
+                                        <span class="fw-medium text-dark mb-0 py-2 px-3">
+                                            {{ __('Dil') }}: {{ $question->language?->name }}
+                                        </span>
+                                    </div>
+
                                     <div class="block-content p-0 bg-body-light">
                                         <img class="w-100 object-fit-contain"
                                              style="height: 200px;"

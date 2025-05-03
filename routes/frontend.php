@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Models\Blog;
 use App\Models\Exam;
+use App\Models\Test;
 use App\Models\Lesson;
 use App\Models\Topic;
 use App\Models\Newsletter;
@@ -30,6 +31,13 @@ Route::get('test/{exam:code}/start', [\App\Http\Controllers\Frontend\TestControl
     ->name('test.start');
 Route::get('test/{exam:code}/solutions', [\App\Http\Controllers\Frontend\TestController::class,'solutions'])
     ->name('test.solutions');
+
+Route::get('exams', [\App\Http\Controllers\Frontend\ExamController::class,'index'])
+    ->name('exams');
+Route::get('exam/{test:code}', [\App\Http\Controllers\Frontend\ExamController::class,'detail'])
+    ->name('exam.detail');
+Route::get('exam/{test:code}/start', [\App\Http\Controllers\Frontend\ExamController::class,'start'])
+    ->name('exam.start');
 
 Route::get('lessons', [\App\Http\Controllers\Frontend\LessonController::class,'index'])
     ->name('lessons');

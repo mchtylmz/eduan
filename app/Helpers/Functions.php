@@ -5,6 +5,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\Language;
+use Carbon\CarbonInterval;
 
 if (!function_exists('user')) {
     /**
@@ -124,6 +125,40 @@ if (!function_exists('timeAgo')) {
     }
 }
 
+if (!function_exists('formatSecondToTime')) {
+
+    /**
+     * @param string $time // 01:40:00 or 00:45:44
+     * @return string
+     */
+    function formatSecondToTime(string $time): string
+    {
+        $parts = explode(':', $time);
+
+        $hours = (int)($parts[0] ?? 0);
+        $minutes = (int)($parts[1] ?? 0);
+        $seconds = (int)($parts[2] ?? 0);
+
+        $interval = CarbonInterval::hours($hours)->minutes($minutes)->seconds($seconds);
+
+        $parts = [];
+
+        if ($interval->hours > 0) {
+            $parts[] = $interval->hours . ' ' . __('saat');
+        }
+
+        if ($interval->minutes > 0) {
+            $parts[] = $interval->minutes . ' ' . __('dakika');
+        }
+
+        if ($interval->seconds > 0) {
+            $parts[] = $interval->seconds . ' ' . __('saniye');
+        }
+
+        return implode(' ', $parts);
+    }
+}
+
 if (!function_exists('settingLocale')) {
     /**
      * @param string $key
@@ -184,17 +219,23 @@ if (!function_exists('resetCache')) {
     }
 }
 
-if (!function_exists('secondToMinutes')) {
+if (!function_exists('secondToTime')) {
 
     /**
      * @param int|null $seconds
      * @return string
      */
-    function secondToMinutes(int|null $seconds = 0): string
+    function secondToTime(int|null $seconds = 0): string
     {
-        $minute = floor(($seconds ?? 0) / 60);
-        $restSecond = $seconds % 60;
-        return $minute . ':' . str_pad($restSecond, 2, '0', STR_PAD_LEFT);
+        $seconds = $seconds ?? 0;
+
+        $hour = floor($seconds / 3600);
+        $minute = floor(($seconds % 3600) / 60);
+        $second = $seconds % 60;
+
+        return str_pad($hour, 2, '0', STR_PAD_LEFT) . ':' .
+            str_pad($minute, 2, '0', STR_PAD_LEFT) . ':' .
+            str_pad($second, 2, '0', STR_PAD_LEFT);
     }
 }
 

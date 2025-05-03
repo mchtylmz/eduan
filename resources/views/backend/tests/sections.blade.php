@@ -9,7 +9,7 @@
         </div>
         <!-- block-content -->
         <div class="block-content fs-sm pb-3">
-
+            @livewire('tests.section-form', ['test' => $test])
         </div>
         <!-- block-content -->
     </div>

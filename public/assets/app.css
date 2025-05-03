@@ -192,3 +192,33 @@
     -ms-user-select: none;
     user-select: none
 }
+.list-group-item.active {
+    background-color: rgba(211,210,210,0.8) !important;
+    color: black !important;
+    border-color: rgba(211,210,210,0.8) !important;
+    border-left: solid 5px var(--clr-theme-primary) !important;
+}
+.pl-30px {
+    padding-left: 30px !important;
+}
+.exams-sections-left {
+    min-height: 360px !important;
+}
+.accordion-button:focus {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0) !important;
+}
+.accordion-button:not(.collapsed) {
+    background-color: var(--clr-theme-primary) !important;
+    color: white !important;
+    border-color: var(--clr-theme-primary) !important;
+}
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
+}
+.list-group-item+.list-group-item.active {
+    border-top-width: 0;
+}
+.exams-sections-content {
+    color: black;
+}
+.w-35 {width: 35%;}

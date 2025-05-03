@@ -18,6 +18,7 @@ class TestsSection extends Model
     protected string $metaTable = 'tests_sections_meta';
 
     protected static string $orderByColumn = 'order';
+    protected static string $orderByColumnDirection = 'ASC';
 
     protected $guarded = [
         'created_at', 'updated_at'
@@ -37,9 +38,14 @@ class TestsSection extends Model
         return $this->belongsTo(Test::class);
     }
 
-    public function parent()
+    public function parents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        // TODO: parent
+        return $this->hasMany(TestsSection::class, 'parent_id', 'id');
+    }
+
+    public function parent(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TestsSection::class, 'parent_id', 'id');
     }
 
     public function question(): \Illuminate\Database\Eloquent\Relations\HasOne

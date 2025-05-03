@@ -19,6 +19,8 @@
 
     <li><a href="{{ route('frontend.tests') }}">{{ __('Testler') }}</a></li>
 
+    <li><a href="{{ route('frontend.exams') }}">{{ __('Sınavlar') }}</a></li>
+
     <li><a href="{{ route('frontend.blog') }}">{{ __('Blog') }}</a></li>
 
     <li><a href="{{ route('frontend.contact') }}">{{ __('İletişim') }}</a></li>
