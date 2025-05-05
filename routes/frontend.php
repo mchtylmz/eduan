@@ -38,6 +38,8 @@ Route::get('exam/{test:code}', [\App\Http\Controllers\Frontend\ExamController::c
     ->name('exam.detail');
 Route::get('exam/{test:code}/start', [\App\Http\Controllers\Frontend\ExamController::class,'start'])
     ->name('exam.start');
+Route::get('exam/{test:code}/solutions', [\App\Http\Controllers\Frontend\ExamController::class,'solutions'])
+    ->name('exam.solutions');
 
 Route::get('lessons', [\App\Http\Controllers\Frontend\LessonController::class,'index'])
     ->name('lessons');
@@ -63,6 +65,8 @@ Route::middleware(['auth'])
         Route::get('/profile', 'index')->name('profile');
         Route::get('/favorite', 'favorite')->name('favorite');
         Route::get('/solved', 'solved')->name('solved');
+        Route::get('/results/exams', 'results')->name('solved.exams');
+        Route::get('/results/exams/{test:code}', 'result')->name('solved.exams.detail');
         Route::get('/logout', 'logout')->name('logout');
     });
 

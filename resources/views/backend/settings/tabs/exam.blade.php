@@ -21,6 +21,28 @@
             <input type="number" min="1" class="form-control" id="examTime" name="settings[examTime]" placeholder="{{ __('Süre') }}.." value="{{ settings()->examTime ?? 300 }}" required>
             <small>{{ __('Soru süresi saniye olarak girilmelidir. 60 saniye = 1 dakika') }}</small>
         </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label" for="solutionWatermark">{{ __('Soru Çözüm Resimlerine Filigran Uygulama') }}</label>
+            <select id="solutionWatermark" class="form-control" name="settings[solutionWatermark]" required>
+                <option value="" hidden>{{ __('Seçiniz') }}</option>
+                @foreach(\App\Enums\StatusEnum::options() as $key => $name)
+                    <option value="{{ $key }}" @selected($key == settings()->solutionWatermark)>{{ $name }}</option>
+                @endforeach
+            </select>
+
+            <div class="mt-3">
+                <label class="form-label" for="solutionWatermarkLogo">{{ __('Filigran Logo') }}</label>
+                <input type="file" class="dropify" id="solutionWatermarkLogo" name="images[solutionWatermarkLogo]"
+                       data-show-remove="false"
+                       data-show-errors="true"
+                       data-allowed-file-extensions="jpg png jpeg webp"
+                       accept=".jpg,.png,.jpeg,.webp"
+                       data-max-file-size="10M"
+                       @if($solutionWatermarkLogo = settings()->solutionWatermarkLogo) data-default-file="{{ asset($solutionWatermarkLogo) }}" @endif
+                />
+            </div>
+        </div>
     </div>
 
     <hr>

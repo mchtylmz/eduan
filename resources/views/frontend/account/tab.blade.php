@@ -46,14 +46,14 @@
     </div>
 
     <div class="col-sm col-6">
-        <div class="h10_category-item mb-20 text-center h10_category_bg-6 py-3 px-3 {{ routeIs('frontend.solved') ? 'active' : '' }}">
+        <div class="h10_category-item mb-20 text-center h10_category_bg-6 py-3 px-3 {{ routeIs('frontend.solved.exams') ? 'active' : '' }}">
             <div class="h10_category-item-icon mb-3">
                 <a href="{{ route('frontend.solved') }}">
                     <i class="fa-light fa-book-alt fa-2x mx-1"></i>
                 </a>
             </div>
             <h4 class="h10_category-item-title">
-                <a href="{{ route('frontend.solved') }}">
+                <a href="{{ route('frontend.solved.exams') }}">
                     {{ __('Çözdüğüm Sınavlar') }}
                 </a>
             </h4>

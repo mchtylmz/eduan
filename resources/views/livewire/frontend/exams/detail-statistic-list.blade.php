@@ -34,30 +34,35 @@
                 </li>
             </ul>
             <div class="course_details-sidebar-btn">
-                @auth()
-                    @if(auth()->user()->can('tests:solve'))
-                        // count($test->userResults)
-                        @if(false)
-                            <a href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
-                                {{ __('Sınavı Yeniden Çöz') }}
-                            </a>
+                @if(\App\Enums\StatusEnum::ACTIVE->is($test->status))
+                    @auth()
+                        @if(auth()->user()->can('tests:solve'))
+                            @if(count($test->userResults))
+                                <a onclick="return confirm('{{ __('Sınav başlayacaktır, sınav süresi içerisinde bitirmelisiniz, aksi durumlarda yanıtlanmamış olarak değerlendirilir.') }}')" href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
+                                    {{ __('Sınavı Yeniden Çöz') }}
+                                </a>
+                            @else
+                                <a onclick="return confirm('{{ __('Sınav başlayacaktır, sınav süresi içerisinde bitirmelisiniz, aksi durumlarda yanıtlanmamış olarak değerlendirilir.') }}')" href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
+                                    {{ __('Sınava Başla') }}
+                                </a>
+                            @endif
                         @else
-                            <a href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
+                            <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
+                               data-bs-target="#informationModal">
                                 {{ __('Sınava Başla') }}
                             </a>
-                        @endif
+                        @endcan
                     @else
                         <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
                            data-bs-target="#informationModal">
                             {{ __('Sınava Başla') }}
                         </a>
-                    @endcan
+                    @endauth
                 @else
-                    <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
-                       data-bs-target="#informationModal">
-                        {{ __('Sınava Başla') }}
-                    </a>
-                @endauth
+                    <button type="button" class="course-btn theme-btn theme-btn-big bg-dark" disabled>
+                        <i class="fa fa-hourglass-1 fa-pulse me-2"></i> {{ __('Yakında Başlayacak') }}
+                    </button>
+                @endif
             </div>
         </div>
     </div>

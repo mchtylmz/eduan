@@ -14,6 +14,7 @@ class UsersController extends Controller
         'password',
         'favorite',
         'tests',
+        'exams',
         'mailing',
         'topicsNotResult',
         'topicsStats',

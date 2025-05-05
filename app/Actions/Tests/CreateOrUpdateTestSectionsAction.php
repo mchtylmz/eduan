@@ -76,9 +76,9 @@ class CreateOrUpdateTestSectionsAction
     private function prepareSectionData(array $section): array
     {
         return [
-            'id' => (int)$section['id'],
-            'test_id' => (int)$section['test_id'],
-            'parent_id' => (int)$section['parent_id'],
+            'id' => (int) $section['id'],
+            'test_id' => (int) $section['test_id'],
+            'parent_id' => (int) $section['parent_id'],
             'type' => $section['type'],
             'name' => $section['name'],
             'order' => $section['order'],
@@ -140,7 +140,7 @@ class CreateOrUpdateTestSectionsAction
     private function prepareFieldData(array $field, TestsSection $testsSection): array
     {
         return [
-            'id' => (int)$field['id'],
+            'id' => (int) $field['id'],
             'test_id' => $testsSection->test_id,
             'parent_id' => $testsSection->id,
             'type' => $field['type'],

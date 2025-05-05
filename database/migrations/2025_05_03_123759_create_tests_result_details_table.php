@@ -18,10 +18,13 @@ return new class extends Migration
             $table->unsignedBigInteger('question_id')->index();
             $table->unsignedBigInteger('answer_id')->index();
             $table->tinyInteger('correct')->default(\App\Enums\YesNoEnum::NO)->index();
+            $table->tinyInteger('point')->default(0);
             $table->unsignedBigInteger('lesson_id')->index();
             $table->unsignedBigInteger('topic_id')->index();
             $table->integer('time')->default(0);
             $table->timestamps();
+
+            $table->unique(['tests_result_id', 'section_id', 'question_id']);
         });
     }
 

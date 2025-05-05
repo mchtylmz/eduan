@@ -1,4 +1,4 @@
-<div class="px-3">
+<div class="px-3" wire:init="startedExams">
     @php $content = $this->getContent(); @endphp
     <div class="bg-light exams-header border-top pt-3 pb-2 px-4 row" style="position: sticky; top: 0; z-index: 123">
         <div class="col-lg-6 exams-title text-start mb-1 d-flex align-items-center gap-1">
@@ -14,15 +14,21 @@
         </div>
         <div class="col-lg-6 exams-duration text-sm-end d-flex align-items-center justify-content-around gap-2 mb-1">
             <div class="counter-progress d-flex align-items-center gap-2 w-35" style="height: 14px">
-                <span class="progress-text text-dark">{{ $this->resultQuestionsCount() }} / {{ $totalQuestionsCount }}</span>
+                <span
+                    class="progress-text text-dark">{{ $this->resultQuestionsCount() }} / {{ $totalQuestionsCount }}</span>
                 <div class="progress w-50">
-                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ $this->resultQuestionsPercent() }}%" aria-valuenow="{{ $this->resultQuestionsPercent() }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                         style="width: {{ $this->resultQuestionsPercent() }}%"
+                         aria-valuenow="{{ $this->resultQuestionsPercent() }}" aria-valuemin="0"
+                         aria-valuemax="100"></div>
                 </div>
             </div>
             <div class="exams-timer w-50" wire:ignore>
                 <span><i class="fa fa-clock mx-2"></i>{{ __('Süre') }}:</span>
                 <span id="exams-timer-text" class="text-dark fw-medium"
-                      data-timer="{{ $expirationTime }}">{{ $duration = secondToTime($test->duration) }}</span>
+                      data-timer="{{ $expirationTime }}">
+                    <i class="fa fa-hourglass-start fa-pulse mx-1"></i>
+                </span>
             </div>
         </div>
     </div>
@@ -48,7 +54,8 @@
                              aria-labelledby="heading{{ $key }}"
                              data-bs-parent="#accordionExamSections">
                             <div class="accordion-body bg-body-light pt-0 px-0 pb-0">
-                                <div class="list-group list-group-flush border border-top-0 border-danger">
+                                <div class="list-group list-group-flush border border-top-0 border-danger"
+                                     style="max-height: 540px; overflow-y: auto">
                                     @php $questionIndex = 1; @endphp
                                     @foreach($section->parents as $parentKey => $parent)
                                         <button
@@ -83,7 +90,8 @@
         </div>
         <div class="col-lg-9 p-3 pt-2 exams-sections-right">
             <div class="progress mb-2 mt-0" id="exams-timer-progress" style="height: 6px" wire:ignore>
-                <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 100%"
+                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
 
             <!-- wire:loading.remove -->
@@ -105,7 +113,28 @@
 
                     @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($content->type))
                         <div class="text-dark exams-sections-question row">
-                            <div class="col-lg-12">
+                            @if($metaContent = $this->getParentContent($content->getMeta('questionParentId', 0)))
+                                <div class="col-lg-5">
+                                    @if(\App\Enums\TestSectionTypeEnum::CONTENT->is($metaContent->type))
+                                        <div class="text-dark exams-sections-content" style="max-height: 540px; overflow-y: auto; border: solid 1px #666;">
+                                            {!! html_entity_decode($metaContent->getMeta('content', '')) !!}
+                                        </div>
+                                    @endif
+
+                                    @if(\App\Enums\TestSectionTypeEnum::PDF->is($metaContent->type))
+                                        <div class="text-dark exams-sections-file w-100 text-end">
+                                            <a target="_blank" href="{{ $file = asset($metaContent->getMeta('meta_file', '')) }}" class="text-dark border px-2 py-1 mb-2">
+                                                <i class="fa fa-external-link mx-1"></i>
+                                                {{ __('Yeni Pencerede Görüntüle') }}
+                                            </a>
+                                            <iframe style="min-height: 540px;"
+                                                    src="{{ $file }}#toolbar=0"
+                                                    class="w-100 border-0" allowfullscreen allowtransparency></iframe>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            <div @class(['col-lg-12' => !$metaContent, 'col-lg-7' => $metaContent])>
                                 @if($question = \App\Models\Question::find($content->getMeta('questionId', 0)))
                                     <div class="title text-start">
                                         <h5 class="mb-3">{{ $question->title }}</h5>
@@ -149,7 +178,6 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="col-lg-4"></div>
                         </div>
                     @endif
                 @endif
@@ -207,19 +235,31 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="finishedModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="finishedModalLabel" aria-hidden="true">
+    <div class="modal fade" id="finishedModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="finishedModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="finishedModalLabel">{{ __('Sınav Tamamlandı') }}</h5>
-                    <button type="button" class="btn-close" wire:click="refreshIfFinished" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" wire:click="solvedExams" aria-label="Close"></button>
                 </div>
                 <div class="modal-body bg-white px-3 py-5 text-center">
                     <div class="py-3">
                         <i class="fa fa-check-double text-white fa-2x fw-bold mb-3 bg-success rounded-circle p-3"></i>
                         <h5 class="my-3 text-success">{{ __('Sınav tamamlandı, yanıtlanan cevaplar kayıt edildi.') }}</h5>
-                        <a type="button" href="{{ route('frontend.exams') }}" class="btn btn-outline-success px-5 mt-3 fw-bold">
-                            {{ __('Sınavları Görüntüle') }}
+
+                        @if(!empty($testResult))
+                            <div class="text-center pt-3 mt-3 mb-3">
+                                <span class="px-4 py-3 fs-5 bg-light fw-medium text-dark rounded-1 border border-secondary border-2">
+                                    {{ __('Sınav Puanı') }}:
+                                    <strong class="bg-dark rounded-2 text-white py-1 px-3 fs-4">{{ $testResult->point }}</strong>
+                                </span>
+                            </div>
+                        @endif
+
+                        <a type="button" wire:click="solvedExams"
+                           class="btn btn-outline-success px-5 mt-3 fw-bold">
+                            {{ __('Sonuçları Görüntüle') }}
                         </a>
                     </div>
                 </div>
@@ -245,10 +285,10 @@
             $('#finishedModal').modal('show');
         });
 
-        if(timerText.length) {
+        if (timerText.length) {
             let countDownDate = new Date(timer).getTime(),
                 startDistance = countDownDate - (new Date().getTime());
-            let x = setInterval(function() {
+            let x = setInterval(function () {
                 let now = new Date().getTime();
                 let distance = countDownDate - now;
                 let percent = (distance / startDistance) * 100;

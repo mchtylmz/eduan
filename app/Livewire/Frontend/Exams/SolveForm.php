@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Frontend\Exams;
 
+use App\Actions\Tests\CreateOrUpdateTestResult;
+use App\Actions\Tests\CreateOrUpdateTestResultDetail;
+use App\Enums\YesNoEnum;
 use App\Models\Test;
+use App\Models\TestsResult;
 use App\Models\TestsSection;
 use App\Traits\CustomLivewireAlert;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +21,7 @@ class SolveForm extends Component
     use WithPagination, WithoutUrlPagination, CustomLivewireAlert;
 
     public Test $test;
+    public TestsResult $testResult;
     public TestsSection $content;
     public Collection $sections;
 
@@ -26,13 +31,13 @@ class SolveForm extends Component
     public array $results = [];
     /*
      results = [
-        section_id => [
+        section_index => [
             parent_id => [
                 question_id => answer_id
             ]
         ]
     ]
-     * */
+    */
 
     public string $sectionTitle = '';
     public int $totalQuestionsCount = 0;
@@ -46,12 +51,34 @@ class SolveForm extends Component
     public function mount(Test $test): void
     {
         $this->test = $test;
+        if (!$this->test->sections_with_no_parent()->count() || !$this->test->questions()->count()) {
+            redirect()->route('frontend.exams');
+            return;
+        }
+
         $this->sections = $test->sections()->parentIsZero()->get();
 
         $this->totalQuestionsCount = $test->questions()->count();
         $this->setActive(0, $this->sections?->first()->parents->first()?->id);
 
+        $this->initializeExpiration();
+    }
+
+    public function initializeExpiration(): void
+    {
         $this->expirationTime = now()->addSeconds($this->test->duration)->format('Y-m-d H:i:s');
+
+        if ($expirationTime = request()->session()->get('expirationTime_' . $this->test->id, false)) {
+            // $this->expirationTime = $expirationTime;
+            // geçici kapalı
+        } else {
+            request()->session()->put('expirationTime_' . $this->test->id, $this->expirationTime);
+        }
+    }
+
+    private function forgetExpiration(): void
+    {
+        request()->session()->forget('expirationTime_' . $this->test->id);
     }
 
     public function setActive(int $sectionKey, int $parentId): void
@@ -89,6 +116,15 @@ class SolveForm extends Component
         return $this->content = TestsSection::where('test_id', $this->test->id ?? 0)
             ->where('id', $this->active['parent'] ?? 0)
             ->first();
+    }
+
+    public function getParentContent(int $order)
+    {
+        if ($order && $activeSection = collect($this->sections)->get($this->active['section'])) {
+            return $activeSection->parents()->with('meta')->where('order', $order)->first();
+        }
+
+        return null;
     }
 
     #[Computed]
@@ -160,16 +196,39 @@ class SolveForm extends Component
 
     public function saveAndFinish(): bool
     {
+        $this->forgetExpiration();
+
         return $this->finished = true;
     }
 
-    public function refreshIfFinished()
+    public function solvedExams()
     {
         if ($this->finished) {
-            return redirect()->route('frontend.exam.detail', $this->test->code);
+            return redirect()->route('frontend.solved.exams.detail', $this->test->code);
         }
 
+        $this->message(__('Sınav sonuçları görüntülenemiyor, işlem tamamlanamadı'))->error();
         return false;
+    }
+
+    public function startedExams(): bool
+    {
+        if ($this->finished) {
+            return false;
+        }
+
+        $this->testResult = CreateOrUpdateTestResult::run(
+            attributes: [
+                'user_id' => auth()->id(),
+                'test_id' => $this->test->id,
+                'completed' => YesNoEnum::NO,
+            ],
+            values: [
+                'question_count' => $this->totalQuestionsCount,
+                'expires_at' => $this->expirationTime,
+            ]
+        );
+        return true;
     }
 
     public function save()
@@ -179,7 +238,7 @@ class SolveForm extends Component
             return false;
         }
 
-        if (!$this->finished) {
+        if ($this->finished) {
             $this->message(__('Sınav daha önce tamamlandı, tekrar yanıtlar kayıt edilemez!'))->error();
             return false;
         }
@@ -189,6 +248,20 @@ class SolveForm extends Component
             return false;
         }
 
+        if (empty($this->testResult)) {
+            $this->startedExams();
+        }
+
+        $this->testResult = CreateOrUpdateTestResultDetail::run(
+            results: $this->results,
+            testResult: $this->testResult
+        );
+
+        $this->finished = true;
+        $this->forgetExpiration();
+
+        $this->message(__('Sınav başarıyla tamamlandı ve yanıtlar kayıt edildi!'))->success();
+        return true;
     }
 
     public function render()

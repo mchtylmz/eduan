@@ -26,6 +26,11 @@
                 </a>
             </li>
             <li class="nav-item" role="presentation">
+                <a @class(['nav-link py-3', 'active' => $activeTab == 'exams']) type="button" href="?tab=exams">
+                    <i class="fa fa-book mx-1"></i> {{ __('Çözülen Sınavlar') }}
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
                 <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsNotResult']) type="button" href="?tab=topicsNotResult">
                     <i class="fa fa-list-dots mx-1"></i> {{ __('Hiç Çözülmeyen Konular') }}
                 </a>

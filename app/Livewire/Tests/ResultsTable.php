@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Livewire\Exams;
+namespace App\Livewire\Tests;
 
 use App\Enums\YesNoEnum;
-use App\Models\Exam;
+use App\Models\Test;
+use App\Models\TestsResult;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
 use App\Traits\CustomLivewireTableFilters;
@@ -12,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Lazy;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use App\Models\ExamResult;
 use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
 use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
 use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
@@ -22,29 +22,29 @@ class ResultsTable extends DataTableComponent
 {
     use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
 
-    protected $model = ExamResult::class;
-    public ?Exam $exam = null;
+    protected $model = TestsResult::class;
+    public ?Test $test = null;
     public ?User $user = null;
 
     public ?bool $incorrectCount = false;
 
-    public function mount(?Exam $exam = null, ?User $user = null, ?bool $incorrectCount = false): void
+    public function mount(?Test $test = null, ?User $user = null, ?bool $incorrectCount = false): void
     {
-        $this->exam = $exam;
+        $this->test = $test;
         $this->user = $user;
         $this->incorrectCount = $incorrectCount;
 
-        $this->setSortAsc('time');
+        $this->setSortDesc('duration');
     }
 
     public function builder(): Builder
     {
         if ($this->incorrectCount) {
-            return ExamResult::with(['user', 'exam'])->whereRaw('question_count = correct_count');
+            return TestsResult::with(['user', 'test'])->whereRaw('question_count = correct_count');
         }
 
-        return ExamResult::with(['user', 'exam'])
-            ->when($this->exam->exists, fn($query) => $query->where('exam_id', $this->exam->id))
+        return TestsResult::with(['user', 'test'])
+            ->when($this->test->exists, fn($query) => $query->where('test_id', $this->test->id))
             ->when($this->user->exists, fn($query) => $query->where('user_id', $this->user->id));
     }
 
@@ -53,19 +53,19 @@ class ResultsTable extends DataTableComponent
         $filters = [];
 
         if (!$this->user->exists) {
-            $filters[] = $this->usersInExamsResultsFilter(
-                $this->exam->id ?? 0,
-                fn(Builder $builder, array $value) => $builder->whereIn('exam_results.user_id', $value)
+            $filters[] = $this->usersInTestsResultsFilter(
+                $this->test->id ?? 0,
+                fn(Builder $builder, array $value) => $builder->whereIn('tests_results.user_id', $value)
             );
         }
 
-        if (!$this->exam->exists && !$this->incorrectCount) {
-            $filters[] = $this->examsInResultsFilter(
-                fn(Builder $builder, array $value) => $builder->whereIn('exam_results.exam_id', $value)
+        if (!$this->test->exists && !$this->incorrectCount) {
+            $filters[] = $this->testsInResultsFilter(
+                fn(Builder $builder, array $value) => $builder->whereIn('tests_results.test_id', $value)
             );
         }
 
-        $filters[] = $this->completeFilter('exam_results.completed');
+        $filters[] = $this->completeFilter('tests_results.completed');
 
         return $filters;
     }
@@ -73,9 +73,9 @@ class ResultsTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make("ID", "id"),
-            Column::make(__('Test Adı'), "exam.name")
-                ->hideIf($this->exam->exists)
+            Column::make("ID", "id")->hideIf(true),
+            Column::make(__('Test Adı'), "Test.name")
+                ->hideIf($this->test->exists)
                 ->searchable()
                 ->sortable(),
             Column::make(__('E-posta Adresi'), "user.email")
@@ -88,6 +88,9 @@ class ResultsTable extends DataTableComponent
                 ->collapseOnMobile()
                 ->searchable()
                 ->sortable(),
+            Column::make(__('Puan'), "point")
+                ->collapseOnMobile()
+                ->sortable(),
             Column::make(__('Soru'), "question_count")
                 ->collapseOnMobile()
                 ->sortable(),
@@ -97,12 +100,8 @@ class ResultsTable extends DataTableComponent
             Column::make(__('Yanlış'), "incorrect_count")
                 ->collapseOnMobile()
                 ->sortable(),
-            Column::make(__('Süre'), "time")
-                ->format(fn($value) => sprintf(
-                    '∼%d %s (%d %s)',
-                    intval($value / 60), __('dakika'),
-                    $value, __('sn'),
-                ))
+            Column::make(__('Süre'), "duration")
+                ->format(fn($value) => formatSecondToTime(secondToTime($value), hideSeconds: true))
                 ->collapseOnMobile()
                 ->sortable(),
             ComponentColumn::make(__('Durum'), "completed")
@@ -114,7 +113,7 @@ class ResultsTable extends DataTableComponent
                 ])
                 ->searchable()
                 ->sortable(),
-            Column::make(__('Tarih'), "updated_at")
+            Column::make(__('Tamamlanma'), "completed_at")
                 ->collapseOnMobile()
                 ->format(fn($value) => $value ? dateFormat($value, 'd/m/Y, H:i') : '-')
                 ->sortable()
@@ -133,18 +132,18 @@ class ResultsTable extends DataTableComponent
         ];
     }
 
-    public function showDetail(ExamResult $examResult): void
+    public function showDetail(TestsResult $testResult): void
     {
         $this->dispatch(
             'showOffcanvas',
             component: [
-                'exams.results-user-detail',
-                'exams.results-detail-table'
+                'tests.results-user-detail',
+                'tests.results-detail-table'
             ],
             data: [
                 'title' => __('Sonuç Detayları'),
-                'examResultId' => $examResult->id,
-                'userId' => $examResult->user_id,
+                'testsResultId' => $testResult->id,
+                'userId' => $testResult->user_id,
             ]
         );
     }

@@ -5,6 +5,8 @@ namespace App\Livewire\Users;
 use App\Models\ExamResult;
 use App\Models\ExamResultDetail;
 use App\Models\Question;
+use App\Models\TestsResult;
+use App\Models\TestsResultDetail;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
 use App\Traits\CustomLivewireTableFilters;
@@ -36,10 +38,17 @@ class TopicsNotResultsTable extends DataTableComponent
         $this->resetPage($this->getComputedPageName());
         $this->clearSorts();
 
-        $this->notInTopicIds = ExamResultDetail::whereIn(
+        $examTopicIds = ExamResultDetail::whereIn(
             'exam_result_id',
             ExamResult::where('user_id', $this->user->id)->pluck('id')->toArray()
         )->pluck('topic_id')->toArray();
+
+        $testTopicIds = TestsResultDetail::whereIn(
+            'tests_result_id',
+            TestsResult::where('user_id', $this->user->id)->pluck('id')->toArray()
+        )->pluck('topic_id')->toArray();
+
+        $this->notInTopicIds = array_merge($examTopicIds, $testTopicIds);
     }
 
     public function builder(): Builder

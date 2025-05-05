@@ -6,6 +6,8 @@ use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\ExamResultDetail;
 use App\Models\Lesson;
+use App\Models\Test;
+use App\Models\TestsResult;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
@@ -83,15 +85,34 @@ class FilterHelper extends DataHelper
         );
     }
 
-    public function usersInTestResults(int $examId = 0): array
+    public function usersInExamsResults(int $examId = 0): array
     {
         return Cache::remember(
-            $this->cacheKey('usersInTestResults', $examId),
+            $this->cacheKey('usersInExamsResults', $examId),
             $this->cacheTime(30),
             fn() => User::orderByDesc('id')
                 ->whereIn(
                     'id',
                     ExamResult::when((bool) $examId, fn ($query) => $query->where('exam_id', $examId))
+                    ->pluck('user_id')
+                    ->toArray()
+                )
+                ->get()
+                ->keyBy('id')
+                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->toArray()
+        );
+    }
+
+    public function usersInTestsResults(int $examId = 0): array
+    {
+        return Cache::remember(
+            $this->cacheKey('usersInTestsResults', $examId),
+            $this->cacheTime(30),
+            fn() => User::orderByDesc('id')
+                ->whereIn(
+                    'id',
+                    TestsResult::when((bool) $examId, fn ($query) => $query->where('test_id', $examId))
                     ->pluck('user_id')
                     ->toArray()
                 )
@@ -109,6 +130,20 @@ class FilterHelper extends DataHelper
             $this->cacheTime(30),
             fn() => Exam::orderByDesc('id')
                 ->whereIn('id', ExamResult::all()->pluck('exam_id')->toArray())
+                ->get()
+                ->keyBy('id')
+                ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))
+                ->toArray()
+        );
+    }
+
+    public function testsInResults(): array
+    {
+        return Cache::remember(
+            $this->cacheKey('testsInResults'),
+            $this->cacheTime(30),
+            fn() => Test::orderByDesc('id')
+                ->whereIn('id', TestsResult::all()->pluck('test_id')->toArray())
                 ->get()
                 ->keyBy('id')
                 ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))

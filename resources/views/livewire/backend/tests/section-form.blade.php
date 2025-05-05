@@ -224,9 +224,9 @@
                                                                                     class="form-control"
                                                                                     wire:model="sections.{{ $index }}.fields.{{ $fieldIndex }}.questionParentId">
                                                                                 <option value="">{{ __('Seçiniz') }}</option>
-                                                                                @foreach($fields as $optionFieldIndex => $optionField)
+                                                                                @foreach($fields as $optionField)
                                                                                     @if(\App\Enums\TestSectionTypeEnum::QUESTION->isNot($optionField['type']))
-                                                                                        <option value="{{ $optionFieldIndex }}" @selected(($field['questionParentId'] ?? false) == $optionFieldIndex)>
+                                                                                        <option value="{{ $optionField['order'] }}" @selected(($field['questionParentId'] ?? false) == $optionField['order'])>
                                                                                             ({{ __('Sıra') }}: {{ $optionField['order'] }}
                                                                                             ) {{ $optionField['type']->name() }}
                                                                                         </option>

@@ -131,7 +131,7 @@ if (!function_exists('formatSecondToTime')) {
      * @param string $time // 01:40:00 or 00:45:44
      * @return string
      */
-    function formatSecondToTime(string $time): string
+    function formatSecondToTime(string $time, bool $hideSeconds = false): string
     {
         $parts = explode(':', $time);
 
@@ -153,6 +153,10 @@ if (!function_exists('formatSecondToTime')) {
 
         if ($interval->seconds > 0) {
             $parts[] = $interval->seconds . ' ' . __('saniye');
+
+            if ($hideSeconds && count($parts) >= 2) {
+                unset($parts[count($parts) - 1]);
+            }
         }
 
         return implode(' ', $parts);

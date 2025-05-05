@@ -25,7 +25,9 @@
         'contacts' => __('İletişim Mesajları'),
         'languages' => __('Diller & Çeviriler'),
         'settings' => __('Ayarlar'),
-        'dashboard' => __('Yönetim Paneli')
+        'dashboard' => __('Yönetim Paneli'),
+        'tests' => __('Sınavlar'),
+        'stats' => __('İstatistikler'),
     ]
 ])
 @php

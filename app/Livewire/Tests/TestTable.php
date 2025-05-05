@@ -53,7 +53,7 @@ class TestTable extends DataTableComponent
                 ->format(fn($value) => formatSecondToTime(secondToTime($value)))
                 ->sortable(),
             CountColumn::make(__('bölüm Sayısı'))
-                ->setDataSource('sectionsWithNoParent')
+                ->setDataSource('sections_with_no_parent')
                 ->sortable(),
             CountColumn::make(__('Soru Sayısı'))
                 ->setDataSource('questions')

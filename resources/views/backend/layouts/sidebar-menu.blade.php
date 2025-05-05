@@ -65,8 +65,8 @@
                 </a>
             </li>
             <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.results')])
-                   href="{{ route('admin.exams.results') }}">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.results')])
+                   href="{{ route('admin.tests.results') }}">
                     <i class="nav-main-link-icon fa fa-book-bookmark"></i>
                     <span class="nav-main-link-name">{{ __('Sınav Sonuçları') }}</span>
                 </a>

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('question_count')->default(0)->index();
             $table->integer('correct_count')->default(0)->index();
             $table->integer('incorrect_count')->default(0)->index();
+            $table->tinyInteger('point')->default(0);
             $table->integer('duration')->default(0)->index();
             $table->tinyInteger('completed')->default(\App\Enums\YesNoEnum::NO)->index();
             $table->timestamp('completed_at')->nullable();

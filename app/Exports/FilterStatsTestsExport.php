@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
+class FilterStatsTestsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
 {
     public Collection $collection;
 
@@ -19,8 +19,8 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return $this->collection;
@@ -31,7 +31,8 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
         return [
             __('İsim'),
             __('Soyisim'),
-            __('Konu Adı'),
+            __('Test Adı'),
+            __('Puan'),
             __('Toplam Soru'),
             __('Doğru Yanıt'),
             __('Yanlış Yanıt'),
@@ -41,15 +42,11 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
 
     public function map($row): array
     {
-        $topic_title = '';
-        if (str($row->topic_title)->isJson()) {
-            $topic_title = json_decode($row->topic_title, true)[app()->getLocale()] ?? '-' ;
-        }
-
         return [
             $row->name,
             $row->surname,
-            $topic_title,
+            $row->test_name,
+            intval($row->point ?: 0),
             intval($row->total_questions ?: 0),
             intval($row->count_correct ?: 0),
             intval($row->count_incorrect ?: 0),

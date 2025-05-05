@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ExamResult::class)->orderByDesc('id');
     }
+
+    public function testResults(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(TestsResult::class)->orderByDesc('id');
+    }
 }

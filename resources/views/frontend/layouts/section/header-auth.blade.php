@@ -23,6 +23,12 @@
                 <span>{{ __('Çözdüğüm Testler') }}</span>
             </a>
         </li>
+        <li>
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.exams') }}">
+                <i class="fa fa-book-alt mx-1"></i>
+                <span>{{ __('Çözdüğüm Sınavlar') }}</span>
+            </a>
+        </li>
         @if(user()->can('dashboard:access'))
             <li>
                 <a class="dropdown-item border-bottom py-2" href="{{ route('admin.home.index') }}">

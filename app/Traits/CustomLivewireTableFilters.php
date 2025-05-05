@@ -52,10 +52,10 @@ trait CustomLivewireTableFilters
             ->filter(is_callable($callback) ? $callback : null);
     }
 
-    protected function usersInTestResultsFilter(int $examId = 0, $callback = null): \Rappasoft\LaravelLivewireTables\Views\Filter
+    protected function usersInExamsResultsFilter(int $examId = 0, $callback = null): \Rappasoft\LaravelLivewireTables\Views\Filter
     {
         return MultiSelectDropdownFilter::make(__('Kullanıcılar'), 'users')
-            ->options(data()->filters()->usersInTestResults($examId))
+            ->options(data()->filters()->usersInExamsResults($examId))
             ->filter(is_callable($callback) ? $callback : null);
     }
 
@@ -66,6 +66,19 @@ trait CustomLivewireTableFilters
             ->filter(is_callable($callback) ? $callback : null);
     }
 
+    protected function usersInTestsResultsFilter(int $examId = 0, $callback = null): \Rappasoft\LaravelLivewireTables\Views\Filter
+    {
+        return MultiSelectDropdownFilter::make(__('Kullanıcılar'), 'users')
+            ->options(data()->filters()->usersInTestsResults($examId))
+            ->filter(is_callable($callback) ? $callback : null);
+    }
+
+    protected function testsInResultsFilter($callback = null): \Rappasoft\LaravelLivewireTables\Views\Filter|null
+    {
+        return MultiSelectDropdownFilter::make(__('Testler'), 'tests')
+            ->options(data()->filters()->testsInResults())
+            ->filter(is_callable($callback) ? $callback : null);
+    }
 
     protected function examsFilter($callback = null): \Rappasoft\LaravelLivewireTables\Views\Filter|null
     {

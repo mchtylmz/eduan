@@ -43,7 +43,7 @@ class Test extends Model
         return $this->hasMany(TestsSection::class);
     }
 
-    public function sectionsWithNoParent(): HasMany
+    public function sections_with_no_parent(): HasMany
     {
         return $this->hasMany(TestsSection::class)->where('parent_id', 0);
     }
@@ -56,5 +56,20 @@ class Test extends Model
     public function questionsWithQuestion(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'tests_questions')->orderBy('order');
+    }
+
+    public function results(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TestsResult::class);
+    }
+
+    public function userResults(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TestsResult::class)->where('user_id', auth()->id())->groupBy('test_id');
+    }
+
+    public function userResultsWithoutGroupBy(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TestsResult::class)->where('user_id', auth()->id());
     }
 }

@@ -12,7 +12,7 @@ class TestsResultDetail extends Model
     /** @use HasFactory<\Database\Factories\TestsResultDetailFactory> */
     use HasFactory, Loggable;
 
-    public $fillable = ['tests_result_id','section_id','question_id','answer_id','correct','lesson_id','topic_id','time'];
+    public $fillable = ['tests_result_id','section_id','question_id','answer_id','correct','point','lesson_id','topic_id','time'];
 
     protected function casts(): array
     {

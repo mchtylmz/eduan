@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Actions\Auth\LogoutAction;
+use App\Enums\YesNoEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Newsletter;
+use App\Models\Test;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -23,11 +25,30 @@ class AccountController extends Controller
         ]);
     }
 
-
     public function solved()
     {
         return view('frontend.account.solved', [
             'title' => __('Testlerim')
+        ]);
+    }
+
+    public function results()
+    {
+        return view('frontend.account.results', [
+            'title' => __('Sınavlarım')
+        ]);
+    }
+
+    public function result(Test $test)
+    {
+        return view('frontend.account.result', [
+            'title' => __('Sınav Sonucu') . ' ' . $test->name,
+            'test' => $test,
+            'results' => $test->userResultsWithoutGroupBy()
+                ->with('details')
+                ->where('completed', YesNoEnum::YES)
+                ->orderBy('id')
+                ->get()
         ]);
     }
 

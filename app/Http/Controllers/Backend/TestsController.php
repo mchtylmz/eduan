@@ -38,4 +38,19 @@ class TestsController extends Controller
             'tinymce' => true,
         ]);
     }
+
+    public function results()
+    {
+        return view('backend.tests.results', [
+            'title' => __('Sınav Sonuçları')
+        ]);
+    }
+
+    public function result(Test $test)
+    {
+        return view('backend.tests.result', [
+            'title' => __('Sınav Sonucu'),
+            'test' => $test
+        ]);
+    }
 }
