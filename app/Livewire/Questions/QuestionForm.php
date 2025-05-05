@@ -220,7 +220,10 @@ class QuestionForm extends Component
             $data['attachment'] = UploadFileAction::run(file: $this->attachment, folder: 'questions');
         }
         if ($this->solution instanceof TemporaryUploadedFile) {
-            $data['solution'] = UploadFileAction::run(file: $this->solution, folder: 'questions');
+            $data['solution'] = $solution = UploadFileAction::run(file: $this->solution, folder: 'questions');
+            if ($applySolution = applyWatermark($this->solution, $solution)) {
+                $data['solution'] = $applySolution;
+            }
         }
 
         return $data;

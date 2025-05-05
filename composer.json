@@ -8,6 +8,7 @@
         "php": "^8.2",
         "archtechx/enums": "^1.1",
         "druc/laravel-langscanner": "^2.2",
+        "intervention/image-laravel": "^1.5",
         "izniburak/laravel-auto-routes": "^2.1",
         "jantinnerezo/livewire-alert": "^3.0",
         "laravel/framework": "^11.9",

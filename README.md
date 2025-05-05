@@ -57,6 +57,12 @@ php artisan vendor:publish --provider="Zoha\Meta\MetaServiceProvider" --tag=conf
 ```
 
 ```
+composer require intervention/image-laravel
+php artisan vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"
+
+```
+
+```
 https://github.com/wotzebra/livewire-sortablejs
 ```
 

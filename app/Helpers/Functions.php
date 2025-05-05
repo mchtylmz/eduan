@@ -2,10 +2,49 @@
 
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Models\Language;
 use Carbon\CarbonInterval;
+use Intervention\Image\ImageManager;
+
+if (!function_exists('applyWatermark')) {
+    /**
+     * @param UploadedFile $file
+     * @param string $inputImagePath
+     * @return Authenticatable|null
+     */
+    function applyWatermark(UploadedFile $file, string $inputImagePath): bool|string
+    {
+        if (\App\Enums\StatusEnum::ACTIVE->value != settings()->solutionWatermark) {
+            return false;
+        }
+
+        $watermarkPath = public_path(settings()->solutionWatermarkLogo);
+        $imagePath = public_path($inputImagePath);
+
+        if (!file_exists($watermarkPath) || !is_readable($watermarkPath)) {
+            return false;
+        }
+        if (!file_exists($imagePath) || !is_readable($imagePath)) {
+            return false;
+        }
+
+        try {
+            $image = ImageManager::imagick()->read($file->getRealPath());
+            $watermark = ImageManager::imagick()->read($watermarkPath);
+            $watermark->scale($image->width() - intval($image->width() / 3));
+            $watermark->rotate(45);
+
+            $image->place($watermark, position: 'center', opacity: 10);
+            $image->toWebp()->save($imagePath);
+        } catch (Exception $exception) {
+            return false;
+        }
+
+        return $inputImagePath;
+    }
+}
 
 if (!function_exists('user')) {
     /**
@@ -98,7 +137,7 @@ if (!function_exists('getImage')) {
 if (!function_exists('dateFormat')) {
 
     /**
-     * @param string $value
+     * @param string|null $value
      * @param string $format
      * @return string
      */
@@ -129,6 +168,7 @@ if (!function_exists('formatSecondToTime')) {
 
     /**
      * @param string $time // 01:40:00 or 00:45:44
+     * @param bool $hideSeconds
      * @return string
      */
     function formatSecondToTime(string $time, bool $hideSeconds = false): string

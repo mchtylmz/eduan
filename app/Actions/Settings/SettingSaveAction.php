@@ -35,7 +35,7 @@ class SettingSaveAction
     protected function images(Array $images): void
     {
         foreach ($images as $key => $image) {
-            if ($image = UploadFileAction::run(file: $image)) {
+            if ($image = UploadFileAction::run(file: $image, folder: 'site')) {
                 $this->data[$key] = $image;
             }
         }
