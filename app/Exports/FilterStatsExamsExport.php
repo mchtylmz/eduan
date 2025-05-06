@@ -31,6 +31,7 @@ class FilterStatsExamsExport implements FromCollection, ShouldAutoSize, WithHead
         return [
             __('İsim'),
             __('Soyisim'),
+            __('E-posta Adresi'),
             __('Sınav Adı'),
             __('Toplam Soru'),
             __('Doğru Yanıt'),
@@ -44,6 +45,7 @@ class FilterStatsExamsExport implements FromCollection, ShouldAutoSize, WithHead
         return [
             $row->name,
             $row->surname,
+            $row->email,
             $row->exam_name,
             intval($row->total_questions ?: 0),
             intval($row->count_correct ?: 0),

@@ -31,6 +31,7 @@ class FilterStatsTestsExport implements FromCollection, ShouldAutoSize, WithHead
         return [
             __('İsim'),
             __('Soyisim'),
+            __('E-posta Adresi'),
             __('Test Adı'),
             __('Puan'),
             __('Toplam Soru'),
@@ -45,6 +46,7 @@ class FilterStatsTestsExport implements FromCollection, ShouldAutoSize, WithHead
         return [
             $row->name,
             $row->surname,
+            $row->email,
             $row->test_name,
             intval($row->point ?: 0),
             intval($row->total_questions ?: 0),

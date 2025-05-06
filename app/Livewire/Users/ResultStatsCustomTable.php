@@ -25,6 +25,8 @@ class ResultStatsCustomTable extends Component
     public int $userId = 0;
     public int $topicId = 0;
 
+    public array $emails = [];
+
     public function mount(?User $user = null): void
     {
         $this->user = $user;
@@ -73,6 +75,7 @@ class ResultStatsCustomTable extends Component
             ->join('topics', 'erd.topic_id', '=', 'topics.id')
             ->select(
                 'users.id as user_id',
+                'users.email',
                 'users.name',
                 'users.surname',
                 'topics.id as topic_id',
@@ -89,6 +92,7 @@ class ResultStatsCustomTable extends Component
             ->join('topics', 'erd.topic_id', '=', 'topics.id')
             ->select(
                 'users.id as user_id',
+                'users.email',
                 'users.name',
                 'users.surname',
                 'topics.id as topic_id',
@@ -105,6 +109,7 @@ class ResultStatsCustomTable extends Component
             ->mergeBindings($unionQuery) // union'daki parametreleri aktar
             ->select(
                 'user_id',
+                'email',
                 'name',
                 'surname',
                 'topic_id',
@@ -116,11 +121,15 @@ class ResultStatsCustomTable extends Component
             )
             ->when($this->userId, fn($q) => $q->where('user_id', $this->userId))
             ->when($this->topicId, fn($q) => $q->where('topic_id', $this->topicId))
-            ->groupBy('user_id', 'name', 'surname', 'topic_id', 'topic_title')
+            ->groupBy('user_id', 'email', 'name', 'surname', 'topic_id', 'topic_title')
             ->having('success_rate', '<=', $this->resultPercent)
             ->orderBy('name')
             ->orderBy('topic_title')
             ->orderBy('success_rate', 'DESC');
+
+        if (!$export) {
+            $this->emails = $finalQuery->get()->toArray();
+        }
 
         return $export ? $finalQuery->get() : $finalQuery->paginate(15);
     }
@@ -133,6 +142,7 @@ class ResultStatsCustomTable extends Component
             ->select(
                 'users.name as name',
                 'users.surname as surname',
+                'users.email as email',
                 'exams.name as exam_name',
                 'result.question_count as total_questions',
                 'result.correct_count as count_correct',
@@ -148,6 +158,10 @@ class ResultStatsCustomTable extends Component
             ->orderBy('exams.name')
             ->orderBy('success_rate', 'DESC');
 
+        if (!$export) {
+            $this->emails = $query->get()->toArray();
+        }
+
         return $export ? $query->get() : $query->paginate(15);
     }
 
@@ -159,6 +173,7 @@ class ResultStatsCustomTable extends Component
             ->select(
                 'users.name as name',
                 'users.surname as surname',
+                'users.email as email',
                 'tests.name as test_name',
                 'result.question_count as total_questions',
                 'result.correct_count as count_correct',
@@ -175,7 +190,23 @@ class ResultStatsCustomTable extends Component
             ->orderBy('tests.name')
             ->orderBy('success_rate', 'DESC');
 
+        if (!$export) {
+            $this->emails = $query->get()->toArray();
+        }
+
         return $export ? $query->get() : $query->paginate(15);
+    }
+
+    public function showSendEmails()
+    {
+        $this->dispatch(
+            'showModal',
+            component: 'stats.send-email-form',
+            data: [
+                'title' => __('Kullanıcılara Mail Gönder'),
+                'emails' => $this->emails,
+            ]
+        );
     }
 
     public function exportTopics()

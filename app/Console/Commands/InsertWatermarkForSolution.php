@@ -41,7 +41,8 @@ class InsertWatermarkForSolution extends Command
         foreach ($questions as $question) {
             $solutionPath = public_path($question->solution);
             if (!file_exists($solutionPath) || !is_readable($solutionPath)) {
-                $this->fail(__('Çözüm resmi okunamadı, ') . $question->solution);
+                $this->error(__('Çözüm resmi okunamadı, ') . $question->solution);
+                continue;
             }
 
             $solutionPathExtension = pathinfo($solutionPath, PATHINFO_EXTENSION);
@@ -64,9 +65,9 @@ class InsertWatermarkForSolution extends Command
                     'solution' => str_replace($solutionPathExtension, 'webp', $question->solution)
                 ]);
 
-                $this->info(__('Filigran başarıyla uygulandı, ') . $question->solution);
+                $this->comment(__('Filigran başarıyla uygulandı, ') . $question->solution);
             } catch (\Exception $exception) {
-                $this->fail($exception->getMessage());
+                $this->error($exception->getMessage());
             }
         }
 

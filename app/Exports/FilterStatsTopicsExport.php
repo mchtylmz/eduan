@@ -31,6 +31,7 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
         return [
             __('İsim'),
             __('Soyisim'),
+            __('E-posta Adresi'),
             __('Konu Adı'),
             __('Toplam Soru'),
             __('Doğru Yanıt'),
@@ -49,6 +50,7 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
         return [
             $row->name,
             $row->surname,
+            $row->email,
             $topic_title,
             intval($row->total_questions ?: 0),
             intval($row->count_correct ?: 0),

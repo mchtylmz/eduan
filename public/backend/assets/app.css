@@ -273,3 +273,6 @@ th.created_at {
 .answers .ribbon {
     min-height: 1.5rem;
 }
+.tox .tox-promotion-link {
+    display:none !important;
+}

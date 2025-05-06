@@ -86,33 +86,12 @@
 
 <x-livewire-alert::scripts />
 @stack('script')
-
 <script>
     $(document).ready(function() {
         let livewireModal = document.getElementById('livewireModal');
         let livewireOffcanvas = document.getElementById('livewireOffcanvas');
 
-        Livewire.on('showModal', function () {
-            let modal = new bootstrap.Modal(livewireModal);
-            modal.show();
-        });
-        Livewire.on('closeModal', function () {
-            let modal = new bootstrap.Modal(livewireModal);
-            modal.hide();
-        });
-        livewireModal.addEventListener('hidden.bs.modal', function () {
-            Livewire.dispatch('closeModal');
-
-            @if(!empty($tinymce))
-            if (tinymce.get('editorcontent')) {
-                tinymce.get('editorcontent').remove();
-            }
-            @endif
-        });
-        livewireModal.addEventListener('shown.bs.modal', function () {
-            $('.selectpicker').selectpicker();
-
-            @if(!empty($tinymce))
+        window.tinymce_shown = function() {
             if (tinymce.get('editorcontent')) {
                 tinymce.get('editorcontent').remove();
             }
@@ -176,10 +155,32 @@
                     input.click();
                 },
             });
-            @endif
+        }
 
+        Livewire.on('showModal', function () {
+            let modal = new bootstrap.Modal(livewireModal);
+            modal.show();
         });
+        Livewire.on('closeModal', function () {
+            let modal = new bootstrap.Modal(livewireModal);
+            modal.hide();
+        });
+        livewireModal.addEventListener('hidden.bs.modal', function () {
+            Livewire.dispatch('closeModal');
 
+            @if(!empty($tinymce))
+            if (tinymce.get('editorcontent')) {
+                tinymce.get('editorcontent').remove();
+            }
+            @endif
+        });
+        livewireModal.addEventListener('shown.bs.modal', function () {
+            $('.selectpicker').selectpicker();
+
+            @if(!empty($tinymce))
+                window.tinymce_shown();
+            @endif
+        });
 
         Livewire.on('showOffcanvas', function () {
             let offcanvas = new bootstrap.Offcanvas(livewireOffcanvas);

@@ -18,7 +18,8 @@ class StatsController extends Controller
 
         return view('backend.stats.index', [
             'title' => __('İstatistik Raporu'),
-            'activeTab' => $activeTab
+            'activeTab' => $activeTab,
+            'tinymce' => true,
         ]);
     }
 }
