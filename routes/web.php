@@ -13,6 +13,7 @@ Route::middleware(['guest', 'set_locale'])
         Route::post('/login', 'store')->name('login');
     });
 */
+Route::get('offline', fn() => view('frontend.offline'))->name('offline');
 
 // frontend login
 Route::middleware(['guest', 'set_locale'])

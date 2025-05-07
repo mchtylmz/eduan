@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('time')->default(0);
             $table->timestamps();
 
-            $table->unique(['tests_result_id', 'section_id', 'question_id']);
+            $table->unique(['tests_result_id', 'section_id', 'question_id'], 'unique_tests_result_details');
         });
     }
 

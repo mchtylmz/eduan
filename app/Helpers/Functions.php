@@ -46,6 +46,25 @@ if (!function_exists('applyWatermark')) {
     }
 }
 
+if (!function_exists('agentDevice')) {
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|object
+     */
+    function agentDevice(): string
+    {
+        $agent = request()->userAgent();
+
+        if (stripos($agent, 'iPhone') !== false || stripos($agent, 'iPad') !== false) {
+            return 'ios';
+        } elseif (stripos($agent, 'Android') !== false) {
+            return 'android';
+        }
+
+        return 'desktop';
+    }
+
+}
+
 if (!function_exists('user')) {
     /**
      * @param null $key

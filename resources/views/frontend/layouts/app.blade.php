@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="device" content="{{ agentDevice() }}">
+    <meta name="agent" content="{{ request()->userAgent() }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="locale" content="{{ app()->getLocale() }}">
     <meta name="language" content="{{ app()->getLocale() }}">
@@ -12,6 +14,7 @@
     <meta name="ip-address" content="{{ request()->ip() }}" />
     <meta name="canonical" content="{{ request()->fullUrl() }}" />
     <meta name="robots" content="index, follow" />
+
 
     <!-- default stack for seo -->
     @if($seoContent = trim(\Illuminate\Support\Facades\View::yieldPushContent('seo')))
@@ -25,6 +28,12 @@
 
     @if($siteFavicon = settings()->siteFavicon)
         <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icons/fav-16.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icons/fav-32.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('icons/fav-57.png') }} }}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('icons/fav-72.png') }}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('icons/fav-114.png') }}'">
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('icons/fav-144.png') }}'">
     @endif
 
     <style>
@@ -52,16 +61,19 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
+    <link rel="manifest" href="{{ asset('pwa-manifest.json') }}">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PF2KLE1860"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+    @if(!empty(env('ANALYTICS_CDOE')))
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PF2KLE1860"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-        gtag('config', '{{ env('ANALYTICS_CDOE') }}');
-    </script>
+            gtag('config', '{{ env('ANALYTICS_CDOE') }}');
+        </script>
+    @endif
 
     @livewireStyles
     @stack('style')

@@ -1,3 +1,9 @@
+<div id="install-prompt" class="box-icon" style="display: none;">
+    <span id="install-button" class="circle">
+        <img src="{{ asset($siteFavicon) }}" alt="Uygulama Yükle">
+    </span>
+</div>
+
 <footer class="footer-area h6_footer-area">
     <div class="footer-top pt-55 pb-2">
         <div class="container">

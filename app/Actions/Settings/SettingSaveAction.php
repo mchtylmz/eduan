@@ -5,7 +5,10 @@ namespace App\Actions\Settings;
 use App\Actions\Files\UploadFileAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Intervention\Image\ImageManager;
+use Mockery\Exception;
 
 class SettingSaveAction
 {
@@ -21,7 +24,6 @@ class SettingSaveAction
         if ($request->hasFile('files')) {
             $this->files($request->file('files'));
         }
-
         if ($request->get('settings')) {
             $this->settings($request->get('settings'));
         }
@@ -29,6 +31,7 @@ class SettingSaveAction
         settings()->set($this->data);
         settings()->save();
 
+        $this->manifest();
         // TODO: log
     }
 
@@ -48,6 +51,52 @@ class SettingSaveAction
                 $this->data[$key] = $file;
             }
         }
+    }
+
+    protected function manifest(): void
+    {
+        $data = array_merge(config('manifest'), [
+            'lang' => app()->getLocale() ?: config('app.locale'),
+            'name' => settings()->appName ?: config('app.name'),
+            'short_name' => settings()->appName ?: config('app.name'),
+            'theme_color' => settings()->primaryColor ?: '#000',
+            'background_color' => settings()->primaryColor ?: '#000',
+            'description' => settings()->appName ?: config('app.name'),
+        ]);
+
+        File::put(
+            public_path('pwa-manifest.json'),
+            json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+
+        $this->generateIcons();
+    }
+
+    protected function generateIcons(): void
+    {
+        try {
+            if (!is_dir(public_path('icons'))) {
+                mkdir(public_path('icons'), 0755, true);
+            }
+
+            if (file_exists($faviconPath = public_path(settings()->siteFavicon))) {
+                $favicon = ImageManager::imagick()->read($faviconPath);
+
+                foreach ([16, 32, 57, 72, 114, 144] as $width) {
+                    $favicon->scale($width, $width)
+                        ->toPng()
+                        ->save(public_path('icons/fav-'.$width.'.png'));
+                }
+
+                $favicon->scale(192, 192)
+                    ->toPng()
+                    ->save(public_path('icons/manifest-icon-192.maskable.png'));
+
+                $favicon->scale(512, 512)
+                    ->toPng()
+                    ->save(public_path('/icons/manifest-icon-512.maskable.png'));
+            }
+        } catch (Exception $exception) {}
     }
 
     protected function settings(array $settings): void
