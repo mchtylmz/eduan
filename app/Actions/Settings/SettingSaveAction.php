@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Intervention\Image\ImageManager;
-use Mockery\Exception;
+use Exception;
 
 class SettingSaveAction
 {
