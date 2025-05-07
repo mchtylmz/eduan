@@ -28,12 +28,9 @@
 
     @if($siteFavicon = settings()->siteFavicon)
         <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icons/fav-16.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icons/fav-32.png') }}">
-        <link rel="apple-touch-icon" href="{{ asset('icons/fav-57.png') }} }}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('icons/fav-72.png') }}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('icons/fav-114.png') }}'">
-        <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('icons/fav-144.png') }}'">
+        @foreach([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width)
+        <link rel="icon" type="image/png" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.png') }}">
+        @endforeach
     @endif
 
     <style>
@@ -79,6 +76,15 @@
     @stack('style')
 </head>
 <body>
+<div class="pwa-app-install p-3 border border-secondary bg-secondary d-flex align-items-center justify-content-between d-none">
+    @if(!empty($siteFavicon))
+        <img class="bg-light border rounded-3 p-1" src="{{ asset($siteFavicon) }}" alt="{{ settingLocale('siteTitle') }}" style="height: 57px"/>
+    @endif
+    <p class="mb-0 px-3 py-1 text-white fw-medium fs-5">{{ __('Tek tıkla giriş için uygulamayı yükle!') }}</p>
+    <a class="btn btn-dark header-btn px-3 text-center" href="/pwa">
+        <i class="fa fa-download"></i>
+    </a>
+</div>
 <!-- sidebar-information-area-start -->
 @includeIf('frontend.layouts.section.sidebar')
 <!-- sidebar-information-area-end -->

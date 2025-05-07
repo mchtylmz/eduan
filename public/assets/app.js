@@ -25,4 +25,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let deferredPrompt;function showInstallPromotion(){document.getElementById("install-prompt").style.display="block"}window.addEventListener("load",(()=>{if(window.matchMedia("(display-mode: standalone)").matches){document.getElementById("install-prompt").style.display="none"}})),window.addEventListener("beforeinstallprompt",(e=>{e.preventDefault(),deferredPrompt=e,showInstallPromotion();document.getElementById("install-button").addEventListener("click",(()=>{deferredPrompt.prompt(),deferredPrompt.userChoice.then((e=>{deferredPrompt=null}))}))})),window.addEventListener("appinstalled",(()=>{document.getElementById("install-prompt").style.display="none"}));
+
+    const isInStandaloneMode = () =>
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+
+    if (isInStandaloneMode()) {
+        $('.pwa-app-install').addClass('d-none');
+    } else {
+        $('.pwa-app-install').removeClass('d-none').addClass('d-flex');
+    }
+
 });

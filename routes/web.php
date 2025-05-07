@@ -14,6 +14,7 @@ Route::middleware(['guest', 'set_locale'])
     });
 */
 Route::get('offline', fn() => view('frontend.offline'))->name('offline');
+Route::get('pwa', fn() => view('frontend.pwa'))->name('pwa');
 
 // frontend login
 Route::middleware(['guest', 'set_locale'])

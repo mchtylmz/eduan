@@ -55,6 +55,15 @@ class SettingSaveAction
 
     protected function manifest(): void
     {
+        $icons = [];
+        foreach ([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width) {
+            $icons[] = [
+                "src" => 'icons/fav-'.$width.'.png',
+                "sizes" => $width. 'x'. $width,
+                "type" => "image/png"
+            ];
+        }
+
         $data = array_merge(config('manifest'), [
             'lang' => app()->getLocale() ?: config('app.locale'),
             'name' => settings()->appName ?: config('app.name'),
@@ -62,6 +71,7 @@ class SettingSaveAction
             'theme_color' => settings()->primaryColor ?: '#000',
             'background_color' => settings()->primaryColor ?: '#000',
             'description' => settings()->appName ?: config('app.name'),
+            'icons' => array_merge(config('manifest.icons'), $icons),
         ]);
 
         File::put(
@@ -82,8 +92,8 @@ class SettingSaveAction
             if (file_exists($faviconPath = public_path(settings()->siteFavicon))) {
                 $favicon = ImageManager::imagick()->read($faviconPath);
 
-                foreach ([16, 32, 57, 72, 114, 144] as $width) {
-                    $favicon->scale($width, $width)
+                foreach ([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width) {
+                    $favicon->resize($width, $width)
                         ->toPng()
                         ->save(public_path('icons/fav-'.$width.'.png'));
                 }
