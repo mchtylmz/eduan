@@ -3,7 +3,7 @@
     <section class="contact-area pt-30 pb-30">
         <div class="container">
             @if(agentDevice() == 'desktop')
-                <h4>💻 {{ __(" Chrome Tarayıcısında “Uygulama Olarak Yükle” Adımları") }}</h4>
+                <h4>💻 {{ __("Chrome Tarayıcısında “Uygulama Olarak Yükle” Adımları") }}</h4>
                 <div class="row mb-3">
                     <div class="col-lg-6 col-12 p-1">
                         <div class="p-2 border text-center">

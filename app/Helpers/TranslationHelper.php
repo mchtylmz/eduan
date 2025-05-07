@@ -43,8 +43,8 @@ class TranslationHelper
             ];
         })->values()->toArray();
 
-        Translation::insertOrIgnore($translations);
-        //Translation::upsert($translations, uniqueBy: ['locale', 'key'], update: ['key']);
+        //Translation::insertOrIgnore($translations);
+        Translation::upsert($translations, uniqueBy: ['locale', 'key'], update: ['key']);
     }
 
     public static function build(string $locale, array $translations = []): void

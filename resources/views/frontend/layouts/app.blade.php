@@ -76,15 +76,17 @@
     @stack('style')
 </head>
 <body>
-<div class="pwa-app-install p-3 border border-secondary bg-secondary d-flex align-items-center justify-content-between d-none">
-    @if(!empty($siteFavicon))
-        <img class="bg-light border rounded-3 p-1" src="{{ asset($siteFavicon) }}" alt="{{ settingLocale('siteTitle') }}" style="height: 57px"/>
-    @endif
-    <p class="mb-0 px-3 py-1 text-white fw-medium fs-5">{{ __('Tek tıkla giriş için uygulamayı yükle!') }}</p>
-    <a class="btn btn-dark header-btn px-3 text-center" href="/pwa">
-        <i class="fa fa-download"></i>
-    </a>
-</div>
+@if(request()->routeIs('frontend.home'))
+    <div class="pwa-app-install p-3 border border-secondary bg-secondary d-flex align-items-center justify-content-between d-none">
+        @if(!empty($siteFavicon))
+            <img class="bg-light border rounded-3 p-1" src="{{ asset($siteFavicon) }}" alt="{{ settingLocale('siteTitle') }}" style="height: 57px"/>
+        @endif
+        <p class="mb-0 px-3 py-1 text-white fw-medium fs-5">{{ __('Tek tıkla giriş için uygulamayı yükle!') }}</p>
+        <a class="btn btn-dark header-btn px-3 text-center" href="/pwa">
+            <i class="fa fa-download"></i>
+        </a>
+    </div>
+@endif
 <!-- sidebar-information-area-start -->
 @includeIf('frontend.layouts.section.sidebar')
 <!-- sidebar-information-area-end -->
