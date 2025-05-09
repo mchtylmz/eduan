@@ -12,6 +12,8 @@ class CreateOrUpdateTestResult
 
     public function handle(array $attributes, array $values = [])
     {
+        resetCache();
+
         return TestsResult::updateOrCreate($attributes, $values);
     }
 }

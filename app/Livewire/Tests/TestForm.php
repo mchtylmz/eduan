@@ -26,6 +26,9 @@ class TestForm extends Component
     public string $name;
     public string $content = '';
     public int $duration = 300;
+    public int $passingScore = 60;
+    public int $correctPoint = 3;
+    public int $incorrectPoint = -1;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
     public string $permission = 'tests:add';
@@ -37,6 +40,9 @@ class TestForm extends Component
         $this->code = sprintf('sinav-%s', rand(11, 999999));
         $this->locale = settings()->testlanguageCode ?? app()->getLocale();
         $this->duration = settings()->testTime ?? 300;
+        $this->correctPoint = intval(settings()->examCorrectPoint ?: 3);
+        $this->incorrectPoint = intval(settings()->examIncorrectPoint ?: -1);
+        $this->passingScore = intval(settings()->examPassingScore ?: 60);
 
         if ($this->test && $this->test->exists) {
             $this->initializeExistingTest();
@@ -51,6 +57,9 @@ class TestForm extends Component
         $this->content = $this->test->content;
         $this->duration = $this->test->duration;
         $this->status = $this->test->status;
+        $this->correctPoint = intval($this->test->correct_point);
+        $this->incorrectPoint = intval($this->test->incorrect_point);
+        $this->passingScore = intval($this->test->passing_score);
 
         $this->permission = 'exams:update';
     }
@@ -65,6 +74,9 @@ class TestForm extends Component
             ],
             'name' => 'required',
             'duration' => 'required|integer|min:30',
+            'passingScore' => 'required|integer|min:1',
+            'correctPoint' => 'required|integer',
+            'incorrectPoint' => 'required|integer',
             'status' => ['required', new Enum(StatusEnum::class)],
         ];
     }
@@ -76,6 +88,9 @@ class TestForm extends Component
             'code' => __('Sınav kodu'),
             'name' => __('Sınav adı'),
             'duration' => __('Süre (dk)'),
+            'passingScore' => __('Geçme Puanı'),
+            'correctPoint' => __('Doğru Yanıt Puanı'),
+            'incorrectPoint' => __('Yanlış Yanıt Puanı'),
             'status' => __('Durum'),
         ];
     }
@@ -92,6 +107,9 @@ class TestForm extends Component
                 'content' => $this->content,
                 'duration' => $this->duration,
                 'status' => $this->status,
+                'passing_score' => $this->passingScore,
+                'correct_point' => $this->correctPoint,
+                'incorrect_point' => $this->incorrectPoint,
             ],
             test: !empty($this->test) && $this->test->exists ? $this->test : null
         );

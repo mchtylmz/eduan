@@ -75,8 +75,12 @@ class ResultsDetailTable extends DataTableComponent
             ComponentColumn::make(__('Yanıt'), "correct")
                 ->component('table.status')
                 ->attributes(fn($value, $row, Column $column) => [
-                    'type' => YesNoEnum::YES->is($value) ? 'success' : 'danger',
-                    'label' => YesNoEnum::YES->is($value) ? __('Doğru') : __('Yanlış')
+                    'type' => YesNoEnum::tryFrom($value->value)->class() ?? 'warning',
+                    'label' => match ($value) {
+                        YesNoEnum::YES => __('Doğru'),
+                        YesNoEnum::NO => __('Yanlış'),
+                        default => __('Boş'),
+                    }
                 ])
                 ->searchable()
                 ->sortable(),

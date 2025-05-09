@@ -4,6 +4,7 @@ namespace App\Livewire\Frontend\Exams;
 
 use App\Actions\Tests\CreateOrUpdateTestResult;
 use App\Actions\Tests\CreateOrUpdateTestResultDetail;
+use App\Enums\TestSectionTypeEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Test;
 use App\Models\TestsResult;
@@ -34,6 +35,9 @@ class SolveForm extends Component
         section_index => [
             parent_id => [
                 question_id => answer_id
+            ],
+            parent_id => [
+                question_id => answer_id
             ]
         ]
     ]
@@ -61,7 +65,21 @@ class SolveForm extends Component
         $this->totalQuestionsCount = $test->questions()->count();
         $this->setActive(0, $this->sections?->first()->parents->first()?->id);
 
+        $this->initializeResultsArray();
         $this->initializeExpiration();
+    }
+
+    public function initializeResultsArray(): void
+    {
+        collect($this->sections)->each(function ($section, $sectionIndex) {
+            $parents = $section->parents()->where('type', TestSectionTypeEnum::QUESTION)->get();
+
+            collect($parents)->each(function ($parent) use ($sectionIndex) {
+                $this->results[$sectionIndex][$parent->id] = [
+                    $parent->question->question_id ?? 0 => 0
+                ];
+            });
+        });
     }
 
     public function initializeExpiration(): void
@@ -132,7 +150,10 @@ class SolveForm extends Component
     {
         $count = 0;
         foreach ($this->results as $section) {
-            $count += count($section);
+            foreach ($section as $question) {
+                if (array_values($question)[0])
+                    $count++;
+            }
         }
 
         return $count;
@@ -147,6 +168,26 @@ class SolveForm extends Component
     public function countHistoryValue(int $value = 0)
     {
         return array_count_values($this->sectionHistory)[$value] ?? 0;
+    }
+
+    public function isSelectedAnswer(int $questionId, int $answerId = 0): bool
+    {
+        $activeSection = $this->active['section'];
+        $activeParent = $this->active['parent'];
+
+        if (empty($this->results[$activeSection][$activeParent][$questionId])) {
+            return false;
+        }
+
+        return $this->results[$activeSection][$activeParent][$questionId] == $answerId;
+    }
+
+    public function uncheckAnswer(int $questionId): void
+    {
+        $activeSection = $this->active['section'];
+        $activeParent = $this->active['parent'];
+
+        $this->results[$activeSection][$activeParent][$questionId] = 0;
     }
 
     public function prevSection(): void
@@ -191,7 +232,8 @@ class SolveForm extends Component
 
     public function saveIsDisabled(): bool
     {
-        return $this->resultQuestionsCount() != $this->totalQuestionsCount;
+        return false;
+        // return $this->resultQuestionsCount() != $this->totalQuestionsCount;
     }
 
     public function saveAndFinish(): bool
@@ -225,6 +267,7 @@ class SolveForm extends Component
             ],
             values: [
                 'question_count' => $this->totalQuestionsCount,
+                'passing_score' => $this->test->passing_score ?? 60,
                 'expires_at' => $this->expirationTime,
             ]
         );
@@ -243,10 +286,12 @@ class SolveForm extends Component
             return false;
         }
 
+        /*
         if ($this->resultQuestionsCount() != $this->totalQuestionsCount || empty($this->results)) {
             $this->message(__('Yanıtlanmayan sorular bulunuyor!'))->error();
             return false;
         }
+        */
 
         if (empty($this->testResult)) {
             $this->startedExams();

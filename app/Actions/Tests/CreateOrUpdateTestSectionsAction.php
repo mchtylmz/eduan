@@ -47,6 +47,8 @@ class CreateOrUpdateTestSectionsAction
 
             DB::commit();
 
+            resetCache();
+
             return true;
         } catch (\Exception $e) {
             DB::rollBack();

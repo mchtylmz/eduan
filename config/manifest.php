@@ -46,15 +46,5 @@ return [
         "client_mode" => "navigate-existing"
     ],
     "edge_side_panel" => [],
-    "shortcuts" => [],
-    "protocol_handlers" => [
-        [
-            "protocol" => "web+pwa",
-            "url" => url('/') . "?launchedfrom=homescreen&pwaprotocolredirect=%s"
-        ],
-        [
-            "protocol" => "web+hypotenuse",
-            "url" => url('/') . "?launchedfrom=homescreen&pwaprotocolredirect=%s"
-        ]
-    ]
+    "shortcuts" => []
 ];

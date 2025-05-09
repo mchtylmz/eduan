@@ -50,6 +50,6 @@ class TestsSection extends Model
 
     public function question(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(TestsQuestion::class);
+        return $this->hasOne(TestsQuestion::class, 'section_id', 'id');
     }
 }

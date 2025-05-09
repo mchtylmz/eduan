@@ -19,6 +19,10 @@
         </div>
 
         <div class="col-lg-3 mb-3">
+            <label class="form-label" for="examPassingScore">{{ __('Sınav Geçme Puanı') }}</label>
+            <input type="number" min="1" max="99" class="form-control" id="examPassingScore" name="settings[examPassingScore]" placeholder="{{ __('Puan') }}.." value="{{ settings()->examPassingScore ?? 60 }}" required>
+        </div>
+        <div class="col-lg-3 mb-3">
             <label class="form-label" for="examCorrectPoint">{{ __('Doğru Yanıt Puanı') }}</label>
             <input type="number" min="1" max="99" class="form-control" id="examCorrectPoint" name="settings[examCorrectPoint]" placeholder="{{ __('Puan') }}.." value="{{ settings()->examCorrectPoint ?? 3 }}" required>
         </div>

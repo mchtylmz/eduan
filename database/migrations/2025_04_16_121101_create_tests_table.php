@@ -19,7 +19,10 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->bigInteger('hits')->default(0);
             $table->string('status')->default(\App\Enums\StatusEnum::ACTIVE);
-            $table->integer('duration')->default(600)->index();
+            $table->integer('duration')->default(600);
+            $table->integer('passing_score')->default(60);
+            $table->integer('correct_point')->default(3);
+            $table->integer('incorrect_point')->default(-1);
             $table->unsignedBigInteger('created_by')->index();
             $table->timestamps();
             $table->softDeletes();

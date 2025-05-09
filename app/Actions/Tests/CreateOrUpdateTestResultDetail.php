@@ -53,7 +53,7 @@ class CreateOrUpdateTestResultDetail
                     'section_id' => $parent_id,
                     'question_id' => $questionId,
                     'answer_id' => $answerId,
-                    'correct' => YesNoEnum::NO,
+                    'correct' => $answerId == 0 ? YesNoEnum::EMPTY: YesNoEnum::NO,
                     'point' => 0,
                     'lesson_id' => 0,
                     'topic_id' => 0,
@@ -97,11 +97,12 @@ class CreateOrUpdateTestResultDetail
         DB::table('tests_result_details')
             ->where('tests_result_id', $testResult->id)
             ->where('point', 0)
+            ->where('correct', '!=', YesNoEnum::EMPTY)
             ->update([
                 'point' => DB::raw(sprintf(
                     'IF(correct = 1, %d, %d)',
-                    settings()->examCorrectPoint ?: 3,
-                    settings()->examIncorrectPoint ?: -1
+                    $testResult->test->correct_point ?: 3,
+                    $testResult->test->incorrect_point ?: -1
                 ))
             ]);
 
@@ -113,8 +114,8 @@ class CreateOrUpdateTestResultDetail
             ]);
 
         $testResult->update([
-            'correct_count' => DB::raw('(SELECT COUNT(correct) FROM tests_result_details WHERE tests_result_id = tests_results.id AND correct = 1)'),
-            'incorrect_count' => DB::raw('(SELECT COUNT(correct) FROM tests_result_details WHERE tests_result_id = tests_results.id AND correct = 0)'),
+            'correct_count' => DB::raw('(SELECT COUNT(correct) FROM tests_result_details WHERE tests_result_id = tests_results.id AND correct = 1 AND answer_id != 0)'),
+            'incorrect_count' => DB::raw('(SELECT COUNT(correct) FROM tests_result_details WHERE tests_result_id = tests_results.id AND correct = 0 AND answer_id != 0)'),
             'point' => DB::raw(
                 '(SELECT SUM(point) FROM tests_result_details WHERE tests_result_id = tests_results.id)'
             ),

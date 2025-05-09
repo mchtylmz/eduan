@@ -34,7 +34,7 @@
     </div>
 
     <div class="border exams-sections row">
-        <div class="col-lg-3 bg-light py-1 exams-sections-left">
+        <div class="col-lg-2 bg-light py-1 exams-sections-left">
             <div class="accordion" id="accordionExamSections" style="position: sticky; top: 60px; z-index: 122">
                 @foreach($sections as $key => $section)
                     <div class="accordion-item">
@@ -74,9 +74,7 @@
                                                     @php $questionIndex++; @endphp
                                                 @endif
                                             </div>
-                                            @if($this->countHistoryValue($parent->id) >= 5)
-                                                <i class="fa fa-check-double mx-1 opacity-25"></i>
-                                            @elseif($this->countHistoryValue($parent->id) >= 2)
+                                            @if($this->countHistoryValue($parent->id) >= 4)
                                                 <i class="fa fa-check mx-1 opacity-25"></i>
                                             @endif
                                         </button>
@@ -88,7 +86,7 @@
                 @endforeach
             </div>
         </div>
-        <div class="col-lg-9 p-3 pt-2 exams-sections-right">
+        <div class="col-lg-10 p-3 pt-2 exams-sections-right">
             <div class="progress mb-2 mt-0" id="exams-timer-progress" style="height: 6px" wire:ignore>
                 <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 100%"
                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -106,7 +104,7 @@
                     @if(\App\Enums\TestSectionTypeEnum::PDF->is($content->type))
                         <div class="text-dark exams-sections-file w-100">
                             <iframe style="min-height: 540px;"
-                                    src="{{ asset($content->getMeta('meta_file', '')) }}#toolbar=0"
+                                    src="{{ asset($content->getMeta('meta_file', '')) }}#toolbar=1"
                                     class="w-100 border-0" allowfullscreen allowtransparency></iframe>
                         </div>
                     @endif
@@ -114,9 +112,9 @@
                     @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($content->type))
                         <div class="text-dark exams-sections-question row">
                             @if($metaContent = $this->getParentContent($content->getMeta('questionParentId', 0)))
-                                <div class="col-lg-5">
+                                <div class="col-lg-6">
                                     @if(\App\Enums\TestSectionTypeEnum::CONTENT->is($metaContent->type))
-                                        <div class="text-dark exams-sections-content" style="max-height: 540px; overflow-y: auto; border: solid 1px #666;">
+                                        <div class="text-dark exams-sections-content p-1" style="max-height: 600px; overflow-y: auto; border: solid 1px #666; font-size: 20px;">
                                             {!! html_entity_decode($metaContent->getMeta('content', '')) !!}
                                         </div>
                                     @endif
@@ -128,13 +126,13 @@
                                                 {{ __('Yeni Pencerede Görüntüle') }}
                                             </a>
                                             <iframe style="min-height: 540px;"
-                                                    src="{{ $file }}#toolbar=0"
+                                                    src="{{ $file }}#toolbar=1"
                                                     class="w-100 border-0" allowfullscreen allowtransparency></iframe>
                                         </div>
                                     @endif
                                 </div>
                             @endif
-                            <div @class(['col-lg-12' => !$metaContent, 'col-lg-7' => $metaContent])>
+                            <div @class(['col-lg-12' => !$metaContent, 'col-lg-6' => $metaContent])>
                                 @if($question = \App\Models\Question::find($content->getMeta('questionId', 0)))
                                     <div class="title text-start">
                                         <h5 class="mb-3">{{ $question->title }}</h5>
@@ -159,6 +157,9 @@
                                                            wire:loading.attr="disabled"
                                                            wire:key="answer-{{ $active['section'] }}-{{ $active['parent'] }}-{{ $question->id }}"
                                                            wire:model.live="results.{{ $active['section'] }}.{{ $active['parent'] }}.{{ $question->id }}"
+                                                           @if($this->isSelectedAnswer($question->id, $answer->id ))
+                                                               wire:click="uncheckAnswer({{ $question->id }})"
+                                                           @endif
                                                            autocomplete="off"
                                                            value="{{ $answer->id }}">
                                                     <label
@@ -170,6 +171,7 @@
                                                     </label>
                                                 </div>
                                             @endforeach
+
                                         </div>
                                     </div>
                                 @else
@@ -188,10 +190,10 @@
     </div>
 
     <div class="bg-light border-bottom border-top-0 exams-footer border-top py-0 row">
-        <div class="col-lg-3 py-3 d-none d-sm-block">
+        <div class="col-lg-2 py-3 d-none d-sm-block">
 
         </div>
-        <div class="col-lg-6 text-center text-sm-start ps-0 my-2 my-sm-0">
+        <div class="col-lg-7 text-center text-sm-start ps-0 my-2 my-sm-0">
             <div class="btn-group" role="group">
                 <button type="button"
                         class="btn btn-warning px-3 py-3 rounded-0 mx-1 d-flex align-items-center gap-1"
@@ -245,21 +247,32 @@
                 </div>
                 <div class="modal-body bg-white px-3 py-5 text-center">
                     <div class="py-3">
-                        <i class="fa fa-check-double text-white fa-2x fw-bold mb-3 bg-success rounded-circle p-3"></i>
-                        <h5 class="my-3 text-success">{{ __('Sınav tamamlandı, yanıtlanan cevaplar kayıt edildi.') }}</h5>
-
                         @if(!empty($testResult))
+                            @if($testResult->point >= $testResult->passing_score)
+                                <i class="fa fa-check-double text-white fa-2x fw-bold mb-3 bg-success rounded-circle p-3"></i>
+                                <h5 class="my-3 text-success">
+                                    {{ __('Tebrikler, sınavı geçtin') }} 👏🏻
+                                </h5>
+                            @else
+                                <i class="fa fa-circle-exclamation text-white fa-2x fw-bold mb-3 bg-danger rounded-circle p-3"></i>
+                                <h5 class="my-3 text-danger">
+                                    {{ __('Sınavı geçemedin, çalışmaya devam etmelisin!') }}
+                                </h5>
+                            @endif
+
                             <div class="text-center pt-3 mt-3 mb-3">
                                 <span class="px-4 py-3 fs-5 bg-light fw-medium text-dark rounded-1 border border-secondary border-2">
                                     {{ __('Sınav Puanı') }}:
-                                    <strong class="bg-dark rounded-2 text-white py-1 px-3 fs-4">{{ $testResult->point }}</strong>
+                                    <strong class="bg-dark rounded-2 text-white py-1 px-3">
+                                        {{ $testResult->point }}
+                                    </strong>
                                 </span>
                             </div>
                         @endif
 
                         <a type="button" wire:click="solvedExams"
-                           class="btn btn-outline-success px-5 mt-3 fw-bold">
-                            {{ __('Sonuçları Görüntüle') }}
+                           class="btn btn-success px-5 mt-3 fw-bold">
+                            <i class="fa fa-poll mx-1"></i> {{ __('Sonuçları Görüntüle') }}
                         </a>
                     </div>
                 </div>

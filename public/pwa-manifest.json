@@ -114,15 +114,5 @@
         "client_mode": "navigate-existing"
     },
     "edge_side_panel": [],
-    "shortcuts": [],
-    "protocol_handlers": [
-        {
-            "protocol": "web+pwa",
-            "url": "http://localhost?launchedfrom=homescreen&pwaprotocolredirect=%s"
-        },
-        {
-            "protocol": "web+hypotenuse",
-            "url": "http://localhost?launchedfrom=homescreen&pwaprotocolredirect=%s"
-        }
-    ]
+    "shortcuts": []
 }

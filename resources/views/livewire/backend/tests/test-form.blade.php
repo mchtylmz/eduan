@@ -66,6 +66,27 @@
                     <x-badge.error field="status"/>
                 </div>
 
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label" for="passingScore">{{ __('Geçme puanı') }}</label>
+                    <input type="number" min="1" class="form-control" id="code" wire:model="passingScore"
+                           placeholder="{{ __('Puanı') }}.." />
+                    <x-badge.error field="passingScore"/>
+                </div>
+
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label" for="correctPoint">{{ __('Doğru Yanıt Puanı') }}</label>
+                    <input type="number" min="-99" max="99" class="form-control" id="correctPoint" wire:model="correctPoint"
+                           placeholder="{{ __('Puanı') }}.."/>
+                    <x-badge.error field="correctPoint"/>
+                </div>
+
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label" for="incorrectPoint">{{ __('Yanlış Yanıt Puanı') }}</label>
+                    <input type="number" min="-99" max="99" class="form-control" id="incorrectPoint" wire:model="incorrectPoint"
+                           placeholder="{{ __('Puanı') }}.."/>
+                    <x-badge.error field="incorrectPoint"/>
+                </div>
+
             </div>
 
             @can($permission)

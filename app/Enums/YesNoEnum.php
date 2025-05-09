@@ -13,12 +13,14 @@ enum YesNoEnum: int
 
     case YES = 1;
     case NO = 0;
+    case EMPTY = -1;
 
     public static function options(): array
     {
         return [
             self::YES->value => __('Evet'),
             self::NO->value => __('Hayır'),
+            self::EMPTY->value => __('Boş'),
         ];
     }
 
@@ -26,7 +28,8 @@ enum YesNoEnum: int
     {
         return match ($this->value) {
             self::YES->value => 'success',
-            self::NO->value => 'danger'
+            self::NO->value => 'danger',
+            self::EMPTY->value => 'warning'
         };
     }
 
@@ -34,7 +37,8 @@ enum YesNoEnum: int
     {
         return match ($this->value) {
             self::YES->value => '',
-            self::NO->value => 'd-none'
+            self::NO->value => 'd-none',
+            self::EMPTY->value => 'd-none'
         };
     }
 

@@ -10,7 +10,7 @@
                     <li>
                     <span>
                         <i class="fa-thin fa-list-dots"></i>
-                        {{ $loop->iteration }}. {{ __('Bölüm') }}
+                        {{ __('Bölüm') }} {{ $loop->iteration }}
                     </span>
                         <span class="text-nowrap">
                         {{ $section->questions_count ?: 0 }} {{ __('Soru') }}

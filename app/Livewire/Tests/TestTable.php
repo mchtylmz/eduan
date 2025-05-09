@@ -50,7 +50,9 @@ class TestTable extends DataTableComponent
                 ->searchable()
                 ->sortable(),
             Column::make(__('Süre (saat)'), "duration")
-                ->format(fn($value) => formatSecondToTime(secondToTime($value)))
+                ->format(fn($value) => formatSecondToTime(secondToTime($value), hideSeconds: true))
+                ->sortable(),
+            Column::make(__('Geçme'), "passing_score")
                 ->sortable(),
             CountColumn::make(__('bölüm Sayısı'))
                 ->setDataSource('sections_with_no_parent')

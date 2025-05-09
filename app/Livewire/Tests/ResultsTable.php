@@ -40,7 +40,7 @@ class ResultsTable extends DataTableComponent
     public function builder(): Builder
     {
         if ($this->incorrectCount) {
-            return TestsResult::with(['user', 'test'])->whereRaw('question_count = correct_count');
+            return TestsResult::with(['user', 'test'])->whereColumn('question_count','correct_count');
         }
 
         return TestsResult::with(['user', 'test'])
@@ -74,6 +74,7 @@ class ResultsTable extends DataTableComponent
     {
         return [
             Column::make("ID", "id")->hideIf(true),
+            Column::make("Geçme", "passing_score")->hideIf(true),
             Column::make(__('Test Adı'), "Test.name")
                 ->hideIf($this->test->exists)
                 ->searchable()
@@ -88,8 +89,18 @@ class ResultsTable extends DataTableComponent
                 ->collapseOnMobile()
                 ->searchable()
                 ->sortable(),
-            Column::make(__('Puan'), "point")
+            ComponentColumn::make(__('Puan'), "point")
                 ->collapseOnMobile()
+                ->component('table.status')
+                ->attributes(fn($value, $row, Column $column) => [
+                    'type' => $value >= $row->passing_score ? 'success' : 'warning',
+                    'label' => sprintf(
+                        '%d (%s)',
+                        $value,
+                        $value >= $row->passing_score ? __('Geçti') : __('Kaldı')
+                    )
+                ])
+                ->searchable()
                 ->sortable(),
             Column::make(__('Soru'), "question_count")
                 ->collapseOnMobile()

@@ -32,19 +32,36 @@
                                  id="pills-{{ $loop->index }}" role="tabpanel" aria-labelledby="pills-home-tab"
                                  tabindex="0">
                                 <div class="accordion" id="questions-{{ $result->id }}">
-                                    <div class="mb-1 text-end d-grid">
-                                        <small class="px-3 py-0 text-end text-dark mb-0">
-                                            {{ __('Sınava Katılma Zamanı') }}:
-                                            {{ dateFormat($result->created_at, 'd/m/Y H:i, l') }}
-                                        </small>
-                                        <small class="px-3 py-0 text-end text-dark mb-0">
-                                            {{ __('Sınava Tamamlama Zamanı') }}:
-                                            {{ dateFormat($result->completed_at, 'd/m/Y H:i, l') }}
-                                        </small>
-                                        <small class="px-3 py-0 text-end text-dark mb-0">
-                                            {{ __('Sınav Süresi') }}:
-                                            {{ formatSecondToTime(secondToTime(strtotime($result->completed_at) - strtotime($result->created_at))) }}
-                                        </small>
+                                    <div class="row mb-3">
+                                        <div class="col-lg-6 d-flex align-items-center flex-wrap gap-2">
+                                            @if($result->point >= $result->passing_score)
+                                                <i class="fa fa-check-double text-success fw-bold fa-2x"></i>
+                                                <p class="my-2 my-sm-0 text-success fw-bold">
+                                                    {{ __('Tebrikler, sınavı geçtin') }} 👏🏻
+                                                </p>
+                                            @else
+                                                <i class="fa fa-circle-exclamation text-danger fw-bold fa-2x"></i>
+                                                <p class="my-2 my-sm-0 text-danger fw-bold">
+                                                    {{ __('Sınavı geçemedin, çalışmaya devam etmelisin!') }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-1 text-end d-grid">
+                                                <small class="px-3 py-0 text-end text-dark mb-0">
+                                                    {{ __('Sınava Katılma Zamanı') }}:
+                                                    {{ dateFormat($result->created_at, 'd/m/Y H:i, l') }}
+                                                </small>
+                                                <small class="px-3 py-0 text-end text-dark mb-0">
+                                                    {{ __('Sınava Tamamlama Zamanı') }}:
+                                                    {{ dateFormat($result->completed_at, 'd/m/Y H:i, l') }}
+                                                </small>
+                                                <small class="px-3 py-0 text-end text-dark mb-0">
+                                                    {{ __('Sınav Süresi') }}:
+                                                    {{ formatSecondToTime(secondToTime(strtotime($result->completed_at) - strtotime($result->created_at))) }}
+                                                </small>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row mb-3">
@@ -89,15 +106,18 @@
                                                         type="button" data-bs-toggle="collapse"
                                                         data-bs-target="#collapse{{ $detail->id }}"
                                                         aria-expanded="false" aria-controls="collapse{{ $detail->id }}">
-                                                    <small class="text-white py-1 px-2 me-2 bg-secondary">
-                                                        {{ $detail->point }} {{ __('Puan') }}
-                                                    </small>
+                                                    @if($detail->point != 0)
+                                                        <small class="text-white py-1 px-2 me-2 bg-secondary">
+                                                            {{ $detail->point }} {{ __('Puan') }}
+                                                        </small>
+                                                    @endif
                                                     <small @class([
                                                         'text-white py-1 px-2 me-2',
                                                         'bg-danger' => \App\Enums\YesNoEnum::NO->is($detail->correct),
                                                         'bg-success' => \App\Enums\YesNoEnum::YES->is($detail->correct),
+                                                        'bg-warning' => \App\Enums\YesNoEnum::EMPTY->is($detail->correct),
                                                     ])>
-                                                        {{ \App\Enums\YesNoEnum::YES->is($detail->correct) ? __('Doğru') : __('Yanlış') }}
+                                                        {{ \App\Enums\YesNoEnum::tryFrom($detail->correct->value)->name() ?? __('Boş') }}
                                                     </small>
                                                     <span>{{ $loop->iteration }}. {{ __('Soru') }}</span>
                                                 </button>
@@ -119,7 +139,7 @@
                                                         <div class="answer bg-body-light py-2 px-3 mt-3">
                                                             <h5 class="mb-1 text-dark">
                                                                 {{ __('Yanıtınız') }} :
-                                                                {{ $detail->answer?->title }}
+                                                                {{ $detail->answer?->title ?? __('Boş')}}
                                                             </h5>
                                                         </div>
                                                         @if($solution = $question->solution)
