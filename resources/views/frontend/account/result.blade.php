@@ -117,7 +117,13 @@
                                                         'bg-success' => \App\Enums\YesNoEnum::YES->is($detail->correct),
                                                         'bg-warning' => \App\Enums\YesNoEnum::EMPTY->is($detail->correct),
                                                     ])>
-                                                        {{ \App\Enums\YesNoEnum::tryFrom($detail->correct->value)->name() ?? __('Boş') }}
+                                                        @if(\App\Enums\YesNoEnum::YES->is($detail->correct))
+                                                            {{ __('Doğru') }}
+                                                        @elseif(\App\Enums\YesNoEnum::NO->is($detail->correct))
+                                                            {{ __('Yanlış') }}
+                                                        @else
+                                                            {{ __('Boş') }}
+                                                        @endif
                                                     </small>
                                                     <span>{{ $loop->iteration }}. {{ __('Soru') }}</span>
                                                 </button>
