@@ -68,10 +68,13 @@
                                                 'active' => $parent->id == $active['parent']
                                             ])>
                                             <div>
-                                                <span>{{ $parent->name }}</span>
+
                                                 @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($parent->type))
+                                                    <span>{{ __('Soru') }}</span>
                                                     <span>{{ $questionIndex }}</span>
                                                     @php $questionIndex++; @endphp
+                                                @else
+                                                    <span>{{ $parent->name }}</span>
                                                 @endif
                                             </div>
                                             @if($this->countHistoryValue($parent->id) >= 4)
@@ -286,7 +289,9 @@
     <script>
         let timerText = $('#exams-timer-text'),
             timer = timerText.data('timer'),
-            timerProgress = $('#exams-timer-progress').find('div.progress-bar');
+            timerProgress = $('#exams-timer-progress').find('div.progress-bar'),
+            dateOptions = {timeZone: '{{ settings()->timezone ?? config('app.timezone') }}'},
+            dateNow = (new Date()).toLocaleString('en-US', dateOptions);
 
         Livewire.on('showFinishedModal', function () {
             let finishedModal = new bootstrap.Modal(document.getElementById('finishedModal'), {
@@ -300,9 +305,9 @@
 
         if (timerText.length) {
             let countDownDate = new Date(timer).getTime(),
-                startDistance = countDownDate - (new Date().getTime());
+                startDistance = countDownDate - (new Date(dateNow).getTime());
             let x = setInterval(function () {
-                let now = new Date().getTime();
+                let now = new Date((new Date()).toLocaleString('en-US', dateOptions)).getTime();
                 let distance = countDownDate - now;
                 let percent = (distance / startDistance) * 100;
 

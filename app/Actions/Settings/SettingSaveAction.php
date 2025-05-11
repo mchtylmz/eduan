@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\File;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Intervention\Image\ImageManager;
 use Exception;
+use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class SettingSaveAction
 {
@@ -31,7 +33,10 @@ class SettingSaveAction
         settings()->set($this->data);
         settings()->save();
 
-        $this->manifest();
+        if ($request->hasFile('files')) {
+            $this->manifest();
+        }
+
         // TODO: log
     }
 
@@ -56,11 +61,12 @@ class SettingSaveAction
     protected function manifest(): void
     {
         $icons = [];
-        foreach ([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width) {
+        foreach ([192, 256, 384, 512, 1024, 2048] as $width) {
             $icons[] = [
-                "src" => 'icons/fav-'.$width.'.png',
+                "src" => 'icons/fav-'.$width.'.jpg',
                 "sizes" => $width. 'x'. $width,
-                "type" => "image/png"
+                "type" => "image/jpg",
+                "purpose" => "any"
             ];
         }
 
@@ -90,21 +96,34 @@ class SettingSaveAction
             }
 
             if (file_exists($faviconPath = public_path(settings()->siteFavicon))) {
-                $favicon = ImageManager::imagick()->read($faviconPath);
+                // $favicon = ImageManager::imagick()->read($faviconPath);
 
-                foreach ([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width) {
+                foreach ([192, 256, 384, 512, 1024, 2048] as $width) {
+                    /*
                     $favicon->resize($width, $width)
-                        ->toPng()
-                        ->save(public_path('icons/fav-'.$width.'.png'));
+                        //->encodeByMediaType(quality: 100)
+                        ->encode('jpg', 100)
+                        ->toJpg(quality: 100)
+                        ->save(public_path('icons/fav-'.$width.'.jpg'));
+                    */
+                    $image = Image::read($faviconPath)->resize($width, $width);
+                    Storage::disk('icons')->put(
+                        'fav-'.$width.'.jpg',
+                        $image->encodeByExtension('jpg', quality: 85)
+                    );
                 }
 
-                $favicon->scale(192, 192)
-                    ->toPng()
-                    ->save(public_path('icons/manifest-icon-192.maskable.png'));
+                $image = Image::read($faviconPath)->resize(192, 192);
+                Storage::disk('icons')->put(
+                    'manifest-icon-192.maskable.jpg',
+                    $image->encodeByExtension('jpg', quality: 85)
+                );
 
-                $favicon->scale(512, 512)
-                    ->toPng()
-                    ->save(public_path('/icons/manifest-icon-512.maskable.png'));
+                $image = Image::read($faviconPath)->resize(512, 512);
+                Storage::disk('icons')->put(
+                    'manifest-icon-512.maskable.jpg',
+                    $image->encodeByExtension('jpg', quality: 85)
+                );
             }
         } catch (Exception $exception) {}
     }

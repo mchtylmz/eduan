@@ -13,8 +13,9 @@ Route::middleware(['guest', 'set_locale'])
         Route::post('/login', 'store')->name('login');
     });
 */
-Route::get('offline', fn() => view('frontend.offline'))->name('offline');
-Route::get('pwa', fn() => view('frontend.pwa'))->name('pwa');
+
+Route::middleware(['web', 'set_locale'])->get('offline', fn() => view('frontend.offline'))->name('offline');
+Route::middleware(['web', 'set_locale'])->get('pwa', fn() => view('frontend.pwa'))->name('pwa');
 
 // frontend login
 Route::middleware(['guest', 'set_locale'])

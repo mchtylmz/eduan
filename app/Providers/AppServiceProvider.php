@@ -39,7 +39,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         if (!app()->environment('production')) {
-            cache()->flush();
+            try {
+                cache()->flush();
+            } catch (\Exception $e) {}
         }
 
         if (app()->environment('production')) {

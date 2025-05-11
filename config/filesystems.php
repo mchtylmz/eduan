@@ -37,6 +37,15 @@ return [
             'throw' => false,
         ],
 
+        'icons' => [
+            'driver' => 'local',
+            //'root' => public_path('uploads'),
+            'root' => base_path(sprintf('%s/icons', config('app.public_path', 'public'))),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             //'root' => public_path('uploads'),

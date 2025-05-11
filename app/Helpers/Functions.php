@@ -65,6 +65,20 @@ if (!function_exists('agentDevice')) {
 
 }
 
+if (!function_exists('isChrome')) {
+
+    /**
+     * @return bool
+     */
+    function isChrome(): bool
+    {
+        $userAgent = request()->header('User-Agent');
+
+        return str_contains($userAgent, 'Chrome') && !str_contains($userAgent, 'Edg');
+    }
+
+}
+
 if (!function_exists('user')) {
     /**
      * @param null $key

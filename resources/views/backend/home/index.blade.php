@@ -12,9 +12,11 @@
         <div class="col-sm-6 col-lg-3 mb-1">
             @livewire('home.statistics', ['section' => 'contactMessages'])
         </div>
+        {{--
         <div class="col-sm-6 col-lg-3 mb-1">
             @livewire('home.statistics', ['section' => 'examReviews'])
         </div>
+        --}}
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.chart-widget', [
                 'id' => 'popularHits',
@@ -39,9 +41,11 @@
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.user-table', ['lastLogins' => false, 'register' => true])
         </div>
+        {{---
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.user-table', ['lastLogins' => true, 'register' => false])
         </div>
+        ---}}
     </div>
     <!-- END Overview -->
 @endsection

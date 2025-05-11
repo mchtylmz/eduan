@@ -11,10 +11,12 @@
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="app-version" content="{{ config('app.version') }}">
     <meta name="theme-color" content="{{ settings()->primaryColor ?? '#000' }}" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="{{ settings()->primaryColor ?? '#000' }}">
     <meta name="ip-address" content="{{ request()->ip() }}" />
     <meta name="canonical" content="{{ request()->fullUrl() }}" />
     <meta name="robots" content="index, follow" />
-
+    <meta name="apple-mobile-web-app-title" content="{{ settingLocale('siteTitle') }}">
+    <link rel="apple-touch-startup-image" href="{{ asset(settings()->siteLogo) }}">
 
     <!-- default stack for seo -->
     @if($seoContent = trim(\Illuminate\Support\Facades\View::yieldPushContent('seo')))
@@ -28,8 +30,10 @@
 
     @if($siteFavicon = settings()->siteFavicon)
         <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
-        @foreach([16, 32, 48, 57, 72, 96, 114, 128, 144, 152, 192, 256, 384, 512] as $width)
-        <link rel="icon" type="image/png" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset($siteFavicon) }}">
+    @foreach([192, 256, 384, 512, 1024, 2048] as $width)
+        <link rel="icon" type="image/png" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.jpg') }}?v={{ time() }}">
+        <link rel="apple-touch-icon" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.jpg') }}?v={{ time() }}">
         @endforeach
     @endif
 
@@ -58,7 +62,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
-    <link rel="manifest" href="{{ asset('pwa-manifest.json') }}">
+    <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
 
     @if(!empty(env('ANALYTICS_CDOE')))
         <!-- Google tag (gtag.js) -->
@@ -76,7 +80,7 @@
     @stack('style')
 </head>
 <body>
-@if(request()->routeIs('frontend.home'))
+@if(request()->routeIs('frontend.home') && isChrome())
     <div class="pwa-app-install p-3 border border-secondary bg-secondary d-flex align-items-center justify-content-between d-none">
         @if(!empty($siteFavicon))
             <img class="bg-light border rounded-3 p-1" src="{{ asset($siteFavicon) }}" alt="{{ settingLocale('siteTitle') }}" style="height: 57px"/>

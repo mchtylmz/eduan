@@ -84,7 +84,8 @@ class SolveForm extends Component
 
     public function initializeExpiration(): void
     {
-        $this->expirationTime = now()->addSeconds($this->test->duration)->format('Y-m-d H:i:s');
+        $this->expirationTime = now(settings()->timezone ?? config('app.timezone'))
+            ->addSeconds($this->test->duration)->format('Y-m-d H:i:s');
 
         if ($expirationTime = request()->session()->get('expirationTime_' . $this->test->id, false)) {
             // $this->expirationTime = $expirationTime;

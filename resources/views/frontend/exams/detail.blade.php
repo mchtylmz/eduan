@@ -44,7 +44,11 @@
                                                     {{ $loop->iteration }}
                                                 </span>
                                                 <span class="my-0 text-dark">
-                                                    {{ $parent->name }}
+                                                    @if(App\Enums\TestSectionTypeEnum::QUESTION->is($parent->type))
+                                                        {{ __('Soru') }}
+                                                    @else
+                                                        {{ $parent->name }}
+                                                    @endif
                                                 </span>
                                             </li>
                                         @endforeach

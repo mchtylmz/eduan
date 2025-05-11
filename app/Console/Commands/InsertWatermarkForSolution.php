@@ -69,6 +69,8 @@ class InsertWatermarkForSolution extends Command
             } catch (\Exception $exception) {
                 $this->error($exception->getMessage());
             }
+
+            usleep(500);
         }
 
     }
