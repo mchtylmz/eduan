@@ -1,3 +1,4 @@
+SetEnv PHPRC /home/customer/www/hypotenuse.be/public_html/php.ini
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

@@ -60,7 +60,7 @@
                 <div class="attachment text-center">
                     <img class="w-100"
                          style="max-width: 600px; object-fit: contain"
-                         src="{{ getImage($question->solution) }}"
+                         src="{{ getImage($question->solution) }}?v={{ time() }}"
                          alt="{{ __('Soru Çözümü') }}"/>
                 </div>
             @endif

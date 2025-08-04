@@ -1,4 +1,4 @@
-<a target="_blank" class="btn btn-sm btn-alt-success d-flex align-items-center mx-2" href="{{ url('/') }}">
+<a target="_blank" class="btn btn-sm btn-alt-success d-flex align-items-center mx-2" href="/" style="z-index:99999999">
     <i class="fa fa-fw fa-external-link me-1"></i>
     <span class="ms-1 d-none d-sm-block">{{ __('Siteyi Görüntüle') }}</span>
 </a>

@@ -153,7 +153,7 @@
                                                                 <h5 class="mb-3">{{ __('Çözüm') }}: </h5>
                                                                 <img class="w-100"
                                                                      style="max-width: 720px; object-fit: contain"
-                                                                     src="{{ getImage($solution) }}"
+                                                                     src="{{ getImage($solution) }}?v={{ time() }}"
                                                                      alt="{{ __('Soru Çözümü') }}"/>
                                                             </div>
                                                         @endif

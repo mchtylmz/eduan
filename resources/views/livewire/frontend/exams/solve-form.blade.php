@@ -5,7 +5,13 @@
             <p class="my-0 text-dark fw-bold">{{ $test->name }}</p>
             @if(!empty($content))
                 <p class="my-0 fw-bold mx-2">/</p>
-                <p class="my-0 text-dark fw-bold">{{ $content->name }}</p>
+                <p class="my-0 text-dark fw-bold">
+                    @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($content->type))
+                        <span>{{ __('Soru') }}</span>
+                    @else
+                        {{ $content->name }}
+                    @endif
+                </p>
             @endif
             <div class="text-center px-2 fw-medium text-dark bg-warning  ms-1" style="min-width: 200px;" wire:loading>
                 <i class="fa fa-spinner fa-pulse mx-1 fw-bold" style="animation-duration: .5s;"></i>

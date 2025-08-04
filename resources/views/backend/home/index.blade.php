@@ -41,11 +41,9 @@
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.user-table', ['lastLogins' => false, 'register' => true])
         </div>
-        {{---
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.user-table', ['lastLogins' => true, 'register' => false])
         </div>
-        ---}}
     </div>
     <!-- END Overview -->
 @endsection
