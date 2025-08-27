@@ -34,7 +34,7 @@
 
                             @if(settingLocale('contactPhone1') || settingLocale('contactPhone2'))
                             <div class="contact-info-item">
-                                <span><i class="fa-thin fa-mobile-notch"></i>{{ __('Telefon Numarası') }}</span>
+                                <span><i class="fa-thin fa-mobile-notch"></i>{{ __('Telefon numarası') }}</span>
                                 @if($phone = settingLocale('contactPhone1'))
                                     <a href="tel:{{ str_replace(['(',')',' '], '', $phone) }}">{{ $phone }}</a>
                                 @endif

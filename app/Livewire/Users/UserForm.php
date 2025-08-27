@@ -28,6 +28,7 @@ class UserForm extends Component
     public string $username;
     public string $name;
     public string $surname;
+    public int $gpt_limit = 5;
     public ?string $password = null;
     public StatusEnum $status = StatusEnum::ACTIVE;
     public YesNoEnum $email_verified = YesNoEnum::NO;
@@ -52,6 +53,7 @@ class UserForm extends Component
         $this->name = $this->user->name;
         $this->surname = $this->user->surname;
         $this->status = $this->user->status;
+        $this->gpt_limit = $this->user->gpt_limit;
         $this->email_verified = $this->user->email_verified ?? YesNoEnum::NO;
         $this->permission = 'users:update';
     }
@@ -81,6 +83,7 @@ class UserForm extends Component
             ],
             'name' => 'required|string',
             'surname' => 'required|string',
+            'gpt_limit' => 'required|integer',
             'role_id' => 'required|integer|exists:roles,id',
             'status' => ['required', new Enum(StatusEnum::class)],
         ];
@@ -93,6 +96,7 @@ class UserForm extends Component
             'password' => __('Parola'),
             'name' => __('İsim'),
             'surname' => __('Soyisim'),
+            'gpt_limit' => __('Yapay zeka kullanım limiti'),
             'role_id' => __('Kullanıcı Yetkisi'),
             'status' => __('Durum'),
         ];
@@ -138,6 +142,7 @@ class UserForm extends Component
                 'email' => $this->username,
                 'name' => $this->name,
                 'surname' => $this->surname,
+                'gpt_limit' => $this->gpt_limit,
                 'status' => $this->status,
                 'email_verified' => $this->email_verified,
             ],

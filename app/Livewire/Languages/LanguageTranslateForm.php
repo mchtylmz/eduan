@@ -28,19 +28,26 @@ class LanguageTranslateForm extends Component
 
     public string $searchOriginal = '';
     public string $searchTranslate = '';
+    public string $fileTime = '';
 
     public function mount(int $languageId = 0): void
     {
         $this->language = Language::find($languageId);
 
-        if (!(new TranslationHelper)->exists($this->language->code)) {
-            $translations = (new TranslationHelper)->scan($this->language->code);
-            TranslationHelper::upload($this->language->code, $translations);
-        }
+        /*if (!(new TranslationHelper)->exists($this->language->code)) {
+
+        }*/
+
+        $translations = (new TranslationHelper)->scan($this->language->code);
+        TranslationHelper::upload($this->language->code, $translations);
 
         $this->translations = $this->language->translations->mapWithKeys(function ($item) {
             return [$item->id => $item];
         })->toArray();
+
+        if (file_exists($file = lang_path($this->language->code) . '.json')) {
+            $this->fileTime = date('d.m.Y H:i', filemtime($file));
+        }
     }
 
     #[Computed]

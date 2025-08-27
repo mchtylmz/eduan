@@ -28,6 +28,9 @@
         'dashboard' => __('Yönetim Paneli'),
         'tests' => __('Sınavlar'),
         'stats' => __('İstatistikler'),
+        'ai' => __('Yapay Zeka'),
+        'solution' => __('Çözüm'),
+        'solution-vote' => __('Değerlendirme'),
     ]
 ])
 @php

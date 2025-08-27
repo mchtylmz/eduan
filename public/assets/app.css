@@ -104,6 +104,10 @@
     border-color: var(--clr-theme-primary);
     border-width: 2px;
 }
+.account-menu > .active {
+    border: 2px dashed var(--clr-theme-primary) !important;
+    box-sizing: border-box;
+}
 @media only screen and (min-width: 960px) {
     .solve-right-sticky {
         position: sticky;
@@ -226,4 +230,50 @@
 .exams-sections-content * {
     color: black !important;
     font-size: 20px !important;
+}
+.star-rating {
+    direction: rtl;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    color: #ddd;
+    font-size: 24px;
+    padding: 0 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover~label,
+.star-rating input:checked~label {
+    color: #ffc107;
+}
+.answer-ai svg {
+    width: 100%;
+}
+.answer-ai {
+    width: 100%;
+    overflow: hidden;
+}
+.popup-content, .popup-content img {
+    width: 100% !important;
+    object-fit: contain !important;
+}
+.content-close button {
+    background-color: white;
+}
+.content-close button {
+    position: absolute;
+    right: 20px;
+    padding: 6px;
+    border-radius: 8px;
+    color: white;
+    border: solid 2px black;
+    background-color: white;
 }

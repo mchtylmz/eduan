@@ -58,6 +58,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Exam::class, 'exams_favorites');
     }
 
+    public function aiUsages(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(UserAiUsage::class)->orderByDesc('id');
+    }
+
     public function examResults(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
         return $this->hasMany(ExamResult::class)->orderByDesc('id');
@@ -71,5 +76,12 @@ class User extends Authenticatable
     public function testResults(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
         return $this->hasMany(TestsResult::class)->orderByDesc('id');
+    }
+
+    public function usageGptLimit(string $date = null): int
+    {
+        $date = dateFormat($date ?? now(), 'Y-m-d');
+
+        return $this->aiUsages()->where('usage_date', $date)->count();
     }
 }

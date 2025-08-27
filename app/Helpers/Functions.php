@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\Lesson;
+use App\Models\TestsResultDetail;
+use App\Models\TestsSection;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Carbon\CarbonInterval;
 use Intervention\Image\ImageManager;
@@ -76,7 +80,54 @@ if (!function_exists('isChrome')) {
 
         return str_contains($userAgent, 'Chrome') && !str_contains($userAgent, 'Edg');
     }
+}
 
+if (!function_exists('examResultStats')) {
+
+    /**
+     * @param \App\Models\Exam $exam
+     * @param \App\Models\User|null $user
+     * @return array
+     */
+    function examResultStats(\App\Models\Exam $exam, ?\App\Models\User $user = null): array
+    {
+        $results = $exam->results()->withCount([
+            'details as question_count',
+            'details as correct_count' => function ($query) {
+                $query->where('correct', \App\Enums\YesNoEnum::YES);
+            },
+            'details as incorrect_count' => function ($query) {
+                $query->where('correct', \App\Enums\YesNoEnum::NO);
+            },
+        ])->when($user, function (\Illuminate\Database\Eloquent\Builder $query) {
+            $query->where('user_id', auth()->id());
+        })->get();
+
+        return [
+            'results_count' => count($results),
+            'question_count' => collect($results)->sum('question_count'),
+            'correct_count' => collect($results)->sum('correct_count'),
+            'incorrect_count' => collect($results)->sum('incorrect_count'),
+        ];
+    }
+}
+
+if (!function_exists('testsSectionGetContent')) {
+    /**
+     * @param int $testId
+     * @param int $sectionId
+     * @return TestsSection|null
+     */
+    function testsSectionGetContent(int $testId, int $sectionId): ?TestsSection
+    {
+        return Cache::remember(
+            'testsSectionGetContent_' .  $testId . '_' . $sectionId,
+            60 * 60 * 24 * 7,
+            fn() => TestsSection::where('test_id', $testId)
+                ->where('id', $sectionId)
+                ->first()
+        );
+    }
 }
 
 if (!function_exists('user')) {
@@ -133,6 +184,17 @@ if (!function_exists('data')) {
     function data(): \App\Helpers\DataHelper
     {
         return new \App\Helpers\DataHelper();
+    }
+}
+
+if (!function_exists('aiHelper')) {
+
+    /**
+     * @return \App\Helpers\AiHelper
+     */
+    function aiHelper(): \App\Helpers\AiHelper
+    {
+        return new \App\Helpers\AiHelper();
     }
 }
 
@@ -293,6 +355,61 @@ if (!function_exists('resetCache')) {
         cache()->flush();
         cache()->clear();
         Artisan::call('optimize:clear');
+    }
+}
+
+if (!function_exists('convertLatexToImg')) {
+    /**
+     * @param string $text
+     * @param string $key
+     * @return string
+     */
+    function convertLatexToImg(string $text, string $key = ''): string
+    {
+        if (in_array($key, ['latex', 'final_answer']) && !str_contains($text, '$$')) {
+            $text = sprintf('$$%s$$', $text);
+        }
+
+        if (! str_contains($text, '$$')) {
+            return $text;
+        }
+
+        return preg_replace_callback('/\$\$(.*?)\$\$/s', function ($matches) {
+            $formula = str_replace(
+                [
+                    '$$',
+                    '<span>',
+                    '<span class="latex-source">',
+                    '</span>',
+                    '<p>',
+                    '</p>',
+                    '<div>',
+                    '</div>',
+                ],
+                '',
+                trim($matches[1] ?? $matches[0])
+            );
+
+            // Daha önce kaydedilmişse DB’den al
+            $existingLatex = \App\Models\LatexImage::where('formula', $formula)->first();
+            if ($existingLatex) {
+                return sprintf(
+                    '<img class="latex-svg-image" src="%s" alt="%s">',
+                    asset($existingLatex->image),
+                    e($formula)
+                );
+            }
+
+            // Kayıtlı değilse arkaplana indir talimati ver
+            \App\Jobs\LatexImageDownloadJob::dispatch($formula);
+
+            // latex den direk link ver
+            return sprintf(
+                '<img src="https://latex.codecogs.com/svg.image?%s" alt="%s">',
+                urlencode($formula),
+                e($formula)
+            );
+        }, $text);
     }
 }
 

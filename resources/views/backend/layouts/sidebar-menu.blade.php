@@ -31,6 +31,15 @@
 
     @canany(['questions:view', 'exams:view', 'exams-reviews:view', 'tests:view', 'stats:view'])
         <li class="nav-main-heading">{{ __('Soru İşlemleri') }}</li>
+        @can('ai:view')
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.ai.index')])
+                   href="{{ route('admin.ai.index') }}">
+                    <i class="nav-main-link-icon fa fa-magic-wand-sparkles"></i>
+                    <span class="nav-main-link-name">{{ __('Yapay Zeka') }}</span>
+                </a>
+            </li>
+        @endcan
         @can('questions:view')
             <li class="nav-main-item">
                 <a @class(['nav-main-link', 'active' => request()->routeIs('admin.questions.index')])

@@ -71,6 +71,51 @@
 
                         <div class="col-lg-12 my-3">
                             <div class="bg-body-light p-2 px-3">
+                                <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Blog') }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="mb-2">
+                                <label class="form-label" for="content.{{ $language->code }}.blogTitle">
+                                    {{ __('Başlık') }}
+                                </label>
+                                <textarea rows="1"
+                                          class="form-control"
+                                          id="content.{{ $language->code }}.blogTitle"
+                                          wire:model="content.{{ $language->code }}.blogTitle"
+                                          placeholder="{{ __('Başlık') }}.."
+                                ></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="content.{{ $language->code }}.blogDescription">
+                                    {{ __('Kısa Açıklama') }}
+                                </label>
+                                <textarea rows="2"
+                                          class="form-control"
+                                          id="content.{{ $language->code }}.blogDescription"
+                                          wire:model="content.{{ $language->code }}.blogDescription"
+                                          placeholder="{{ __('Açıklama') }}.."
+                                ></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="blogCount">{{ __('Gösterilecek Ders Sayısı') }}</label>
+                                <input type="number" min="1" class="form-control" id="blogCount" wire:model="content.{{ $language->code }}.blogCount" placeholder="{{ __('Sayı') }}.." />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="content.{{ $language->code }}.blogStatus">{{ __('Durum') }}</label>
+                                <select id="content.{{ $language->code }}.blogStatus" class="form-control" wire:model="content.{{ $language->code }}.blogStatus">
+                                    <option value="" hidden>{{ __('Seçiniz') }}</option>
+                                    @foreach(\App\Enums\StatusEnum::options() as $optionKey => $optionText)
+                                        <option value="{{ $optionKey }}">{{ $optionText }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12"><hr></div>
+
+                        <div class="col-lg-12 my-3">
+                            <div class="bg-body-light p-2 px-3">
                                 <h5 class="mb-0"><span>({{ str($language->code)->upper() }})</span> {{ __('Karşılama Alanı') }}</h5>
                             </div>
                         </div>

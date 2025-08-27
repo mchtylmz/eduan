@@ -55,7 +55,7 @@
                         </div>
                         <div class="blog_details-content-meta p-4 mt-3">
                             <div class="blog_details-content-tag">
-                                <ul>
+                                <ul class="flex-wrap">
                                     @foreach(explode(',', $blog->keywords) as $keyword)
                                         @if(trim($keyword)) <li><a>{{ $keyword }}</a></li> @endif
                                     @endforeach

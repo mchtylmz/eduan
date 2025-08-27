@@ -33,7 +33,7 @@ class TranslationHelper
         );
     }
 
-    public static function upload(string $locale, array $translations = [])
+    public static function upload(string $locale, array $translations = []): void
     {
         $translations = collect($translations)->map(function ($value, $key) use($locale) {
             return [

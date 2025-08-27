@@ -50,7 +50,7 @@ class ListExams extends Component
                 request('page', 1),
                 auth()->check() ? auth()->id() : 'not_auth',
             ]),
-            60 * 60 * 24 * 30, // 1 ay
+            60 * 60 * 30, // 1 ay
             function () {
                 return Test::withCount(['sections_with_no_parent', 'questions'])
                     ->with(['language'])

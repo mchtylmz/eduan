@@ -168,6 +168,7 @@ class FilterHelper extends DataHelper
     {
         $types = [
             '' => __('Tümü'),
+            'chatgpt' => __('Yapay Zeka'),
             'login' => __('Giriş'),
             'logout' => __('Çıkış'),
             'create' => __('Ekle'),

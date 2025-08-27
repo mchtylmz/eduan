@@ -11,7 +11,7 @@
                         @endif
                     </div>
                 @endif
-                <div class="col-lg-6">
+                <div class="col-lg-{{ $image ? 6 : 12 }}">
                     <div class="h4_faq-wrap mb-10">
                         <div class="section-area-4 mb-30 text-center">
                             <h2 class="section-title mb-10">{{ data_get($content, 'faqTitle') }}</h2>

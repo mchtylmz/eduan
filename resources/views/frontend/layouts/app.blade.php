@@ -2,7 +2,8 @@
 <html class="no-js" lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <!--<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="device" content="{{ agentDevice() }}">
     <meta name="agent" content="{{ request()->userAgent() }}">
@@ -62,7 +63,11 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
-    <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
+    @if(request()->routeIs('frontend.home') && isChrome())
+        <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
+    @endif
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
 
     @if(!empty(env('ANALYTICS_CDOE')))
         <!-- Google tag (gtag.js) -->
@@ -128,14 +133,18 @@
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/app.js') }}?v={{ config('app.version') }}"></script>
 
+@includeIf('frontend.layouts.section.footer-popup')
+
 @livewireScripts
 <x-livewire-alert::scripts/>
 @stack('script')
+
 <script>
     $(document).ready(function() {
         Livewire.hook('element.init', ({ component, el }) => {
             $('.selectpicker').selectpicker();
         });
+
     });
 </script>
 @if($message = session('message'))

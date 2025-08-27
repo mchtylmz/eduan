@@ -80,6 +80,10 @@
                                                                      alt="{{ __('Soru Çözümü') }}"/>
                                                             </div>
                                                         @endif
+
+                                                        @can('ai:solution')
+                                                            <x-ai.button :questionCode="$question->code" />
+                                                        @endcan
                                                     @endif
                                                 </div>
                                             </div>

@@ -31,7 +31,7 @@
                             <div class="tab-pane h4_faq-content fade {{ $loop->last ? 'show active': '' }}"
                                  id="pills-{{ $loop->index }}" role="tabpanel" aria-labelledby="pills-home-tab"
                                  tabindex="0">
-                                <div class="accordion" id="questions-{{ $result->id }}">
+                                <div class="" id="questions-{{ $result->id }}">
                                     <div class="row mb-3">
                                         <div class="col-lg-6 d-flex align-items-center flex-wrap gap-2">
                                             @if($result->point >= $result->passing_score)
@@ -99,69 +99,127 @@
                                         </div>
                                     </div>
 
-                                    @foreach($result->details as $detail)
-                                        <div class="accordion-item mb-1 mt-1">
-                                            <h2 class="accordion-header" id="heading{{ $detail->id }}">
-                                                <button class="accordion-button collapsed d-flex align-items-center"
-                                                        type="button" data-bs-toggle="collapse"
-                                                        data-bs-target="#collapse{{ $detail->id }}"
-                                                        aria-expanded="false" aria-controls="collapse{{ $detail->id }}">
-                                                    @if($detail->point != 0)
-                                                        <small class="text-white py-1 px-2 me-2 bg-secondary">
-                                                            {{ $detail->point }} {{ __('Puan') }}
-                                                        </small>
-                                                    @endif
-                                                    <small @class([
-                                                        'text-white py-1 px-2 me-2',
-                                                        'bg-danger' => \App\Enums\YesNoEnum::NO->is($detail->correct),
-                                                        'bg-success' => \App\Enums\YesNoEnum::YES->is($detail->correct),
-                                                        'bg-warning' => \App\Enums\YesNoEnum::EMPTY->is($detail->correct),
-                                                    ])>
-                                                        @if(\App\Enums\YesNoEnum::YES->is($detail->correct))
-                                                            {{ __('Doğru') }}
-                                                        @elseif(\App\Enums\YesNoEnum::NO->is($detail->correct))
-                                                            {{ __('Yanlış') }}
-                                                        @else
-                                                            {{ __('Boş') }}
-                                                        @endif
-                                                    </small>
-                                                    <span>{{ $loop->iteration }}. {{ __('Soru') }}</span>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse{{ $detail->id }}" class="accordion-collapse collapse"
-                                                 aria-labelledby="heading{{ $detail->id }}"
-                                                 data-bs-parent="#questions-{{ $result->id }}">
-                                                <div class="accordion-body">
-                                                    @if($question = $detail->question)
-                                                        <div class="question">
-                                                            <h5 class="mb-3 px-3">{{ $question->title }}</h5>
-                                                            @if($attachment = $question->attachment)
-                                                                <img class="w-100"
-                                                                     style="max-width: 600px; object-fit: contain"
-                                                                     src="{{ getImage($attachment) }}"
-                                                                     alt="{{ __('Soru') }}"/>
-                                                            @endif
-                                                        </div>
-                                                        <div class="answer bg-body-light py-2 px-3 mt-3">
-                                                            <h5 class="mb-1 text-dark">
-                                                                {{ __('Yanıtınız') }} :
-                                                                {{ $detail->answer?->title ?? __('Boş')}}
-                                                            </h5>
-                                                        </div>
-                                                        @if($solution = $question->solution)
-                                                            <div class="solution px-3 mt-3">
-                                                                <h5 class="mb-3">{{ __('Çözüm') }}: </h5>
-                                                                <img class="w-100"
-                                                                     style="max-width: 720px; object-fit: contain"
-                                                                     src="{{ getImage($solution) }}?v={{ time() }}"
-                                                                     alt="{{ __('Soru Çözümü') }}"/>
-                                                            </div>
-                                                        @endif
-                                                    @endif
-                                                </div>
-                                            </div>
+                                    @foreach($test->sections()->parentIsZero()->get() as $section)
+                                        <div
+                                            class="block bg-body-light mb-2 px-3 py-3 rounded-2 d-flex align-items-center gap-2">
+                                            <span class="badge bg-dark">{{ $loop->iteration }}</span>
+                                            <p class="my-0 text-dark fw-bold">{{ $section->name }}</p>
                                         </div>
+
+                                        <div class="accordion" id="accordionSections{{ $section->id }}">
+                                            @php $questionIndex = 1; @endphp
+                                            @foreach($section->parents as $parent)
+                                                @php
+                                                    $detail = collect($result->details)->where('section_id', $parent->id)->first();
+                                                    $detail = collect($detail);
+
+                                                    $content = testsSectionGetContent(testId: $test->id, sectionId: $parent->id);
+                                                    if (\App\Enums\TestSectionTypeEnum::QUESTION->is($content->type) && !$detailQuestion = $result->details()->where('question_id', $content->getMeta('questionId', 0))->first()) {
+                                                        continue;
+                                                    }
+                                                @endphp
+
+                                                <div class="accordion-item mb-1">
+                                                    <h2 class="accordion-header" id="result-heading{{ $parent->id }}">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#result-collapse{{ $parent->id }}"
+                                                                aria-expanded="false"
+                                                                aria-controls="result-collapse{{ $parent->id }}">
+                                                            @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($parent->type))
+
+                                                                @if($detail->get('point') != 0)
+                                                                    <small
+                                                                        class="text-white py-1 px-2 me-2 bg-secondary">
+                                                                        {{ $detail->get('point') }} {{ __('Puan') }}
+                                                                    </small>
+                                                                @endif
+
+                                                                <small @class([
+                                                        'text-white py-1 px-2 me-2',
+                                                        'bg-danger' => \App\Enums\YesNoEnum::NO->value == $detail->get('correct'),
+                                                        'bg-success' => \App\Enums\YesNoEnum::YES->value == $detail->get('correct'),
+                                                        'bg-warning' => \App\Enums\YesNoEnum::EMPTY->value == $detail->get('correct'),
+                                                    ])>
+                                                                    @if(\App\Enums\YesNoEnum::YES->value == $detail->get('correct'))
+                                                                        {{ __('Doğru') }}
+                                                                    @elseif(\App\Enums\YesNoEnum::NO->value == $detail->get('correct'))
+                                                                        {{ __('Yanlış') }}
+                                                                    @else
+                                                                        {{ __('Boş') }}
+                                                                    @endif
+                                                                </small>
+
+                                                                <span>{{ __('Soru') }} {{ $questionIndex }}</span>
+                                                                @php $questionIndex++; @endphp
+                                                            @else
+                                                                <span>{{ $parent->name }}</span>
+                                                            @endif
+                                                        </button>
+                                                    </h2>
+                                                    <div id="result-collapse{{ $parent->id }}"
+                                                         class="accordion-collapse collapse"
+                                                         aria-labelledby="result-heading{{ $parent->id }}"
+                                                         data-bs-parent="#accordionSections{{ $section->id }}">
+                                                        <div class="accordion-body">
+
+                                                            @if(\App\Enums\TestSectionTypeEnum::CONTENT->is($content?->type))
+                                                                <div class="text-dark exams-sections-content">
+                                                                    {!! html_entity_decode($content->getMeta('content', '')) !!}
+                                                                </div>
+                                                            @endif
+
+                                                            @if(\App\Enums\TestSectionTypeEnum::PDF->is($content?->type))
+                                                                <div class="text-dark exams-sections-file w-100">
+                                                                    <iframe style="min-height: 540px;"
+                                                                            src="{{ asset($content->getMeta('meta_file', '')) }}#toolbar=1"
+                                                                            class="w-100 border-0" allowfullscreen
+                                                                            allowtransparency></iframe>
+                                                                </div>
+                                                            @endif
+
+                                                            @if(\App\Enums\TestSectionTypeEnum::QUESTION->is($content->type) && $detail = $detailQuestion)
+                                                                @if($question = $detail->question)
+                                                                    <div class="question">
+                                                                        <h5 class="mb-3 px-3">{{ $question->title }}</h5>
+                                                                        @if($attachment = $question->attachment)
+                                                                            <img class="w-100"
+                                                                                 style="max-width: 600px; object-fit: contain"
+                                                                                 src="{{ getImage($attachment) }}"
+                                                                                 alt="{{ __('Soru') }}"/>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="answer bg-body-light py-2 px-3 mt-3">
+                                                                        <h5 class="mb-1 text-dark">
+                                                                            {{ __('Yanıtınız') }} :
+                                                                            {{ $detail->answer?->title ?? __('Boş')}}
+                                                                        </h5>
+                                                                    </div>
+                                                                    @if($solution = $question->solution)
+                                                                        <div class="solution px-3 mt-3">
+                                                                            <h5 class="mb-3">{{ __('Çözüm') }}: </h5>
+                                                                            <img class="w-100"
+                                                                                 style="max-width: 720px; object-fit: contain"
+                                                                                 src="{{ getImage($solution) }}?v={{ time() }}"
+                                                                                 alt="{{ __('Soru Çözümü') }}"/>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    @can('ai:solution')
+                                                                        <x-ai.button :questionCode="$question->code"/>
+                                                                    @endcan
+
+                                                                @endif
+                                                            @endif
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
                                     @endforeach
+
                                 </div>
                             </div>
                         @endforeach

@@ -4,7 +4,6 @@ namespace App\Livewire\Blogs;
 
 use App\Actions\Blogs\CreateOrUpdateBlogAction;
 use App\Actions\Files\UploadFileAction;
-use App\Actions\Files\UploadThumbnailAction;
 use App\Enums\StatusEnum;
 use App\Models\Blog;
 use App\Models\Faq;

@@ -26,7 +26,7 @@
                 @foreach($this->jsonData() as $key => $value)
                     <tr @class(['bg-info-light' => $this->diff($key)])>
                         <td class="py-1 bg-transparent">{{ $key }}: </td>
-                        <td class="py-1 bg-transparent">{{ $value }}</td>
+                        <td class="py-1 bg-transparent" style="white-space: break-spaces; word-break: break-all;">{{ !is_string($value) ? json_encode($value, JSON_PRETTY_PRINT) : $value }}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -40,7 +40,7 @@
                 @foreach($this->currentData as $key => $value)
                     <tr @class(['bg-info-light' => $this->diff($key)])>
                         <td class="py-1 bg-transparent">{{ $key }}: </td>
-                        <td class="py-1 bg-transparent">{{ $value }}</td>
+                        <td class="py-1 bg-transparent" style="white-space: break-spaces; word-break: break-all;">{{ !is_string($value) ? json_encode($value, JSON_PRETTY_PRINT) : $value }}</td>
                     </tr>
                 @endforeach
                 </tbody>

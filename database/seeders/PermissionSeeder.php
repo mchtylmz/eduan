@@ -99,6 +99,14 @@ class PermissionSeeder extends Seeder
             ['name' => 'tests:update'],
             ['name' => 'tests:delete'],
             ['name' => 'tests:solve'],
+
+            // 18-08-2025 updated
+            ['name' => 'ai:solution'],
+            ['name' => 'ai:solution-vote'],
+            ['name' => 'ai:view'],
+            ['name' => 'ai:add'],
+            ['name' => 'ai:update'],
+            ['name' => 'ai:delete'],
         ]);
 
         $user->givePermissionTo(['user-type:user']);

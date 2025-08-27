@@ -48,7 +48,7 @@
                     autosave_ask_before_unload: true,
                     autosave_interval: '5s',
                     image_caption: true,
-                    forced_root_block: false,
+                    // forced_root_block: false,
                     fullscreen_native: true,
                     visual_table_class: 'tinymce-table',
                     plugins: [
@@ -112,8 +112,7 @@
                 autosave_ask_before_unload: true,
                 autosave_interval: '5s',
                 image_caption: true,
-                menubar: false,
-                forced_root_block: false,
+                menubar: true,
                 fullscreen_native: true,
                 visual_table_class: 'tinymce-table',
                 plugins: [

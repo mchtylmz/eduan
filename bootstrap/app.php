@@ -25,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withSchedule(function () {
+        Schedule::job(\App\Jobs\UpdateGptLimitForUsers::class)
+            ->timezone(config('app.timezone'))
+            ->dailyAt('00:00');
+
         Schedule::command('backup:run --only-db')
             ->timezone(config('app.timezone'))
             ->wednesdays()

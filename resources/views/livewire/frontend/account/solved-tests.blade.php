@@ -20,15 +20,21 @@
                             </div>
                         </div>
                         <div class="h2_course-content-bottom">
+                            @php
+                                $resultStats = examResultStats(exam: $test, user: user());
+                                $results_count = $resultStats['results_count'] ?? 0;
+                                $correct_count = $resultStats['correct_count'] ?? 0;
+                                $incorrect_count = $resultStats['incorrect_count'] ?? 0;
+                            @endphp
                             <span>
                                 <i class="fa-light fa-question-circle me-1"></i>
-                                {{ count($test->userResults) }} {{ __('Sonuç') }}
+                                {{ $results_count }} {{ __('Sonuç') }}
                             </span>
                             <span>
                                     <i class="fa-light fa-poll me-1"></i>
-                                {{ collect($test->userResults)->sum('correct_count') }} {{ __('Doğru') }}
+                                {{ $correct_count }} {{ __('Doğru') }}
                                 /
-                                {{ collect($test->userResults)->sum('incorrect_count') }} {{ __('Yanlış') }}
+                                {{ $incorrect_count }} {{ __('Yanlış') }}
                             </span>
                         </div>
                     </div>

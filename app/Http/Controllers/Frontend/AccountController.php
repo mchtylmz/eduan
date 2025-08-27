@@ -25,10 +25,24 @@ class AccountController extends Controller
         ]);
     }
 
+    public function stats()
+    {
+        return view('frontend.account.stats', [
+            'title' => __('İstatistikler')
+        ]);
+    }
+
     public function solved()
     {
         return view('frontend.account.solved', [
             'title' => __('Testlerim')
+        ]);
+    }
+
+    public function solvedNotCompleteTests()
+    {
+        return view('frontend.account.solved-not-complete', [
+            'title' => __('Yarım Kalan Testler')
         ]);
     }
 
@@ -45,7 +59,7 @@ class AccountController extends Controller
             'title' => __('Sınav Sonucu') . ' ' . $test->name,
             'test' => $test,
             'results' => $test->userResultsWithoutGroupBy()
-                ->with('details')
+                ->with(['details', 'test'])
                 ->where('completed', YesNoEnum::YES)
                 ->orderBy('id')
                 ->get()

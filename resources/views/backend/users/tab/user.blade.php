@@ -6,6 +6,10 @@
 <div class="mb-3">
     <ul class="list-group list-group-flush">
         <li class="list-group-item">
+            {{ __('Bugün Kalan Yapay Zeka Kullanım Limit') }} :
+            {{ max($user->gpt_limit - $user->usageGptLimit(), 0) }} / {{$user->gpt_limit }}
+        </li>
+        <li class="list-group-item">
             {{ __('Yetki Grubu') }} :
             @if($user->can(\App\Enums\RoleTypeEnum::ADMIN->value))
                 {{ \App\Enums\RoleTypeEnum::ADMIN->name() }}

@@ -276,3 +276,14 @@ th.created_at {
 .tox .tox-promotion-link {
     display:none !important;
 }
+.answer-ai svg {
+    width: 100%;
+}
+.answer-ai {
+    width: 100%;
+    overflow: hidden;
+}
+.latex-ai-image {
+    height: 20px;
+    object-fit: contain;
+}

@@ -7,6 +7,7 @@ use App\Enums\PageTypeEnum;
 use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Models\Question;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -30,6 +31,19 @@ class HomeController extends Controller
     {
         return view('frontend.home.search', [
             'title' => __('Arama Sonucu')
+        ]);
+    }
+
+    public function aiSolution(Question $question)
+    {
+        abort_if(
+            request()->user()->cannot('ai:solution'),
+            403
+        );
+
+        return view('frontend.home.ai-solution', [
+            'title' => __('Yapay Zeka Soru Cevaplama'),
+            'question' => $question
         ]);
     }
 

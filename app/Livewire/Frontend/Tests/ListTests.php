@@ -70,7 +70,7 @@ class ListTests extends Component
                 request('page', 1),
                 auth()->check() ? auth()->id() : 'not_auth',
             ]),
-            60 * 60 * 60 * 365,
+            60 * 60 * 365,
             function () {
                 return Exam::withCount([
                         'questions' => fn($query) => $query->active(),

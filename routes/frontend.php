@@ -13,6 +13,7 @@ use App\Models\Lesson;
 use App\Models\Topic;
 use App\Models\Newsletter;
 use App\Models\Page;
+use App\Models\Question;
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class,'index'])
     ->name('home');
@@ -22,6 +23,8 @@ Route::get('page/{page:slug}', [\App\Http\Controllers\Frontend\HomeController::c
     ->name('page');
 Route::get('sitemap.xml', [\App\Http\Controllers\Frontend\HomeController::class,'sitemap'])
     ->name('sitemap');
+Route::get('ai/solution/{question:code}', [\App\Http\Controllers\Frontend\HomeController::class,'aiSolution'])
+    ->name('ai.solution');
 
 Route::get('tests/{topic:code?}', [\App\Http\Controllers\Frontend\TestController::class,'index'])
     ->name('tests');
@@ -64,7 +67,9 @@ Route::middleware(['auth'])
     ->group(function () {
         Route::get('/profile', 'index')->name('profile');
         Route::get('/favorite', 'favorite')->name('favorite');
+        Route::get('/stats', 'stats')->name('stats');
         Route::get('/solved', 'solved')->name('solved');
+        Route::get('/solved/not-complete-tests', 'solvedNotCompleteTests')->name('solved.notTests');
         Route::get('/results/exams', 'results')->name('solved.exams');
         Route::get('/results/exams/{test:code}', 'result')->name('solved.exams.detail');
         Route::get('/logout', 'logout')->name('logout');

@@ -10,7 +10,7 @@
             @includeIf('frontend.account.tab')
 
             <div class="row justify-content-between py-3">
-                <div class="col-lg-6 py-2">
+                <div class="col-lg-7 py-2">
                     <h5 class="bg-light p-3">{{ __('Hesap Bilgilerim') }}</h5>
                     @livewire('frontend.account.profile-form')
                 </div>

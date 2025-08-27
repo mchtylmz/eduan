@@ -63,6 +63,11 @@
                          src="{{ getImage($question->solution) }}?v={{ time() }}"
                          alt="{{ __('Soru Çözümü') }}"/>
                 </div>
+
+                @can('ai:solution')
+                    <x-ai.button :questionCode="$question->code" />
+                @endcan
+
             @endif
         </div>
 

@@ -146,6 +146,30 @@ trait CustomLivewireTableFilters
             });
     }
 
+    protected function usageDateFilter(string $field): Filter
+    {
+        return DateRangeFilter::make(__('Kullanım Tarihi'))
+            ->config([
+                'placeholder' => __('Tarih Seçiniz'),
+                'locale' => app()->getLocale(),
+            ])
+            ->filter(function(Builder $builder, array $dateRange) use($field) {
+                return $builder->whereBetween($field, [$dateRange['minDate'], $dateRange['maxDate']]);
+            });
+    }
+
+    protected function dateFilter(string $field, string $label = ''): Filter
+    {
+        return DateRangeFilter::make($label)
+            ->config([
+                'placeholder' => __('Tarih Seçiniz'),
+                'locale' => app()->getLocale(),
+            ])
+            ->filter(function(Builder $builder, array $dateRange) use($field) {
+                return $builder->whereBetween($field, [$dateRange['minDate'], $dateRange['maxDate']]);
+            });
+    }
+
     protected function visibilityFilter(string $field = 'visibility'): \Rappasoft\LaravelLivewireTables\Views\Filter
     {
         return SelectFilter::make(__('Görünüm'), 'visibility')

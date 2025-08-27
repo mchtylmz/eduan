@@ -5,6 +5,7 @@ namespace App\Livewire\Home;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Lesson;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
@@ -31,6 +32,36 @@ class ChartWidget extends Component
                         return [
                             'x' => str($exam->name)->limit(10),
                             'y' => $exam->hits
+                        ];
+                    })->toArray()
+                ]
+            ]
+        ];
+    }
+
+    public function popularAiAnswers(): array
+    {
+        $aiAnswers = cache()->remember(
+            'home_chart_popularAiAnswers',
+            60 * 60 * 2,
+            fn() =>  DB::table('user_ai_usages')
+                ->join('answer_a_i_s', 'answer_a_i_s.id', '=', 'user_ai_usages.answer_ai_id')
+                ->join('topics', 'topics.id', '=', 'answer_a_i_s.topic_id')
+                ->select('topics.title as name', DB::raw('SUM(user_ai_usages.usage) as hits'))
+                ->groupBy('user_ai_usages.answer_ai_id', 'topics.title')
+                ->orderByDesc('hits')
+                ->limit(8)
+                ->get()
+        );
+
+        return [
+            [
+                'name' => __('Görüntüleme'),
+                'data' => [
+                    ...collect($aiAnswers)->map(function ($aiAnswer) {
+                        return [
+                            'x' => str(getJsonLocaleValue($aiAnswer->name))->limit(12),
+                            'y' => $aiAnswer->hits
                         ];
                     })->toArray()
                 ]

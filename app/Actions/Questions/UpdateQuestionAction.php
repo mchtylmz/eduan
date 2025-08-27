@@ -3,6 +3,7 @@
 namespace App\Actions\Questions;
 
 use App\Models\Question;
+use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class UpdateQuestionAction
@@ -11,6 +12,10 @@ class UpdateQuestionAction
 
     public function handle(Question $question, array $data, array $answers)
     {
+        if (!empty($data['code'])) {
+            $data['code'] = Str::slug($data['code']);
+        }
+
         $question->update($data);
 
         $this->answerCreateOrUpdate($question, $answers);

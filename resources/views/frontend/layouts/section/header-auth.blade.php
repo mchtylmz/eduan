@@ -24,9 +24,21 @@
             </a>
         </li>
         <li>
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved') }}">
+                <i class="fa fa-pen-alt-slash mx-1"></i>
+                <span>{{ __('Yarım Kalan Testler') }}</span>
+            </a>
+        </li>
+        <li>
             <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.exams') }}">
                 <i class="fa fa-book-alt mx-1"></i>
                 <span>{{ __('Çözdüğüm Sınavlar') }}</span>
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.exams') }}">
+                <i class="fa fa-chart-line mx-1"></i>
+                <span>{{ __('İstatistikler') }}</span>
             </a>
         </li>
         @if(user()->can('dashboard:access'))

@@ -11,6 +11,8 @@ enum SettingsTabsEnum: string
     use Names, Values, Comparable;
 
     case GENERAL = 'general';
+    case AI = 'ai';
+    case POPUP = 'popup';
     case LOGO = 'logo';
     case STYLE = 'style';
     case COVER = 'cover';
@@ -25,6 +27,8 @@ enum SettingsTabsEnum: string
     {
         return [
             self::GENERAL->value => __('Site Ayarları'),
+            self::AI->value => __('Yapay Zeka Ayarları'),
+            self::POPUP->value => __('Anasayfa Pop-up Özelliği'),
             self::LOGO->value => __('Logo Ayarları'),
             self::STYLE->value => __('Stil Ayarları'),
             self::EXAM->value => __('Test & Soru Ayarları'),
@@ -46,6 +50,8 @@ enum SettingsTabsEnum: string
     {
         return match ($this->value) {
             self::GENERAL->value => 'fa-cogs',
+            self::AI->value => 'fa-wand-magic-sparkles',
+            self::POPUP->value => 'fa-window-maximize',
             self::LOGO->value => 'fa-image',
             self::STYLE->value => 'fa-palette',
             self::EXAM->value => 'fa-pen',

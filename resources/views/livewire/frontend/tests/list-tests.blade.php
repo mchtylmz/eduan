@@ -76,16 +76,17 @@
                                     <i class="fa-light fa-question-circle me-1"></i>
                                     {{ $test->questions_count }} {{ __('Soru') }}
                                 </span>
-                                <span>
-                                    <i class="fa-light fa-comments me-1"></i>
-                                    {{ $test->reviews_count }}
-                                </span>
                             @if(auth()->check() && count($test->userResults))
+                                @php
+                                    $resultStats = examResultStats(exam: $test, user: user());
+                                    $correct_count = $resultStats['correct_count'];
+                                    $incorrect_count = $resultStats['incorrect_count'];
+                                @endphp
                                 <span>
                                     <i class="fa-light fa-poll me-1"></i>
-                                    {{ collect($test->userResults)->sum('correct_count') }} {{ __('Doğru') }}
+                                    {{ $correct_count }} {{ __('Doğru') }}
                                     /
-                                    {{ collect($test->userResults)->sum('incorrect_count') }} {{ __('Yanlış') }}
+                                    {{ $incorrect_count }} {{ __('Yanlış') }}
                                 </span>
                             @endif
                         </div>

@@ -66,6 +66,10 @@ AutoRoute::auto('languages', \App\Http\Controllers\Backend\LanguageController::c
     'name' => 'languages',
     'middleware' => ['can:languages:view'],
 ]);
+AutoRoute::auto('ai', \App\Http\Controllers\Backend\AiController::class, [
+    'name' => 'ai',
+    'middleware' => ['can:ai:view'],
+]);
 
 Route::get('logout', [\App\Http\Controllers\Backend\Auth\LogoutController::class, 'index'])
     ->name('logout');

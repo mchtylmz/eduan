@@ -3,6 +3,7 @@
 namespace App\Actions\Settings;
 
 use App\Actions\Files\UploadFileAction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -131,6 +132,10 @@ class SettingSaveAction
     protected function settings(array $settings): void
     {
         foreach ($settings as $key => $value) {
+            if ($key == 'gptLimitCount' && $oldValue = settings()->gptLimitCount) {
+                User::where('gpt_limit', $oldValue)->update(['gpt_limit' => $value]);
+            }
+
             $this->data[$key] = trim($value);
         }
     }

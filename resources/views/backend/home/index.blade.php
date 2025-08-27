@@ -19,6 +19,13 @@
         --}}
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.chart-widget', [
+                'id' => 'popularAiAnswers',
+                'title' => __('Popüler Yapay Zeka Konuları'),
+                'subtitle' => __('Görüntüleme')
+            ])
+        </div>
+        <div class="col-12 col-sm-6 mb-1">
+            @livewire('home.chart-widget', [
                 'id' => 'popularHits',
                 'title' => __('En Çok Görünütülenen Testler'),
                 'subtitle' => __('Görüntüleme')
