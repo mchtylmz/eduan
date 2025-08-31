@@ -24,9 +24,9 @@
             </a>
         </li>
         <li>
-            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved') }}">
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.notTests') }}">
                 <i class="fa fa-pen-alt-slash mx-1"></i>
-                <span>{{ __('Yarım Kalan Testler') }}</span>
+                <span>{{ __('Çözmediğim Testler') }}</span>
             </a>
         </li>
         <li>

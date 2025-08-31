@@ -3,6 +3,7 @@
 namespace App\Livewire\Frontend\Account;
 
 use App\Actions\Exams\UpdateExamFavoriteForUserAction;
+use App\Enums\ReviewVisibilityEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Exam;
 use App\Models\ExamResult;
@@ -26,12 +27,18 @@ class SolvedTests extends Component
     #[Computed]
     public function tests()
     {
+        if ($this->showNotComplete) {
+            return Exam::with(['language', 'userResults'])
+                ->withCount([
+                    'questions' => fn($query) => $query->active(),
+                ])
+                ->whereNotIn('id', ExamResult::where('user_id', auth()->id())->pluck('exam_id'))
+                ->active()
+                ->paginate($this->paginate);
+        }
+
         return Exam::with(['language', 'userResults'])
             ->whereHas('userResults', fn ($query) => $query->where('user_id', auth()->id()))
-            ->when(
-                $this->showNotComplete,
-                fn ($query) => $query->whereHas('userResults', fn ($query) => $query->where('completed', YesNoEnum::NO))
-            )
             ->active()
             ->paginate($this->paginate);
     }

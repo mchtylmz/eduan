@@ -16,14 +16,14 @@
                             <a class="nav-link {{ request('tab') !== 'exams' ? 'active': '' }} px-4"
                                     href="{{ route('frontend.stats', ['tab' => 'tests']) }}">
                                 <i class="fa fa-fw fa-poll d-none d-sm-block"></i>
-                                <span>{{ __('Testler') }}</span>
+                                <span>{{ __('Sınavlar') }}</span>
                             </a>
                         </li>
                         <li class="nav-item" role="presentation" style="width: 20%">
                             <a class="nav-link {{ request('tab') == 'exams' ? 'active': '' }} px-4"
                                     href="{{ route('frontend.stats', ['tab' => 'exams']) }}">
                                 <i class="fa fa-fw fa-pen-clip d-none d-sm-block"></i>
-                                <span>{{ __('Sınavlar') }}</span>
+                                <span>{{ __('Testler') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -31,7 +31,7 @@
 
                 <div class="course_details-tab-content">
                     <div class="tab-content h4_faq-area" id="pills-tests">
-                        @livewire('frontend.account.stats-table', ['tab' => request('tab')])
+                        @livewire('frontend.account.stats-table', ['tab' => request('tab', 'tests')])
                     </div>
                 </div>
 

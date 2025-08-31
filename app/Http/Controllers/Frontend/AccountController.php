@@ -42,7 +42,7 @@ class AccountController extends Controller
     public function solvedNotCompleteTests()
     {
         return view('frontend.account.solved-not-complete', [
-            'title' => __('Yarım Kalan Testler')
+            'title' => __('Çözmediğim Testler')
         ]);
     }
 

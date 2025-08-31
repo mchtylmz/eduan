@@ -17,13 +17,15 @@
             @livewire('home.statistics', ['section' => 'examReviews'])
         </div>
         --}}
-        <div class="col-12 col-sm-6 mb-1">
-            @livewire('home.chart-widget', [
+        @can('ai:view')
+            <div class="col-12 col-sm-6 mb-1">
+                @livewire('home.chart-widget', [
                 'id' => 'popularAiAnswers',
                 'title' => __('Popüler Yapay Zeka Konuları'),
                 'subtitle' => __('Görüntüleme')
-            ])
-        </div>
+                ])
+            </div>
+        @endcan
         <div class="col-12 col-sm-6 mb-1">
             @livewire('home.chart-widget', [
                 'id' => 'popularHits',

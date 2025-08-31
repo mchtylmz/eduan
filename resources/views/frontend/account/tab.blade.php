@@ -24,7 +24,7 @@
         <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.solved.notTests') ? 'active' : '' }}"
            href="{{ route('frontend.solved.notTests') }}">
             <i class="fa-light fa-pen-alt-slash fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('Yarım Kalan Testler') }}</p>
+            <p class="mb-0 text-black fw-medium fs-5">{{ __('Çözmediğim Testler') }}</p>
         </a>
     </div>
     <div class="col-6 col-lg-3 my-1 px-1 account-menu">

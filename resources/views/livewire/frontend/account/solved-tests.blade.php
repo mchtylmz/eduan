@@ -20,6 +20,7 @@
                             </div>
                         </div>
                         <div class="h2_course-content-bottom">
+                            @if(!$showNotComplete)
                             @php
                                 $resultStats = examResultStats(exam: $test, user: user());
                                 $results_count = $resultStats['results_count'] ?? 0;
@@ -36,6 +37,12 @@
                                 /
                                 {{ $incorrect_count }} {{ __('Yanlış') }}
                             </span>
+                            @else
+                                <span>
+                                    <i class="fa-light fa-question-circle me-1"></i>
+                                    {{ $test->questions_count }} {{ __('Soru') }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
