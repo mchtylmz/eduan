@@ -28,18 +28,26 @@
 
     @if(!empty($popupContent) || !empty($popupSubject))
         <script>
-            let promoTime = Math.floor(Date.now() / 1000) + (3600 * 36) + 120;
+            let promoTime = Math.floor(Date.now() / 1000) + (3600 * 50) + 120;
+            console.log(
+                'promoTime',
+                promoTime,
+                '{{ strtotime('48 hours') }}',
+                window.localStorage.getItem("PromoModal_storage") <= '{{ strtotime('48 hours') }}'
+            );
 
             setTimeout(() => {
-                if (window.localStorage.getItem("PromoModal_storage") <= '{{ strtotime('36 hours') }}') {
+                if (window.localStorage.getItem("PromoModal_storage") <= '{{ strtotime('48 hours') }}') {
                     $('#PromoModal').modal('show');
-                }
-            }, 100);
 
-            let PromoModal = document.getElementById('PromoModal');
-            PromoModal.addEventListener('hidden.bs.modal', function (event) {
+                    let PromoModal = document.getElementById('PromoModal');
+                    PromoModal.addEventListener('hidden.bs.modal', function (event) {
+                        window.localStorage.setItem("PromoModal_storage", promoTime);
+                    });
+                }
+
                 window.localStorage.setItem("PromoModal_storage", promoTime);
-            })
+            }, 100);
         </script>
     @endif
 @endif

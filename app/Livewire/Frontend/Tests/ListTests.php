@@ -67,7 +67,7 @@ class ListTests extends Component
                 $this->word,
                 intval($this->showHits),
                 $this->paginate,
-                request('page', 1),
+                $this->getPage(),
                 auth()->check() ? auth()->id() : 'not_auth',
             ]),
             60 * 60 * 365,

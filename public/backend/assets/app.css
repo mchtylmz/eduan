@@ -286,4 +286,5 @@ th.created_at {
 .latex-ai-image {
     height: 20px;
     object-fit: contain;
+    max-width: 480px !important;
 }
