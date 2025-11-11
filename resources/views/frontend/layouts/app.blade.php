@@ -83,6 +83,12 @@
 
     @livewireStyles
     @stack('style')
+
+    <style>
+        .theme-btn {
+            text-transform: none !important;
+        }
+    </style>
 </head>
 <body>
 @if(request()->routeIs('frontend.home') && isChrome())

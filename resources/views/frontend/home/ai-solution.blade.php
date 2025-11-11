@@ -8,7 +8,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelAi-headingQuestion">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelAi-collapseQuestion" aria-expanded="true" aria-controls="panelAi-collapseQuestion">
-                                    {{ __('Soru') }}
+                                    @if(app()->getLocale() == 'nl')
+                                        Vraag
+                                    @else
+                                        {{ __('Soru') }}
+                                    @endif
                                 </button>
                             </h2>
                             <div id="panelAi-collapseQuestion" class="accordion-collapse collapse show" aria-labelledby="panelAi-headingQuestion">
