@@ -1,0 +1,106 @@
+{
+    "consentModal": {
+        "title": "We use cookies",
+        "description": "This website uses essential cookies to ensure its proper operation and tracking cookies to understand how you interact with it. The latter will be set only after consent.",
+        "acceptAllBtn": "Accept all",
+        "acceptNecessaryBtn": "Reject all",
+        "showPreferencesBtn": "Manage Individual preferences"
+    },
+    "preferencesModal": {
+        "title": "Manage cookie preferences",
+        "acceptAllBtn": "Accept all",
+        "acceptNecessaryBtn": "Reject all",
+        "savePreferencesBtn": "Accept current selection",
+        "closeIconLabel": "Close modal",
+        "sections": [
+            {
+                "title": "Cookie usage",
+                "description": "We use cookies to ensure the basic functionalities of the website and to enhance your online experience."
+            },
+            {
+                "title": "Strictly necessary cookies",
+                "description": "These cookies are essential for the proper functioning of the website, for example for user authentication.",
+                "linkedCategory": "necessary",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Name",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "XSRF-TOKEN",
+                            "description": "This security cookie protects your session from unauthorized actions and CSRF attacks, and is essential for the website to function properly.",
+                            "expiration": "2 hours"
+                        },
+                        {
+                            "name": "hypotenuse_session",
+                            "description": "This cookie maintains your login session and preserves your preferences while browsing the website.",
+                            "expiration": "2 hours or until browser is closed"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Analytics",
+                "description": "Cookies used for analytics help collect data that allows services to understand how users interact with a particular service. These insights allow services both to improve content and to build better features that improve the user’s experience.",
+                "linkedCategory": "analytics",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Name",
+                        "domain": "Service",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "_ga",
+                            "domain": "Google Analytics",
+                            "description": "Cookie set by <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Expires after 12 days"
+                        },
+                        {
+                            "name": "_gid",
+                            "domain": "Google Analytics",
+                            "description": "Cookie set by <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Session"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Advertising",
+                "description": "Google uses cookies for advertising, including serving and rendering ads, personalizing ads (depending on your ad settings at <a href=\"https://g.co/adsettings\">g.co/adsettings</a>), limiting the number of times an ad is shown to a user, muting ads you have chosen to stop seeing, and measuring the effectiveness of ads.",
+                "linkedCategory": "advertisement"
+            },
+            {
+                "title": "Functionality",
+                "description": "Cookies used for functionality allow users to interact with a service or site to access features that are fundamental to that service. Things considered fundamental to the service include preferences like the user’s choice of language, product optimizations that help maintain and improve a service, and maintaining information relating to a user’s session, such as the content of a shopping cart.",
+                "linkedCategory": "functionality",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Name",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "user_language_preference",
+                            "description": " This cookie remembers your language preference (Dutch/French/English) for future visits.",
+                            "expiration": "1 year"
+                        },
+                        {
+                            "name": "exercise_settings",
+                            "description": "This cookie saves your difficulty level and exercise preferences to personalize your learning experience.",
+                            "expiration": "1 year"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "More information",
+                "description": "For any queries in relation to the policy on cookies and your choices, please <a href='/contact'>contact us</a>."
+            }
+        ]
+    }
+}

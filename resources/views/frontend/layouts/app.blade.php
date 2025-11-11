@@ -63,6 +63,8 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
+
     @if(request()->routeIs('frontend.home') && isChrome())
         <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
     @endif
@@ -138,6 +140,7 @@
 <script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/app.js') }}?v={{ config('app.version') }}"></script>
+<script type="module" src="{{ asset('assets/cookieconsent-config.js') }}"></script>
 
 @includeIf('frontend.layouts.section.footer-popup')
 

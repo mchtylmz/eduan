@@ -1,0 +1,106 @@
+{
+    "consentModal": {
+        "title": "Nous utilisons des cookies",
+        "description": "Ce site Web utilise des cookies essentiels pour assurer son bon fonctionnement et des cookies de suivi pour comprendre comment vous interagissez avec lui. Ces derniers ne seront définis qu'après consentement.",
+        "acceptAllBtn": "Tout accepter",
+        "acceptNecessaryBtn": "Tout refuser",
+        "showPreferencesBtn": "Gérer les préférences"
+    },
+    "preferencesModal": {
+        "title": "Gérer les préférences de cookies",
+        "acceptAllBtn": "Tout accepter",
+        "acceptNecessaryBtn": "Tout refuser",
+        "savePreferencesBtn": "Accepter la sélection actuelle",
+        "closeIconLabel": "Fermer la fenêtre",
+        "sections": [
+            {
+                "title": "Utilisation des cookies",
+                "description": "Nous utilisons des cookies pour assurer les fonctionnalités de base du site Web et améliorer votre expérience en ligne."
+            },
+            {
+                "title": "Cookies strictement nécessaires",
+                "description": "Ces cookies sont essentiels au bon fonctionnement du site Web, par exemple pour l'authentification des utilisateurs.",
+                "linkedCategory": "necessary",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Nom",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "XSRF-TOKEN",
+                            "description": "Ce cookie de sécurité protège votre session contre les actions non autorisées et les attaques CSRF, et est essentiel au bon fonctionnement du site Web.",
+                            "expiration": "2 heures"
+                        },
+                        {
+                            "name": "hypotenuse_session",
+                            "description": "Ce cookie maintient votre session de connexion et préserve vos préférences lors de la navigation sur le site Web.",
+                            "expiration": "2 heures ou jusqu'à la fermeture du navigateur"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Analytiques",
+                "description": "Les cookies utilisés à des fins analytiques aident à collecter des données qui permettent aux services de comprendre comment les utilisateurs interagissent avec un service particulier. Ces informations permettent aux services d'améliorer le contenu et de créer de meilleures fonctionnalités qui améliorent l'expérience utilisateur.",
+                "linkedCategory": "analytics",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Nom",
+                        "domain": "Service",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "_ga",
+                            "domain": "Google Analytics",
+                            "description": "Cookie défini par <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Expire après 12 jours"
+                        },
+                        {
+                            "name": "_gid",
+                            "domain": "Google Analytics",
+                            "description": "Cookie défini par <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Session"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Publicité",
+                "description": "Google utilise des cookies pour la publicité, notamment pour diffuser et afficher des annonces, personnaliser les annonces (en fonction de vos paramètres publicitaires sur <a href=\"https://g.co/adsettings\">g.co/adsettings</a>), limiter le nombre de fois qu'une annonce est diffusée à un utilisateur, masquer les annonces que vous avez choisi de ne plus voir et mesurer l'efficacité des annonces.",
+                "linkedCategory": "advertisement"
+            },
+            {
+                "title": "Fonctionnalité",
+                "description": "Les cookies utilisés pour la fonctionnalité permettent aux utilisateurs d'interagir avec un service ou un site pour accéder à des fonctionnalités fondamentales de ce service. Les éléments considérés comme fondamentaux pour le service incluent les préférences telles que le choix de langue de l'utilisateur, les optimisations de produits qui aident à maintenir et améliorer un service, et la conservation des informations relatives à la session d'un utilisateur, telles que le contenu d'un panier d'achat.",
+                "linkedCategory": "functionality",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Nom",
+                        "description": "Description",
+                        "expiration": "Expiration"
+                    },
+                    "body": [
+                        {
+                            "name": "user_language_preference",
+                            "description": "Ce cookie mémorise votre préférence de langue (néerlandais/français/anglais) pour les visites futures.",
+                            "expiration": "1 an"
+                        },
+                        {
+                            "name": "exercise_settings",
+                            "description": "Ce cookie enregistre votre niveau de difficulté et vos préférences d'exercice pour personnaliser votre expérience d'apprentissage.",
+                            "expiration": "1 an"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Plus d'informations",
+                "description": "Pour toute question concernant la politique de cookies et vos choix, veuillez <a href='/contact'>nous contacter</a>."
+            }
+        ]
+    }
+}

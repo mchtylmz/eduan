@@ -3,7 +3,7 @@
         <div class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle header-btn theme-btn theme-btn-locale theme-btn-medium px-3" type="button" id="auth-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-globe me-1"></i>
-                <span>{{ app()->getLocale() }}</span>
+                <span>{{ str(app()->getLocale())->upper() }}</span>
             </button>
             <ul class="dropdown-menu py-0" aria-labelledby="auth-dropdown">
                 @foreach(data()->languages(active: true) as $locale)

@@ -39,6 +39,17 @@
                 @error('password')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
             </div>
         </div>
+        <div class="account-form-condition mt-1 mb-1">
+            <label class="condition_label">
+                @if($page = \App\Models\Page::find(settings()->privacyPage ?? 0))
+                    <a class="text-decoration-underline" target="_blank" href="{{ route('frontend.page', $page->slug) }}">{{ __('Site kullanım koşullarını ve gizlilik kurallarını okudum, kabul ediyorum.') }}</a>
+                @else
+                    {{ __('Site kullanım koşullarını ve gizlilik kurallarını okudum, kabul ediyorum.') }}
+                @endif
+                <input type="checkbox" required checked>
+                <span class="check_mark"></span>
+            </label>
+        </div>
         <div class="account-form-condition">
             <label class="condition_label">{{ __('Beni Hatırla') }}
                 <input type="checkbox"

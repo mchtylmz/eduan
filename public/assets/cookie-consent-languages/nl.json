@@ -1,0 +1,106 @@
+{
+    "consentModal": {
+        "title": "We gebruiken cookies",
+        "description": "Deze website gebruikt essentiële cookies om de goede werking te garanderen en tracking cookies om te begrijpen hoe u ermee interageert. Deze laatste worden alleen ingesteld na toestemming.",
+        "acceptAllBtn": "Alles accepteren",
+        "acceptNecessaryBtn": "Alles weigeren",
+        "showPreferencesBtn": "Voorkeuren beheren"
+    },
+    "preferencesModal": {
+        "title": "Cookievoorkeuren beheren",
+        "acceptAllBtn": "Alles accepteren",
+        "acceptNecessaryBtn": "Alles weigeren",
+        "savePreferencesBtn": "Huidige selectie accepteren",
+        "closeIconLabel": "Venster sluiten",
+        "sections": [
+            {
+                "title": "Cookiegebruik",
+                "description": "We gebruiken cookies om de basisfunctionaliteit van de website te waarborgen en uw online ervaring te verbeteren."
+            },
+            {
+                "title": "Strikt noodzakelijke cookies",
+                "description": "Deze cookies zijn essentieel voor de goede werking van de website, bijvoorbeeld voor gebruikersauthenticatie.",
+                "linkedCategory": "necessary",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Naam",
+                        "description": "Beschrijving",
+                        "expiration": "Vervaldatum"
+                    },
+                    "body": [
+                        {
+                            "name": "XSRF-TOKEN",
+                            "description": "Deze beveiligingscookie beschermt uw sessie tegen ongeautoriseerde acties en CSRF-aanvallen en is essentieel voor de goede werking van de website.",
+                            "expiration": "2 uur"
+                        },
+                        {
+                            "name": "hypotenuse_session",
+                            "description": "Deze cookie handhaaft uw inlogsessie en bewaart uw voorkeuren tijdens het browsen op de website.",
+                            "expiration": "2 uur of totdat de browser wordt gesloten"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Analyse",
+                "description": "Cookies die voor analyse worden gebruikt, helpen bij het verzamelen van gegevens waarmee diensten kunnen begrijpen hoe gebruikers omgaan met een bepaalde dienst. Deze inzichten stellen diensten in staat om zowel inhoud te verbeteren als betere functies te bouwen die de gebruikerservaring verbeteren.",
+                "linkedCategory": "analytics",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Naam",
+                        "domain": "Service",
+                        "description": "Beschrijving",
+                        "expiration": "Vervaldatum"
+                    },
+                    "body": [
+                        {
+                            "name": "_ga",
+                            "domain": "Google Analytics",
+                            "description": "Cookie ingesteld door <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Verloopt na 12 dagen"
+                        },
+                        {
+                            "name": "_gid",
+                            "domain": "Google Analytics",
+                            "description": "Cookie ingesteld door <a href=\"https://business.safety.google/adscookies/\">Google Analytics</a>",
+                            "expiration": "Sessie"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Reclame",
+                "description": "Google gebruikt cookies voor advertenties, waaronder het weergeven en renderen van advertenties, het personaliseren van advertenties (afhankelijk van uw advertentie-instellingen op <a href=\"https://g.co/adsettings\">g.co/adsettings</a>), het beperken van het aantal keren dat een advertentie aan een gebruiker wordt getoond, het dempen van advertenties die u niet meer wilt zien en het meten van de effectiviteit van advertenties.",
+                "linkedCategory": "advertisement"
+            },
+            {
+                "title": "Functionaliteit",
+                "description": "Cookies die voor functionaliteit worden gebruikt, stellen gebruikers in staat om te communiceren met een dienst of site om toegang te krijgen tot functies die fundamenteel zijn voor die dienst. Zaken die als fundamenteel voor de dienst worden beschouwd, omvatten voorkeuren zoals de taalkeuze van de gebruiker, productoptimalisaties die helpen bij het onderhouden en verbeteren van een dienst, en het bijhouden van informatie met betrekking tot de sessie van een gebruiker, zoals de inhoud van een winkelwagen.",
+                "linkedCategory": "functionality",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Naam",
+                        "description": "Beschrijving",
+                        "expiration": "Vervaldatum"
+                    },
+                    "body": [
+                        {
+                            "name": "user_language_preference",
+                            "description": "Deze cookie onthoudt uw taalvoorkeur (Nederlands/Frans/Engels) voor toekomstige bezoeken.",
+                            "expiration": "1 jaar"
+                        },
+                        {
+                            "name": "exercise_settings",
+                            "description": "Deze cookie slaat uw moeilijkheidsgraad en oefenvoorkeuren op om uw leerervaring te personaliseren.",
+                            "expiration": "1 jaar"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Meer informatie",
+                "description": "Voor vragen met betrekking tot het cookiebeleid en uw keuzes, kunt u <a href='/contact'>contact met ons opnemen</a>."
+            }
+        ]
+    }
+}

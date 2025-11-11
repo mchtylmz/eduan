@@ -1,0 +1,106 @@
+{
+    "consentModal": {
+        "title": "Çerez kullanıyoruz",
+        "description": "Bu web sitesi, düzgün çalışmasını sağlamak için temel çerezler ve sizinle nasıl etkileşim kurduğunuzu anlamak için izleme çerezleri kullanır. İkincisi yalnızca onay verildikten sonra ayarlanacaktır.",
+        "acceptAllBtn": "Tümünü kabul et",
+        "acceptNecessaryBtn": "Tümünü reddet",
+        "showPreferencesBtn": "Tercihlerimi yönet"
+    },
+    "preferencesModal": {
+        "title": "Çerez tercihlerini yönet",
+        "acceptAllBtn": "Tümünü kabul et",
+        "acceptNecessaryBtn": "Tümünü reddet",
+        "savePreferencesBtn": "Mevcut seçimi kabul et",
+        "closeIconLabel": "Kapat",
+        "sections": [
+            {
+                "title": "Çerez kullanımı",
+                "description": "Web sitesinin temel işlevlerini sağlamak ve çevrimiçi deneyiminizi geliştirmek için çerezler kullanıyoruz."
+            },
+            {
+                "title": "Kesinlikle gerekli çerezler",
+                "description": "Bu çerezler, örneğin kullanıcı kimlik doğrulaması için web sitesinin düzgün çalışması açısından gereklidir.",
+                "linkedCategory": "necessary",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Ad",
+                        "description": "Açıklama",
+                        "expiration": "Süre"
+                    },
+                    "body": [
+                        {
+                            "name": "XSRF-TOKEN",
+                            "description": "Bu güvenlik çerezi, oturumunuzu yetkisiz işlemlerden ve CSRF saldırılarından korur ve web sitesinin düzgün çalışması için gereklidir.",
+                            "expiration": "2 saat"
+                        },
+                        {
+                            "name": "hypotenuse_session",
+                            "description": "Bu çerez, giriş oturumunuzu korur ve web sitesinde gezinirken tercihlerinizi saklar.",
+                            "expiration": "2 saat veya tarayıcı kapatılana kadar"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Analitik",
+                "description": "Analitik için kullanılan çerezler, hizmetlerin kullanıcıların belirli bir hizmetle nasıl etkileşim kurduğunu anlamasına olanak tanıyan verilerin toplanmasına yardımcı olur. Bu bilgiler, hizmetlerin hem içeriği iyileştirmesine hem de kullanıcı deneyimini geliştiren daha iyi özellikler oluşturmasına olanak tanır.",
+                "linkedCategory": "analytics",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Ad",
+                        "domain": "Hizmet",
+                        "description": "Açıklama",
+                        "expiration": "Süre"
+                    },
+                    "body": [
+                        {
+                            "name": "_ga",
+                            "domain": "Google Analytics",
+                            "description": "<a href=\"https://business.safety.google/adscookies/\">Google Analytics</a> tarafından ayarlanan çerez",
+                            "expiration": "12 gün sonra sona erer"
+                        },
+                        {
+                            "name": "_gid",
+                            "domain": "Google Analytics",
+                            "description": "<a href=\"https://business.safety.google/adscookies/\">Google Analytics</a> tarafından ayarlanan çerez",
+                            "expiration": "Oturum"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Reklamcılık",
+                "description": "Google, reklamların sunulması ve gösterilmesi, reklamların kişiselleştirilmesi (<a href=\"https://g.co/adsettings\">g.co/adsettings</a> adresindeki reklam ayarlarınıza bağlı olarak), bir reklamın kullanıcıya gösterilme sayısının sınırlandırılması, görmemeyi seçtiğiniz reklamların sessize alınması ve reklamların etkinliğinin ölçülmesi dahil olmak üzere reklamcılık için çerezler kullanır.",
+                "linkedCategory": "advertisement"
+            },
+            {
+                "title": "İşlevsellik",
+                "description": "İşlevsellik için kullanılan çerezler, kullanıcıların bir hizmetin temel özelliklerine erişmek için bir hizmet veya siteyle etkileşim kurmasına olanak tanır. Hizmet için temel olarak kabul edilen şeyler arasında kullanıcının dil seçimi gibi tercihler, bir hizmeti korumaya ve geliştirmeye yardımcı olan ürün optimizasyonları ve alışveriş sepetinin içeriği gibi kullanıcının oturumuyla ilgili bilgilerin saklanması yer alır.",
+                "linkedCategory": "functionality",
+                "cookieTable": {
+                    "headers": {
+                        "name": "Ad",
+                        "description": "Açıklama",
+                        "expiration": "Süre"
+                    },
+                    "body": [
+                        {
+                            "name": "user_language_preference",
+                            "description": "Bu çerez, gelecekteki ziyaretler için dil tercihinizi (Flemenkçe/Fransızca/İngilizce) hatırlar.",
+                            "expiration": "1 yıl"
+                        },
+                        {
+                            "name": "exercise_settings",
+                            "description": "Bu çerez, öğrenme deneyiminizi kişiselleştirmek için zorluk seviyenizi ve egzersiz tercihlerinizi kaydeder.",
+                            "expiration": "1 yıl"
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Daha fazla bilgi",
+                "description": "Çerez politikası ve seçimleriniz hakkında sorularınız için lütfen <a href='/contact'>bizimle iletişime geçin</a>."
+            }
+        ]
+    }
+}
