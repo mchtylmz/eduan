@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\SetLocale;
 use App\Jobs\CalculateLeagueResult;
+use App\Jobs\UpdateSeasonIdForResults;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -48,6 +49,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ->name('upload_backup_to_cloudflare')
             ->timezone(config('app.timezone'))
             ->dailyAt('04:30');
+
+        Schedule::job(\App\Jobs\UpdateSeasonIdForResults::class)
+            ->name('update_season_id_for_results')
+            ->timezone(config('app.timezone'))
+            ->everyFifteenMinutes();
 
         Schedule::command('optimize:clear')
             ->name('optimize_clear')

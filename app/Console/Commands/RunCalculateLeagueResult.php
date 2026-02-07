@@ -26,6 +26,11 @@ class RunCalculateLeagueResult extends Command
      */
     public function handle()
     {
+        if (settings()->leagueStatus == 'passive') {
+            $this->error('lig hesaplama kapalı');
+            return self::FAILURE;
+        }
+
         $day = (int) (settings()->leagueDay ?? 6);
         if (now()->dayOfWeek !== $day) {
             $this->error(sprintf(

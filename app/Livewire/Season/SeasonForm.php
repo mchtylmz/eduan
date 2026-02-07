@@ -3,6 +3,7 @@
 namespace App\Livewire\Season;
 
 use App\Enums\StatusEnum;
+use App\Jobs\UpdateSeasonIdForResults;
 use App\Models\Season;
 use App\Traits\CustomLivewireAlert;
 use Illuminate\Validation\Rules\Enum;
@@ -95,6 +96,8 @@ class SeasonForm extends Component
         }
 
         $this->mount();
+
+        UpdateSeasonIdForResults::dispatch();
 
         $this->message(__('Bilgileriniz başarıyla güncellendi'))->success();
         return true;
