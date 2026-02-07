@@ -28,7 +28,6 @@ class FavoriteTable extends DataTableComponent
         $this->userId = $userId;
         $this->resetPage($this->getComputedPageName());
         $this->clearSorts();
-
     }
 
     public function builder(): Builder

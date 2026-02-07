@@ -21,6 +21,7 @@ trait LivewireTableConfigure
             ->setLoadingPlaceholderEnabled()
             ->setLoadingPlaceholderContent(__('Yükleniyor') . '...')
             ->setFilterLayoutSlideDown()
+            ->setFilterSlideDownDefaultStatusEnabled()
             ->setEagerLoadAllRelationsStatus(false)
             ->setShouldRetrieveTotalItemCountDisabled()
             ->setQueryStringEnabled()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Home;
 
+use App\Enums\RoleTypeEnum;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\Lesson;
@@ -45,6 +46,12 @@ class ChartWidget extends Component
             'home_chart_popularAiAnswers',
             60 * 60 * 2,
             fn() =>  DB::table('user_ai_usages')
+                ->when(
+                    auth()->user()->can(RoleTypeEnum::TEACHER->value),
+                    function ($query) {
+                        return $query->whereIn('user_id', auth()->user()->students()->select('id'));
+                    }
+                )
                 ->join('answer_a_i_s', 'answer_a_i_s.id', '=', 'user_ai_usages.answer_ai_id')
                 ->join('topics', 'topics.id', '=', 'answer_a_i_s.topic_id')
                 ->select('topics.title as name', DB::raw('SUM(user_ai_usages.usage) as hits'))
@@ -72,10 +79,16 @@ class ChartWidget extends Component
     public function popularResults(): array
     {
         $results = cache()->remember(
-            'home_chart_popularResults',
+            'home_chart_popularResults_' . (auth()->user()->can(RoleTypeEnum::TEACHER->value) ? auth()->id() : ''),
             60 * 60 * 2,
             fn() => ExamResult::selectRaw('id, exam_id, SUM(question_count) as question_count, SUM(correct_count) as correct_count, SUM(incorrect_count) as incorrect_count')
                 ->with('exam')
+                ->when(
+                    auth()->user()->can(RoleTypeEnum::TEACHER->value),
+                    function ($query) {
+                        return $query->whereIn('user_id', auth()->user()->students()->select('id'));
+                    }
+                )
                 ->groupBy('exam_id')
                 ->orderByRaw('question_count DESC')
                 ->limit(8)

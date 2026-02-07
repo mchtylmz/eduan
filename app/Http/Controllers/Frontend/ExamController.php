@@ -39,4 +39,9 @@ class ExamController extends Controller
             'test' => $test,
         ]);
     }
+
+    public function solutions()
+    {
+        abort(404);
+    }
 }

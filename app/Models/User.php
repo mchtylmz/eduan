@@ -8,7 +8,6 @@ use App\Enums\YesNoEnum;
 use App\Traits\Loggable;
 use App\Traits\Scope\RoleScope;
 use App\Traits\Scope\StatusScope;
-use Filterable\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -76,6 +75,26 @@ class User extends Authenticatable
     public function testResults(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
         return $this->hasMany(TestsResult::class)->orderByDesc('id');
+    }
+
+    public function teachers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'teacher_student',
+            'user_id',
+            'teacher_id',
+        );
+    }
+
+    public function students(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'teacher_student',
+            'teacher_id',
+            'user_id',
+        );
     }
 
     public function usageGptLimit(string $date = null): int

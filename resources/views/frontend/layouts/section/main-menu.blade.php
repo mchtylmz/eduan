@@ -1,10 +1,10 @@
 <ul>
-    <li><a href="{{ route('frontend.home') }}">{{ __('Anasayfa') }}</a></li>
+    <li class="me-4"><a href="{{ route('frontend.home') }}">{{ __('Anasayfa') }}</a></li>
 
     <li class="menu-has-child d-unset d-sm-none">
         <a href="javascript:void(0);">{{ __('Dersler') }}</a>
         <ul class="submenu">
-            @if($lessons = data()->lessons(hits: false, limit: 9))
+            @if($lessons = data()->lessons(hits: false, limit: 10))
                 @foreach($lessons as $lesson)
                     <li>
                         <a href="{{ route('frontend.lesson', $lesson->code) }}">{{ $lesson->name }}</a>
@@ -12,18 +12,21 @@
                 @endforeach
             @endif
             <li>
-                <a  href="{{ route('frontend.lessons') }}">{{ __('Tüm Dersler') }}</a>
+                <a href="{{ route('frontend.lessons') }}">{{ __('Tüm Dersler') }}</a>
             </li>
         </ul>
     </li>
 
-    <li><a href="{{ route('frontend.tests') }}">{{ __('Testler') }}</a></li>
+    <li class="me-4"><a href="{{ route('frontend.tests') }}">{{ __('Testler') }}</a></li>
 
-    <li><a href="{{ route('frontend.exams') }}">{{ __('Sınavlar') }}</a></li>
+    <li class="me-4"><a href="{{ route('frontend.exams') }}">{{ __('Sınavlar') }}</a></li>
 
-    <li><a href="{{ route('frontend.blog') }}">{{ __('Blog') }}</a></li>
+    <li class="me-4"><a href="{{ route('frontend.blog') }}">{{ __('Blog') }}</a></li>
+    @if(settings()->leagueStatus == 'active')
+        <li class="me-4"><a href="{{ route('frontend.leagues') }}">{{ __('Ligler') }}</a></li>
+    @endif
 
-    <li><a href="{{ route('frontend.contact') }}">{{ __('İletişim') }}</a></li>
+    <li class="me-4"><a href="{{ route('frontend.contact') }}">{{ __('İletişim') }}</a></li>
 
     <li class="menu-has-child d-unset d-sm-none">
         <a href="{{ route('login') }}">

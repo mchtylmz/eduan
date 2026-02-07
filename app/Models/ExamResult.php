@@ -12,7 +12,9 @@ class ExamResult extends Model
     /** @use HasFactory<\Database\Factories\ExamResultFactory> */
     use HasFactory, Loggable;
 
-    public $fillable = ['user_id', 'exam_id','question_count','correct_count','incorrect_count','time', 'completed'];
+    public $fillable = ['user_id', 'exam_id', 'question_count', 'correct_count', 'incorrect_count', 'time', 'completed',
+        'season_id'
+    ];
 
     protected function casts(): array
     {
@@ -39,4 +41,8 @@ class ExamResult extends Model
         return $this->hasMany(ExamResultDetail::class);
     }
 
+    public function season(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    {
+        return $this->belongsTo(Season::class);
+    }
 }

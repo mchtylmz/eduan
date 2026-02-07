@@ -2,10 +2,13 @@
 
 namespace App\Helpers;
 
+use App\Enums\RoleTypeEnum;
+use App\Enums\StatusEnum;
 use App\Models\Exam;
 use App\Models\ExamResult;
 use App\Models\ExamResultDetail;
 use App\Models\Lesson;
+use App\Models\Season;
 use App\Models\Test;
 use App\Models\TestsResult;
 use App\Models\Topic;
@@ -74,10 +77,47 @@ class FilterHelper extends DataHelper
 
     public function users(): array
     {
+        $suffix = '';
+        if (auth()->user()->can(RoleTypeEnum::TEACHER->value)) {
+            $suffix = auth()->id();
+        }
+
         return Cache::remember(
-            $this->cacheKey('users'),
+            $this->cacheKey('users', $suffix),
             $this->cacheTime(30),
             fn() => User::orderByDesc('id')
+                ->when(
+                    auth()->user()->can(RoleTypeEnum::TEACHER),
+                    fn ($query) => $query->whereIn('id', auth()->user()->students()->select('id'))
+                )
+                ->get()
+                ->keyBy('id')
+                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->toArray()
+        );
+    }
+
+    public function students(): array
+    {
+        return Cache::remember(
+            $this->cacheKey('students'),
+            $this->cacheTime(30),
+            fn() => User::permission('users:teacher-findable')
+                ->orderByDesc('id')
+                ->get()
+                ->keyBy('id')
+                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->toArray()
+        );
+    }
+
+    public function teachers(): array
+    {
+        return Cache::remember(
+            $this->cacheKey('teachers'),
+            $this->cacheTime(30),
+            fn() => User::permission(RoleTypeEnum::TEACHER)
+                ->orderByDesc('id')
                 ->get()
                 ->keyBy('id')
                 ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
@@ -94,8 +134,14 @@ class FilterHelper extends DataHelper
                 ->whereIn(
                     'id',
                     ExamResult::when((bool) $examId, fn ($query) => $query->where('exam_id', $examId))
-                    ->pluck('user_id')
-                    ->toArray()
+                    ->select('user_id')
+                    // ->toArray()
+                )
+                ->when(
+                    auth()->user()->can(RoleTypeEnum::TEACHER),
+                    function ($query) {
+                        return $query->whereIn('id', auth()->user()->students()->select('id'));
+                    }
                 )
                 ->get()
                 ->keyBy('id')
@@ -116,6 +162,12 @@ class FilterHelper extends DataHelper
                     ->pluck('user_id')
                     ->toArray()
                 )
+                ->when(
+                    auth()->user()->can(RoleTypeEnum::TEACHER),
+                    function ($query) {
+                        return $query->whereIn('id', auth()->user()->students()->select('id'));
+                    }
+                )
                 ->get()
                 ->keyBy('id')
                 ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
@@ -129,7 +181,7 @@ class FilterHelper extends DataHelper
             $this->cacheKey('examsInResults'),
             $this->cacheTime(30),
             fn() => Exam::orderByDesc('id')
-                ->whereIn('id', ExamResult::all()->pluck('exam_id')->toArray())
+                ->whereIn('id', ExamResult::all()->select('exam_id'))
                 ->get()
                 ->keyBy('id')
                 ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))
@@ -143,7 +195,7 @@ class FilterHelper extends DataHelper
             $this->cacheKey('testsInResults'),
             $this->cacheTime(30),
             fn() => Test::orderByDesc('id')
-                ->whereIn('id', TestsResult::all()->pluck('test_id')->toArray())
+                ->whereIn('id', TestsResult::all()->select('test_id'))
                 ->get()
                 ->keyBy('id')
                 ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))

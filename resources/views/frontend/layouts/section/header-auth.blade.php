@@ -24,19 +24,19 @@
             </a>
         </li>
         <li>
-            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.notTests') }}">
-                <i class="fa fa-pen-alt-slash mx-1"></i>
-                <span>{{ __('Çözmediğim Testler') }}</span>
-            </a>
-        </li>
-        <li>
             <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.exams') }}">
                 <i class="fa fa-book-alt mx-1"></i>
                 <span>{{ __('Çözdüğüm Sınavlar') }}</span>
             </a>
         </li>
         <li>
-            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.solved.exams') }}">
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.my.leagues') }}">
+                <i class="fa fa-list-1-2 mx-1"></i>
+                <span>{{ __('Lig Sonuçlarım') }}</span>
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.stats') }}">
                 <i class="fa fa-chart-line mx-1"></i>
                 <span>{{ __('İstatistikler') }}</span>
             </a>

@@ -60,6 +60,12 @@ class PermissionSeeder extends Seeder
             ['name' => 'users:update'],
             ['name' => 'users:update-password'],
             ['name' => 'users:delete'],
+            // 13-01-2025 updated
+            ['name' => 'users:student-delete'],
+            ['name' => 'users:student-add'],
+            ['name' => 'users:teacher-delete'],
+            ['name' => 'users:teacher-add'],
+            ['name' => 'users:teacher-findable'],
 
             ['name' => 'roles:view'],
             ['name' => 'roles:add'],
@@ -88,6 +94,8 @@ class PermissionSeeder extends Seeder
 
             ['name' => 'user-type:admin'],
             ['name' => 'user-type:user'],
+            // 13-01-2025 updated
+            ['name' => 'user-type:teacher'],
 
             ['name' => 'dashboard:access'],
 
@@ -107,6 +115,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'ai:add'],
             ['name' => 'ai:update'],
             ['name' => 'ai:delete'],
+
+            // 13-01-2026 updated
+            ['name' => 'leagues:view'],
+            ['name' => 'leagues:run'],
+            ['name' => 'leagues:delete'],
+
+            // 02-02-2026 updated
+            ['name' => 'seasons:view'],
+            ['name' => 'seasons:update'],
+            ['name' => 'seasons:delete'],
         ]);
 
         $user->givePermissionTo(['user-type:user']);
@@ -115,5 +133,6 @@ class PermissionSeeder extends Seeder
 
         $admin->givePermissionTo(Permission::all());
         $admin->revokePermissionTo(['user-type:user']);
+        $admin->revokePermissionTo(['user-type:teacher']);
     }
 }

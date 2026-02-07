@@ -5,6 +5,11 @@
     <div class="block block-rounded">
         <ul class="nav nav-tabs nav-tabs-alt block-header-default" role="tablist">
             <li class="nav-item" role="presentation">
+                <a @class(['nav-link py-3', 'active' => $activeTab == 'questions']) type="button" href="?tab=questions">
+                    <i class="fa fa-question-circle mx-1"></i> {{ __('Kullanıcı Soru Çözme İstatistikleri') }}
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
                 <a @class(['nav-link py-3', 'active' => $activeTab == 'stats']) type="button" href="?tab=stats">
                     <i class="fa fa-percentage mx-1"></i> {{ __('Sonuç İstatistikleri') }}
                 </a>

@@ -8,7 +8,7 @@
 
     <title>{{ !empty($title) ? $title . ' | ' : '' }}{{ settingLocale('siteTitle') }}</title>
     @if($favicon = settings()->siteFavicon)
-        <link rel="shortcut icon" href="{{ asset($favicon) }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset($favicon) }}">
     @endif
 
     <!-- sweetalert2 -->
@@ -30,6 +30,7 @@
 
     <style>
         [x-cloak] { display: none !important; }
+        .fa-1_5x {font-size: 1.25rem !important;}
     </style>
     @livewireStyles
 
@@ -191,9 +192,11 @@
         });
         livewireOffcanvas.addEventListener('show.bs.offcanvas', function () {
             $('.selectpicker').selectpicker();
+            One.helpersOnLoad(['js-flatpickr']);
         });
         Livewire.hook('element.init', ({ component, el }) => {
             $('.selectpicker').selectpicker();
+            One.helpersOnLoad(['js-flatpickr']);
         });
         Livewire.on('scrollToEndContent', function () {
             setTimeout(() => {

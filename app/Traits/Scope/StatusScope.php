@@ -19,4 +19,8 @@ trait StatusScope
         $query->where('status', StatusEnum::PASSIVE);
     }
 
+    public function scopeLeagueApproval(Builder $query, int $value = 1): void
+    {
+        $query->where('league_approval', $value);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Exams;
 
+use App\Enums\RoleTypeEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Exam;
 use App\Models\User;
@@ -34,16 +35,25 @@ class ResultsTable extends DataTableComponent
         $this->user = $user;
         $this->incorrectCount = $incorrectCount;
 
-        $this->setSortAsc('time');
+        $this->setSortDesc('updated_at');
+        $this->setFilter('completed', YesNoEnum::YES->value);
+        $this->setFilter('season_id', activeSeason()->id ?? 0);
     }
 
     public function builder(): Builder
     {
+        $builder = ExamResult::with(['user', 'exam'])->when(
+            auth()->user()->can(RoleTypeEnum::TEACHER),
+            function ($query) {
+                return $query->whereIn('user_id', auth()->user()->students()->select('id'));
+            }
+        );
+
         if ($this->incorrectCount) {
-            return ExamResult::with(['user', 'exam'])->whereRaw('question_count = correct_count');
+            return $builder->whereRaw('question_count = correct_count');
         }
 
-        return ExamResult::with(['user', 'exam'])
+        return $builder
             ->when($this->exam->exists, fn($query) => $query->where('exam_id', $this->exam->id))
             ->when($this->user->exists, fn($query) => $query->where('user_id', $this->user->id));
     }
@@ -51,6 +61,8 @@ class ResultsTable extends DataTableComponent
     public function filters(): array
     {
         $filters = [];
+
+        $filters[] = $this->seasonsFilter('exam_results.season_id');
 
         if (!$this->user->exists) {
             $filters[] = $this->usersInExamsResultsFilter(
@@ -78,13 +90,13 @@ class ResultsTable extends DataTableComponent
                 ->hideIf($this->exam->exists)
                 ->searchable()
                 ->sortable(),
-            Column::make(__('E-posta Adresi'), "user.email")
-                ->searchable()
-                ->sortable(),
             Column::make(__('İsim'), "user.name")
                 ->searchable()
                 ->sortable(),
             Column::make(__('Soyisim'), "user.surname")
+                ->searchable()
+                ->sortable(),
+            Column::make(__('E-posta Adresi'), "user.email")
                 ->collapseOnMobile()
                 ->searchable()
                 ->sortable(),
@@ -99,9 +111,8 @@ class ResultsTable extends DataTableComponent
                 ->sortable(),
             Column::make(__('Süre'), "time")
                 ->format(fn($value) => sprintf(
-                    '∼%d %s (%d %s)',
-                    intval($value / 60), __('dakika'),
-                    $value, __('sn'),
+                    '∼%d %s',
+                    intval($value / 60), __('dakika')
                 ))
                 ->collapseOnMobile()
                 ->sortable(),
@@ -110,7 +121,7 @@ class ResultsTable extends DataTableComponent
                 ->component('table.status')
                 ->attributes(fn($value, $row, Column $column) => [
                     'type' => YesNoEnum::YES->is($value) ? 'success' : 'warning',
-                    'label' => YesNoEnum::YES->is($value) ? __('Tamamlandı') : __('Tamamlanmadı')
+                    'label' => YesNoEnum::YES->is($value) ? '<i class="fa-regular fa-circle-check fa-1_5x mx-1"></i>' : '<i class="fa fa-circle-xmark fa-1_5x mx-1"></i>'
                 ])
                 ->searchable()
                 ->sortable(),

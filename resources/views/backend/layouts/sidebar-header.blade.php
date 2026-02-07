@@ -1,5 +1,5 @@
 <!-- Logo -->
-@if($logoWhite = settings()->siteLogoWhite)
+@if($logoWhite = settings()->siteFavicon)
     <a class="fw-semibold text-dual" href="{{ route('admin.home.index') }}">
         <img src="{{ asset($logoWhite) }}" alt="Logo" style="max-height: 40px"/>
     </a>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Enums\RoleTypeEnum;
 use App\Enums\StatusEnum;
 use App\Enums\YesNoEnum;
 use App\Models\User;
@@ -32,6 +33,10 @@ class UserTable extends DataTableComponent
 
     public function builder(): Builder
     {
+        if (auth()->user()->can(RoleTypeEnum::TEACHER->value)) {
+            return User::with(['roles', 'students'])->whereIn('id', auth()->user()->students()->select('id'));
+        }
+
         return User::with(['roles']);
     }
 

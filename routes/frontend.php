@@ -14,6 +14,7 @@ use App\Models\Topic;
 use App\Models\Newsletter;
 use App\Models\Page;
 use App\Models\Question;
+use App\Models\League;
 
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class,'index'])
     ->name('home');
@@ -55,6 +56,10 @@ Route::get('blog/{blog:slug}', [\App\Http\Controllers\Frontend\BlogController::c
     ->name('blog.detail');
 Route::get('faqs', [\App\Http\Controllers\Frontend\FaqController::class,'index'])
     ->name('faqs');
+Route::get('leagues', [\App\Http\Controllers\Frontend\LeagueController::class,'index'])
+    ->name('leagues');
+Route::get('league/{league:code}', [\App\Http\Controllers\Frontend\LeagueController::class,'detail'])
+    ->name('leagues.detail');
 
 Route::get('contact', [\App\Http\Controllers\Frontend\ContactController::class,'index'])
     ->name('contact');
@@ -68,6 +73,7 @@ Route::middleware(['auth'])
         Route::get('/profile', 'index')->name('profile');
         Route::get('/favorite', 'favorite')->name('favorite');
         Route::get('/stats', 'stats')->name('stats');
+        Route::get('/my-leagues', 'myLeagues')->name('my.leagues');
         Route::get('/solved', 'solved')->name('solved');
         Route::get('/solved/not-complete-tests', 'solvedNotCompleteTests')->name('solved.notTests');
         Route::get('/results/exams', 'results')->name('solved.exams');

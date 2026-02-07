@@ -12,7 +12,7 @@ class TestsResult extends Model
     /** @use HasFactory<\Database\Factories\TestsResultFactory> */
     use HasFactory, Loggable;
 
-    public $fillable = ['user_id', 'test_id','question_count','correct_count','incorrect_count','duration','point','passing_score','completed', 'completed_at', 'expires_at'];
+    public $fillable = ['user_id', 'test_id','question_count','correct_count','incorrect_count','duration','point','passing_score','completed', 'completed_at', 'expires_at', 'season_id'];
 
     protected function casts(): array
     {
@@ -39,5 +39,10 @@ class TestsResult extends Model
     public function details(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(TestsResultDetail::class, 'tests_result_id');
+    }
+
+    public function season(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    {
+        return $this->belongsTo(Season::class);
     }
 }

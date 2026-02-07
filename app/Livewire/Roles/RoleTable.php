@@ -41,6 +41,9 @@ class RoleTable extends DataTableComponent
                     if ($row->hasPermissionTo(RoleTypeEnum::USER)) {
                         return RoleTypeEnum::USER->name();
                     }
+                    if ($row->hasPermissionTo(RoleTypeEnum::TEACHER)) {
+                        return RoleTypeEnum::TEACHER->name();
+                    }
 
                     return '-';
                 }),

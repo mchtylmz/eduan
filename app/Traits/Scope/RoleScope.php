@@ -17,6 +17,11 @@ trait RoleScope
         $query->permission(\App\Enums\RoleTypeEnum::USER)->permission('exams:solve', true);
     }
 
+    public function scopeTeacher(Builder $query): void
+    {
+        $query->permission(\App\Enums\RoleTypeEnum::TEACHER);
+    }
+
     public function scopePremiumUser(Builder $query): void
     {
         $query->permission(\App\Enums\RoleTypeEnum::USER)->permission('exams:solve');

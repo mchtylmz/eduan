@@ -29,6 +29,7 @@ class UserForm extends Component
     public string $name;
     public string $surname;
     public int $gpt_limit = 5;
+    public int $league_approval = 1;
     public ?string $password = null;
     public StatusEnum $status = StatusEnum::ACTIVE;
     public YesNoEnum $email_verified = YesNoEnum::NO;
@@ -54,6 +55,7 @@ class UserForm extends Component
         $this->surname = $this->user->surname;
         $this->status = $this->user->status;
         $this->gpt_limit = $this->user->gpt_limit;
+        $this->league_approval = $this->user->league_approval == 1 ? 1 : 0;
         $this->email_verified = $this->user->email_verified ?? YesNoEnum::NO;
         $this->permission = 'users:update';
     }
@@ -84,6 +86,7 @@ class UserForm extends Component
             'name' => 'required|string',
             'surname' => 'required|string',
             'gpt_limit' => 'required|integer',
+            'league_approval' => 'required|integer|min:0|max:1',
             'role_id' => 'required|integer|exists:roles,id',
             'status' => ['required', new Enum(StatusEnum::class)],
         ];
@@ -97,6 +100,7 @@ class UserForm extends Component
             'name' => __('İsim'),
             'surname' => __('Soyisim'),
             'gpt_limit' => __('Yapay zeka kullanım limiti'),
+            'league_approval' => __('Lig / Lig Sonuçlarına Katılma Durumu'),
             'role_id' => __('Kullanıcı Yetkisi'),
             'status' => __('Durum'),
         ];
@@ -143,6 +147,7 @@ class UserForm extends Component
                 'name' => $this->name,
                 'surname' => $this->surname,
                 'gpt_limit' => $this->gpt_limit,
+                'league_approval' => $this->league_approval == 1 ? 1 : 0,
                 'status' => $this->status,
                 'email_verified' => $this->email_verified,
             ],

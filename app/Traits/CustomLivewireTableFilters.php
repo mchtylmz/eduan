@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Enums\RoleTypeEnum;
 use App\Enums\StatusEnum;
 use App\Enums\VisibilityEnum;
 use App\Enums\YesNoEnum;
@@ -87,9 +88,9 @@ trait CustomLivewireTableFilters
             ->filter(is_callable($callback) ? $callback : null);
     }
 
-    protected function languageFilter(string $field = 'name'): \Rappasoft\LaravelLivewireTables\Views\Filter
+    protected function languageFilter(string $field = 'name', string $key = 'locale'): \Rappasoft\LaravelLivewireTables\Views\Filter
     {
-        return SelectFilter::make(__('Dil'), 'locale')
+        return SelectFilter::make(__('Dil'), $key)
             ->options(cache()->remember(
                 'filter_languages',
                 60 * 60 * 24 * 30,
@@ -97,6 +98,19 @@ trait CustomLivewireTableFilters
             ))
             ->filter(function (Builder $builder, string $value) use($field) {
                 $builder->whereLocale($field, $value);
+            });
+    }
+
+    protected function seasonsFilter(string $field = 'season_id', string $key = 'season_id'): \Rappasoft\LaravelLivewireTables\Views\Filter
+    {
+        return SelectFilter::make(__('Dönem'), $key)
+            ->options(cache()->remember(
+                'filter_seasons',
+                60 * 60 * 24 * 30,
+                fn() => data()->seasons()
+            ))
+            ->filter(function (Builder $builder, string $value) use($field) {
+                $builder->where($field, $value);
             });
     }
 
@@ -116,7 +130,16 @@ trait CustomLivewireTableFilters
     protected function roleFilter(): Filter
     {
         return MultiSelectFilter::make(__('Yetkiler'))
-            ->options(Role::orderBy('name')->get()->pluck('name', 'name')->toArray())
+            ->options(
+                Role::orderBy('name')
+                    ->when(
+                        auth()->user()->can(RoleTypeEnum::TEACHER->value),
+                        fn(Builder $builder) => $builder->permission(\App\Enums\RoleTypeEnum::USER)
+                    )
+                    ->get()
+                    ->pluck('name', 'name')
+                    ->toArray()
+            )
             ->filter(fn(Builder $builder, array $value) => $builder->role($value));
     }
 

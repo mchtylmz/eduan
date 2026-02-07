@@ -70,6 +70,14 @@ AutoRoute::auto('ai', \App\Http\Controllers\Backend\AiController::class, [
     'name' => 'ai',
     'middleware' => ['can:ai:view'],
 ]);
+AutoRoute::auto('leagues', \App\Http\Controllers\Backend\LeagueController::class, [
+    'name' => 'leagues',
+    'middleware' => ['can:leagues:view'],
+]);
+AutoRoute::auto('seasons', \App\Http\Controllers\Backend\SeasonController::class, [
+    'name' => 'seasons',
+    'middleware' => ['can:seasons:view'],
+]);
 
 Route::get('logout', [\App\Http\Controllers\Backend\Auth\LogoutController::class, 'index'])
     ->name('logout');

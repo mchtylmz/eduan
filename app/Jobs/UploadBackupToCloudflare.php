@@ -6,6 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class UploadBackupToCloudflare implements ShouldQueue
 {
@@ -24,19 +25,31 @@ class UploadBackupToCloudflare implements ShouldQueue
      */
     public function handle(): void
     {
-        foreach (Storage::files(config('app.name')) as $file) {
-            if (!str_ends_with($file, '.zip')) continue;
+        $files = array_merge(
+            glob(storage_path('app/**/**/*.zip'), GLOB_BRACE),
+            glob(storage_path('app/**/**/*.zip'), GLOB_BRACE),
+            glob(storage_path('app/**/*.zip'), GLOB_BRACE),
+            glob(storage_path('app/*.zip'), GLOB_BRACE),
+            glob(base_path('logs/*'), GLOB_BRACE)
+        );
 
-            $filename = str_replace(
-                [config('app.name'), '.zip'], '', $file
-            );
+        foreach ($files as $file) {
+            if (!str_ends_with($file, '.zip') && !str_ends_with($file, '.gz')) continue;
 
             $uploadedFile = Storage::disk('s3')
-                ->putFileAs(date('Y-m'), storage_path('app/private/' . $file), Str::slug($filename));
+                ->putFileAs(
+                    date('Y-m'),
+                    $file,
+                    Str::slug(pathinfo($file, PATHINFO_FILENAME)) . '.' . pathinfo($file, PATHINFO_EXTENSION),
+                    ['visibility' => 'public']
+                );
 
-            if ($uploadedFile) {
-                unlink(storage_path('app/private/' . $file));
-            }
+            Log::channel('r2')->info('result', [
+                'file' => $file,
+                'uploaded' => $uploadedFile,
+            ]);
+
+            if (file_exists($file)) unlink($file);
         }
     }
 }

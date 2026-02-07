@@ -39,7 +39,20 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-4">
+                <div class="mb-3">
+                    <label class="form-label" for="league_approval">{{ __('Lig / Lig Sonuçlarına Katılma Durumu') }}</label>
+                    <select id="league_approval"
+                            class="form-control selectpicker"
+                            wire:model="league_approval">
+                        <option value="" hidden>{{ __('Seçiniz') }}</option>
+                        <option value="0" @selected($league_approval == 0)>{{ __('Hayır') }}</option>
+                        <option value="1" @selected($league_approval == 1)>{{ __('Evet') }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
                 <div class="mb-3">
                     <label class="form-label" for="gpt_limit">{{ __('Günlük Yapay Zeka Kullanım Limiti') }}</label>
                     <input type="number" min="0" class="form-control" id="gpt_limit" wire:model="gpt_limit" placeholder="{{ __('Kullanım Limiti') }}..">
@@ -47,7 +60,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="mb-3" wire:ignore>
                     <label class="form-label" for="email_verified">{{ __('E-posta Onay') }}</label>
                     <select id="email_verified"

@@ -53,6 +53,13 @@ class AccountController extends Controller
         ]);
     }
 
+    public function myLeagues()
+    {
+        return view('frontend.account.my-leagues', [
+            'title' => __('Lig Sonuçları')
+        ]);
+    }
+
     public function result(Test $test)
     {
         return view('frontend.account.result', [

@@ -14,6 +14,7 @@
 
         'blogs' => __('Bloglar'),
         'lessons' => __('Dersler'),
+        'seasons' => __('Dönemler'),
         'topics' => __('Konular'),
         'questions' => __('Soru Havuzu'),
         'exams' => __('Testler'),
@@ -29,8 +30,15 @@
         'tests' => __('Sınavlar'),
         'stats' => __('İstatistikler'),
         'ai' => __('Yapay Zeka'),
+        'leagues' => __('Ligler'),
         'solution' => __('Çözüm'),
         'solution-vote' => __('Değerlendirme'),
+        'teacher-delete' => __('Öğretmen Eşleşmesi Kaldırma'),
+        'student-delete' => __('Öğrenci Eşleşmesi Kaldırma'),
+        'student-add' => __('Öğrenci Eşleşmesi Ekleme'),
+        'teacher-add' => __('Öğretmen Eşleşmesi Ekleme'),
+        'teacher-findable' => __('Öğretmen tarafından eklenebilir'),
+        'run' => __('Çalıştırabilir'),
     ]
 ])
 @php
@@ -40,7 +48,6 @@ $groups = collect($permissions ?? [])->mapToGroups(function ($item) {
 @endphp
 <!-- row -->
 <div class="row mb-3">
-
     <div class="col-lg-12">
         <div class="mb-3">
             <label class="form-label" for="name">{{ __('Yetki Adı') }}</label>

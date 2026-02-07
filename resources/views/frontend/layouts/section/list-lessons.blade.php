@@ -4,7 +4,7 @@
         <span>{{ __('Dersler') }}</span>
     </a>
     <ul class="h2_header-category-submenu">
-        @if($lessons = data()->lessons(hits: false, limit: 9))
+        @if($lessons = data()->lessons(hits: false, limit: 10))
             @foreach($lessons as $lesson)
                 <li>
                     <a class="py-2" href="{{ route('frontend.lesson', $lesson->code) }}">{{ $lesson->name }}</a>

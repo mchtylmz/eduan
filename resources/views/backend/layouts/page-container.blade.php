@@ -6,7 +6,7 @@
 
     <nav id="sidebar" aria-label="Main Navigation">
         <!-- Side Header -->
-        <div class="content-header">
+        <div class="content-header bg-light">
             @includeIf('backend.layouts.sidebar-header')
         </div>
         <!-- END Side Header -->

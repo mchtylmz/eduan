@@ -75,7 +75,7 @@
         <div class="account-form-button mt-3 d-flex justify-content-center">
             <button type="submit" class="account-btn w-50" wire:loading.attr="disabled">
                 <div wire:loading.remove>
-                    <i class="fa fa-sign-in-alt me-1"></i>
+                    <i class="fa fa-save me-1"></i>
                     <span class="fw-medium fs-6">{{ __('Güncelle') }}</span>
                 </div>
                 <div wire:loading>

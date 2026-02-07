@@ -16,33 +16,40 @@
                 </li>
             @endcan
             <li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'favorite']) type="button" href="?tab=favorite">
-                    <i class="fa fa-heart mx-1"></i> {{ __('Favori Testler') }}
+                <a @class(['nav-link py-3', 'active' => $activeTab == 'teachers']) type="button" href="?tab=teachers">
+                    @if($user->hasPermissionTo(\App\Enums\RoleTypeEnum::TEACHER->value))
+                        <i class="fa fa-users mx-1"></i> {{ __('Atanan Kullanıcılar') }}
+                    @else
+                        <i class="fa fa-graduation-cap mx-1"></i> {{ __('Öğretmen / Okul Ataması') }}
+                    @endif
                 </a>
             </li>
+
+
             <li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'tests']) type="button" href="?tab=tests">
-                    <i class="fa fa-pen-alt mx-1"></i> {{ __('Çözülen Testler') }}
+                <a href="javascript:;" type="button" class="nav-link py-3" id="otherUserTabs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-grip mx-1"></i> {{ __('Diğer İşlemler') }} <i class="fa fa-angle-down mx-1"></i>
                 </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'exams']) type="button" href="?tab=exams">
-                    <i class="fa fa-book mx-1"></i> {{ __('Çözülen Sınavlar') }}
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsNotResult']) type="button" href="?tab=topicsNotResult">
-                    <i class="fa fa-list-dots mx-1"></i> {{ __('Hiç Çözülmeyen Konular') }}
-                </a>
-            </li><li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsStats']) type="button" href="?tab=topicsStats">
-                    <i class="fa fa-percentage mx-1"></i> {{ __('Sonuç İstatistiği') }}
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a @class(['nav-link py-3', 'active' => $activeTab == 'mailing']) type="button" href="?tab=mailing">
-                    <i class="fa fa-envelope mx-1"></i> {{ __('E-posta Gönder') }}
-                </a>
+                <div class="dropdown-menu dropdown-menu-end fs-sm" aria-labelledby="otherUserTabs">
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'favorite']) type="button" href="?tab=favorite">
+                        <i class="fa fa-heart mx-1"></i> {{ __('Favori Testler') }}
+                    </a>
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'tests']) type="button" href="?tab=tests">
+                        <i class="fa fa-pen-alt mx-1"></i> {{ __('Çözülen Testler') }}
+                    </a>
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'exams']) type="button" href="?tab=exams">
+                        <i class="fa fa-book mx-1"></i> {{ __('Çözülen Sınavlar') }}
+                    </a>
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsNotResult']) type="button" href="?tab=topicsNotResult">
+                        <i class="fa fa-list-dots mx-1"></i> {{ __('Hiç Çözülmeyen Konular') }}
+                    </a>
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsStats']) type="button" href="?tab=topicsStats">
+                        <i class="fa fa-percentage mx-1"></i> {{ __('Sonuç İstatistiği') }}
+                    </a>
+                    <a @class(['nav-link py-3', 'active' => $activeTab == 'mailing']) type="button" href="?tab=mailing">
+                        <i class="fa fa-envelope mx-1"></i> {{ __('E-posta Gönder') }}
+                    </a>
+                </div>
             </li>
         </ul>
 

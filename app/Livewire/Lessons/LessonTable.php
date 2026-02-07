@@ -10,6 +10,8 @@ use App\Models\Topic;
 use App\Traits\CustomLivewireAlert;
 use App\Traits\CustomLivewireTableFilters;
 use App\Traits\LivewireTableConfigure;
+use Barryvdh\Debugbar\Twig\Extension\Debug;
+use DebugBar\DebugBar;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Lazy;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
@@ -29,7 +31,7 @@ class LessonTable extends DataTableComponent
 
     public function mount(): void
     {
-        $this->setFilter('locale', settings()->examlanguageCode ?? app()->getLocale());
+        // $this->setFilter('locale', strval(settings()->examlanguageCode ?? app()->getLocale()));
         //$this->setSortAsc('sort');
     }
 

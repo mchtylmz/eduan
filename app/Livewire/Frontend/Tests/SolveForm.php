@@ -132,6 +132,7 @@ class SolveForm extends Component
             ],
             [
                 'question_count' => $this->questionsCount,
+                'season_id' => activeSeason()->id ?? 1
             ]
         );
 

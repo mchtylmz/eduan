@@ -12,6 +12,7 @@ class UsersController extends Controller
     protected array $userTabs = [
         'user',
         'password',
+        'teachers',
         'favorite',
         'tests',
         'exams',
@@ -43,6 +44,13 @@ class UsersController extends Controller
     {
         if (!request()->user()->canany(['users:view'])) {
             abort(403, __('Kullanıcı güncellenemez, yetkiniz bulunmuyor!'));
+        }
+
+        if (auth()->user()->can(RoleTypeEnum::TEACHER->value) && !auth()->user()->students()->where('id', $user->id)->exists()) {
+            return redirect()->route('admin.users.index')->with([
+                'status' => 'error',
+                'message' => __('Kullanıcı güncellenemez, yetkiniz bulunmuyor!')
+            ]);
         }
 
         $activeTab = in_array(request()->input('tab'), $this->userTabs) ? request()->input('tab') : 'user';

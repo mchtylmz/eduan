@@ -4,12 +4,14 @@ namespace App\Helpers;
 
 use App\Enums\PageMenuEnum;
 use App\Enums\PageTypeEnum;
+use App\Enums\StatusEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Contact;
 use App\Models\ExamReview;
 use App\Models\Language;
 use App\Models\Lesson;
 use App\Models\Page;
+use App\Models\Season;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -115,6 +117,24 @@ class DataHelper
                 ->where('menu', PageMenuEnum::FOOTER)
                 ->orderBy('sort')
                 ->get()
+        );
+    }
+
+    public function seasons(): array
+    {
+        return Cache::remember(
+            $this->cacheKey('seasons'),
+            $this->cacheTime(30),
+            fn() => Season::orderBy('id', 'desc')
+                ->where('status', StatusEnum::ACTIVE->value)
+                ->get()
+                ->keyBy('id')
+                ->map(fn($item) => sprintf(
+                    '%s - %s',
+                    dateFormat($item->start_date, 'd M'),
+                    dateFormat($item->end_date, 'd M'),
+                ))
+                ->toArray()
         );
     }
 

@@ -270,6 +270,7 @@ class SolveForm extends Component
                 'question_count' => $this->totalQuestionsCount,
                 'passing_score' => $this->test->passing_score ?? 60,
                 'expires_at' => $this->expirationTime,
+                'season_id' => activeSeason()->id ?? 1
             ]
         );
         return true;

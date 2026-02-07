@@ -42,7 +42,7 @@
                         <h5 class="footer-widget-title">{{ __('Konular') }}</h5>
                         <div class="footer-widget-list">
                             <ul>
-                                @if($topics = data()->topics(hits: true, limit: 6))
+                                @if($topics = data()->topics(hits: true, limit: 5))
                                     @foreach($topics as $topic)
                                         <li>
                                             <a class="py-2" href="{{ route('frontend.tests', $topic->code) }}">{{ $topic->title }}</a>
@@ -66,19 +66,10 @@
     <div class="copyright-area">
         <div class="container pb-3">
             <div class="row justify-content-between">
-                <div class="col-sm-9">
+                <div class="col-sm-12">
                     <div class="copyright-text">
                         <p class="text-center text-sm-start">
                             {{ settingLocale('siteTitle') }} © {{ now()->year }} | {{ __('Tüm Hakları Saklıdır.') }}
-                        </p>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="copyright-text">
-                        <p class="text-center text-sm-end">
-                            <span>{{ __('Dil') }}:</span>
-                            <span class="text-capitalize">{{ data()->language(app()->getLocale())?->name }}</span>
-                            <span class="text-uppercase">({{ app()->getLocale() }})</span>
                         </p>
                     </div>
                 </div>

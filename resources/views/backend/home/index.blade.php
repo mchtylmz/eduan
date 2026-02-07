@@ -9,14 +9,18 @@
         <div class="col-sm-6 col-lg-3 mb-1">
             @livewire('home.statistics', ['section' => 'usersPremium'])
         </div>
-        <div class="col-sm-6 col-lg-3 mb-1">
-            @livewire('home.statistics', ['section' => 'contactMessages'])
-        </div>
-        {{--
-        <div class="col-sm-6 col-lg-3 mb-1">
-            @livewire('home.statistics', ['section' => 'examReviews'])
-        </div>
-        --}}
+        @cannot(\App\Enums\RoleTypeEnum::TEACHER->value)
+            <div class="col-sm-6 col-lg-3 mb-1">
+                @livewire('home.statistics', ['section' => 'contactMessages'])
+            </div>
+            {{--
+            <div class="col-sm-6 col-lg-3 mb-1">
+                @livewire('home.statistics', ['section' => 'examReviews'])
+            </div>
+            --}}
+        @else
+            <div class="col-sm-6 col-lg-3 mb-1"></div>
+        @endcan
         @can('ai:view')
             <div class="col-12 col-sm-6 mb-1">
                 @livewire('home.chart-widget', [
@@ -40,19 +44,21 @@
                 'subtitle' => __('Yanıtlar')
             ])
         </div>
-        <div class="col-12 col-sm-6 mb-1">
-            @livewire('home.chart-widget', [
-                'id' => 'popularLessons',
-                'title' => __('En Çok Görüntülenen Dersler'),
-                'subtitle' => __('Görüntüleme')
-            ])
-        </div>
-        <div class="col-12 col-sm-6 mb-1">
-            @livewire('home.user-table', ['lastLogins' => false, 'register' => true])
-        </div>
-        <div class="col-12 col-sm-6 mb-1">
-            @livewire('home.user-table', ['lastLogins' => true, 'register' => false])
-        </div>
+        @cannot(\App\Enums\RoleTypeEnum::TEACHER->value)
+            <div class="col-12 col-sm-6 mb-1">
+                @livewire('home.chart-widget', [
+                    'id' => 'popularLessons',
+                    'title' => __('En Çok Görüntülenen Dersler'),
+                    'subtitle' => __('Görüntüleme')
+                ])
+            </div>
+            <div class="col-12 col-sm-6 mb-1">
+                @livewire('home.user-table', ['lastLogins' => false, 'register' => true])
+            </div>
+            <div class="col-12 col-sm-6 mb-1">
+                @livewire('home.user-table', ['lastLogins' => true, 'register' => false])
+            </div>
+        @endcan
     </div>
     <!-- END Overview -->
 @endsection

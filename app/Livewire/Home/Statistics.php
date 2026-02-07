@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Home;
 
+use App\Enums\RoleTypeEnum;
 use App\Enums\StatusEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Contact;
@@ -34,11 +35,19 @@ class Statistics extends Component
 
     public function users(): void
     {
-        $count = cache()->remember(
-            'home_users',
-            $this->time,
-            fn() => User::active()->user()->count()
-        );
+        if (auth()->user()->can(RoleTypeEnum::TEACHER->value)) {
+            $count = cache()->remember(
+                'home_users_teacher_' . auth()->id(),
+                $this->time,
+                fn() => auth()->user()->students()->active()->count()
+            );
+        } else {
+            $count = cache()->remember(
+                'home_users',
+                $this->time,
+                fn() => User::active()->user()->count()
+            );
+        }
 
         $this->data(
             count: $count,
@@ -50,11 +59,19 @@ class Statistics extends Component
 
     public function usersPremium(): void
     {
-        $count = cache()->remember(
-            'home_premium_users',
-            $this->time,
-            fn() => User::active()->premiumUser()->count()
-        );
+        if (auth()->user()->can(RoleTypeEnum::TEACHER->value)) {
+            $count = cache()->remember(
+                'home_premium_users_teacher_' . auth()->id(),
+                $this->time,
+                fn() => auth()->user()->students()->active()->premiumUser()->count()
+            );
+        } else {
+            $count = cache()->remember(
+                'home_premium_users',
+                $this->time,
+                fn() => User::active()->premiumUser()->count()
+            );
+        }
 
         $this->data(
             count: $count,

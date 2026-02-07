@@ -9,12 +9,13 @@ class StatsController extends Controller
 {
     protected array $tabs = [
         'stats',
-        'corrects'
+        'corrects',
+        'questions'
     ];
 
     public function index()
     {
-        $activeTab = in_array(request()->input('tab'), $this->tabs) ? request()->input('tab') : 'stats';
+        $activeTab = in_array(request()->input('tab'), $this->tabs) ? request()->input('tab') : 'questions';
 
         return view('backend.stats.index', [
             'title' => __('İstatistik Raporu'),

@@ -30,6 +30,7 @@
     <title>{{ !empty($title) ? $title . ' | ' : '' }}{{ settingLocale('siteTitle') }}</title>
 
     @if($siteFavicon = settings()->siteFavicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset($siteFavicon) }}">
         <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
         <link rel="apple-touch-icon" href="{{ asset($siteFavicon) }}">
     @foreach([192, 256, 384, 512, 1024, 2048] as $width)
@@ -63,7 +64,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css">
+    <link rel="stylesheet" href="{{ asset('assets/cookieconsent.css') }}">
 
     @if(request()->routeIs('frontend.home') && isChrome())
         <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
@@ -90,6 +91,10 @@
         .theme-btn {
             text-transform: none !important;
         }
+        .fa-1_5x {font-size: 1.25rem !important;}
+        .fa-1_75x {font-size: 1.36rem !important;}
+        .fa-1_70x {font-size: 1.33rem !important;}
+        .fa-1_65x {font-size: 1.30rem !important;}
     </style>
 </head>
 <body>
@@ -136,11 +141,23 @@
 <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
 <script src="{{ asset('assets/js/odometer.min.js') }}"></script>
 <script src="{{ asset('assets/js/appear.min.js') }}"></script>
-<script src="{{ asset('backend/assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-<script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
+
+<script src="{{ asset('assets/js/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ asset('assets/js/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
+<script src="{{ asset('assets/js/flatpickr/flatpickr.min.js') }}"></script>
+<script src="{{ asset('assets/js/flatpickr/l10n/'.app()->getLocale().'.js') }}"></script>
+
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/app.js') }}?v={{ config('app.version') }}"></script>
-<script type="module" src="{{ asset('assets/cookieconsent-config.js') }}"></script>
+<script>
+    if (!document.cookie.includes('cc_cookie')) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = "{{ asset('assets/cookieconsent-config.js') }}";
+        document.head.appendChild(script);
+    }
+</script>
+
 
 @includeIf('frontend.layouts.section.footer-popup')
 

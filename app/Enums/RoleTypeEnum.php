@@ -12,11 +12,14 @@ enum RoleTypeEnum: string
     case ADMIN = 'user-type:admin';
     case USER = 'user-type:user';
 
+    case TEACHER = 'user-type:teacher';
+
     public static function options(): array
     {
         return [
             self::ADMIN->value => __('Yönetici'),
             self::USER->value => __('Kullanıcı'),
+            self::TEACHER->value => __('Öğretmen/Okul'),
         ];
     }
 
@@ -30,6 +33,7 @@ enum RoleTypeEnum: string
         return match ($this->value) {
             self::ADMIN->value => 'fa fa-shield-alt',
             self::USER->value => 'fa fa-user',
+            self::TEACHER->value => 'fa fa-graduation-cap',
         };
     }
 }

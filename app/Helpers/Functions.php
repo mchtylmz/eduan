@@ -69,6 +69,33 @@ if (!function_exists('agentDevice')) {
 
 }
 
+if (!function_exists('seasons')) {
+
+    /**
+     * @return mixed
+     */
+    function seasons(): mixed
+    {
+        return \App\Models\Season::orderBy('id', 'desc')->get();
+    }
+}
+
+if (!function_exists('activeSeason')) {
+
+    /**
+     * @return mixed
+     */
+    function activeSeason(): mixed
+    {
+        $now = now()->timezone(settings()->timezone ?? config('app.timezone'))->format('Y-m-d');
+
+        return \App\Models\Season::where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->orderBy('id', 'DESC')
+            ->first();
+    }
+}
+
 if (!function_exists('isChrome')) {
 
     /**
@@ -354,7 +381,7 @@ if (!function_exists('resetCache')) {
     {
         cache()->flush();
         cache()->clear();
-        Artisan::call('optimize:clear');
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     }
 }
 
