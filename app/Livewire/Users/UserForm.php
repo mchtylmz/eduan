@@ -68,6 +68,10 @@ class UserForm extends Component
     #[Computed]
     public function roles(): \Illuminate\Database\Eloquent\Collection
     {
+        if (auth()->user()->cannot('user-type:admin')) {
+            return Role::permission(\App\Enums\RoleTypeEnum::USER)->get();
+        }
+
         return Role::all();
     }
 

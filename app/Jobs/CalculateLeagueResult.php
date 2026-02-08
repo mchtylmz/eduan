@@ -3,12 +3,14 @@
 namespace App\Jobs;
 
 use App\Enums\YesNoEnum;
+use App\Models\ExamResultDetail;
 use App\Models\League;
 use App\Models\LeagueResult;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CalculateLeagueResult implements ShouldQueue
@@ -41,42 +43,78 @@ class CalculateLeagueResult implements ShouldQueue
         $correctPoint = intval(settings()->leagueCorrectPoint ?? 3);
         $incorrectPoint = intval(settings()->leagueIncorrectPoint ?? -1) * -1;
 
-        $isCompleted = settings()->leagueResultCompleted ?? 1;
-        $model = app(settings()->leagueResultModel ?? 'App\Models\ExamResult');
+        //$isCompleted = settings()->leagueResultCompleted ?? 1;
+        $model = app(settings()->leagueResultModel ?? 'App\Models\ExamResultDetail');
 
         // exam_results or tests_results
-        if (!in_array($model->getTable(), ['exam_results', 'tests_results'])) {
+        if (!in_array($model->getTable(), ['exam_result_details', 'tests_result_details'])) {
             $this->fail('Lig tablosu tanımlı değil!');
             return;
         }
-        // endif exam_results or tests_results
+        // endif exam_result_details or tests_result_details
 
-        $results = $model::query()
-            ->selectRaw(strtr(
-                'user_id,
-                 SUM((correct_count * :correct_point) - (incorrect_count * :incorrect_point)) AS total_score,
-                 SUM(correct_count) AS total_correct,
-                 SUM(incorrect_count) AS total_incorrect,
-                 SUM(:time) AS total_duration,
-                 RANK() OVER (
-                     ORDER BY
-                         SUM((correct_count * :correct_point) - (incorrect_count * :incorrect_point)) DESC,
-                         SUM(correct_count) DESC,
-                         SUM(:time) ASC
-                 ) AS rank_position',
-                [
-                    ':correct_point' => $correctPoint,
-                    ':incorrect_point' => $incorrectPoint,
-                    ':time' => $model->getTable() == 'exam_results' ? 'time' : 'duration',
-                ]
-            ))
-            ->when($isCompleted, fn($query) => $query->where('completed', YesNoEnum::YES))
-            ->whereIn('user_id', User::active()->leagueApproval()->select('id'))
-            ->whereBetween('updated_at', [
-                $this->started_at,
-                $this->ended_at
-            ])
-            ->groupBy('user_id')
+        $foreignId = match ($model->getTable()) {
+            'exam_result_details' => 'exam_result_id',
+            'tests_result_details' => 'tests_result_id',
+            default => false
+        };
+        if (!$foreignId) {
+            $this->fail('Lig hesaplama $foreignId hatası!');
+            return;
+        }
+
+        $baseTableName = match ($model->getTable()) {
+            'exam_result_details' => 'exam_results',
+            'tests_result_details' => 'tests_results',
+            default => false
+        };
+        if (!$baseTableName) {
+            $this->fail('Lig hesaplama $baseTableName hatası!');
+            return;
+        }
+
+        $tableName = $model->getTable();
+
+        $results = DB::query()
+            ->fromSub(function ($query) use($tableName, $baseTableName, $foreignId, $correctPoint, $incorrectPoint) {
+                $query->from($tableName . ' as trd')
+                    ->join($baseTableName . ' as tr', 'tr.id', '=', 'trd.' . $foreignId)
+                    ->join('users as u', function ($join) {
+                        $join->on('u.id', '=', 'tr.user_id')
+                            ->where('u.status', 'active')
+                            ->where('u.league_approval', 1)
+                            ->whereNull('u.deleted_at');
+                    })
+                    ->whereBetween('trd.updated_at', [
+                        $this->started_at,
+                        $this->ended_at
+                    ])
+                    ->groupBy('tr.user_id')
+                    ->selectRaw(strtr(
+                        'tr.user_id as user_id,
+                        SUM(CASE WHEN trd.correct = 1 THEN :correct_point ELSE :incorrect_point END) as total_score,
+                        SUM(CASE WHEN trd.correct = 1 THEN 1 ELSE 0 END) as total_correct,
+                        SUM(CASE WHEN trd.correct = 0 THEN 1 ELSE 0 END) as total_incorrect,
+                        SUM(trd.time) as total_duration',
+                        [
+                            ':table_name' => $tableName,
+                            ':foreign_id' => $foreignId,
+                            ':column_correct' => 'IF(correct = 1, 1, 0)',
+                            ':column_incorrect' => 'IF(correct = 0, 1, 0)',
+                            ':correct_point' => $correctPoint,
+                            ':incorrect_point' => $incorrectPoint,
+                        ]
+                    ));
+            }, 't')
+            ->selectRaw('
+                t.*,
+                RANK() OVER (
+                    ORDER BY
+                        t.total_score DESC,
+                        t.total_correct DESC,
+                        t.total_duration ASC
+                ) as rank_position
+            ')
             ->get();
 
         if (empty($results)) {

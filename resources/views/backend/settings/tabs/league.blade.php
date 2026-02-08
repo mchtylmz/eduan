@@ -10,13 +10,13 @@
     ];
 
     $leagueResultModel = [
-        'App\Models\TestsResult' => __('Sınav Sonuçları'),
-        'App\Models\ExamResult' => __('Test Sonuçları'),
+        'App\Models\TestsResultDetail' => __('Sınav Sonuçları'),
+        'App\Models\ExamResultDetail' => __('Test Sonuçları'),
     ];
 
     $leagueResultCompleted = [
         0 => __('Tüm Sonuçlar'),
-        1 => __('Tamamlandı / Tamamlanan Sonuçlar'),
+        // 1 => __('Tamamlandı / Tamamlanan Sonuçlar'),
     ];
 
 @endphp
