@@ -28,6 +28,7 @@
             <p class="mb-0 text-black fw-medium fs-5">{{ __('Çözdüğüm Sınavlar') }}</p>
         </a>
     </div>
+    @if(settings()->leagueStatus == 'active')
     <div class="col-6 col-lg-3 my-1 px-1 account-menu">
         <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.my.leagues') ? 'active' : '' }}"
            href="{{ route('frontend.my.leagues') }}">
@@ -35,6 +36,7 @@
             <p class="mb-0 text-black fw-medium fs-5">{{ __('Lig Sonuçlarım') }}</p>
         </a>
     </div>
+    @endif
     <div class="col-6 col-lg-3 my-1 px-1 account-menu">
         <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.stats') ? 'active' : '' }}"
            href="{{ route('frontend.stats') }}">

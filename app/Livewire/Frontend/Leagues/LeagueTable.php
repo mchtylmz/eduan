@@ -11,7 +11,7 @@ use Livewire\Component;
 #[Lazy(isolate: false)]
 class LeagueTable extends Component
 {
-    public League $selectedLeague;
+    public League|null $selectedLeague;
 
     #[Computed(cache: true)]
     public function leagues()

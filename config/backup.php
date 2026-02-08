@@ -77,6 +77,20 @@ return [
              *
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
+
+            'mysql' => [
+                'dump' => [
+                    'excludeTables' => [
+                        'logs',
+                        'telescope_entries',
+                        'telescope_entries_tags',
+                        'telescope_monitoring',
+                        'failed_jobs',
+                        'jobs',
+                        'job_batches',
+                    ]
+                ],
+            ],
             'databases' => [
                 'mysql',
             ],
@@ -93,12 +107,12 @@ return [
          *
          * If you do not want any compressor at all, set it to null.
          */
-        'database_dump_compressor' => null,
+        'database_dump_compressor' => Spatie\DbDumper\Compressors\GzipCompressor::class,
 
         /*
          * If specified, the database dumped file name will contain a timestamp (e.g.: 'Y-m-d-H-i-s').
          */
-        'database_dump_file_timestamp_format' => null,
+        'database_dump_file_timestamp_format' => 'Ymd_His',
 
         /*
          * The base of the dump filename, either 'database' or 'connection'

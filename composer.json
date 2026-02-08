@@ -24,6 +24,7 @@
         "spatie/laravel-backup": "^9.1",
         "spatie/laravel-permission": "^6.9",
         "spatie/laravel-translatable": "*",
+        "webmozart/assert": "^1.12",
         "zoha/laravel-meta": "^2.0"
     },
     "require-dev": {

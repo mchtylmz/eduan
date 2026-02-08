@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->saturdays()
             ->at('01:30');
 
-        Schedule::command('backup:run')
+        Schedule::command('backup:run --only-files')
             ->name('backup_run')
             ->timezone(config('app.timezone'))
             ->mondays()

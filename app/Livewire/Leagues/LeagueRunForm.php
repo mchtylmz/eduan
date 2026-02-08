@@ -23,6 +23,11 @@ class LeagueRunForm extends Component
 
     public function run()
     {
+        if (settings()->leagueStatus == 'passive') {
+            $this->message(__('Lig sistemi pasif durumda, hesaplama yapılamaz!'))->error();
+            return false;
+        }
+
         if ($this->start_at > $this->end_at) {
             $this->message(__('Başlangıç zamanı bbitiş zamanından daha sonra olamaz!'))->error();
             return false;

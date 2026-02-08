@@ -7,6 +7,7 @@ use Illuminate\Database\ConfigurationUrlParser;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Spatie\Backup\Exceptions\CannotCreateDbDumper;
+use Spatie\DbDumper\Databases\MariaDb;
 use Spatie\DbDumper\Databases\MongoDb;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
@@ -57,7 +58,14 @@ class DbDumperFactory
         }
 
         if (isset($dbConfig['port'])) {
-            $dbDumper = $dbDumper->setPort($dbConfig['port']);
+            if (filter_var($dbConfig['port'], FILTER_VALIDATE_INT, [
+                'options' => [
+                    'min_range' => 1,
+                    'max_range' => 65535,
+                ],
+            ]) !== false) {
+                $dbDumper = $dbDumper->setPort((int) $dbConfig['port']);
+            }
         }
 
         if (isset($dbConfig['dump'])) {
@@ -85,7 +93,8 @@ class DbDumperFactory
         }
 
         return match ($driver) {
-            'mysql', 'mariadb' => new MySql,
+            'mysql' => new MySql,
+            'mariadb' => new MariaDb,
             'pgsql' => new PostgreSql,
             'sqlite' => new Sqlite,
             'mongodb' => new MongoDb,

@@ -36,6 +36,8 @@ class UploadBackupToCloudflare implements ShouldQueue
         foreach ($files as $file) {
             if (!str_ends_with($file, '.zip') && !str_ends_with($file, '.gz')) continue;
 
+            if (!file_exists($file)) continue;
+
             $uploadedFile = Storage::disk('s3')
                 ->putFileAs(
                     date('Y-m'),

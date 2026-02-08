@@ -29,12 +29,14 @@
                 <span>{{ __('Çözdüğüm Sınavlar') }}</span>
             </a>
         </li>
+        @if(settings()->leagueStatus == 'active')
         <li>
             <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.my.leagues') }}">
                 <i class="fa fa-list-1-2 mx-1"></i>
                 <span>{{ __('Lig Sonuçlarım') }}</span>
             </a>
         </li>
+        @endif
         <li>
             <a class="dropdown-item border-bottom py-2" href="{{ route('frontend.stats') }}">
                 <i class="fa fa-chart-line mx-1"></i>

@@ -17,9 +17,12 @@ class StatsTable extends Component
 
     public $activeSeason;
 
+    public $user;
+
     public function mount(): void
     {
         $this->activeSeason = activeSeason() ?? false;
+        $this->user = auth()->user();
 
         $this->tabs = [
             'questions' => __('Soru İstatistiği'),
@@ -55,13 +58,14 @@ class StatsTable extends Component
                 SUM(question_count)  AS question_count,
                 SUM(correct_count)   AS correct_count,
                 SUM(incorrect_count) AS incorrect_count,
-                DATE(updated_at)     AS updated_at
+                DATE(created_at)     AS updated_at
             ")
             ->when(
                 $this->activeSeason,
-                fn($query) => $query->whereBetween('updated_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
+                fn($query) => $query->whereBetween('created_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
             )
-            ->groupBy(DB::raw('DATE(updated_at)'))
+            ->where('user_id', $this->user->id)
+            ->groupBy(DB::raw('DATE(created_at)'))
             ->unionAll(
                 DB::table('tests_results')
                     ->selectRaw("
@@ -69,13 +73,14 @@ class StatsTable extends Component
                         SUM(question_count)  AS question_count,
                         SUM(correct_count)   AS correct_count,
                         SUM(incorrect_count) AS incorrect_count,
-                        DATE(updated_at)     AS updated_at
+                        DATE(created_at)     AS updated_at
                     ")
                     ->when(
                         $this->activeSeason,
-                        fn($query) => $query->whereBetween('updated_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
+                        fn($query) => $query->whereBetween('created_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
                     )
-                    ->groupBy(DB::raw('DATE(updated_at)'))
+                    ->where('user_id', $this->user->id)
+                    ->groupBy(DB::raw('DATE(created_at)'))
             );
 
         return DB::query()
@@ -105,6 +110,7 @@ class StatsTable extends Component
                 $this->activeSeason,
                 fn($query) => $query->whereBetween('updated_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
             )
+            ->whereRaw(sprintf("exam_result_id IN(SELECT id FROM exam_results WHERE user_id = %d)", $this->user->id))
             ->groupBy($column)
             ->unionAll(
                 DB::table('tests_result_details')
@@ -119,6 +125,7 @@ class StatsTable extends Component
                         $this->activeSeason,
                         fn($query) => $query->whereBetween('updated_at', [$this->activeSeason->start_date, $this->activeSeason->end_date])
                     )
+                    ->whereRaw(sprintf("tests_result_id IN(SELECT id FROM tests_results WHERE user_id = %d)", $this->user->id))
                     ->groupBy($column)
             );
 

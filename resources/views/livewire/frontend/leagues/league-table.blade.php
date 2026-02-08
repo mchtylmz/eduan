@@ -6,9 +6,13 @@
                 <!-- col-lg-8 -->
                 <div class="col-lg-8 order-2 order-sm-1">
                     <h5 class="card-title mt-3 mt-sm-0 mb-1 mb-sm-0">
-                        <span>{{ dateFormat($selectedLeague->start_at, 'd M Y, l') }}</span>
-                        -
-                        <span>{{ dateFormat($selectedLeague->end_at, 'd M Y, l') }}</span>
+                        @if($selectedLeague)
+                            <span>{{ dateFormat($selectedLeague->start_at, 'd M Y, l') }}</span>
+                            -
+                            <span>{{ dateFormat($selectedLeague->end_at, 'd M Y, l') }}</span>
+                        @else
+                            <span>{{ __('Lig Sonuçları') }}</span>
+                        @endif
                     </h5>
                 </div>
                 <!-- col-lg-8 -->
@@ -22,21 +26,27 @@
                             <strong>{{ __('Geçmiş Lig Sonuçları') }}</strong>
                         </button>
                         <ul class="dropdown-menu w-100">
-                            @foreach($this->leagues() as $league)
+                            @if(count($leagues = $this->leagues()))
+                                @foreach($leagues as $league)
+                                    <li>
+                                        <a class="dropdown-item d-flex justify-content-between align-items-center choose-league"
+                                           href="{{ route('frontend.leagues.detail', $league->code) }}">
+                                            <div>
+                                                <span>{{ dateFormat($league->start_at, 'd M Y') }}</span>
+                                                -
+                                                <span>{{ dateFormat($league->end_at, 'd M Y') }}</span>
+                                            </div>
+                                            @if($selectedLeague && $selectedLeague->id == $league->id)
+                                                <i class="fa fa-check mx-1"></i>
+                                            @endif
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @else
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center choose-league"
-                                       href="{{ route('frontend.leagues.detail', $league->code) }}">
-                                        <div>
-                                            <span>{{ dateFormat($league->start_at, 'd M Y') }}</span>
-                                            -
-                                            <span>{{ dateFormat($league->end_at, 'd M Y') }}</span>
-                                        </div>
-                                        @if($selectedLeague->id == $league->id)
-                                            <i class="fa fa-check mx-1"></i>
-                                        @endif
-                                    </a>
+                                    <p class="mb-0 p-3">{{ __('Gösterilecek sonuç bulunmuyor!') }}</p>
                                 </li>
-                            @endforeach
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -47,28 +57,34 @@
     </div>
     <!-- card -->
 
-    <div class="row">
-        <div class="col-lg-4 mb-3 px-2">
-            @livewire('frontend.leagues.league-result-table', [
-            'league' => $selectedLeague,
-            'name' => __('1. Lig'),
-            'ranking' => 1
-            ])
+    @if($selectedLeague)
+        <div class="row">
+            <div class="col-lg-4 mb-3 px-2">
+                @livewire('frontend.leagues.league-result-table', [
+                'league' => $selectedLeague,
+                'name' => __('1. Lig'),
+                'ranking' => 1
+                ])
+            </div>
+            <div class="col-lg-4 mb-3 px-2">
+                @livewire('frontend.leagues.league-result-table', [
+                'league' => $selectedLeague,
+                'name' => __('2. Lig'),
+                'ranking' => 2
+                ])
+            </div>
+            <div class="col-lg-4 mb-3 px-2">
+                @livewire('frontend.leagues.league-result-table', [
+                'league' => $selectedLeague,
+                'name' => __('3. Lig'),
+                'ranking' => 3
+                ])
+            </div>
         </div>
-        <div class="col-lg-4 mb-3 px-2">
-            @livewire('frontend.leagues.league-result-table', [
-            'league' => $selectedLeague,
-            'name' => __('2. Lig'),
-            'ranking' => 2
-            ])
+    @else
+        <div class="alert alert-danger py-3">
+            <strong>{{ __('Gösterilecek sonuç bulunmuyor!') }}</strong>
         </div>
-        <div class="col-lg-4 mb-3 px-2">
-            @livewire('frontend.leagues.league-result-table', [
-            'league' => $selectedLeague,
-            'name' => __('3. Lig'),
-            'ranking' => 3
-            ])
-        </div>
-    </div>
+    @endif
 
 </div>

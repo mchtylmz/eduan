@@ -131,8 +131,8 @@ class DataHelper
                 ->keyBy('id')
                 ->map(fn($item) => sprintf(
                     '%s - %s',
-                    dateFormat($item->start_date, 'd M'),
-                    dateFormat($item->end_date, 'd M'),
+                    dateFormat($item->start_date, 'd M Y'),
+                    dateFormat($item->end_date, 'd M Y'),
                 ))
                 ->toArray()
         );
