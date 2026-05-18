@@ -92,7 +92,7 @@ class CalculateLeagueResult implements ShouldQueue
                     ->groupBy('tr.user_id')
                     ->selectRaw(strtr(
                         'tr.user_id as user_id,
-                        SUM(CASE WHEN trd.correct = 1 THEN :correct_point ELSE :incorrect_point END) as total_score,
+                        SUM(CASE WHEN trd.correct = 1 THEN :correct_point WHEN trd.correct = 0 THEN :incorrect_point ELSE 0 END) as total_score,
                         SUM(CASE WHEN trd.correct = 1 THEN 1 ELSE 0 END) as total_correct,
                         SUM(CASE WHEN trd.correct = 0 THEN 1 ELSE 0 END) as total_incorrect,
                         SUM(trd.time) as total_duration',
