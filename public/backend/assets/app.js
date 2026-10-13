@@ -135,12 +135,8 @@
             $('.dropify').dropify({
                 imgFileExtensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'],
                 maxFileSizePreview: '20M',
-                messages: {
-                    'default': 'Bir dosyayı buraya sürükleyip bırakın veya tıklayın',
-                    'replace': 'Değiştirmek için sürükleyip bırakın veya tıklayın',
-                    'remove':  'Kaldır',
-                    'error':   'Hata! Yanlış bir şey oldu.'
-                }
+                messages: window.uploadTranslations.messages,
+                error: window.uploadTranslations.error
             });
         }
 

@@ -22,12 +22,16 @@ class TestForm extends Component
     public ?Test $test = null;
 
     public string $locale;
+
     public string $code;
     public string $name;
+
     public string $content = '';
     public int $duration = 300;
+
     public int $passingScore = 60;
     public int $correctPoint = 3;
+
     public int $incorrectPoint = -1;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
@@ -54,14 +58,14 @@ class TestForm extends Component
         $this->name = $this->test->name;
         $this->locale = $this->test->locale;
         $this->code = $this->test->code;
-        $this->content = $this->test->content;
+        $this->content = $this->test->content ?? '';
         $this->duration = $this->test->duration;
         $this->status = $this->test->status;
         $this->correctPoint = intval($this->test->correct_point);
         $this->incorrectPoint = intval($this->test->incorrect_point);
         $this->passingScore = intval($this->test->passing_score);
 
-        $this->permission = 'exams:update';
+        $this->permission = 'tests:update';
     }
 
     public function rules(): array
@@ -97,6 +101,8 @@ class TestForm extends Component
 
     public function save()
     {
+        abort_unless(request()->user()?->can($this->test?->exists ? 'tests:update' : 'tests:add'), 403);
+
         $this->validate();
 
         $test = CreateOrUpdateAction::run(

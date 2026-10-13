@@ -6,7 +6,6 @@ use App\Actions\Exams\UpdateExamFavoriteForUserAction;
 use App\Models\Exam;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
@@ -15,12 +14,14 @@ use Livewire\WithPagination;
 #[Lazy(isolate: true)]
 class FavoriteTests extends Component
 {
-    use WithPagination, CustomLivewireAlert;
+    use CustomLivewireAlert, WithPagination;
 
     protected string $paginationTheme = 'bootstrap';
 
     public User $user;
+
     public bool $showPaginate = true;
+
     public int $paginate = 21;
 
     public function mount(): void
@@ -32,8 +33,13 @@ class FavoriteTests extends Component
     public function tests()
     {
         return $this->user->favoriteExams()
-            ->withCount(['questions' => fn($query) => $query->active()])
-            ->with(['language', 'userResults'])
+            ->withCount([
+                'questions' => fn ($query) => $query->active(),
+                'results as personal_results_count' => fn ($query) => $query->where('user_id', auth()->id()),
+            ])
+            ->withSum(['results as personal_correct_count' => fn ($query) => $query->where('user_id', auth()->id())], 'correct_count')
+            ->withSum(['results as personal_incorrect_count' => fn ($query) => $query->where('user_id', auth()->id())], 'incorrect_count')
+            ->with('language')
             ->active()
             ->paginate($this->paginate);
     }

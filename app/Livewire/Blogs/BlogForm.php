@@ -21,12 +21,16 @@ class BlogForm extends Component
     public Blog $blog;
 
     public string $locale;
+
     public string $slug;
     public string $title;
+
     public string $brief = '';
     public string $content;
+
     public string $keywords = '';
     public StatusEnum $status = StatusEnum::ACTIVE;
+
     public string $published_at = '';
     public $image;
 
@@ -41,9 +45,9 @@ class BlogForm extends Component
             $this->locale = $this->blog->locale;
             $this->slug = $this->blog->slug;
             $this->title = $this->blog->title;
-            $this->brief = $this->blog->brief;
+            $this->brief = $this->blog->brief ?? '';
             $this->content = html_entity_decode($this->blog->content);
-            $this->keywords = $this->blog->keywords;
+            $this->keywords = $this->blog->keywords ?? '';
             $this->status = $this->blog->status;
             $this->published_at = $this->blog->published_at?->format('Y-m-d H:i');
 
@@ -91,6 +95,7 @@ class BlogForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can(! empty($this->blog) && $this->blog->exists ? 'blogs:update' : 'blogs:add'), 403);
         $this->validate();
 
         $data = [

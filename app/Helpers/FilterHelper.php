@@ -28,7 +28,7 @@ class FilterHelper extends DataHelper
                 ->orderBy('sort')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => $item->name)
+                ->map(fn ($item) => $item->name)
                 ->toArray()
         );
     }
@@ -42,7 +42,7 @@ class FilterHelper extends DataHelper
                 ->orderBy('sort')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => $item->name)
+                ->map(fn ($item) => $item->name)
                 ->toArray()
         );
     }
@@ -56,7 +56,7 @@ class FilterHelper extends DataHelper
                 ->orderBy('sort')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => $item->title)
+                ->map(fn ($item) => $item->title)
                 ->toArray()
         );
     }
@@ -70,7 +70,7 @@ class FilterHelper extends DataHelper
                 ->orderBy('sort')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => $item->title)
+                ->map(fn ($item) => $item->title)
                 ->toArray()
         );
     }
@@ -92,7 +92,7 @@ class FilterHelper extends DataHelper
                 )
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->email, $item->display_name))
                 ->toArray()
         );
     }
@@ -106,7 +106,7 @@ class FilterHelper extends DataHelper
                 ->orderByDesc('id')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->email, $item->display_name))
                 ->toArray()
         );
     }
@@ -120,7 +120,7 @@ class FilterHelper extends DataHelper
                 ->orderByDesc('id')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->email, $item->display_name))
                 ->toArray()
         );
     }
@@ -145,7 +145,7 @@ class FilterHelper extends DataHelper
                 )
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->email, $item->display_name))
                 ->toArray()
         );
     }
@@ -170,7 +170,7 @@ class FilterHelper extends DataHelper
                 )
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->email, $item->display_name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->email, $item->display_name))
                 ->toArray()
         );
     }
@@ -181,10 +181,10 @@ class FilterHelper extends DataHelper
             $this->cacheKey('examsInResults'),
             $this->cacheTime(30),
             fn() => Exam::orderByDesc('id')
-                ->whereIn('id', ExamResult::all()->select('exam_id'))
+                ->whereIn('id', ExamResult::select('exam_id'))
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->code, $item->name))
                 ->toArray()
         );
     }
@@ -195,10 +195,10 @@ class FilterHelper extends DataHelper
             $this->cacheKey('testsInResults'),
             $this->cacheTime(30),
             fn() => Test::orderByDesc('id')
-                ->whereIn('id', TestsResult::all()->select('test_id'))
+                ->whereIn('id', TestsResult::select('test_id'))
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->code, $item->name))
                 ->toArray()
         );
     }
@@ -211,12 +211,12 @@ class FilterHelper extends DataHelper
             fn() => Exam::orderByDesc('id')
                 ->get()
                 ->keyBy('id')
-                ->map(fn($item) => sprintf('(%s) %s', $item->code, $item->name))
+                ->map(fn ($item) => sprintf('(%s) %s', $item->code, $item->name))
                 ->toArray()
         );
     }
 
-    public function logTypes(string $value = null): string|array
+    public function logTypes(?string $value = null): string|array
     {
         $types = [
             '' => __('Tümü'),

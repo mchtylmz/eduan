@@ -11,16 +11,17 @@ namespace PHPUnit\TextUI\Output;
 
 use const PHP_EOL;
 use function assert;
-use PHPUnit\Event\EventFacadeIsSealedException;
 use PHPUnit\Event\Facade as EventFacade;
-use PHPUnit\Event\UnknownSubscriberTypeException;
 use PHPUnit\Logging\TeamCity\TeamCityLogger;
 use PHPUnit\Logging\TestDox\TestResultCollection;
 use PHPUnit\Runner\DirectoryDoesNotExistException;
+use PHPUnit\Runner\Extension\ExtensionCapabilities;
 use PHPUnit\TestRunner\TestResult\TestResult;
 use PHPUnit\TextUI\CannotOpenSocketException;
 use PHPUnit\TextUI\Configuration\Configuration;
 use PHPUnit\TextUI\InvalidSocketException;
+use PHPUnit\TextUI\Output\Compact\ProgressPrinter\ProgressPrinter as CompactProgressPrinter;
+use PHPUnit\TextUI\Output\Compact\ResultPrinter as CompactResultPrinter;
 use PHPUnit\TextUI\Output\Default\ProgressPrinter\ProgressPrinter as DefaultProgressPrinter;
 use PHPUnit\TextUI\Output\Default\ResultPrinter as DefaultResultPrinter;
 use PHPUnit\TextUI\Output\Default\UnexpectedOutputPrinter;
@@ -36,52 +37,77 @@ use SebastianBergmann\Timer\ResourceUsageFormatter;
 final class Facade
 {
     private static ?Printer $printer                           = null;
+    private static ?CompactResultPrinter $compactResultPrinter = null;
     private static ?DefaultResultPrinter $defaultResultPrinter = null;
     private static ?TestDoxResultPrinter $testDoxResultPrinter = null;
     private static ?SummaryPrinter $summaryPrinter             = null;
     private static bool $defaultProgressPrinter                = false;
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
-    public static function init(Configuration $configuration, bool $extensionReplacesProgressOutput, bool $extensionReplacesResultOutput): Printer
+    public static function init(Configuration $configuration, ExtensionCapabilities $extensionCapabilities): Printer
     {
         self::createPrinter($configuration);
 
-        assert(self::$printer !== null);
+        $printer = self::$printer;
+
+        assert($printer !== null);
 
         if ($configuration->debug()) {
-            return self::$printer;
+            return $printer;
         }
 
-        self::createUnexpectedOutputPrinter();
+        if ($configuration->outputIsCompact()) {
+            self::$compactResultPrinter = new CompactResultPrinter(
+                $printer,
+                $configuration->displayDetailsOnIncompleteTests() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnSkippedTests() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnTestsThatTriggerDeprecations() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnTestsThatTriggerErrors() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnTestsThatTriggerNotices() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnTestsThatTriggerWarnings() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnPhpunitDeprecations() || $configuration->displayDetailsOnAllIssues(),
+                $configuration->displayDetailsOnPhpunitNotices() || $configuration->displayDetailsOnAllIssues(),
+            );
 
-        if (!$extensionReplacesProgressOutput) {
-            self::createProgressPrinter($configuration);
-        }
+            new CompactProgressPrinter(
+                $printer,
+                EventFacade::instance(),
+                !$configuration->disallowTestOutput(),
+            );
+        } else {
+            self::createUnexpectedOutputPrinter();
 
-        if (!$extensionReplacesResultOutput) {
+            if (!$extensionCapabilities->replacesProgressOutput()) {
+                self::createProgressPrinter($configuration);
+            }
+
             self::createResultPrinter($configuration);
             self::createSummaryPrinter($configuration);
+
+            if ($configuration->outputIsTeamCity()) {
+                new TeamCityLogger(
+                    DefaultPrinter::standardOutput(),
+                    EventFacade::instance(),
+                );
+            }
         }
 
-        if ($configuration->outputIsTeamCity()) {
-            new TeamCityLogger(
-                DefaultPrinter::standardOutput(),
-                EventFacade::instance(),
-            );
-        }
+        assert(self::$printer !== null);
 
         return self::$printer;
     }
 
     /**
-     * @param ?array<string, TestResultCollection> $testDoxResult
+     * @param ?array<class-string, TestResultCollection> $testDoxResult
      */
     public static function printResult(TestResult $result, ?array $testDoxResult, Duration $duration, bool $stackTraceForDeprecations): void
     {
         assert(self::$printer !== null);
+
+        if (self::$compactResultPrinter !== null) {
+            self::$compactResultPrinter->print($result);
+
+            return;
+        }
 
         if ($result->numberOfTestsRun() > 0) {
             if (self::$defaultProgressPrinter) {
@@ -112,7 +138,7 @@ final class Facade
     public static function printerFor(string $target): Printer
     {
         if ($target === 'php://stdout') {
-            if (!self::$printer instanceof NullPrinter) {
+            if (self::$printer !== null && !self::$printer instanceof NullPrinter) {
                 return self::$printer;
             }
 
@@ -127,6 +153,10 @@ final class Facade
         $printerNeeded = false;
 
         if ($configuration->debug()) {
+            $printerNeeded = true;
+        }
+
+        if ($configuration->outputIsCompact()) {
             $printerNeeded = true;
         }
 
@@ -204,9 +234,10 @@ final class Facade
         if ($configuration->outputIsTestDox()) {
             self::$defaultResultPrinter = new DefaultResultPrinter(
                 self::$printer,
-                true,
-                true,
                 $configuration->displayDetailsOnPhpunitDeprecations() || $configuration->displayDetailsOnAllIssues(),
+                true,
+                $configuration->displayDetailsOnPhpunitNotices() || $configuration->displayDetailsOnAllIssues(),
+                true,
                 false,
                 false,
                 true,
@@ -239,9 +270,10 @@ final class Facade
 
         self::$defaultResultPrinter = new DefaultResultPrinter(
             self::$printer,
-            true,
-            true,
             $configuration->displayDetailsOnPhpunitDeprecations() || $configuration->displayDetailsOnAllIssues(),
+            true,
+            $configuration->displayDetailsOnPhpunitNotices() || $configuration->displayDetailsOnAllIssues(),
+            true,
             true,
             true,
             true,
@@ -270,10 +302,6 @@ final class Facade
         );
     }
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
     private static function createUnexpectedOutputPrinter(): void
     {
         assert(self::$printer !== null);

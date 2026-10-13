@@ -269,12 +269,16 @@ class SectionForm extends Component
             return false;
         }
 
-        CreateOrUpdateTestSectionsAction::run(
+        $saved = CreateOrUpdateTestSectionsAction::run(
             sections: $this->sections,
             test: $this->test
         );
 
-        resetCache();
+        if (! $saved) {
+            $this->message(__('Sınav bölümleri kayıt edilemedi!'))->error();
+
+            return false;
+        }
 
         return redirect()->route('admin.tests.index')->with([
             'status' => 'success',

@@ -1,107 +1,56 @@
 'use strict';
 
-/**
- * PWA service worker of Red Cherry (https://redcherry.ir)
- * Code By : Ali Rahimi (https://alirahimi818.ir)
- * learn more in Github : https://github.com/alirahimi818/simple-PWA
- */
+const cacheName = 'hypotenuse-pwa-' + (self.PWA_CACHE_VERSION || '3');
+const offlinePage = '/offline.html';
 
-let cache_storage_name = 'hypotenuse-pwa-1.0';
-let start_page = '/';
-let offline_page = 'offline';
-let first_cache_urls = [start_page, offline_page];
-let never_cache_urls = [/\/admin/];
-
-// Install
-self.addEventListener('install', function (e) {
-    console.log('PWA sw installation');
-    e.waitUntil(caches.open(cache_storage_name).then(function (cache) {
-        console.log('PWA sw caching first urls');
-        first_cache_urls.map(function (url) {
-            return cache.add(url).catch(function (res) {
-                return console.log('PWA: ' + String(res) + ' ' + url);
-            });
-        });
-    }));
+self.addEventListener('install', event => {
+    event.waitUntil(caches.open(cacheName).then(cache =>
+        cache.add(new Request(new URL(offlinePage, self.location.origin), { credentials: 'omit' }))
+    ));
 });
 
-// Activate
-self.addEventListener('activate', function (e) {
-    console.log('PWA sw activation');
-    e.waitUntil(caches.keys().then(function (kl) {
-        return Promise.all(kl.map(function (key) {
-            if (key !== cache_storage_name) {
-                console.log('PWA old cache removed', key);
-                return caches.delete(key);
-            }
-        }));
-    }));
-    return self.clients.claim();
+self.addEventListener('activate', event => {
+    event.waitUntil(caches.keys().then(keys => Promise.all(
+        keys.filter(key => key.startsWith('hypotenuse-pwa-') && key !== cacheName)
+            .map(key => caches.delete(key))
+    )).then(() => self.clients.claim()));
 });
 
-// Fetch
-self.addEventListener('fetch', function (e) {
+self.addEventListener('fetch', event => {
+    const request = event.request;
+    const url = new URL(request.url);
+    if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-    if (!checkFetchRules(e)) return;
-
-    // Strategy for online user
-    if (e.request.mode === 'navigate' && navigator.onLine) {
-        e.respondWith(fetch(e.request).then(function (response) {
-            return caches.open(cache_storage_name).then(function (cache) {
-                if (never_cache_urls.every(check_never_cache_urls, e.request.url)) {
-                    cache.put(e.request, response.clone());
-                }
-                return response;
-            });
-        }));
+    // HTML and user-specific routes are always fetched from the server.
+    if (request.mode === 'navigate') {
+        event.respondWith(fetch(request).catch(() => caches.match(offlinePage)));
         return;
     }
 
-    // Strategy for offline user
-    e.respondWith(caches.match(e.request).then(function (response) {
-        return response || fetch(e.request).then(function (response) {
-            return caches.open(cache_storage_name).then(function (cache) {
-                if (never_cache_urls.every(check_never_cache_urls, e.request.url)) {
-                    cache.put(e.request, response.clone());
-                }
-                return response;
-            });
-        });
-    }).catch(function () {
-        return caches.match(offline_page);
-    }));
+    // Cache only static assets; uploaded questions, PDFs and Livewire are excluded.
+    if (!/^\/(assets|backend\/assets|icons)\//.test(url.pathname)
+        || !/\.(css|js|png|jpe?g|webp|gif|ico|woff2?|ttf|svg)$/i.test(url.pathname)) return;
+
+    event.respondWith((async () => {
+        let cache;
+        let cached;
+        try {
+            cache = await caches.open(cacheName);
+            cached = await cache.match(request);
+        } catch (error) {
+            // Storage may be unavailable; online assets must still load.
+        }
+        if (cached) return cached;
+        const response = await fetch(request);
+        if (cache && response.ok && !response.redirected
+            && !response.headers.get('content-type')?.includes('text/html')
+            && !/private|no-store/i.test(response.headers.get('cache-control') || '')) {
+            try {
+                await cache.put(request, response.clone());
+            } catch (error) {
+                // Full/disabled cache must not turn a successful request into an error.
+            }
+        }
+        return response;
+    })());
 });
-
-// Check never cache urls
-function check_never_cache_urls(url) {
-    if (this.match(url)) {
-        return false;
-    }
-    return true;
-}
-
-// Fetch Rules
-function checkFetchRules(e) {
-
-    // Check request url from inside domain.
-    if (new URL(e.request.url).origin !== location.origin) return;
-
-    // Check request url http or https
-    if (!e.request.url.match(/^(http|https):\/\//i)) return;
-
-    // Show offline page for POST requests
-    if (e.request.method !== 'GET') {
-        return caches.match(offline_page);
-    }
-
-    return true;
-}
-
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js");
-if (workbox.googleAnalytics) {
-    try {
-        workbox.googleAnalytics.initialize();
-    } catch (e) {
-        console.log(e.message);
-    }
-}

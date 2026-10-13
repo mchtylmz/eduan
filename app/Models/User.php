@@ -97,7 +97,7 @@ class User extends Authenticatable
         );
     }
 
-    public function usageGptLimit(string $date = null): int
+    public function usageGptLimit(?string $date = null): int
     {
         $date = dateFormat($date ?? now(), 'Y-m-d');
 

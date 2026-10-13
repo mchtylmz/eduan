@@ -8,7 +8,7 @@
             <h3 class="block-title">{{ $title }}</h3>
 
             <div class="block-options">
-                @can('lessons:add')
+                @can('questions:add')
                     <a href="{{ route('admin.questions.create') }}" class="btn btn-success">
                         <i class="fa fa-fw fa-plus mx-1"></i> {{ __('Yeni Soru Ekle') }}
                     </a>

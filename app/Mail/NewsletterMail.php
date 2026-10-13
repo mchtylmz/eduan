@@ -21,13 +21,14 @@ class NewsletterMail extends Mailable implements HasLocalePreference, ShouldQueu
 
     public $locale = 'tr';
     public $subject = '';
+
     public string $content = '';
     public string $token = '0';
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Newsletter $subscribe, string $locale = null, string $subject = null, string $content = null)
+    public function __construct(Newsletter $subscribe, ?string $locale = null, ?string $subject = null, ?string $content = null)
     {
         $this->subscribe = $subscribe;
         $this->locale = $locale;

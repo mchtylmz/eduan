@@ -24,7 +24,7 @@ class SetLocale
             $locale = $request->session()->get('locale');
         }
         else {
-            $locale = settings()->defaultLocale ?? 'tr';
+            $locale = settings()->defaultLocale ?? 'nl';
             session()->put('locale', $locale);
         }
 

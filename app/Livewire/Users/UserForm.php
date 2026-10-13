@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Actions\Users\AuthorizeStudentAccess;
 use App\Actions\Users\CreateOrUpdateUserAction;
 use App\Actions\Users\UpdatePasswordAction;
 use App\Actions\Users\UpdateRoleAction;
@@ -25,12 +26,16 @@ class UserForm extends Component
     public ?User $user = null;
 
     public ?int $role_id;
+
     public string $username;
     public string $name;
+
     public string $surname;
     public int $gpt_limit = 5;
+
     public int $league_approval = 1;
     public ?string $password = null;
+
     public StatusEnum $status = StatusEnum::ACTIVE;
     public YesNoEnum $email_verified = YesNoEnum::NO;
 
@@ -41,8 +46,10 @@ class UserForm extends Component
         $this->user = $user;
 
         if (!empty($this->user) && $this->user->exists) {
+            AuthorizeStudentAccess::run($this->user);
             $this->initializeForExistingUser();
         } else {
+            abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can('users:add'), 403);
             $this->initializeForNewUser();
         }
     }
@@ -112,11 +119,13 @@ class UserForm extends Component
 
     public function save()
     {
-        $this->validate();
-
-        if ($this->isUnauthorized()) {
-            return false;
+        if ($this->user?->exists) {
+            AuthorizeStudentAccess::run($this->user, 'users:update');
+        } else {
+            abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can('users:add'), 403);
         }
+        abort_unless($this->roles()->contains('id', $this->role_id), 403);
+        $this->validate();
 
         $user = $this->createOrUpdateUser();
         if (!$user) {
@@ -131,15 +140,6 @@ class UserForm extends Component
             'status' => 'success',
             'message' => __('Kullanıcı bilgisi kayıt edildi!')
         ]);
-    }
-
-    private function isUnauthorized(): bool
-    {
-        if (auth()->user()->cannot($this->permission)) {
-            $this->message(__('Kullanıcı bilgisi kayıt edilemez, yetkiniz bulunmuyor!'))->error();
-            return true;
-        }
-        return false;
     }
 
     private function createOrUpdateUser(): ?User

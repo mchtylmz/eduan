@@ -20,13 +20,14 @@ class ContactReplyMail extends Mailable implements HasLocalePreference, ShouldQu
 
     public string $email;
     public $locale = 'tr';
+
     public $subject = '';
     public string $content = '';
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Contact $contact, string $locale = null, string $subject = null, string $content = null)
+    public function __construct(Contact $contact, ?string $locale = null, ?string $subject = null, ?string $content = null)
     {
         $this->contact = $contact;
         $this->email = $contact->email ?? '0';

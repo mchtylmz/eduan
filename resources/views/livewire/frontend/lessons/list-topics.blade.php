@@ -48,7 +48,7 @@
                             <a href="{{ route('frontend.tests', $topic->code) }}">
                                 <span>
                                     <i class="fa-light fa-question-circle me-2"></i>
-                                    {{ collect($topic->exams)->groupBy('id')->count() }} {{ __('Test') }}
+                                    {{ $topic->exams_count }} {{ __('Test') }}
                                 </span>
                             </a>
                         </div>

@@ -16,7 +16,7 @@ use IteratorAggregate;
  *
  * @immutable
  *
- * @template-implements IteratorAggregate<int, Group>
+ * @template-implements IteratorAggregate<non-negative-int, Group>
  */
 final readonly class GroupCollection implements IteratorAggregate
 {
@@ -47,7 +47,7 @@ final readonly class GroupCollection implements IteratorAggregate
     }
 
     /**
-     * @return list<string>
+     * @return list<non-empty-string>
      */
     public function asArrayOfStrings(): array
     {
@@ -62,7 +62,7 @@ final readonly class GroupCollection implements IteratorAggregate
 
     public function isEmpty(): bool
     {
-        return empty($this->groups);
+        return $this->groups === [];
     }
 
     public function getIterator(): GroupCollectionIterator

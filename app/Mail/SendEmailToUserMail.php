@@ -21,16 +21,17 @@ class SendEmailToUserMail extends Mailable implements HasLocalePreference, Shoul
 
     public string $email;
     public $locale = 'tr';
+
     public $subject = '';
     public string $content = '';
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $locale = null, string $subject = null, string $content = null)
+    public function __construct(User $user, ?string $locale = null, ?string $subject = null, ?string $content = null, ?string $email = null)
     {
         $this->user = $user;
-        $this->email = $contact->email ?? '0';
+        $this->email = $email ?? $user->email ?? $user->username ?? '';
         $this->locale = $locale;
         $this->subject = $subject;
         $this->content = $content ? replaceEmailVariables($content, $user->toArray()) : '';

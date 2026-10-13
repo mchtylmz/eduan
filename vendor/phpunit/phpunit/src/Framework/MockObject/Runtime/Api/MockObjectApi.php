@@ -10,10 +10,6 @@
 namespace PHPUnit\Framework\MockObject;
 
 use function assert;
-use PHPUnit\Event\Code\NoTestCaseObjectOnCallStackException;
-use PHPUnit\Event\Code\TestMethodBuilder;
-use PHPUnit\Event\Facade as EventFacade;
-use PHPUnit\Framework\MockObject\Builder\InvocationMocker as InvocationMockerBuilder;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 
 /**
@@ -23,13 +19,16 @@ use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
  */
 trait MockObjectApi
 {
-    /** @noinspection MagicMethodsValidityInspection */
-    public function __phpunit_hasMatchers(): bool
+    public function __phpunit_hasInvocationCountRule(): bool
     {
-        return $this->__phpunit_getInvocationHandler()->hasMatchers();
+        return $this->__phpunit_getInvocationHandler()->hasInvocationCountRule();
     }
 
-    /** @noinspection MagicMethodsValidityInspection */
+    public function __phpunit_hasParametersRule(): bool
+    {
+        return $this->__phpunit_getInvocationHandler()->hasParametersRule();
+    }
+
     public function __phpunit_verify(bool $unsetInvocationMocker = true): void
     {
         $this->__phpunit_getInvocationHandler()->verify();
@@ -45,31 +44,29 @@ trait MockObjectApi
 
     abstract public function __phpunit_unsetInvocationMocker(): void;
 
-    public function expects(InvocationOrder $matcher): InvocationMockerBuilder
+    public function __phpunit_recordsInvocations(): bool
     {
-        assert($this instanceof StubInternal);
+        return $this->__phpunit_getInvocationHandler()->recordsInvocations();
+    }
 
-        if (!$this->__phpunit_wasGeneratedAsMockObject()) {
-            $message = 'Expectations configured on test doubles that are created as test stubs are no longer verified since PHPUnit 10. Test doubles that are created as test stubs will no longer have the expects() method in PHPUnit 12. Update your test code to use createMock() instead of createStub(), for example.';
-
-            try {
-                $test = TestMethodBuilder::fromCallStack();
-
-                if (!$this->__phpunit_state()->wasDeprecationAlreadyEmittedFor($test->id())) {
-                    EventFacade::emitter()->testTriggeredPhpunitDeprecation(
-                        $test,
-                        $message,
-                    );
-
-                    $this->__phpunit_state()->deprecationWasEmittedFor($test->id());
-                }
-                // @codeCoverageIgnoreStart
-            } catch (NoTestCaseObjectOnCallStackException) {
-                EventFacade::emitter()->testRunnerTriggeredPhpunitDeprecation($message);
-                // @codeCoverageIgnoreEnd
-            }
-        }
-
+    public function expects(InvocationOrder $matcher): InvocationMocker
+    {
         return $this->__phpunit_getInvocationHandler()->expects($matcher);
+    }
+
+    /**
+     * @param ?non-empty-string                         $label
+     * @param array<non-empty-string, non-empty-string> $methodLabels
+     *
+     * @throws EmptyInvocationJournalLabelException
+     * @throws InvocationJournalAlreadyRegisteredException
+     * @throws MethodCannotBeConfiguredException
+     * @throws TestDoubleSealedException
+     */
+    public function recordInvocationsIn(InvocationJournal $journal, ?string $label = null, array $methodLabels = []): void
+    {
+        assert($journal instanceof InvocationJournalInternal);
+
+        $this->__phpunit_getInvocationHandler()->recordInvocationsIn($journal, $label, $methodLabels);
     }
 }

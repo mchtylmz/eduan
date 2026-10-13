@@ -2,46 +2,46 @@
 
 namespace App\Livewire\Frontend\Tests;
 
+use App\Helpers\FrontendCache;
 use App\Models\Exam;
-use Illuminate\Support\Facades\Cache;
-use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class DetailStatisticList extends Component
 {
+    #[Locked]
     public Exam $exam;
 
-    public function lessons()
+    #[Computed]
+    public function summary(): array
     {
-        return Cache::remember(
-            implode('_', ['lessons', $this->exam->id, auth()->id()]),
-            60 * 60 * 24 * 365,
+        return FrontendCache::remember(
+            'tests', ['detail-summary' => $this->exam->id],
             function () {
-                return $this->exam->questions()
-                    ->active()
-                    ->with('lesson')
-                    ->selectRaw('count(questions.id) as questions_count, questions.lesson_id')
-                    ->groupBy('questions.lesson_id')
-                    ->get();
+                $totals = $this->exam->questions()->active()
+                    ->selectRaw('COUNT(questions.id) as questions_count, COALESCE(SUM(questions.time), 0) as seconds')->first();
+
+                return [
+                    'questions_count' => (int) $totals->questions_count,
+                    'seconds' => (int) $totals->seconds,
+                    'lessons' => $this->exam->questions()->active()->with('lesson:id,name')
+                        ->selectRaw('count(questions.id) as questions_count, questions.lesson_id')->groupBy('questions.lesson_id')->get(),
+                    'topics' => $this->exam->questions()->active()->with('topic:id,title')
+                        ->selectRaw('count(questions.id) as questions_count, questions.topic_id')->groupBy('questions.topic_id')->get(),
+                ];
             }
         );
     }
 
+    public function lessons()
+    {
+        return $this->summary()['lessons'];
+    }
+
     public function topics()
     {
-        return Cache::remember(
-            implode('_', ['topics', $this->exam->id, auth()->id()]),
-            60 * 60 * 24 * 365,
-            function () {
-                return $this->exam->questions()
-                    ->active()
-                    ->with('topic')
-                    ->selectRaw('count(questions.id) as questions_count, questions.topic_id')
-                    ->groupBy('questions.topic_id')
-                    ->get();
-            }
-        );
+        return $this->summary()['topics'];
     }
 
     public function render()

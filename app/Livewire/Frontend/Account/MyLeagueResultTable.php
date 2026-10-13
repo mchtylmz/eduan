@@ -4,33 +4,27 @@ namespace App\Livewire\Frontend\Account;
 
 use App\Models\LeagueResult;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class MyLeagueResultTable extends Component
 {
-    public int $userId;
+    use WithPagination;
 
-    public array $leagueNames = [];
+    #[Locked]
+    public int $userId;
 
     public function mount(int $userId): void
     {
-        $this->userId = $userId;
-
-        $this->leagueNames = [
-            1 => __('1. Lig'),
-            2 => __('2. Lig'),
-            3 => __('3. Lig'),
-            4 => __('4. Lig'),
-            5 => __('5. Lig'),
-            6 => __('6. Lig'),
-            7 => __('7. Lig'),
-        ];
+        abort_unless(auth()->check() && $userId === auth()->id(), 403);
+        $this->userId = auth()->id();
     }
 
     #[Computed]
     public function results()
     {
-        return LeagueResult::with('league')->where('user_id', $this->userId)->latest()->get();
+        return LeagueResult::with('league')->where('user_id', auth()->id())->latest()->orderByDesc('id')->paginate(15);
     }
 
     public function render()

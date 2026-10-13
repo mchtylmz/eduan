@@ -13,6 +13,7 @@ class SelectPdfModalForm extends Component
     use WithFileUploads, CustomLivewireAlert;
 
     public int $sectionIndex;
+
     public int $fieldIndex;
     public $file;
 
@@ -24,6 +25,8 @@ class SelectPdfModalForm extends Component
 
     public function save(): bool
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can('tests:update'), 403);
+        $this->validate(['file' => 'required|file|mimes:pdf|extensions:pdf|max:10240']);
         $filename = '';
         if ($this->file instanceof TemporaryUploadedFile) {
             $filename = UploadFileAction::run(file: $this->file, folder: 'tests');

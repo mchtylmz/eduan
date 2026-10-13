@@ -25,6 +25,7 @@ Route::get('page/{page:slug}', [\App\Http\Controllers\Frontend\HomeController::c
 Route::get('sitemap.xml', [\App\Http\Controllers\Frontend\HomeController::class,'sitemap'])
     ->name('sitemap');
 Route::get('ai/solution/{question:code}', [\App\Http\Controllers\Frontend\HomeController::class,'aiSolution'])
+    ->middleware('auth')
     ->name('ai.solution');
 
 Route::get('tests/{topic:code?}', [\App\Http\Controllers\Frontend\TestController::class,'index'])

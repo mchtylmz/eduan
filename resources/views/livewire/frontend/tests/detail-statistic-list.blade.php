@@ -1,32 +1,32 @@
 <div>
-    @if(count($userResultsWithoutGroupBy = $exam->userResultsWithoutGroupBy))
-        @php
-            $resultStats = examResultStats(exam: $exam, user: user());
+    @php
+            $resultStats = auth()->check() ? examResultStats(exam: $exam, user: auth()->user()) : [];
 
             $results_count = $resultStats['results_count'] ?? 0;
             $question_count = $resultStats['question_count'] ?? 0;
             $correct_count = $resultStats['correct_count'] ?? 0;
             $incorrect_count = $resultStats['incorrect_count'] ?? 0;
-        @endphp
+    @endphp
+    @if($results_count)
 
     <div class="course_details-sidebar mb-3 pt-0 pb-0">
         <div class="course_details-list">
             <ul class="mb-0">
                 <li class="text-success">
-                    <span><i class="fa fa-percent text-success"></i>{{ __('Başarı') }}</span>
-                    <span>%{{ $correct_count ? intval(($correct_count * 100) / $question_count) : 0 }}</span>
+                    <span><i class="fa fa-percent text-success"></i>{{ __('account.success') }}</span>
+                    <span>{{ $question_count ? intval(($correct_count * 100) / $question_count) : 0 }}%</span>
                 </li>
                 <li class="text-success">
                     <span>
-                        <i class="fa fa-percent text-success"></i> {{ $results_count }} {{ __('Sonuç') }}
+                        <i class="fa fa-percent text-success"></i> {{ $results_count }} {{ __('learning.result') }}
                     </span>
                     <span>
-                       {{ $correct_count }} {{ __('Doğru') }} / {{ $incorrect_count }} {{ __('Yanlış') }}
+                       {{ $correct_count }} {{ __('account.correct') }} / {{ $incorrect_count }} {{ __('account.incorrect') }}
                     </span>
                 </li>
                 <li class="">
                     <a href="{{ route('frontend.test.solutions', $exam->code) }}" class="course-btn theme-btn bg-success">
-                        {{ __('Sonuçlarımı Görüntüle') }}
+                        {{ __('learning.view_results') }}
                     </a>
                 </li>
             </ul>
@@ -38,7 +38,7 @@
         <div class="course_details-list">
             <ul class="mb-3">
                 <li>
-                    <span><i class="fa-thin fa-language"></i>{{ __('Dil') }}</span>
+                    <span><i class="fa-thin fa-language"></i>{{ __('learning.language') }}</span>
                     <span>{{ $exam->language->name ?? '' }}</span>
                 </li>
                 @foreach($this->lessons() as $item)
@@ -48,7 +48,7 @@
                         {{ $item->lesson->name ?? '' }}
                     </span>
                     <span class="text-nowrap">
-                        {{ $item->questions_count ?? 0 }} {{ __('Soru') }}
+                        {{ $item->questions_count ?? 0 }} {{ __('learning.questions') }}
                     </span>
                 </li>
                 @endforeach
@@ -59,21 +59,21 @@
                         {{ $item->topic->title ?? '' }}
                     </span>
                     <span class="text-nowrap">
-                        {{ $item->questions_count ?? 0 }} {{ __('Soru') }}
+                        {{ $item->questions_count ?? 0 }} {{ __('learning.questions') }}
                     </span>
                 </li>
                 @endforeach
                 <li>
-                    <span><i class="fa-thin fa-file-lines"></i>{{ __('Toplam Soru') }}</span>
-                    <span>{{ $exam->questions()->active()->count() }}</span>
+                    <span><i class="fa-thin fa-file-lines"></i>{{ __('learning.total_questions') }}</span>
+                    <span>{{ $this->summary()['questions_count'] }}</span>
                 </li>
                 <li>
-                    <span><i class="fa-thin fa-clock"></i>{{ __('Toplam Süre') }}</span>
-                    <span>∼ {{ intval($exam->questions()->active()->sum('time') / 60) }} {{ __('dakika') }}</span>
+                    <span><i class="fa-thin fa-clock"></i>{{ __('learning.duration') }}</span>
+                    <span>∼ {{ intval($this->summary()['seconds'] / 60) }} {{ __('learning.minutes') }}</span>
                 </li>
                 <li>
-                    <span><i class="fa-thin fa-eye"></i>{{ __('Görünüm') }}</span>
-                    <span>{{ $exam->visibility->name() ?? '' }}</span>
+                    <span><i class="fa-thin fa-eye"></i>{{ __('learning.visibility') }}</span>
+                    <span>{{ \App\Enums\VisibilityEnum::PREMIUM->is($exam->visibility) ? __('account.premium_only') : __('account.members_only') }}</span>
                 </li>
                 {{-----
                 <li>
@@ -85,25 +85,25 @@
             <div class="course_details-sidebar-btn">
                 @auth()
                     @if(\App\Enums\VisibilityEnum::LOGGED->is($exam->visibility) || auth()->user()->can('exams:solve'))
-                        @if(count($exam->userResults))
+                        @if($results_count)
                             <a href="{{ route('frontend.test.start', $exam->code) }}" class="course-btn theme-btn theme-btn-big">
-                                {{ __('Testi Tekrar Çöz') }}
+                                {{ __('learning.retry') }}
                             </a>
                         @else
                             <a href="{{ route('frontend.test.start', $exam->code) }}" class="course-btn theme-btn theme-btn-big">
-                                {{ __('Testi Çöz') }}
+                                {{ __('learning.solve') }}
                             </a>
                         @endif
                     @else
                         <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
                            data-bs-target="#informationModal">
-                            {{ __('Testi Çöz') }}
+                            {{ __('learning.solve') }}
                         </a>
-                    @endcan
+                    @endif
                 @else
                     <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
                        data-bs-target="#informationModal">
-                        {{ __('Testi Çöz') }}
+                        {{ __('learning.solve') }}
                     </a>
                 @endauth
             </div>

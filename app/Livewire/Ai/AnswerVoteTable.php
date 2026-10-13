@@ -2,89 +2,52 @@
 
 namespace App\Livewire\Ai;
 
-use App\Models\UserAiUsage;
-use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Helpers\LearningTable;
+use App\Helpers\TableCache;
+use App\Models\AnswerAI;
 use App\Models\AnswerAIVote;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use App\Models\User;
+use App\Traits\CustomLivewireAlert;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
 
-#[Lazy(isolate: true)]
-class AnswerVoteTable extends DataTableComponent
+class AnswerVoteTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
+    use CustomLivewireAlert;
 
-    protected $model = AnswerAIVote::class;
-
+    #[Locked]
     public int $answerAiId = 0;
 
     public function mount(int $answerAiId = 0): void
     {
+        LearningTable::access('ai');
         $this->answerAiId = $answerAiId;
-
-        $this->setSortDesc('created_at');
     }
 
-    public function builder(): Builder
+    public function render()
     {
-        return AnswerAIVote::with(['user'])
-            ->when($this->answerAiId, fn (Builder $builder) => $builder->where('answer_ai_id', $this->answerAiId));
+        LearningTable::access('ai');
+        if ($this->answerAiId) {
+            AnswerAI::findOrFail($this->answerAiId);
+        }
+        $students = LearningTable::studentIds();
+        $scope = hash('sha256', json_encode([$students, $this->answerAiId]));
+
+        return view('livewire.backend.ai.votes-server-table', ['users' => TableCache::options('ai-votes-users-'.$scope,
+            fn () => User::when($students !== null, fn ($q) => $q->whereIn('id', $students))->get(['id', 'name', 'surname', 'email'])
+                ->mapWithKeys(fn ($u) => [$u->id => sprintf('(%s) %s', $u->email, $u->display_name)])->all())]);
     }
 
-    public function filters(): array
+    public function delete(int $id): bool
     {
-        return [
-            $this->usersFilter(
-                fn(Builder $builder, array $value) => $builder->whereIn('answer_a_i_votes.user_id', $value)
-            ),
-            $this->dateFilter('answer_a_i_votes.created_at', __('Değerlendirme Zamanı')),
-        ];
-    }
+        LearningTable::access('ai');
+        abort_unless(auth()->user()->can('ai:delete'), 403);
+        $students = LearningTable::studentIds();
+        $record = AnswerAIVote::when($this->answerAiId, fn ($q) => $q->where('answer_ai_id', $this->answerAiId))
+            ->when($students !== null, fn ($q) => $q->whereIn('user_id', $students))->findOrFail($id);
+        $deleted = $record->delete();
+        $this->dispatch('refresh-server-table', table: 'ai-votes');
 
-    public function columns(): array
-    {
-        return [
-            Column::make("Id", "id")
-                ->hideIf(true),
-            Column::make(__('Kullanıcı adı'), "user.username")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('İsim'), "user.name")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Soyisim'), "user.surname")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Değerlendirme'), "vote")
-                ->sortable(),
-            Column::make(__('Değerlendirme Zamanı'), "created_at")
-                ->collapseOnMobile()
-                ->format(fn($value) => $value ? dateFormat($value, 'd/m/Y H:i') : '-')
-                ->sortable()
-        ];
-    }
-
-    public function appendColumns(): array
-    {
-        return [
-            WireLinkColumn::make(__('Sil'))
-                ->collapseOnMobile()
-                ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Sil')))
-                ->confirmMessage(__('Değerlendirme silinecektir, işleme devam edilsin mi?'))
-                ->action(fn($row) => 'delete("' . $row->id . '")')
-                ->attributes(fn($row) => ['class' => 'btn btn-danger btn-sm'])
-                ->html(),
-        ];
-    }
-
-    public function delete(AnswerAIVote $answerAIVote)
-    {
-        $this->message(__('Değerlendirme başarıyla silindi!'))->success();
-
-        return $answerAIVote->delete();
+        return $deleted;
     }
 }

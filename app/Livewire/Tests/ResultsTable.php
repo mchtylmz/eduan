@@ -2,173 +2,62 @@
 
 namespace App\Livewire\Tests;
 
-use App\Enums\RoleTypeEnum;
-use App\Enums\YesNoEnum;
+use App\Helpers\LearningTable;
+use App\Helpers\TableCache;
+use App\Models\Season;
 use App\Models\Test;
-use App\Models\TestsResult;
 use App\Models\User;
-use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
 
-#[Lazy(isolate: true)]
-class ResultsTable extends DataTableComponent
+class ResultsTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
-
-    protected $model = TestsResult::class;
+    #[Locked]
     public ?Test $test = null;
+
+    #[Locked]
     public ?User $user = null;
 
-    public ?bool $incorrectCount = false;
+    #[Locked]
+    public bool $incorrectCount = false;
 
-    public function mount(?Test $test = null, ?User $user = null, ?bool $incorrectCount = false): void
+    public function mount(?Test $test = null, ?User $user = null, bool $incorrectCount = false): void
     {
+        LearningTable::access('tests');
         $this->test = $test;
         $this->user = $user;
         $this->incorrectCount = $incorrectCount;
-
-        // $this->setSortDesc('duration');
-        $this->setSortDesc('completed_at');
-        $this->setFilter('completed', YesNoEnum::YES->value);
-        $this->setFilter('season_id', activeSeason()->id ?? 0);
     }
 
-    public function builder(): Builder
+    public function render()
     {
-        $builder = TestsResult::with(['user', 'test'])->when(
-            auth()->user()->can(RoleTypeEnum::TEACHER),
-            function ($query) {
-                return $query->whereIn('user_id', auth()->user()->students()->select('id'));
-            }
-        );
+        LearningTable::access('tests');
+        $students = LearningTable::studentIds();
+        $scope = hash('sha256', json_encode([$students, $this->test?->id]));
+        $query = LearningTable::timedResultsQuery($students)->when($this->test, fn ($query) => $query->where('test_id', $this->test->id));
 
+        return view('livewire.backend.tests.results-server-table', [
+            'seasons' => [0 => __('tables.no_season')] + TableCache::options('seasons', fn () => Season::orderByDesc('id')->pluck('name', 'id')->all()),
+            'users' => TableCache::options('timed-result-users-'.$scope, fn () => User::whereIn('id', (clone $query)->select('user_id'))->reorder()->orderByDesc('id')->get(['id', 'name', 'surname', 'email'])
+                ->mapWithKeys(fn ($user) => [$user->id => sprintf('(%s) %s', $user->email, $user->display_name)])->all()),
+            'tests' => TableCache::options('timed-result-tests-'.$scope, fn () => Test::whereIn('id', (clone $query)->select('test_id'))->get(['id', 'name'])->pluck('name', 'id')->all()),
+        ]);
+    }
+
+    public function showDetail(int $id): void
+    {
+        LearningTable::access('tests');
+        $query = LearningTable::timedResultsQuery(LearningTable::studentIds());
+        if ($this->test) {
+            $query->where('test_id', $this->test->id);
+        }
+        if ($this->user) {
+            $query->where('user_id', $this->user->id);
+        }
         if ($this->incorrectCount) {
-            return $builder->whereColumn('question_count','correct_count');
+            $query->whereColumn('question_count', 'correct_count');
         }
-
-        return $builder
-            ->when($this->test->exists, fn($query) => $query->where('test_id', $this->test->id))
-            ->when($this->user->exists, fn($query) => $query->where('user_id', $this->user->id));
-    }
-
-    public function filters(): array
-    {
-        $filters = [];
-
-        $filters[] = $this->seasonsFilter('tests_results.season_id');
-
-        if (!$this->user->exists) {
-            $filters[] = $this->usersInTestsResultsFilter(
-                $this->test->id ?? 0,
-                fn(Builder $builder, array $value) => $builder->whereIn('tests_results.user_id', $value)
-            );
-        }
-
-        if (!$this->test->exists && !$this->incorrectCount) {
-            $filters[] = $this->testsInResultsFilter(
-                fn(Builder $builder, array $value) => $builder->whereIn('tests_results.test_id', $value)
-            );
-        }
-
-        $filters[] = $this->completeFilter('tests_results.completed');
-
-        return $filters;
-    }
-
-    public function columns(): array
-    {
-        return [
-            Column::make("ID", "id")->hideIf(true),
-            Column::make("Geçme", "passing_score")->hideIf(true),
-            Column::make(__('Test Adı'), "Test.name")
-                ->hideIf($this->test->exists)
-                ->searchable()
-                ->sortable(),
-            Column::make(__('İsim'), "user.name")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Soyisim'), "user.surname")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('E-posta Adresi'), "user.email")
-                ->collapseOnMobile()
-                ->searchable()
-                ->sortable(),
-            ComponentColumn::make(__('Puan'), "point")
-                ->collapseOnMobile()
-                ->component('table.status')
-                ->attributes(fn($value, $row, Column $column) => [
-                    'type' => $value >= $row->passing_score ? 'success' : 'warning',
-                    'label' => sprintf(
-                        '%d (%s)',
-                        $value,
-                        $value >= $row->passing_score ? __('Geçti') : __('Kaldı')
-                    )
-                ])
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Soru'), "question_count")
-                ->collapseOnMobile()
-                ->sortable(),
-            Column::make(__('Doğru'), "correct_count")
-                ->collapseOnMobile()
-                ->sortable(),
-            Column::make(__('Yanlış'), "incorrect_count")
-                ->collapseOnMobile()
-                ->sortable(),
-            Column::make(__('Süre'), "duration")
-                ->format(fn($value) => formatSecondToTime(secondToTime($value), hideSeconds: true))
-                ->collapseOnMobile()
-                ->sortable(),
-            ComponentColumn::make(__('Durum'), "completed")
-                ->collapseOnMobile()
-                ->component('table.status')
-                ->attributes(fn($value, $row, Column $column) => [
-                    'type' => YesNoEnum::YES->is($value) ? 'success' : 'warning',
-                    'label' => YesNoEnum::YES->is($value) ? '<i class="fa-regular fa-circle-check fa-1_5x mx-1"></i>' : '<i class="fa fa-circle-xmark fa-1_5x mx-1"></i>'
-                ])
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Tamamlanma'), "completed_at")
-                ->collapseOnMobile()
-                ->format(fn($value) => $value ? dateFormat($value, 'd/m/Y, H:i') : '-')
-                ->sortable()
-        ];
-    }
-
-    public function appendColumns(): array
-    {
-        return [
-            WireLinkColumn::make(__('Detay'))
-                ->collapseOnMobile()
-                ->title(fn($row) => sprintf('<i class="fa fa-poll mx-1"></i> %s', __('Detay')))
-                ->action(fn($row) => 'showDetail("' . $row->id . '")')
-                ->attributes(fn($row) => ['class' => 'btn btn-info btn-sm'])
-                ->html(),
-        ];
-    }
-
-    public function showDetail(TestsResult $testResult): void
-    {
-        $this->dispatch(
-            'showOffcanvas',
-            component: [
-                'tests.results-user-detail',
-                'tests.results-detail-table'
-            ],
-            data: [
-                'title' => __('Sonuç Detayları'),
-                'testsResultId' => $testResult->id,
-                'userId' => $testResult->user_id,
-            ]
-        );
+        $result = $query->findOrFail($id);
+        $this->dispatch('open-learning-table', view: 'tests.results-detail-table', recordId: $result->id);
     }
 }

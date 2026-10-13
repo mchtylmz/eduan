@@ -4,32 +4,35 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Exam;
 use App\Models\Test;
-use App\Models\Topic;
-use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
     public function index()
     {
         return view('frontend.exams.index', [
-            'title' => __('Sınavlar')
+            'title' => __('Sınavlar'),
         ]);
     }
 
     public function detail(Test $test)
     {
+        abort_unless(StatusEnum::ACTIVE->is($test->status), 404);
         incrementIf(true, $test);
 
         return view('frontend.exams.detail', [
             'title' => $test->name,
             'test' => $test,
+            'sections' => $test->sections()->parentIsZero()->with('parents')->get(),
         ]);
     }
 
     public function start(Test $test)
     {
+        if (! request()->user()) {
+            return redirect()->route('login');
+        }
+
         if (StatusEnum::PASSIVE->is($test->status) || request()->user()->cannot('tests:solve')) {
             return redirect()->route('frontend.exam.detail', $test->code);
         }

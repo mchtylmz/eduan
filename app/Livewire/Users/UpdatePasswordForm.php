@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Actions\Users\AuthorizeStudentAccess;
 use App\Actions\Users\UpdatePasswordAction;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
@@ -12,8 +13,15 @@ class UpdatePasswordForm extends Component
     use CustomLivewireAlert;
 
     public User $user;
+
     public string $newPassword;
     public string $newPasswordConfirmation;
+
+    public function mount(User $user): void
+    {
+        AuthorizeStudentAccess::run($user);
+        $this->user = $user;
+    }
 
     public function rules(): array
     {
@@ -33,6 +41,7 @@ class UpdatePasswordForm extends Component
 
     public function save()
     {
+        AuthorizeStudentAccess::run($this->user, 'users:update-password');
         $this->validate();
 
         if (auth()->user()->cannot('users:update-password')) {

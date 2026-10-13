@@ -6,6 +6,7 @@
     ])
 @endpush
 @section('content')
+    <h1 class="visually-hidden">{{ $title ?: __('Ligler') }}</h1>
     <!-- lessons area start -->
     <section class="h10_category-area pt-30 pb-50 bg-white">
         <div class="container px-3 px-sm-2">

@@ -10,7 +10,7 @@ class CreateOrUpdateExamAction
 {
     use AsAction;
 
-    public function handle(array $data, Exam $exam = null)
+    public function handle(array $data, ?Exam $exam = null)
     {
         if (empty($data['created_by'])) {
             $data['created_by'] = request()->user()?->id;

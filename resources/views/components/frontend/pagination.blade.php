@@ -17,13 +17,13 @@
                 {{-- Previous Page Link --}}
                 @if ($paginator->onFirstPage())
                     <li>
-                        <a href="javascript:void(0);" rel="next" aria-label="@lang('pagination.next')" class="disabled">
+                        <a href="javascript:void(0);" aria-label="@lang('pagination.previous')" class="disabled">
                             <i class="fa-light fa-angle-left"></i>
                         </a>
                     </li>
                 @else
                     <li>
-                        <a href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="@lang('pagination.next')">
+                        <a href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="@lang('pagination.previous')">
                             <i class="fa-light fa-angle-left"></i>
                         </a>
                     </li>

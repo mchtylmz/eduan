@@ -2,26 +2,32 @@
 
 namespace App\Livewire;
 
-use Livewire\Attributes\On;
+use App\Actions\Users\AuthorizeUserMail;
 use Livewire\Component;
 
 class Modal extends Component
 {
     public string|array $component;
+
     public string $title;
+
     public array $data;
+
     public bool $show = false;
+
     public string $size;
+
     public array $sizes = [
         'sm',
         'md',
         'lg',
-        'xl'
+        'xl',
     ];
 
     protected $listeners = [
         'showModal' => 'showModal',
         'closeModal' => 'closeModal',
+        'stats-mail-ready' => 'openStatsMail',
     ];
 
     public function showModal(string|array $component, array $data = []): void
@@ -30,9 +36,16 @@ class Modal extends Component
 
         $this->data = $data;
         $this->title = $data['title'] ?? '';
-        $this->size = !empty($data['size']) && in_array($data['size'], $this->sizes) ? $data['size'] : 'xl';
+        $this->size = ! empty($data['size']) && in_array($data['size'], $this->sizes) ? $data['size'] : 'xl';
 
         $this->show = true;
+    }
+
+    public function openStatsMail(array $emails): void
+    {
+        AuthorizeUserMail::run(studentIds: array_column($emails, 'user_id'));
+        $this->showModal('stats.send-email-form', ['title' => __('Kullanıcılara Mail Gönder'), 'emails' => $emails]);
+        $this->dispatch('stats-mail-opened');
     }
 
     public function closeModal(): void

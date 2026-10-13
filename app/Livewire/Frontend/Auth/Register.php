@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Frontend\Auth;
 
+use App\Actions\Auth\LimitAuthRequests;
 use App\Actions\Users\CreateOrUpdateUserAction;
 use App\Actions\Users\UpdatePasswordAction;
 use App\Actions\Users\UpdateRoleAction;
@@ -11,22 +12,28 @@ use App\Traits\CustomLivewireAlert;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class Register extends Component
 {
     use CustomLivewireAlert;
 
     public bool $afterRegister = false;
+
     public string $name;
+
     public string $surname;
+
     public string $email;
+
     public string $phone;
+
     public string $password;
+
     public string $password_confirmation;
+
     public bool $acceptTerms = true;
+
     public string $passwordInputType = 'password';
 
     public function changeType(): void
@@ -45,7 +52,7 @@ class Register extends Component
             ],
             'phone' => 'nullable|string',
             'password' => [
-                'required', 'string', 'confirmed', Password::min(6)->mixedCase()->numbers()->symbols()
+                'required', 'string', 'confirmed', Password::min(6)->mixedCase()->numbers()->symbols(),
             ],
             'acceptTerms' => ['required', 'accepted'],
         ];
@@ -65,9 +72,11 @@ class Register extends Component
 
     public function save()
     {
+        LimitAuthRequests::run('register');
         $this->validate();
         if (settings()->registerStatus != StatusEnum::ACTIVE->value) {
             $this->message(__('Kayıt işlemi yapılamadı, daha sonra tekrar deneyiniz!'))->error();
+
             return false;
         }
 
@@ -76,10 +85,11 @@ class Register extends Component
             'surname' => $this->surname,
             'username' => $this->email,
             'email' => $this->email,
-            'phone' => $this->phone ?? ''
+            'phone' => $this->phone ?? '',
         ]);
-        if (!$user) {
+        if (! $user) {
             $this->message(__('Kayıt işlemi yapılamadı, daha sonra tekrar deneyiniz!'))->error();
+
             return false;
         }
 
@@ -90,6 +100,7 @@ class Register extends Component
         $this->reset(['name', 'surname', 'email', 'phone', 'password', 'password_confirmation']);
 
         $this->afterRegister = true;
+
         return true;
     }
 

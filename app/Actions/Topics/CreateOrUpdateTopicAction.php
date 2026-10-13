@@ -10,7 +10,7 @@ class CreateOrUpdateTopicAction
 {
     use AsAction;
 
-    public function handle(array $data, Topic $topic = null)
+    public function handle(array $data, ?Topic $topic = null)
     {
         if (!empty($data['code'])) {
             $data['code'] = Str::slug($data['code']);

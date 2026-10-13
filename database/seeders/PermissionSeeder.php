@@ -59,6 +59,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'users:add'],
             ['name' => 'users:update'],
             ['name' => 'users:update-password'],
+            ['name' => 'users:send-email'],
             ['name' => 'users:delete'],
             // 13-01-2025 updated
             ['name' => 'users:student-delete'],

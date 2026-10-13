@@ -1,366 +1,117 @@
 
 # Livewire Alert
 
-<a href="https://github.com/jantinnerezo/livewire-alert/actions"><img src="https://github.com/jantinnerezo/livewire-alert/workflows/PHPUnit/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/jantinnerezo/livewire-alert"><img src="https://img.shields.io/packagist/v/jantinnerezo/livewire-alert" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/jantinnerezo/livewire-alert"><img src="https://img.shields.io/packagist/dt/jantinnerezo/livewire-alert" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/jantinnerezo/livewire-alert"><img src="https://img.shields.io/packagist/l/jantinnerezo/livewire-alert" alt="License"></a>
+<a href="https://github.com/jantinnerezo/livewire-alert/actions"><img src="https://github.com/jantinnerezo/livewire-alert/workflows/PHPUnit/badge.svg" alt="Build Status"></a> [![PHPStan Analysis](https://github.com/jantinnerezo/livewire-alert/workflows/PHPStan/badge.svg)](https://github.com/jantinnerezo/livewire-alert/actions) <a href="https://packagist.org/packages/jantinnerezo/livewire-alert"><img src="https://img.shields.io/packagist/dt/jantinnerezo/livewire-alert" alt="Total Downloads"></a> <a href="https://packagist.org/packages/jantinnerezo/livewire-alert"><img src="https://img.shields.io/packagist/l/jantinnerezo/livewire-alert" alt="License"></a>
 
-Livewire Alert is a simple alert utility package designed to seamlessly integrate with your Livewire components. Under the hood, it utilizes SweetAlert2, offering you the functionality of SweetAlert2 without the need for any custom Javascript. 
+Livewire Alert is a Laravel Livewire package that brings SweetAlert2 notifications to your Livewire components through a fluent, chainable API. Configure and trigger beautiful, interactive alerts with a clean PHP interface — no JavaScript required.
 
-## Interactive Demo
-Check the interactive demo here:  https://livewire-alert.jantinnerezo.com
+## 📖 Documentation
 
-## Contribute to interactive demo 
-Do you have any ideas in mind that you can add to the interactive demo? Fork and submit a PR here: https://github.com/jantinnerezo/livewire-alert-demo
+Full documentation, live examples, and an interactive playground are hosted at:
+
+### 👉 [https://livewire-alert.jantinnerezo.me](https://livewire-alert.jantinnerezo.me)
+
+Every feature — icons, positions, toasts, timers, buttons, confirm dialogs, loading alerts, in-place updates, inputs, flash alerts, images, custom classes, dependency injection and more — is documented there with copy-pasteable snippets and runnable demos.
+
+## Requirements
+- PHP 8.1 or higher
+- Laravel 10.x or higher
+- Livewire 3.x or 4.x
+- Composer
 
 ## Installation
 
-You can install the package via composer:
-
-```bash
-
-composer require jantinnerezo/livewire-alert
-
-```
-
-Next, add the scripts component to your template after the `@livewireScripts`.
-
-> SweetAlert2 script is not included by default so make sure you include it before livewire alert script.
-
-``` html
-<body> 
-
-  @livewireScripts
-
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <x-livewire-alert::scripts />
-  
-</body> 
-```
-
-You can also manually include the script by publishing `livewire-alert.js`
+Require the package with Composer:
 
 ``` bash
-php artisan vendor:publish --tag=livewire-alert:assets
+composer require jantinnerezo/livewire-alert
 ```
 
-And then in your view you can include the published script instead of including inline script with `<x-livewire-alert::scripts />` component.
-> If you go this path, make sure to include the `<x-livewire-alert::flash />` right after the livewire-alert script if you still want the flash feature.
-``` html
-<script src="{{ asset('vendor/livewire-alert/livewire-alert.js') }}"></script> 
-<x-livewire-alert::flash />
-```
-
-## Requirements
-This package is meant to use with Livewire components. Make sure you are using it with Livewire projects only.
-
-- PHP 8.1 or higher
-
-- Laravel 7 to 12
-
-- Livewire
-
-- SweetAlert2
-
-## Usage
-
-You can use livewire alert by using the `LivewireAlert` trait.
-
-``` php
-use Jantinnerezo\LivewireAlert\LivewireAlert;
- 
-class Index extends Component
-{
-    use LivewireAlert;
-    
-    public function submit()
-    {
-        $this->alert('success', 'Basic Alert');
-    }
-}
-```
-
-Displaying different alert icons. 
-> The default alert behaviour is a toast notification.
-
-``` php
-$this->alert('success', 'Success is approaching!');
-```
-
-``` php
-$this->alert('error', 'Wrong email or password!');
-```
-
-``` php
-$this->alert('warning', 'The world has warned you.');
-```
-
-``` php
-$this->alert('info', 'The fact is you know your name :D');
-```
-
-``` php
-$this->alert('question', 'How are you today?');
-```
-
-Disabling toast notification alert treatment.
-
-
-``` php
-$this->alert('info', 'This is not as toast alert', [
-    'toast' => false
-]);
-```
-
-## Positioning Alert
-
-``` php
-$this->alert('info', 'Centering alert', [
-    'position' => 'center'
-]);
-```
-
-List of the following alert positions:
-- top
-- top-start
-- top-end
-- center
-- center-start
-- center-end
-- bottom
-- bottom-start
-- bottom-end
-
-## Buttons
-
-SweetAlert2 has 3 buttons that is not shown by default.
-
-
-To show confirm button, simply pass the `showConfirmButton` to alert configuration and set it to `true`.
-
-``` php
-$this->alert('question', 'How are you today?', [
-    'showConfirmButton' => true
-]);
-```
-
-Change confirm button text:
-
-``` php
-$this->alert('question', 'How are you today?', [
-    'showConfirmButton' => true,
-    'confirmButtonText' => 'Good'
-]);
-```
-
-Adding event when confirm button is clicked. First create a function that will be fired when confirm button is clicked:
-
-``` php
-public function confirmed()
-{
-    // Do something
-}
-```
-
-Add to it event listeners array to register it.
-
-``` php
-protected $listeners = [
-    'confirmed'
-];
-```
-
-Or
-
-``` php
-public function getListeners()
-{
-    return [
-    	'confirmed'
-    ];
-}
-```
-
-And then pass it to `onConfirmed` key of the alert configuration.
-
-``` php
-$this->alert('question', 'How are you today?', [
-    'showConfirmButton' => true,
-    'confirmButtonText' => 'Good',
-    'onConfirmed' => 'confirmed' 
-]);
-```
-
-You can also pass a parameter to the event to get the alert response. 
-> Useful when you need to get the value of the input inside the alert.
-
-``` php
-$this->alert('warning', 'Please enter password', [
-    'showConfirmButton' => true,
-    'confirmButtonText' => 'Submit',
-    'onConfirmed' => 'confirmed',
-    'input' => 'password',
-    'inputValidator' => '(value) => new Promise((resolve) => '.
-        '  resolve('.
-        '    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,}$/.test(value) ?'.
-        '    undefined : "Error in password"'.
-        '  )'.
-        ')',    
-    'allowOutsideClick' => false,
-    'timer' => null
-]);
-```
-
-``` php
-public function confirmed($data)
-{
-    // Get input value and do anything you want to it
-    $password = $data['value'];
-}
-```
-
-Just do the same thing to show `deny` and `cancel` button. Just create a function for each button and register it to event listeners.
-
-``` php
-public function denied() 
-{
-    // Do something when denied button is clicked
-}
-```
-
-``` php
-public function cancelled() 
-{
-    // Do something when cancel button is clicked
-}
-```
-
-``` php
-public function getListeners()
-{
-    return [
-    	'denied',
-      'dismissed'
-    ];
-}
-```
-
-Make sure to set `showDenyButton` and `showCancelButton` to `true`.
-
-``` php
-$this->alert('warning', 'Alert with deny and cancel button', [
-    'showDenyButton' => true,
-    'denyButtonText' => 'Deny',
-    'showCancelButton' => true,
-    'cancelButtonText' => 'Cancel',
-    'onDenied' => 'denied',
-    'onDismissed' => 'cancelled'
-]);
-```
-
-Emit events to only specific component. Instead of passing the listener directly to the event, pass an array with `component` and `listeners` keys. 
-
-``` PHP
-'onConfirmed' => [
-   'component' => 'livewire-component',
-   'listener' => 'confirmed'
-];
-```
-
-Don't want to define extra button configuration every time you show alert confirmation? Use the confirm method instead. 
-> You can always override default confirm settings just tweak the configuration.
-
-``` php
-$this->confirm('Are you sure do want to leave?', [
-    'onConfirmed' => 'confirmed',
-]);
-```
-
-## Flash Notification
-
-You can also use alert as a flash notification. You can pass the redirect route on the fourth parameter, redirects to `/` by default.
-
-``` php
-$this->flash('success', 'Successfully submitted form', [], '/');
-```
-
-## Configuration
-
-Override default alert config by publishing the `livewire-alert.php` config file.
+Optionally publish the config file:
 
 ``` bash
 php artisan vendor:publish --tag=livewire-alert:config
 ```
 
-``` php
-[
-    'alert' => [
-        'position' => 'top-end',
-        'timer' => 3000,
-        'toast' => true,
-        'text' => null,
-        'showCancelButton' => false,
-        'showConfirmButton' => false
-    ],
-    'confirm' => [
-        'icon' => 'warning',
-        'position' => 'center',
-        'toast' => false,
-        'timer' => null,
-        'showConfirmButton' => true,
-        'showCancelButton' => true,
-        'cancelButtonText' => 'No',
-        'confirmButtonColor' => '#3085d6',
-        'cancelButtonColor' => '#d33'
-    ]
-]
+Install SweetAlert2 via npm or yarn:
+
+``` bash
+npm install sweetalert2
 ```
 
-## Customizations
-
-You can customize alert style by passing your custom classes, works perfectly with [TailwindCSS](https://tailwindcss.com/)
-
-``` php
-[
-  'customClass' => [
-    'container' => '',
-    'popup' => '',
-    'header' => '',
-    'title' => '',
-    'closeButton' => '',
-    'icon' => '',
-    'image' => '',
-    'content' => '',
-    'htmlContainer' => '',
-    'input' => '',
-    'inputLabel' => '',
-    'validationMessage' => '',
-    'actions' => '',
-    'confirmButton' => '',
-    'denyButton' => '',
-    'cancelButton' => '',
-    'loader' => '',
-    'footer' => ''
-   ]
-];
+``` bash
+yarn add sweetalert2
 ```
 
-For more details about customization and configuration please check [SweetAlert2](https://sweetalert2.github.io/#configuration/)
+Then import it in `resources/js/app.js`:
+
+``` js
+import Swal from 'sweetalert2'
+
+window.Swal = Swal
+```
+
+Or include it via CDN before the closing `</body>` tag:
+
+``` html
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+```
+
+### Filament
+
+Register SweetAlert2 as a Filament asset in your `AppServiceProvider`:
+
+``` php
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Vite;
+use Filament\Support\Assets\Js;
+
+public function boot()
+{
+    FilamentAsset::register([
+        Js::make('sweetalert2', Vite::asset('resources/js/sweetalert2.js')),
+        // Or via CDN:
+        // Js::make('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11'),
+    ]);
+}
+```
+
+## Quick taste
+
+``` php
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+
+public function save()
+{
+    LivewireAlert::title('Changes saved!')
+        ->success()
+        ->show();
+}
+```
+
+For everything else — head to the [documentation site](https://livewire-alert.jantinnerezo.me).
+
+## Looking for v3?
+
+The last v3 release was [v3.0.3](https://github.com/jantinnerezo/livewire-alert/releases/tag/v3.0.3) (March 11, 2024). v4 is a major refactor introducing the fluent Facade API, dependency injection, and many more features. For v3:
+
+``` bash
+composer require jantinnerezo/livewire-alert:^3.0
+```
+
+Upgrading to v4 is recommended for new and ongoing projects.
+
+## Testing
+
+``` bash
+composer test
+```
 
 ## Contributors
 
 <a href="https://github.com/jantinnerezo/livewire-alert/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=jantinnerezo/livewire-alert" width="300" />
 </a>
-
-
-## Changelog
-
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
 
 ## Contributing
 

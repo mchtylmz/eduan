@@ -26,7 +26,7 @@ class RecoverPasswordMail extends Mailable implements HasLocalePreference, Shoul
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $locale = null)
+    public function __construct(User $user, ?string $locale = null)
     {
         $this->user = $user;
         $this->locale = $locale;
@@ -83,7 +83,7 @@ class RecoverPasswordMail extends Mailable implements HasLocalePreference, Shoul
                 'email' => $this->user->email
             ],
             [
-                'token' => $token,
+                'token' => hash('sha256', $token),
                 'created_at' => now()
             ]
         );

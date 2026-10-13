@@ -8,8 +8,8 @@ use App\Enums\StatusEnum;
 use App\Models\Lesson;
 use App\Models\Topic;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Validate;
@@ -22,8 +22,10 @@ class TopicForm extends Component
 
     public array $title = [];
     public array $description = [];
+
     public int $lesson_id;
     public string $code;
+
     public int $sort = 1;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
@@ -78,6 +80,7 @@ class TopicForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can(! empty($this->topic) && $this->topic->exists ? 'topics:update' : 'topics:add'), 403);
         $this->validate();
 
         CreateOrUpdateTopicAction::run(

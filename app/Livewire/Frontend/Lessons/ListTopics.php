@@ -2,15 +2,14 @@
 
 namespace App\Livewire\Frontend\Lessons;
 
+use App\Helpers\FrontendCache;
 use App\Models\Lesson;
 use App\Models\Topic;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Lazy]
 class ListTopics extends Component
 {
     use WithPagination;
@@ -20,7 +19,9 @@ class ListTopics extends Component
     public Lesson $lesson;
 
     public bool $visibilityLite = false;
+
     public bool $search = false;
+
     public string $word = '';
 
     public function searchTopics(): void
@@ -28,6 +29,7 @@ class ListTopics extends Component
         $this->search = true;
         $this->resetPage();
     }
+
     public function clearSearch(): void
     {
         $this->search = false;
@@ -38,20 +40,19 @@ class ListTopics extends Component
     #[Computed]
     public function topics()
     {
-        return Cache::remember(
-            implode('_', [
-                'frontend_topics', ($this->lesson->id ?? 0), $this->word
-            ]),
-            60 * 60 * 60 * 365,
+        return FrontendCache::paginate(
+            'topics',
+            ['lesson' => $this->lesson->id, 'search' => $this->search ? $this->word : '', 'page' => $this->getPage()],
             function () {
-                return Topic::when(!empty($this->lesson->id), fn($query) => $query->where('lesson_id', $this->lesson->id))
+                return Topic::select(['id', 'code', 'lesson_id', 'title', 'description', 'sort', 'hits', 'status'])->when(! empty($this->lesson->id), fn ($query) => $query->where('lesson_id', $this->lesson->id))
                     ->when($this->search, function ($query) {
                         $query->where(function ($query) {
                             $query->where('code', 'like', "%{$this->word}%")
                                 ->orWhere('title', 'like', "%{$this->word}%");
                         });
                     })
-                    ->with('exams')
+                    ->with('lesson:id,name')
+                    ->withCount(['exams' => fn ($query) => $query->select(DB::raw('COUNT(DISTINCT exams.id)'))])
                     ->active()
                     ->orderBy('sort')
                     ->paginate(21);

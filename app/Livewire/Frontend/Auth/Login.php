@@ -4,16 +4,16 @@ namespace App\Livewire\Frontend\Auth;
 
 use App\Actions\Auth\LoginAction;
 use App\Traits\CustomLivewireAlert;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class Login extends Component
 {
     use CustomLivewireAlert;
 
     public string $username;
+
     public string $password;
+
     public bool $remember = false;
 
     public string $passwordInputType = 'password';
@@ -35,7 +35,7 @@ class Login extends Component
     {
         return [
             'username' => __('E-posta Adresiniz'),
-            'password' => __('Parola')
+            'password' => __('Parola'),
         ];
     }
 
@@ -48,10 +48,11 @@ class Login extends Component
             password: $this->password,
             remember: $this->remember
         );
-        if (!$isLogin) {
+        if (! $isLogin) {
             $this->reset('password');
 
             $this->message(__('Kullanıcı adı / parola hatalı!'))->error();
+
             return false;
         }
 

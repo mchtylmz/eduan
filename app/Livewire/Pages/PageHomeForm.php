@@ -20,13 +20,16 @@ class PageHomeForm extends Component
     public Page $page;
 
     public array $title = [];
+
     public array $brief = [];
     public array $content = [];
+
     public array $keywords = [];
     public array $imageTranslations = [];
 
     public string $slug;
     public int $sort = 1;
+
     public StatusEnum $status = StatusEnum::ACTIVE;
     public string $permission = 'pages:update';
 
@@ -71,6 +74,7 @@ class PageHomeForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can('pages:update'), 403);
         $this->validate();
 
         $data = [

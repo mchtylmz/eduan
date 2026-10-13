@@ -17,6 +17,10 @@ return [
 
     'default' => env('CACHE_STORE', 'database'),
 
+    'limiter' => 'security',
+
+    'frontend_ttl' => 60 * 60 * 24 * 7,
+
     /*
     |--------------------------------------------------------------------------
     | Cache Stores
@@ -32,6 +36,26 @@ return [
     */
 
     'stores' => [
+
+        // Public content survives default-store cleanup; invalidate revisions, never flush this store in requests.
+        'frontend' => [
+            'driver' => env('APP_ENV') === 'testing' ? 'array' : 'file',
+            'path' => storage_path('framework/cache/frontend'),
+            'lock_path' => storage_path('framework/cache/frontend'),
+        ],
+
+        // Hourly snapshots must survive the existing default-store flushes.
+        'dashboard' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/dashboard'),
+            'lock_path' => storage_path('framework/cache/dashboard'),
+        ],
+
+        'security' => [
+            'driver' => env('APP_ENV') === 'testing' ? 'array' : 'file',
+            'path' => storage_path('framework/cache/security'),
+            'lock_path' => storage_path('framework/cache/security'),
+        ],
 
         'array' => [
             'driver' => 'array',

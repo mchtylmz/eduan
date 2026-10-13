@@ -38,7 +38,9 @@ return [
     |
     */
 
-    'layout' => 'components.layouts.app',
+    'component_layout' => 'components.layouts.app',
+
+    'make_command' => ['type' => 'class', 'emoji' => false],
 
     /*
     |---------------------------------------------------------------------------
@@ -50,7 +52,7 @@ return [
     |
     */
 
-    'lazy_placeholder' => 'components.livewire.lazy_placeholder',
+    'component_placeholder' => 'components.livewire.lazy_placeholder',
 
     /*
     |---------------------------------------------------------------------------
@@ -71,7 +73,7 @@ return [
         'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs...
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
-            'jpg', 'jpeg', 'mpga', 'webp', 'wma'
+            'jpg', 'jpeg', 'mpga', 'webp', 'wma',
         ],
         'max_upload_time' => 5, // Max duration (in minutes) before an upload is invalidated...
         'cleanup' => true, // Should cleanup temporary uploads older than 24 hrs...
@@ -157,4 +159,12 @@ return [
     */
 
     'pagination_theme' => 'bootstrap',
+
+    // Existing rich text includes Base64 images; snapshots and updates repeat it.
+    'payload' => [
+        'max_size' => 16 * 1024 * 1024,
+        'max_nesting_depth' => 10,
+        'max_calls' => 50,
+        'max_components' => 200,
+    ],
 ];

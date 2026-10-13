@@ -6,6 +6,7 @@ use App\Enums\StatusEnum;
 use App\Models\User;
 use App\Traits\Loggable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class LoginAction
@@ -14,6 +15,8 @@ class LoginAction
 
     public function handle(string $username, string $password, bool $remember = false): bool
     {
+        $rateLimitKey = LimitAuthRequests::run('login', $username);
+
         $credentials = [
             'username' => $username,
             'password' => $password,
@@ -33,6 +36,7 @@ class LoginAction
         );
 
         request()->session()->regenerate(true);
+        RateLimiter::clear($rateLimitKey);
 
         return true;
     }

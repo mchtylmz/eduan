@@ -3,88 +3,55 @@
 namespace App\Livewire\Pages;
 
 use App\Enums\PageTypeEnum;
-use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\Page;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use App\Traits\CustomLivewireAlert;
+use App\Traits\ServerTableActions;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-class PagesTable extends DataTableComponent
+class PagesTable extends Component
 {
-    use CustomLivewireAlert, CustomLivewireTableFilters, LivewireTableConfigure;
+    use CustomLivewireAlert, ServerTableActions;
 
-    protected $model = Page::class;
+    protected string $resource = 'pages';
 
-    public function columns(): array
+    protected string $tableName = 'pages';
+
+    protected function builder(): Builder
     {
-        return [
-            Column::make("Id", "id")
-                ->hideIf(true),
-            Column::make("type", "type")
-                ->hideIf(true),
-            Column::make(__('Başlık'), "title")
-                ->sortable(),
-            Column::make(__('Sıra'), "sort")
-                ->sortable(),
-            Column::make(__('Yönlendirme'), "link")
-                ->format(fn($value) => $value ?: '-')
-                ->sortable(),
-            ComponentColumn::make(__('Durum'), "status")
-                ->collapseOnMobile()
-                ->component('table.status')
-                ->attributes(fn($value, $row, Column $column) => [
-                    'type' => $value->class(),
-                    'label' => $value->name(),
-                ])
-                ->searchable()
-                ->sortable()
-        ];
+        return Page::query();
     }
 
-    public function appendColumns(): array
+    public function render()
     {
-        return [
-            LinkColumn::make(__('Düzenle'))
-                ->collapseOnMobile()
-                ->hideIf(auth()?->user()->cannot('pages:update'))
-                ->title(fn($row) => sprintf('<i class="fa fa-pen mx-1"></i> %s', __('Düzenle')))
-                ->location(fn($row) => route('admin.pages.edit', $row->id))
-                ->attributes(fn($row) => [
-                    'class' => 'btn btn-warning btn-sm ' . (PageTypeEnum::SYSTEM->is($row->type) ? 'd-none' : '')
-                ])
-                ->html(),
+        $record = $this->selectedRecord();
 
-            WireLinkColumn::make(__('Sil'))
-                ->collapseOnMobile()
-                ->hideIf(auth()?->user()->cannot('pages:delete'))
-                ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Sil')))
-                ->confirmMessage(__('Sayfa silinecektir, işleme devam edilsin mi?'))
-                ->action(fn($row) => 'delete("' . $row->id . '")')
-                ->attributes(fn($row) => [
-                    'class' => 'btn btn-danger btn-sm ' . (PageTypeEnum::SYSTEM->is($row->type) ? 'd-none' : '')
-                ])
-                ->html(),
-        ];
+        return view('livewire.backend.pages.server-table', [
+            'details' => $record ? [__('Başlık') => $record->title, __('Sıra') => $record->sort, __('Yönlendirme') => $record->link ?: '-', __('Durum') => $record->status->name()] : [],
+            'editUrl' => $record && auth()->user()->can('pages:update') && ! PageTypeEnum::SYSTEM->is($record->type) ? route('admin.pages.edit', $record) : null,
+        ]);
     }
 
     public function delete(Page $page)
     {
+        $this->requireTableAccess('delete');
         if (auth()->user()->cannot('pages:delete')) {
             $this->message(__('Sayfa silinemedi!'))->error();
+
             return false;
         }
 
         if (PageTypeEnum::SYSTEM->is($page->type)) {
             $this->message(__('Sistem sayfaları silinemez!'))->error();
+
             return false;
         }
 
         $this->message(__('Sayfa başarıyla silindi!'))->success();
 
-        return $page->delete();
+        $deleted = $page->delete();
+        $this->dispatch('refresh-server-table', table: 'pages');
+
+        return $deleted;
     }
 }

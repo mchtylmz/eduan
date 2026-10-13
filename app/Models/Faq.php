@@ -13,7 +13,7 @@ class Faq extends Model
     /** @use HasFactory<\Database\Factories\FaqFactory> */
     use HasFactory, StatusScope, Loggable;
 
-    protected $fillable = ['slug', 'title', 'brief', 'content', 'type', 'status', 'sort'];
+    protected $fillable = ['locale', 'slug', 'title', 'brief', 'content', 'type', 'status', 'sort'];
 
     protected function casts(): array
     {

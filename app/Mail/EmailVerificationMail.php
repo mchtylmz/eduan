@@ -27,7 +27,7 @@ class EmailVerificationMail extends Mailable implements HasLocalePreference, Sho
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $locale = null)
+    public function __construct(User $user, ?string $locale = null)
     {
         $this->user = $user;
         $this->locale = $locale;

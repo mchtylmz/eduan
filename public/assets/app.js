@@ -1,21 +1,32 @@
 document.addEventListener('DOMContentLoaded', function () {
+    try {
+        const userName = document.querySelector('meta[name="pwa-user-name"]');
+        if (userName?.content) localStorage.setItem('pwa-user-name', userName.content);
+        else localStorage.removeItem('pwa-user-name');
+    } catch (error) {
+        // Local storage can be disabled by the browser.
+    }
+
     // Register Service Worker
-    console.log(location.protocol, 'serviceWorker', 'serviceWorker' in navigator);
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/assets/pwa-sw.js')
-                .then(function (register) {
-                    console.log('PWA service worker ready');
-                    register.update();
+            navigator.serviceWorker.register('/pwa-sw.js', { scope: '/', updateViaCache: 'none' })
+                .then(async function (register) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(registrations
+                        .filter(item => item.scope === new URL('/assets/', location.href).href)
+                        .map(item => item.unregister()));
+                    await register.update();
                 })
                 .catch(function (error) {
-                    console.log('Register failed! Error:' + error);
+                    console.warn('PWA registration/update failed:', error);
                 });
 
             // Check user internet status (online/offline)
             function updateOnlineStatus(event) {
                 if (!navigator.onLine) {
-                    alert('Internet access is not possible!')
+                    const message = document.querySelector('meta[name="pwa-offline-message"]')?.content;
+                    if (message) alert(message);
                 }
             }
 
@@ -24,7 +35,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    let deferredPrompt;function showInstallPromotion(){document.getElementById("install-prompt").style.display="block"}window.addEventListener("load",(()=>{if(window.matchMedia("(display-mode: standalone)").matches){document.getElementById("install-prompt").style.display="none"}})),window.addEventListener("beforeinstallprompt",(e=>{e.preventDefault(),deferredPrompt=e,showInstallPromotion();document.getElementById("install-button").addEventListener("click",(()=>{deferredPrompt.prompt(),deferredPrompt.userChoice.then((e=>{deferredPrompt=null}))}))})),window.addEventListener("appinstalled",(()=>{document.getElementById("install-prompt").style.display="none"}));
+    let deferredPrompt;
+    const installPrompt = document.getElementById('install-prompt');
+    const installButton = document.getElementById('install-button');
+    window.addEventListener('load', () => {
+        if (installPrompt && window.matchMedia('(display-mode: standalone)').matches) {
+            installPrompt.style.display = 'none';
+        }
+    });
+    window.addEventListener('beforeinstallprompt', event => {
+        if (!installPrompt || !installButton) return;
+        event.preventDefault();
+        deferredPrompt = event;
+        installPrompt.style.display = 'block';
+    });
+    installButton?.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        await deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+    });
+    window.addEventListener('appinstalled', () => {
+        if (installPrompt) installPrompt.style.display = 'none';
+    });
 
     const isInStandaloneMode = () =>
         window.matchMedia('(display-mode: standalone)').matches ||

@@ -7,7 +7,8 @@
         </a>
     </li>
 
-    @canany(['lessons:view', 'topics:view'])
+    @canany(['lessons:view', 'topics:view', 'ai:view', 'questions:view'])
+        <li class="nav-main-heading" data-menu-group="education">{{ __('menus.education') }}</li>
         @can('lessons:view')
             <li class="nav-main-item">
                 <a @class(['nav-main-link', 'active' => request()->routeIs('admin.lessons.index')])
@@ -26,9 +27,7 @@
                 </a>
             </li>
         @endcan
-    @endcanany
 
-    @canany(['questions:view', 'exams:view', 'tests:view', 'stats:view'])
         @can('ai:view')
             <li class="nav-main-item">
                 <a @class(['nav-main-link', 'active' => request()->routeIs('admin.ai.index')])
@@ -47,38 +46,44 @@
                 </a>
             </li>
         @endcan
-        @can('exams:view')
-            <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.index')])
-                   href="{{ route('admin.exams.index') }}">
-                    <i class="nav-main-link-icon fa fa-pen"></i>
-                    <span class="nav-main-link-name">{{ __('Testler') }}</span>
-                </a>
-            </li>
-            <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.results')])
-                   href="{{ route('admin.exams.results') }}">
-                    <i class="nav-main-link-icon fa fa-poll"></i>
-                    <span class="nav-main-link-name">{{ __('Test Sonuçları') }}</span>
-                </a>
-            </li>
-        @endcan
-        @can('tests:view')
-            <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.index')])
-                   href="{{ route('admin.tests.index') }}">
-                    <i class="nav-main-link-icon fa fa-book-open-reader"></i>
-                    <span class="nav-main-link-name">{{ __('Sınavlar') }}</span>
-                </a>
-            </li>
-            <li class="nav-main-item">
-                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.results')])
-                   href="{{ route('admin.tests.results') }}">
-                    <i class="nav-main-link-icon fa fa-book-bookmark"></i>
-                    <span class="nav-main-link-name">{{ __('Sınav Sonuçları') }}</span>
-                </a>
-            </li>
-        @endcan
+    @endcanany
+
+    @can('exams:view')
+        <li class="nav-main-heading" data-menu-group="tests">{{ __('Testler') }}</li>
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.index')])
+               href="{{ route('admin.exams.index') }}">
+                <i class="nav-main-link-icon fa fa-pen"></i>
+                <span class="nav-main-link-name">{{ __('Testler') }}</span>
+            </a>
+        </li>
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.exams.results')])
+               href="{{ route('admin.exams.results') }}">
+                <i class="nav-main-link-icon fa fa-poll"></i>
+                <span class="nav-main-link-name">{{ __('Test Sonuçları') }}</span>
+            </a>
+        </li>
+    @endcan
+    @can('tests:view')
+        <li class="nav-main-heading" data-menu-group="exams">{{ __('Sınavlar') }}</li>
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.index')])
+               href="{{ route('admin.tests.index') }}">
+                <i class="nav-main-link-icon fa fa-book-open-reader"></i>
+                <span class="nav-main-link-name">{{ __('Sınavlar') }}</span>
+            </a>
+        </li>
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.tests.results')])
+               href="{{ route('admin.tests.results') }}">
+                <i class="nav-main-link-icon fa fa-book-bookmark"></i>
+                <span class="nav-main-link-name">{{ __('Sınav Sonuçları') }}</span>
+            </a>
+        </li>
+    @endcan
+    @canany(['stats:view', 'leagues:view'])
+        <li class="nav-main-heading" data-menu-group="results">{{ __('menus.results') }}</li>
         @can('stats:view')
             <li class="nav-main-item">
                 <a @class(['nav-main-link', 'active' => request()->routeIs('admin.stats.index')])
@@ -88,17 +93,17 @@
                 </a>
             </li>
         @endcan
-    @endcanany
 
-    @can('leagues:view')
-        <li class="nav-main-item">
-            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.leagues.index')])
-               href="{{ route('admin.leagues.index') }}">
-                <i class="nav-main-link-icon fa fa-award"></i>
-                <span class="nav-main-link-name">{{ __('Ligler / Lig Sonuçları') }}</span>
-            </a>
-        </li>
-    @endcan
+        @can('leagues:view')
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.leagues.index')])
+                   href="{{ route('admin.leagues.index') }}">
+                    <i class="nav-main-link-icon fa fa-award"></i>
+                    <span class="nav-main-link-name">{{ __('Ligler / Lig Sonuçları') }}</span>
+                </a>
+            </li>
+        @endcan
+    @endcanany
 
     @canany(['exams-reviews:view', 'blogs:view', 'languages:view', 'pages:view', 'contacts:view', 'newsletter:view'])
         <li @class(['nav-main-item', 'open' => request()->routeIs('admin.exams.reviews') || request()->routeIs('admin.blogs.*') || request()->routeIs('admin.pages.*') || request()->routeIs('admin.contacts.*') || request()->routeIs('admin.newsletter.*') || request()->routeIs('admin.languages.*')])>
@@ -192,60 +197,63 @@
         </li>
     @endcanany
 
-    @can('users:view')
-        <li class="nav-main-item">
-            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.users.index')])
-               href="{{ route('admin.users.index') }}">
-                <i class="nav-main-link-icon fa fa-users"></i>
-                <span class="nav-main-link-name">{{ __('Kullanıcılar') }}</span>
-            </a>
-        </li>
-    @endcan
+    @canany(['users:view', 'roles:view', 'settings:view', 'seasons:view'])
+        <li class="nav-main-heading" data-menu-group="management">{{ __('menus.management') }}</li>
+        @can('users:view')
+            <li class="nav-main-item">
+                <a @class(['nav-main-link', 'active' => request()->routeIs('admin.users.index')])
+                   href="{{ route('admin.users.index') }}">
+                    <i class="nav-main-link-icon fa fa-users"></i>
+                    <span class="nav-main-link-name">{{ __('Kullanıcılar') }}</span>
+                </a>
+            </li>
+        @endcan
 
-    @canany(['roles:view', 'settings:view', 'roles:view', 'roles:view', 'seasons:view'])
-        <li @class(['nav-main-item', 'open' => request()->routeIs('admin.roles.*') || request()->routeIs('admin.settings.*')])>
-            <a @class(['nav-main-link nav-main-link-submenu', 'active' => request()->routeIs('admin.roles.*') || request()->routeIs('admin.settings.*')]) data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                <i class="nav-main-link-icon fa fa-cogs"></i>
-                <span class="nav-main-link-name">{{ __('Ayarlar') }} & {{ __('Yetkiler') }}</span>
-            </a>
+        @canany(['roles:view', 'settings:view', 'seasons:view'])
+            <li @class(['nav-main-item', 'open' => request()->routeIs('admin.roles.*') || request()->routeIs('admin.settings.*') || request()->routeIs('admin.seasons.*')])>
+                <a @class(['nav-main-link nav-main-link-submenu', 'active' => request()->routeIs('admin.roles.*') || request()->routeIs('admin.settings.*') || request()->routeIs('admin.seasons.*')]) data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                    <i class="nav-main-link-icon fa fa-cogs"></i>
+                    <span class="nav-main-link-name">{{ __('Ayarlar') }} & {{ __('Yetkiler') }}</span>
+                </a>
 
-            <ul class="nav-main-submenu">
-                @can('seasons:view')
-                    <li class="nav-main-item">
-                        <a @class(['nav-main-link', 'active' => request()->routeIs('admin.seasons.*')])
-                           href="{{ route('admin.seasons.index') }}">
-                            <i class="nav-main-link-icon fa fa-calendar"></i>
-                            <span class="nav-main-link-name">{{ __('Dönemler') }}</span>
-                        </a>
-                    </li>
-                @endcan
-                @can('roles:view')
-                    <li class="nav-main-item">
-                        <a @class(['nav-main-link', 'active' => request()->routeIs('admin.roles.*')])
-                           href="{{ route('admin.roles.index') }}">
-                            <i class="nav-main-link-icon si si-lock"></i>
-                            <span class="nav-main-link-name">{{ __('Yetkiler') }}</span>
-                        </a>
-                    </li>
-                @endcan
-                @can('settings:view')
-                    <li class="nav-main-item">
-                        <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.index')])
-                           href="{{ route('admin.settings.index') }}">
-                            <i class="nav-main-link-icon si si-settings"></i>
-                            <span class="nav-main-link-name">{{ __('Ayarlar') }}</span>
-                        </a>
-                    </li>
-                    <li class="nav-main-item">
-                        <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.logs')])
-                           href="{{ route('admin.settings.logs') }}">
-                            <i class="nav-main-link-icon si si-chart"></i>
-                            <span class="nav-main-link-name">{{ __('Loglar') }}</span>
-                        </a>
-                    </li>
-                @endcan
-            </ul>
-        </li>
+                <ul class="nav-main-submenu">
+                    @can('seasons:view')
+                        <li class="nav-main-item">
+                            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.seasons.*')])
+                               href="{{ route('admin.seasons.index') }}">
+                                <i class="nav-main-link-icon fa fa-calendar"></i>
+                                <span class="nav-main-link-name">{{ __('Dönemler') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('roles:view')
+                        <li class="nav-main-item">
+                            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.roles.*')])
+                               href="{{ route('admin.roles.index') }}">
+                                <i class="nav-main-link-icon si si-lock"></i>
+                                <span class="nav-main-link-name">{{ __('Yetkiler') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('settings:view')
+                        <li class="nav-main-item">
+                            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.index')])
+                               href="{{ route('admin.settings.index') }}">
+                                <i class="nav-main-link-icon si si-settings"></i>
+                                <span class="nav-main-link-name">{{ __('Ayarlar') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.settings.logs')])
+                               href="{{ route('admin.settings.logs') }}">
+                                <i class="nav-main-link-icon si si-chart"></i>
+                                <span class="nav-main-link-name">{{ __('Loglar') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
+        @endcanany
+
     @endcanany
-
 </ul>

@@ -1,36 +1,44 @@
 <?php
 
-use App\Models\Lesson;
-use App\Models\TestsResultDetail;
+use App\Enums\StatusEnum;
+use App\Helpers\AiHelper;
+use App\Helpers\DataHelper;
+use App\Jobs\LatexImageDownloadJob;
+use App\Models\Exam;
+use App\Models\LatexImage;
+use App\Models\Season;
 use App\Models\TestsSection;
+use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Carbon\CarbonInterval;
 use Intervention\Image\ImageManager;
 
-if (!function_exists('applyWatermark')) {
+if (! function_exists('applyWatermark')) {
     /**
-     * @param UploadedFile $file
-     * @param string $inputImagePath
      * @return Authenticatable|null
      */
     function applyWatermark(UploadedFile $file, string $inputImagePath): bool|string
     {
-        if (\App\Enums\StatusEnum::ACTIVE->value != settings()->solutionWatermark) {
+        if (StatusEnum::ACTIVE->value != settings()->solutionWatermark) {
             return false;
         }
 
         $watermarkPath = public_path(settings()->solutionWatermarkLogo);
         $imagePath = public_path($inputImagePath);
 
-        if (!file_exists($watermarkPath) || !is_readable($watermarkPath)) {
+        if (! file_exists($watermarkPath) || ! is_readable($watermarkPath)) {
             return false;
         }
-        if (!file_exists($imagePath) || !is_readable($imagePath)) {
+        if (! file_exists($imagePath) || ! is_readable($imagePath)) {
             return false;
         }
 
@@ -41,7 +49,7 @@ if (!function_exists('applyWatermark')) {
             $watermark->rotate(45);
 
             $image->place($watermark, position: 'center', opacity: 10);
-            $image->toWebp()->save($imagePath);
+            $image->encodeByExtension(pathinfo($imagePath, PATHINFO_EXTENSION))->save($imagePath);
         } catch (Exception $exception) {
             return false;
         }
@@ -50,9 +58,9 @@ if (!function_exists('applyWatermark')) {
     }
 }
 
-if (!function_exists('agentDevice')) {
+if (! function_exists('agentDevice')) {
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|object
+     * @return Factory|View|Application|object
      */
     function agentDevice(): string
     {
@@ -69,98 +77,74 @@ if (!function_exists('agentDevice')) {
 
 }
 
-if (!function_exists('seasons')) {
+if (! function_exists('seasons')) {
 
-    /**
-     * @return mixed
-     */
     function seasons(): mixed
     {
-        return \App\Models\Season::orderBy('id', 'desc')->get();
+        return Season::orderBy('id', 'desc')->get();
     }
 }
 
-if (!function_exists('activeSeason')) {
+if (! function_exists('activeSeason')) {
 
-    /**
-     * @return mixed
-     */
     function activeSeason(): mixed
     {
         $now = now()->timezone(settings()->timezone ?? config('app.timezone'))->format('Y-m-d');
 
-        return \App\Models\Season::where('start_date', '<=', $now)
+        return Season::where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->orderBy('id', 'DESC')
             ->first();
     }
 }
 
-if (!function_exists('isChrome')) {
+if (! function_exists('isChrome')) {
 
-    /**
-     * @return bool
-     */
     function isChrome(): bool
     {
         $userAgent = request()->header('User-Agent');
 
-        return str_contains($userAgent, 'Chrome') && !str_contains($userAgent, 'Edg');
+        return str_contains($userAgent, 'Chrome') && ! str_contains($userAgent, 'Edg');
     }
 }
 
-if (!function_exists('examResultStats')) {
+if (! function_exists('examResultStats')) {
 
-    /**
-     * @param \App\Models\Exam $exam
-     * @param \App\Models\User|null $user
-     * @return array
-     */
-    function examResultStats(\App\Models\Exam $exam, ?\App\Models\User $user = null): array
+    function examResultStats(Exam $exam, ?User $user = null): array
     {
-        $results = $exam->results()->withCount([
-            'details as question_count',
-            'details as correct_count' => function ($query) {
-                $query->where('correct', \App\Enums\YesNoEnum::YES);
-            },
-            'details as incorrect_count' => function ($query) {
-                $query->where('correct', \App\Enums\YesNoEnum::NO);
-            },
-        ])->when($user, function (\Illuminate\Database\Eloquent\Builder $query) {
-            $query->where('user_id', auth()->id());
-        })->get();
+        $totals = $exam->results()
+            ->leftJoin('exam_result_details as details', 'details.exam_result_id', '=', 'exam_results.id')
+            ->when($user, fn ($query) => $query->where('exam_results.user_id', $user->id))
+            ->selectRaw('COUNT(DISTINCT exam_results.id) AS results_count, COUNT(details.id) AS question_count,
+                COALESCE(SUM(details.correct = 1), 0) AS correct_count,
+                COALESCE(SUM(details.correct = 0), 0) AS incorrect_count')
+            ->toBase()->first();
 
         return [
-            'results_count' => count($results),
-            'question_count' => collect($results)->sum('question_count'),
-            'correct_count' => collect($results)->sum('correct_count'),
-            'incorrect_count' => collect($results)->sum('incorrect_count'),
+            'results_count' => (int) $totals->results_count,
+            'question_count' => (int) $totals->question_count,
+            'correct_count' => (int) $totals->correct_count,
+            'incorrect_count' => (int) $totals->incorrect_count,
         ];
     }
 }
 
-if (!function_exists('testsSectionGetContent')) {
-    /**
-     * @param int $testId
-     * @param int $sectionId
-     * @return TestsSection|null
-     */
+if (! function_exists('testsSectionGetContent')) {
     function testsSectionGetContent(int $testId, int $sectionId): ?TestsSection
     {
         return Cache::remember(
-            'testsSectionGetContent_' .  $testId . '_' . $sectionId,
+            'testsSectionGetContent_'.$testId.'_'.$sectionId,
             60 * 60 * 24 * 7,
-            fn() => TestsSection::where('test_id', $testId)
+            fn () => TestsSection::where('test_id', $testId)
                 ->where('id', $sectionId)
                 ->first()
         );
     }
 }
 
-if (!function_exists('user')) {
+if (! function_exists('user')) {
     /**
-     * @param null $key
-     * @return Authenticatable|null
+     * @param  null  $key
      */
     function user($key = null): ?Authenticatable
     {
@@ -172,11 +156,7 @@ if (!function_exists('user')) {
     }
 }
 
-if (!function_exists('singular')) {
-    /**
-     * @param string $text
-     * @return string
-     */
+if (! function_exists('singular')) {
     function singular(string $text): string
     {
         return str_replace(
@@ -187,15 +167,11 @@ if (!function_exists('singular')) {
     }
 }
 
-if (!function_exists('letters')) {
-    /**
-     * @param int|null $index
-     * @return string|array
-     */
+if (! function_exists('letters')) {
     function letters(?int $index = null): string|array
     {
         $letters = range('A', 'Z');
-        if (!is_null($index)) {
+        if (! is_null($index)) {
             return $letters[$index] ?? 'A';
         }
 
@@ -203,48 +179,33 @@ if (!function_exists('letters')) {
     }
 }
 
-if (!function_exists('data')) {
+if (! function_exists('data')) {
 
-    /**
-     * @return \App\Helpers\DataHelper
-     */
-    function data(): \App\Helpers\DataHelper
+    function data(): DataHelper
     {
-        return new \App\Helpers\DataHelper();
+        return new DataHelper;
     }
 }
 
-if (!function_exists('aiHelper')) {
+if (! function_exists('aiHelper')) {
 
-    /**
-     * @return \App\Helpers\AiHelper
-     */
-    function aiHelper(): \App\Helpers\AiHelper
+    function aiHelper(): AiHelper
     {
-        return new \App\Helpers\AiHelper();
+        return new AiHelper;
     }
 }
 
-if (!function_exists('getJsonLocaleValue')) {
-    /**
-     * @param $value
-     * @return string
-     */
+if (! function_exists('getJsonLocaleValue')) {
     function getJsonLocaleValue($value): string
     {
         return json_decode($value, true)[app()->getLocale()] ?? '';
     }
 }
 
-if (!function_exists('getImage')) {
-    /**
-     * @param string|null $image
-     * @param string|null $default
-     * @return string
-     */
+if (! function_exists('getImage')) {
     function getImage(?string $image, ?string $default = null): string
     {
-        if (!is_file(public_path($image))) {
+        if (! is_file(public_path($image))) {
             return asset($default ?: settings()->siteLogo);
         }
 
@@ -256,65 +217,56 @@ if (!function_exists('getImage')) {
     }
 }
 
-if (!function_exists('dateFormat')) {
+if (! function_exists('dateFormat')) {
 
-    /**
-     * @param string|null $value
-     * @param string $format
-     * @return string
-     */
     function dateFormat(?string $value, string $format = 'd/m/Y, l'): string
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return '';
         }
+
         return Carbon::parse($value)->timezone(settings()->timezone ?? config('app.timezone'))->translatedFormat($format);
     }
 }
 
-if (!function_exists('timeAgo')) {
-    /**
-     * @param string|null $value
-     * @return string
-     */
+if (! function_exists('timeAgo')) {
     function timeAgo(?string $value): string
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return '';
         }
+
         return Carbon::parse($value)->timezone(settings()->timezone ?? config('app.timezone'))->diffForHumans();
     }
 }
 
-if (!function_exists('formatSecondToTime')) {
+if (! function_exists('formatSecondToTime')) {
 
     /**
-     * @param string $time // 01:40:00 or 00:45:44
-     * @param bool $hideSeconds
-     * @return string
+     * @param  string  $time  // 01:40:00 or 00:45:44
      */
     function formatSecondToTime(string $time, bool $hideSeconds = false): string
     {
         $parts = explode(':', $time);
 
-        $hours = (int)($parts[0] ?? 0);
-        $minutes = (int)($parts[1] ?? 0);
-        $seconds = (int)($parts[2] ?? 0);
+        $hours = (int) ($parts[0] ?? 0);
+        $minutes = (int) ($parts[1] ?? 0);
+        $seconds = (int) ($parts[2] ?? 0);
 
         $interval = CarbonInterval::hours($hours)->minutes($minutes)->seconds($seconds);
 
         $parts = [];
 
         if ($interval->hours > 0) {
-            $parts[] = $interval->hours . ' ' . __('saat');
+            $parts[] = $interval->hours.' '.__('saat');
         }
 
         if ($interval->minutes > 0) {
-            $parts[] = $interval->minutes . ' ' . __('dakika');
+            $parts[] = $interval->minutes.' '.__('dakika');
         }
 
         if ($interval->seconds > 0) {
-            $parts[] = $interval->seconds . ' ' . __('saniye');
+            $parts[] = $interval->seconds.' '.__('saniye');
 
             if ($hideSeconds && count($parts) >= 2) {
                 unset($parts[count($parts) - 1]);
@@ -325,47 +277,35 @@ if (!function_exists('formatSecondToTime')) {
     }
 }
 
-if (!function_exists('settingLocale')) {
-    /**
-     * @param string $key
-     * @param string|null $locale
-     * @return string|null
-     */
+if (! function_exists('settingLocale')) {
     function settingLocale(string $key, ?string $locale = null): ?string
     {
         return data()->setting($key, $locale ?? app()->getLocale());
     }
 }
 
-if (!function_exists('routeIs')) {
-    /**
-     * @param ...$patterns
-     * @return bool
-     */
+if (! function_exists('routeIs')) {
     function routeIs(...$patterns): bool
     {
         return request()->routeIs($patterns);
     }
 }
 
-if (!function_exists('incrementIf')) {
+if (! function_exists('incrementIf')) {
 
-    /**
-     * @param bool $condition
-     * @param \Illuminate\Database\Eloquent\Model|null $model
-     * @param string $column
-     * @return void
-     */
-    function incrementIf(bool $condition, ?\Illuminate\Database\Eloquent\Model $model = null, string $column = 'hits'): void
+    function incrementIf(bool $condition, ?Model $model = null, string $column = 'hits'): void
     {
-        if ($condition) $model->increment($column);
+        if ($condition) {
+            if ($column === 'hits') {
+                $model::withoutTimestamps(fn () => $model->increment($column));
+            } else {
+                $model->increment($column);
+            }
+        }
     }
 }
 
-if (!function_exists('flush')) {
-    /**
-     * @return void
-     */
+if (! function_exists('flush')) {
     function flush(): void
     {
         cache()->flush();
@@ -373,27 +313,18 @@ if (!function_exists('flush')) {
     }
 }
 
-if (!function_exists('resetCache')) {
-    /**
-     * @return void
-     */
+if (! function_exists('resetCache')) {
     function resetCache(): void
     {
+        // Invalidate runtime data; compiled views/config/routes are deployment concerns.
         cache()->flush();
-        cache()->clear();
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     }
 }
 
-if (!function_exists('convertLatexToImg')) {
-    /**
-     * @param string $text
-     * @param string $key
-     * @return string
-     */
+if (! function_exists('convertLatexToImg')) {
     function convertLatexToImg(string $text, string $key = ''): string
     {
-        if (in_array($key, ['latex', 'final_answer']) && !str_contains($text, '$$')) {
+        if (in_array($key, ['latex', 'final_answer']) && ! str_contains($text, '$$')) {
             $text = sprintf('$$%s$$', $text);
         }
 
@@ -418,7 +349,7 @@ if (!function_exists('convertLatexToImg')) {
             );
 
             // Daha önce kaydedilmişse DB’den al
-            $existingLatex = \App\Models\LatexImage::where('formula', $formula)->first();
+            $existingLatex = LatexImage::where('formula', $formula)->first();
             if ($existingLatex) {
                 return sprintf(
                     '<img class="latex-svg-image" src="%s" alt="%s">',
@@ -428,7 +359,7 @@ if (!function_exists('convertLatexToImg')) {
             }
 
             // Kayıtlı değilse arkaplana indir talimati ver
-            \App\Jobs\LatexImageDownloadJob::dispatch($formula);
+            LatexImageDownloadJob::dispatch($formula);
 
             // latex den direk link ver
             return sprintf(
@@ -440,13 +371,9 @@ if (!function_exists('convertLatexToImg')) {
     }
 }
 
-if (!function_exists('secondToTime')) {
+if (! function_exists('secondToTime')) {
 
-    /**
-     * @param int|null $seconds
-     * @return string
-     */
-    function secondToTime(int|null $seconds = 0): string
+    function secondToTime(?int $seconds = 0): string
     {
         $seconds = $seconds ?? 0;
 
@@ -454,16 +381,13 @@ if (!function_exists('secondToTime')) {
         $minute = floor(($seconds % 3600) / 60);
         $second = $seconds % 60;
 
-        return str_pad($hour, 2, '0', STR_PAD_LEFT) . ':' .
-            str_pad($minute, 2, '0', STR_PAD_LEFT) . ':' .
+        return str_pad($hour, 2, '0', STR_PAD_LEFT).':'.
+            str_pad($minute, 2, '0', STR_PAD_LEFT).':'.
             str_pad($second, 2, '0', STR_PAD_LEFT);
     }
 }
 
-if (!function_exists('randomBackgroundClass')) {
-    /**
-     * @return string
-     */
+if (! function_exists('randomBackgroundClass')) {
     function randomBackgroundClass(): string
     {
         return Arr::random([
@@ -485,13 +409,8 @@ if (!function_exists('randomBackgroundClass')) {
     }
 }
 
-if (!function_exists('replaceEmailVariables')) {
+if (! function_exists('replaceEmailVariables')) {
 
-    /**
-     * @param string $content
-     * @param array $values
-     * @return string
-     */
     function replaceEmailVariables(string $content, array $values): string
     {
         $fields = [
@@ -505,12 +424,13 @@ if (!function_exists('replaceEmailVariables')) {
             '[kayit_tarihi]' => 'created_at',
         ];
         $fields = collect($fields)->mapWithKeys(function ($fieldValue, $fieldKey) use ($values) {
-            if ($fieldValue == 'display_name' && !data_get($values, $fieldValue)) {
+            if ($fieldValue == 'display_name' && ! data_get($values, $fieldValue)) {
                 return [$fieldKey => sprintf(
                     '%s %s',
                     data_get($values, 'name') ?? '', data_get($values, 'surname') ?? ''
                 )];
             }
+
             return [$fieldKey => data_get($values, $fieldValue) ?? ''];
         })->toArray();
 

@@ -32,6 +32,7 @@ class LatexImageForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can('ai:update'), 403);
         $this->validate();
 
         $data = [];

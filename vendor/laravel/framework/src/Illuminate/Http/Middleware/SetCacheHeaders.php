@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -50,7 +51,7 @@ class SetCacheHeaders
     {
         $response = $next($request);
 
-        if (! $request->isMethodCacheable() || (! $response->getContent() && ! $response instanceof BinaryFileResponse && ! $response instanceof StreamedResponse)) {
+        if (! $request->isMethodCacheable() || (! $response->getContent() && ! $request->isMethod('HEAD') && ! $response instanceof BinaryFileResponse && ! $response instanceof StreamedResponse)) {
             return $response;
         }
 
@@ -63,7 +64,7 @@ class SetCacheHeaders
         }
 
         if (isset($options['etag']) && $options['etag'] === true) {
-            $options['etag'] = $response->getEtag() ?? ($response->getContent() ? md5($response->getContent()) : null);
+            $options['etag'] = $response->getEtag() ?? ($response->getContent() ? hash('xxh128', $response->getContent()) : null);
         }
 
         if (isset($options['last_modified'])) {
@@ -88,7 +89,7 @@ class SetCacheHeaders
      */
     protected function parseOptions($options)
     {
-        return (new Collection(explode(';', rtrim($options, ';'))))->mapWithKeys(function ($option) {
+        return (new Stringable(rtrim($options, ';')))->explode(';')->mapWithKeys(function ($option) {
             $data = explode('=', $option, 2);
 
             return [$data[0] => $data[1] ?? true];

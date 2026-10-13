@@ -23,7 +23,7 @@
 
     <li class="me-4"><a href="{{ route('frontend.blog') }}">{{ __('Blog') }}</a></li>
     @if(settings()->leagueStatus == 'active')
-        <li class="me-4"><a href="{{ route('frontend.leagues') }}">{{ __('Ligler') }}</a></li>
+        <li class="me-4"><a href="{{ route('frontend.leagues') }}">{{ __('leagues.title') }}</a></li>
     @endif
 
     <li class="me-4"><a href="{{ route('frontend.contact') }}">{{ __('İletişim') }}</a></li>

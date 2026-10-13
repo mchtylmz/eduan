@@ -2,15 +2,12 @@
 
 namespace App\Livewire\Frontend\Blogs;
 
+use App\Helpers\FrontendCache;
 use App\Models\Blog;
-use App\Models\Lesson;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Lazy(isolate: true)]
 class ListBlogs extends Component
 {
     use WithPagination;
@@ -18,7 +15,9 @@ class ListBlogs extends Component
     protected string $paginationTheme = 'bootstrap';
 
     public bool $showHits = false;
+
     public bool $showPaginate = true;
+
     public int $paginate = 18;
 
     public bool $grid = false;
@@ -28,26 +27,25 @@ class ListBlogs extends Component
     #[Computed]
     public function blogs()
     {
-        return Cache::remember(
-            implode('_', [
-                'frontend_blogs', app()->getLocale(), intval($this->showHits), $this->paginate, $this->search
-            ]),
-            60 * 60 * 3,
+        return FrontendCache::paginate(
+            'blogs',
+            ['search' => $this->search, 'hits' => $this->showHits, 'limit' => $this->paginate, 'page' => $this->getPage()],
             function () {
-                return Blog::where('locale', app()->getLocale())
+                return Blog::select(['id', 'locale', 'slug', 'image', 'title', 'brief', 'hits', 'published_at', 'status'])->where('locale', app()->getLocale())
                     ->where('published_at', '<=', now())
-                    ->when($this->showHits, fn($query) => $query->orderByDesc('hits'))
+                    ->when($this->showHits, fn ($query) => $query->orderByDesc('hits'))
                     ->when(
                         $this->search,
-                        fn($query) => $query->where(function ($query) {
-                            $query->where('title', 'like', '%' . $this->search . '%')
-                                ->orWhere('content', 'like', '%' . $this->search . '%');
+                        fn ($query) => $query->where(function ($query) {
+                            $query->where('title', 'like', '%'.$this->search.'%')
+                                ->orWhere('content', 'like', '%'.$this->search.'%');
                         })
                     )
                     ->active()
                     ->orderByDesc('published_at')
                     ->paginate($this->paginate);
-            }
+            },
+            fn () => Blog::where('locale', app()->getLocale())->active()->where('published_at', '>', now())->min('published_at')
         );
     }
 

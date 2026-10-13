@@ -62,7 +62,7 @@ $groups = collect($permissions ?? [])->mapToGroups(function ($item) {
     <!-- role type -->
     @foreach(\App\Enums\RoleTypeEnum::cases() as $name => $value)
         <div class="col-lg-3 mb-3">
-            <div class="form-check form-block">
+            <div class="form-check form-block admin-role-type">
                 <input class="form-check-input"
                        type="radio"
                        value="{{ $value }}"

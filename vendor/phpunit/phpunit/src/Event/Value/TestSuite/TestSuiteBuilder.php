@@ -11,15 +11,23 @@ namespace PHPUnit\Event\TestSuite;
 
 use function assert;
 use function class_exists;
+use function count;
 use function explode;
 use function method_exists;
+use function strpos;
+use function substr;
 use PHPUnit\Event\Code\Test;
 use PHPUnit\Event\Code\TestCollection;
+use PHPUnit\Event\Code\TestDoxBuilder;
 use PHPUnit\Event\RuntimeException;
 use PHPUnit\Framework\DataProviderTestSuite;
+use PHPUnit\Framework\IterativeTestSuite;
+use PHPUnit\Framework\PhptRepeatTestSuite;
+use PHPUnit\Framework\PhptRetryTestSuite;
+use PHPUnit\Framework\RetryTestSuite;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite as FrameworkTestSuite;
-use PHPUnit\Runner\PhptTestCase;
+use PHPUnit\Runner\Phpt\TestCase as PhptTestCase;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -39,7 +47,25 @@ final readonly class TestSuiteBuilder
 
         self::process($testSuite, $tests);
 
+        if ($testSuite instanceof PhptRetryTestSuite) {
+            return new TestSuiteForRetriedPhpt(
+                $testSuite->name(),
+                $testSuite->count(),
+                TestCollection::fromArray($tests),
+                $testSuite->maxAttempts(),
+            );
+        }
+
+        if ($testSuite instanceof PhptRepeatTestSuite) {
+            return new TestSuiteForRepeatedPhpt(
+                $testSuite->name(),
+                $testSuite->count(),
+                TestCollection::fromArray($tests),
+            );
+        }
+
         if ($testSuite instanceof DataProviderTestSuite) {
+            assert(count(explode('::', $testSuite->name())) === 2);
             [$className, $methodName] = explode('::', $testSuite->name());
 
             assert(class_exists($className));
@@ -64,6 +90,61 @@ final readonly class TestSuiteBuilder
             );
         }
 
+        if ($testSuite instanceof IterativeTestSuite) {
+            $name = $testSuite->name();
+
+            $separatorPosition = strpos($name, '::');
+
+            assert($separatorPosition !== false);
+
+            $className  = substr($name, 0, $separatorPosition);
+            $methodName = substr($name, $separatorPosition + 2);
+
+            $hashPosition = strpos($methodName, '#');
+            $isForDataSet = false;
+
+            if ($hashPosition !== false) {
+                $methodName   = substr($methodName, 0, $hashPosition);
+                $isForDataSet = true;
+            }
+
+            assert($className !== '' && class_exists($className));
+            assert($methodName !== '' && method_exists($className, $methodName));
+
+            $reflector = new ReflectionMethod($className, $methodName);
+
+            $file = $reflector->getFileName();
+            $line = $reflector->getStartLine();
+
+            assert($file !== false);
+            assert($line !== false);
+
+            if ($testSuite instanceof RetryTestSuite) {
+                return new TestSuiteForRetriedTestMethod(
+                    $name,
+                    $testSuite->count(),
+                    TestCollection::fromArray($tests),
+                    $className,
+                    $methodName,
+                    $file,
+                    $line,
+                    $isForDataSet,
+                    $testSuite->maxAttempts(),
+                );
+            }
+
+            return new TestSuiteForRepeatedTestMethod(
+                $name,
+                $testSuite->count(),
+                TestCollection::fromArray($tests),
+                $className,
+                $methodName,
+                $file,
+                $line,
+                $isForDataSet,
+            );
+        }
+
         if ($testSuite->isForTestClass()) {
             $testClassName = $testSuite->name();
 
@@ -81,6 +162,7 @@ final readonly class TestSuiteBuilder
                 $testClassName,
                 $testSuite->count(),
                 TestCollection::fromArray($tests),
+                TestDoxBuilder::prettifyClassName($testClassName),
                 $file,
                 $line,
             );

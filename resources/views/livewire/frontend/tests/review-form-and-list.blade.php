@@ -1,5 +1,5 @@
 <div>
-    @if(auth()->check() && !empty($user))
+    @auth
     <form wire:submit.prevent="save" novalidate class="contact-form">
         @csrf
         <div class="row">
@@ -26,7 +26,7 @@
             </div>
         </div>
     </form>
-    @endif
+    @endauth
 
     <div class="mt-3">
         @if(count($reviews = $this->reviews()))
@@ -34,13 +34,13 @@
                 @foreach($reviews as $review)
                     <div class="blog_details-comment-item">
                         <div class="blog_details-comment-content">
-                            <h6>{{ $review->user->name }} {{ str($review->user->name)->substr(0, 1) }}.</h6>
+                            <h6>{{ $review->user?->name }} {{ str($review->user?->surname)->substr(0, 1) }}.</h6>
                             <span>{{ dateFormat($review->created_at, 'd M Y, H:i') }}</span>
                             <div>
                                 @if($review->reply)
                                     <medium class="text-muted d-inline-flex mb-0 border rounded-2 px-1 bg-light"
                                             style="font-size: 15px;">
-                                        @ {{ $review->user->name }} {{ str($review->user->name)->substr(0, 1) }}.
+                                        @ {{ $review->user?->name }} {{ str($review->user?->surname)->substr(0, 1) }}.
                                     </medium>
                                 @endif
                                 <p class="mb-0">

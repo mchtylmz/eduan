@@ -3,8 +3,9 @@
 namespace App\Helpers;
 
 use App\Models\Log;
+use App\Models\Question;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use Throwable;
 
 class AiHelper
 {
@@ -12,9 +13,13 @@ class AiHelper
 
     private array $images = [];
 
+    private ?Question $question = null;
+
     public function gptLists(): array
     {
         return [
+            'gpt-6-luna' => 'GPT-6 Luna',
+            'gpt-6-sol' => 'GPT-6 Sol',
             'gpt-5' => __('Chat GPT 5'),
             'gpt-5-nano' => __('Chat GPT 5 Nano'),
             'gpt-5-mini' => __('Chat GPT 5 Mini'),
@@ -34,145 +39,108 @@ class AiHelper
         ];
     }
 
-    public function getApiKey(): string|null
+    public function getApiKey(): ?string
     {
-        return settings()->gptApiKey ?: false;
+        return settings()->gptApiKey ?: null;
     }
 
-    public function setImage(string $image): AiHelper
+    public function forQuestion(Question $question): self
     {
-        $path = file_get_contents($image);
-        $extension = pathinfo($image, PATHINFO_EXTENSION);
-
-        $this->images[] = 'data:image/' . $extension . ';base64,' . base64_encode($path);
+        $this->question = $question;
 
         return $this;
     }
 
-    private function gptDeveloperMessage(): array
+    public function setImage(string $image): self
     {
-        return [
-            'role' => 'developer',
-            'content' => [
-                [
-                    'type' => 'input_text',
-                    'text' => sprintf(
-                        '%s Alleen de sleutel- en variabelenamen in het JSON-object mogen in het Engels zijn. for json object: STAPPEN -> steps, answer_consistency_note -> final_answer. ',
-                        settings()->gptDeveloperMessage ?: ''
-                    )
-                ]
-            ]
-        ];
-    }
-
-    private function gptUserMessage(): array
-    {
-        return [
-            'role' => 'user',
-            'content' => [
-                [
-                    'type' => 'input_text',
-                    'text' => settings()->gptUserMessage ?: ''
-                ]
-            ]
-        ];
-    }
-
-    private function getInputImages(): array
-    {
-        $content = [];
-
-        foreach ($this->images as $image) {
-            $content[] = [
-                'type' => 'input_image',
-                'image_url' => $image
-            ];
+        $mime = is_file($image) && is_readable($image) ? mime_content_type($image) : false;
+        if (! in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], true)) {
+            throw new \InvalidArgumentException('invalid_input_image');
         }
+        $contents = file_get_contents($image);
+        if ($contents === false || $contents === '') {
+            throw new \InvalidArgumentException('unreadable_input_image');
+        }
+        $this->images[] = 'data:'.$mime.';base64,'.base64_encode($contents);
 
-        return $content;
+        return $this;
     }
 
     public function getBody(): array
     {
-        $input = [
-            $this->gptDeveloperMessage(),
-            $this->gptUserMessage()
-        ];
-        if ($images = $this->getInputImages()) {
-            $input[] = [
-                'role' => 'user',
-                'content' => $images
-            ];
-        }
-
-        return [
-            'model' => array_key_exists(settings()->gptModel, $this->gptLists()) ? settings()->gptModel : 'gpt-5',
-            'input' => $input,
-            'text' => [
-                'format' => [
-                    'type' => 'json_object'
-                ],
-                'verbosity' => 'low'
-            ],
-            'reasoning' => [
-                'effort' => array_key_exists(settings()->gptEffect, $this->gptEffects()) ? settings()->gptEffect : 'low',
-                'summary' => 'auto'
-            ],
-            'tools' => [
-                [
-                    'type' => 'image_generation',
-                    'background' => 'transparent',
-                    'moderation' => 'auto',
-                    'output_compression' => 100,
-                    'output_format' => 'png',
-                    'quality' => 'medium',
-                    'size' => '1024x1536'
-                ]
-            ],
-            'store' => true
-        ];
+        return AiSolutionRequest::build(
+            settings()->gptModel ?: 'gpt-6-luna',
+            settings()->gptEffect ?: 'low',
+            settings()->gptDeveloperMessage ?: '',
+            settings()->gptUserMessage ?: '',
+            $this->images,
+            $this->question,
+        );
     }
 
-    public function output()
+    public function output(): array|false
     {
+        $started = microtime(true);
+        $body = [];
+        $raw = [];
+        $httpStatus = null;
+        $error = null;
+        $result = false;
         try {
-            $response = Http::acceptJson()
-                ->timeout(120)
-                ->withoutVerifying()
-                ->withOptions(["verify" => false])
-                ->withToken($this->getApiKey())
-                ->withBody(json_encode($getBody = $this->getBody()))
-                ->post(self::$apiUrl)
-                ->throw();
-
-            $output = collect($response->json('output'))
-                ->firstWhere('type', 'message');
-
-            $content = collect($output['content'] ?? [])
-                ->firstWhere('type', 'output_text');
-
-            $outputText = json_decode(collect($content)->get('text', ''), true) ?? [];
-
+            if (! $this->getApiKey()) {
+                throw new \RuntimeException('missing_api_key');
+            }
+            if (count($this->images) !== 2) {
+                throw new \RuntimeException('missing_question_or_solution_image');
+            }
+            $body = $this->getBody();
+            // One request only: no automatic retry, image generation or model fallback.
+            $response = Http::acceptJson()->connectTimeout(10)->timeout(120)
+                ->withToken($this->getApiKey())->post(self::$apiUrl, $body);
+            $httpStatus = $response->status();
+            $raw = $response->json() ?: [];
+            if (! $response->successful()) {
+                throw new \RuntimeException('http_error');
+            }
+            $result = AiSolutionResult::parse($raw);
+        } catch (Throwable $exception) {
+            // Do not log exception messages from the transport: these may contain credentials.
+            $error = in_array($exception::class, [\RuntimeException::class, \InvalidArgumentException::class, \UnexpectedValueException::class], true)
+                ? $exception->getMessage() : class_basename($exception);
+        }
+        // Retain the exact response/usage for inspection, never the key or base64 images.
+        try {
             Log::insert([
-                'user_id'    => auth()->id(),
-                'log_date'   => now(),
+                'user_id' => auth()->id(),
+                'log_date' => now(),
                 'table_name' => 'chatgpt',
-                'log_type'   => 'create',
-                'ip'         => request()->ip(),
-                'data_id'    => 0,
-                'data'       => json_encode([
-                    'result' => $outputText,
-                    'output' => $output,
-                    'body' => $getBody,
-                ]),
-                'agent'      => request()->server('HTTP_USER_AGENT'),
-                'browser'    => request()->server('HTTP_SEC_CH_UA'),
-                'device'     => request()->server('HTTP_SEC_CH_UA_PLATFORM')
+                'log_type' => $result === false ? 'error' : 'create',
+                'ip' => request()->ip(),
+                'data_id' => $this->question?->id ?? 0,
+                'data' => json_encode([
+                    'result' => $result,
+                    'output' => $raw,
+                    'body' => [
+                        'model' => $body['model'] ?? null,
+                        'reasoning' => $body['reasoning'] ?? null,
+                        'max_output_tokens' => $body['max_output_tokens'] ?? null,
+                        'image_count' => count($this->images),
+                        'prompt_version' => AiSolutionRequest::VERSION,
+                        'prompt_hash' => hash('sha256', json_encode($body['input'][0] ?? []).json_encode($body['input'][1]['content'][0] ?? [])),
+                    ],
+                    'http_status' => $httpStatus,
+                    'duration_ms' => (int) round((microtime(true) - $started) * 1000),
+                    'error' => $error,
+                ], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE),
+                'agent' => request()->server('HTTP_USER_AGENT'),
+                'browser' => request()->server('HTTP_SEC_CH_UA'),
+                'device' => request()->server('HTTP_SEC_CH_UA_PLATFORM'),
             ]);
-        } catch (\Exception $exception) {
-            return false;
+        } catch (Throwable) {
+            // A log write failure must not discard a valid paid response and cause regeneration.
+            \Illuminate\Support\Facades\Log::warning('AI audit log could not be written.', ['question_id' => $this->question?->id]);
         }
 
-        return $outputText ?? '';
+        return $result;
     }
 }

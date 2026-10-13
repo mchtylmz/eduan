@@ -2,31 +2,52 @@
 
 namespace App\Livewire\Settings;
 
+use App\Helpers\LogDataMasker;
 use App\Models\Log;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class LogDetailTable extends Component
 {
+    #[Locked]
     public Log $log;
 
+    #[Locked]
     public array $currentData = [];
+
+    #[Locked]
+    public array $changedFields = [];
 
     public function mount(int $logId): void
     {
         $this->log = Log::find($logId);
 
-        $this->currentData = $this->currentData();
+        $current = $this->rawCurrentData();
+        $old = json_decode($this->log->data, true);
+        $compare = fn ($value) => is_array($value) ? json_encode($value) : (string) $value;
+        $this->changedFields = array_keys(array_diff_assoc(array_map($compare, $old), array_map($compare, $current)));
+        $this->currentData = LogDataMasker::mask($current);
     }
 
     public function jsonData(): array
     {
-        return json_decode($this->log->data, true);
+        return LogDataMasker::mask(json_decode($this->log->data, true));
     }
 
     public function currentData(): array
     {
-        if (!in_array($this->log->log_type, ['create', 'delete']) && $this->log->table_name) {
+        return LogDataMasker::mask($this->rawCurrentData());
+    }
+
+    public function hydrate(): void
+    {
+        $this->currentData = LogDataMasker::mask($this->currentData);
+    }
+
+    protected function rawCurrentData(): array
+    {
+        if (! in_array($this->log->log_type, ['create', 'delete']) && $this->log->table_name) {
             $log = Log::orderBy('id', 'ASC')
                 ->where('id', '>', $this->log->id)
                 ->where('table_name', $this->log->table_name)
@@ -45,7 +66,7 @@ class LogDetailTable extends Component
 
     public function diff(string $key): bool
     {
-        return array_key_exists($key, array_diff_assoc($this->jsonData(), $this->currentData));
+        return in_array($key, $this->changedFields, true);
     }
 
     public function render()

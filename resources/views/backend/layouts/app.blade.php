@@ -52,6 +52,7 @@
       ok: '{{ __('Tamam') }}',
       cancel: '{{ __('Vazgeç') }}',
     };
+    window.uploadTranslations = @json(__('upload'));
 </script>
 <!-- oneui -->
 <script src="{{ asset('backend/assets/js/oneui.app.min.js') }}"></script>
@@ -59,33 +60,36 @@
 <script src="{{ asset('backend/assets/js/lib/jquery.min.js') }}"></script>
 <!-- jquery.validate -->
 <script src="{{ asset('backend/assets/js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+@if(app()->getLocale() !== 'en')
 <script src="{{ asset('backend/assets/js/plugins/jquery-validation/localization/messages_'.app()->getLocale().'.min.js') }}"></script>
+@endif
 <!-- sweetalert2 -->
 <script src="{{ asset('backend/assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- dropify -->
 <script src="{{ asset('backend/assets/js/plugins/dropify/dist/js/dropify.js') }}"></script>
 <!-- flatpickr -->
 <script src="{{ asset('backend/assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+@if(app()->getLocale() !== 'en')
 <script src="{{ asset('backend/assets/js/plugins/flatpickr/l10n/'.app()->getLocale().'.js') }}"></script>
+@endif
 <!-- jquery.maskedinput -->
 <script src="{{ asset('backend/assets/js/plugins/jquery.maskedinput/jquery.maskedinput.min.js') }}"></script>
 <!-- bootstrap-select -->
 <script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
-<script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/i18n/defaults-'.app()->getLocale().'_'.str(app()->getLocale())->upper().'.min.js') }}"></script>
+<script src="{{ asset('backend/assets/js/plugins/bootstrap-select/dist/js/i18n/defaults-'.(app()->getLocale() === 'en' ? 'en_US' : app()->getLocale().'_'.str(app()->getLocale())->upper()).'.min.js') }}"></script>
 @if(!empty($tinymce))
 <!-- tinymce -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/tinymce.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/media/plugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/image/plugin.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/help/js/i18n/keynav/tr.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.5.1/plugins/fullscreen/plugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/help/js/i18n/keynav/{{ app()->getLocale() }}.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.2.1/plugins/fullscreen/plugin.min.js"></script>
 @endif
 <!-- app -->
 <script src="{{ asset('backend/assets/app.js') }}?v={{ config('app.version') }}"></script>
 
 @livewireScripts
 
-<x-livewire-alert::scripts />
 @stack('script')
 <script>
     $(document).ready(function() {
@@ -123,8 +127,8 @@
                 width: "100%",
                 height: '400px',
                 resize: true,
-                language_url: '{{ asset('backend/assets/langs/tinymce_tr.js') }}',
-                language: '{{ app()->getLocale() }}',
+                language_url: '{{ in_array(app()->getLocale(), ['nl', 'tr']) ? asset('backend/assets/langs/tinymce_'.app()->getLocale().'.js') : '' }}',
+                language: '{{ in_array(app()->getLocale(), ['nl', 'tr']) ? app()->getLocale() : 'en' }}',
                 powerpaste_allow_local_images: true,
                 toolbar_sticky: true,
                 autosave_restore_when_empty: false,
@@ -132,7 +136,6 @@
                 autosave_interval: '5s',
                 image_caption: true,
                 menubar: true,
-                forced_root_block: false,
                 fullscreen_native: true,
                 visual_table_class: 'tinymce-table',
                 plugins: [
@@ -147,10 +150,10 @@
                 font_size_formats: '10px 11px 12px 14px 16px 18px 24px 32px 36px 48px 64px',
                 font_size_input_default_unit: "px",
                 setup: function setup(editor) {
-                    editor.on('Change KeyUp', function () {
+                    editor.on('change input undo redo', function () {
                         let content = editor.getContent();
                         let component = Livewire.find($('#editorcontent').closest('[wire\\:id]').attr('wire:id'));
-                        component.set('content', content);
+                        component.set('content', content, false);
                     });
                 },
                 file_picker_callback: (cb, value, meta) => {
@@ -160,11 +163,12 @@
 
                     input.addEventListener('change', (e) => {
                         const file = e.target.files[0];
+                        if (!file) return;
 
                         const reader = new FileReader();
                         reader.addEventListener('load', () => {
                             const id = 'blobid' + (new Date()).getTime();
-                            const blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                            const blobCache =  tinymce.get('editorcontent').editorUpload.blobCache;
                             const base64 = reader.result.split(',')[1];
                             const blobInfo = blobCache.create(id, file, base64);
                             blobCache.add(blobInfo);

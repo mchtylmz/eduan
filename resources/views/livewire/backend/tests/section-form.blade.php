@@ -88,7 +88,7 @@
                                     <label class="form-label"
                                            for="sections.{{ $index }}.name">{{ __('Bölüm Başlığı/Adı') }}</label>
                                     <input type="text" class="form-control" id="name"
-                                           wire:model.change="sections.{{ $index }}.name"
+                                           wire:model.live.change="sections.{{ $index }}.name"
                                            placeholder="{{ __('Adı') }}.." required/>
                                     <x-badge.error field="sections.{{ $index }}.name"/>
                                 </div>

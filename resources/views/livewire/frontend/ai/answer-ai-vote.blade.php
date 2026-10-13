@@ -6,15 +6,15 @@
                 <!-- stars -->
                 <div class="half-stars-vote">
                     <div class="star-rating animated-stars">
-                        <input type="radio" id="star5-{{ $answerAI->id }}" wire:model.change="vote" value="5">
+                        <input type="radio" id="star5-{{ $answerAI->id }}" wire:model.live.change="vote" value="5">
                         <label for="star5-{{ $answerAI->id }}" class="fa fa-star"></label>
-                        <input type="radio" id="star4-{{ $answerAI->id }}" wire:model.change="vote" value="4">
+                        <input type="radio" id="star4-{{ $answerAI->id }}" wire:model.live.change="vote" value="4">
                         <label for="star4-{{ $answerAI->id }}" class="fa fa-star"></label>
-                        <input type="radio" id="star3-{{ $answerAI->id }}" wire:model.change="vote" value="3">
+                        <input type="radio" id="star3-{{ $answerAI->id }}" wire:model.live.change="vote" value="3">
                         <label for="star3-{{ $answerAI->id }}" class="fa fa-star"></label>
-                        <input type="radio" id="star2-{{ $answerAI->id }}" wire:model.change="vote" value="2">
+                        <input type="radio" id="star2-{{ $answerAI->id }}" wire:model.live.change="vote" value="2">
                         <label for="star2-{{ $answerAI->id }}" class="fa fa-star"></label>
-                        <input type="radio" id="star1-{{ $answerAI->id }}" wire:model.change="vote" value="1">
+                        <input type="radio" id="star1-{{ $answerAI->id }}" wire:model.live.change="vote" value="1">
                         <label for="star1-{{ $answerAI->id }}" class="fa fa-star"></label>
                     </div>
                 </div>

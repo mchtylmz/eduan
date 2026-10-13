@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Frontend\Auth;
 
-use App\Actions\Auth\LoginAction;
+use App\Actions\Auth\LimitAuthRequests;
 use App\Actions\Auth\RecoverPasswordAction;
 use App\Mail\EmailVerificationMail;
 use App\Mail\RecoverPasswordMail;
@@ -36,6 +36,7 @@ class RecoverPassword extends Component
 
     public function submit()
     {
+        LimitAuthRequests::run('recover');
         $this->validate();
 
         $user = RecoverPasswordAction::run(username: $this->username);
@@ -50,7 +51,7 @@ class RecoverPassword extends Component
         return false;
     }
 
-    public function sendRecoverPasswordMail(User $user): void
+    private function sendRecoverPasswordMail(User $user): void
     {
         Mail::to($user->email)
             ->send(new RecoverPasswordMail(user: $user, locale: app()->getLocale()));

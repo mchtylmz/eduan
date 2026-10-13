@@ -32,9 +32,9 @@
                 <div class="col-xl-8 col-lg-8">
                     <div class="blog_details-wrap mb-30">
                         <div class="blog_details-top mb-0 pb-3 px-0">
-                            <h3 class="blog_details-title px-3">
+                            <h1 class="h3 blog_details-title px-3">
                                 {{ $blog->title }}
-                            </h3>
+                            </h1>
                             <div class="blog_details-meta px-3">
                                 <div class="blog_details-category">
                                     <h5 class="text-muted">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="blog_details-content p-3">
+                        <div class="blog_details-content p-3" lang="{{ $blog->locale }}">
                             {!! html_entity_decode($blog->content) !!}
                         </div>
                         <div class="blog_details-content-meta p-4 mt-3">

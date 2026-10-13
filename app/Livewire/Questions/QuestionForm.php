@@ -13,8 +13,8 @@ use App\Models\Question;
 use App\Models\Topic;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -29,14 +29,18 @@ class QuestionForm extends Component
 
     public int $lesson_id;
     public int $topic_id;
+
     public string $locale;
     public string $title = '';
+
     public string $code = '';
     public int $sort = 1;
+
     public int $time = 300;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
     public $attachment;
+
     public $solution;
     public array $answers = [];
 
@@ -231,6 +235,7 @@ class QuestionForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can(! empty($this->question) && $this->question->exists ? 'questions:update' : 'questions:add'), 403);
         $this->validate();
 
         if (!empty($this->question) && $this->question->exists) {

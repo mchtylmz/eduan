@@ -5,12 +5,12 @@ namespace App\Livewire\Frontend\Exams;
 use App\Enums\TestSectionTypeEnum;
 use App\Models\Test;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class DetailStatisticList extends Component
 {
+    #[Locked]
     public Test $test;
 
     #[Computed]

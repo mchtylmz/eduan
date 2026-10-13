@@ -4,7 +4,7 @@
 
         <div class="account-form-item mb-15">
             <div class="account-form-label">
-                <label for="current_password">{{ __('Şu Anki Parolanız') }}</label>
+                <label for="current_password">{{ __('account.current_password') }}</label>
             </div>
             <div class="account-form-input account-form-input-pass">
                 <input type="{{ $passwordInputType }}"
@@ -12,9 +12,9 @@
                        class="form-control @error('current_password') is-invalid @enderror"
                        wire:model="current_password"
                        placeholder="******"
-                       autocomplete="off" required>
+                       autocomplete="current-password" required>
                 <span style="right: 5px;">
-                    <button class="btn btn-light" type="button" wire:click="changeType">
+                    <button class="btn btn-light" type="button" wire:click="changeType" aria-label="{{ __('account.show_password') }}">
                             @if($passwordInputType == 'text')
                             <i class="fa-light fa-eye-slash mx-2"></i>
                         @else
@@ -27,7 +27,7 @@
         </div>
         <div class="account-form-item mb-15">
             <div class="account-form-label">
-                <label for="password">{{ __('Yeni Parolanız') }}</label>
+                <label for="password">{{ __('account.new_password') }}</label>
             </div>
             <div class="account-form-input account-form-input-pass">
                 <input type="{{ $passwordInputType }}"
@@ -35,9 +35,9 @@
                        class="form-control @error('password') is-invalid @enderror"
                        wire:model="password"
                        placeholder="******"
-                       autocomplete="off" required>
+                       autocomplete="new-password" required>
                 <span style="right: 5px;">
-                    <button class="btn btn-light" type="button" wire:click="changeType">
+                    <button class="btn btn-light" type="button" wire:click="changeType" aria-label="{{ __('account.show_password') }}">
                             @if($passwordInputType == 'text')
                             <i class="fa-light fa-eye-slash mx-2"></i>
                         @else
@@ -50,7 +50,7 @@
         </div>
         <div class="account-form-item mb-15">
             <div class="account-form-label">
-                <label for="password_confirmation">{{ __('Tekrar Yeni Parolanız') }}</label>
+                <label for="password_confirmation">{{ __('account.confirm_password') }}</label>
             </div>
             <div class="account-form-input account-form-input-pass">
                 <input type="{{ $passwordInputType }}"
@@ -58,9 +58,9 @@
                        class="form-control @error('password') is-invalid @enderror"
                        wire:model="password_confirmation"
                        placeholder="******"
-                       autocomplete="off" required>
+                       autocomplete="new-password" required>
                 <span style="right: 5px;">
-                    <button class="btn btn-light" type="button" wire:click="changeType">
+                    <button class="btn btn-light" type="button" wire:click="changeType" aria-label="{{ __('account.show_password') }}">
                             @if($passwordInputType == 'text')
                             <i class="fa-light fa-eye-slash mx-2"></i>
                         @else
@@ -73,10 +73,10 @@
         </div>
 
         <div class="account-form-button mt-3 d-flex justify-content-center">
-            <button type="submit" class="account-btn w-50" wire:loading.attr="disabled">
+            <button type="submit" class="account-btn" wire:loading.attr="disabled">
                 <div wire:loading.remove>
                     <i class="fa fa-save me-1"></i>
-                    <span class="fw-medium fs-6">{{ __('Güncelle') }}</span>
+                    <span class="fw-medium fs-6">{{ __('account.update_password') }}</span>
                 </div>
                 <div wire:loading>
                     <i class="fa fa-fw fa-spinner fa-pulse mx-1" style="animation-duration: .5s"></i>

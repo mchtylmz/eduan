@@ -1,91 +1,47 @@
-<div>
-    @if($activeSeason)
-        <h5 class="p-3 bg-light mb-3">
-            {{ __('Dönem') }} : {{ dateFormat($activeSeason->start_date, 'd M Y') }} - {{ dateFormat($activeSeason->end_date, 'd M Y') }}
-        </h5>
-    @endif
-
-    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-center my-2 mb-4">
-        @foreach($tabs as $tabIndex => $tabTitle)
-            <button type="button" class="btn {{ $activeTab == $tabIndex ? 'btn-secondary' : 'btn-outline-secondary' }}"
-                    wire:click="chooseTab('{{ $tabIndex }}')"
-                    wire:loading.attr="disabled">
-                @if($activeTab == $tabIndex)
-                    <i class="fa fa-check mx-1"></i>
-                @endif
-                {{ $tabTitle }}
-            </button>
-        @endforeach
-    </div>
-
-    <div class="w-100 my-3" wire:loading>
-        <div class="alert alert-warning p-3 py-2 fw-bold w-100">
-            <i class="fa fa-spinner fa-pulse mx-1"></i> {{ __('Yükleniyor') }}...
-        </div>
-    </div>
-
-    <div class="table-responsive">
-        <h5 class="p-3 bg-light my-2">{{ $tabs[$activeTab] }}</h5>
-
-        @if(count($results = $this->results()))
-        <table class="table table-responsive table-striped table-bordered w-100">
-            <thead>
-            <tr>
-                @if($activeTab == 'questions')
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Tarih') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Toplam Soru') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Doğru Yanıt') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Yanlış Yanıt') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Başarı Yüzdesi') }}</th>
-                @endif
-                @if(in_array($activeTab, ['lessonsDesc', 'lessonsAsc', 'topicsDesc', 'topicsAsc']))
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Ders') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Toplam Soru') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Doğru Yanıt') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Yanlış Yanıt') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Boş Yanıt') }}</th>
-                    <th scope="col" class="bg-secondary text-white text-center">{{ __('Başarı Yüzdesi') }}</th>
-                @endif
-            </tr>
-            </thead>
-            <tbody>
-                @foreach($results as $result)
-                    @if($activeTab == 'questions')
-                        @php($rate = round($result->correct_count * 100.0 / $result->question_count, 2))
-                        <tr>
-                            <td class="text-center" scope="col">{{ dateFormat($result->updated_at) }}</td>
-                            <td class="text-center" scope="col">{{ $result->question_count }}</td>
-                            <td class="text-center" scope="col">{{ $result->correct_count }}</td>
-                            <td class="text-center" scope="col">{{ $result->incorrect_count }}</td>
-                            <td class="text-center" scope="col">
-                                <strong class="{{ $rate >= 50 ? 'text-success' : 'text-dark' }}">%{{ $rate }}</strong>
-                            </td>
-                        </tr>
-                    @endif
-                    @if(in_array($activeTab, ['lessonsDesc', 'lessonsAsc', 'topicsDesc', 'topicsAsc']))
-                        @php($rate = round($result->correct_count * 100.0 / $result->total_count, 2))
-                        <tr>
-                            <td class="text-center" scope="col">{{ getJsonLocaleValue($result->name) }}</td>
-                            <td class="text-center" scope="col">{{ $result->total_count }}</td>
-                            <td class="text-center" scope="col">{{ $result->correct_count }}</td>
-                            <td class="text-center" scope="col">
-                                {{ $result->total_count - ($result->empty_count + $result->correct_count) }}
-                            </td>
-                            <td class="text-center" scope="col">{{ $result->empty_count }}</td>
-                            <td class="text-center" scope="col">
-                                <strong class="{{ $rate >= 25 ? 'text-success' : 'text-dark' }}">%{{ $rate }}</strong>
-                            </td>
-                        </tr>
-                    @endif
+<div class="member-statistics">
+    <div class="member-report-filter">
+        <div>
+            <label for="member-statistics-report">{{ __('account.report') }}</label>
+            <select id="member-statistics-report" class="form-select" wire:model.live="activeTab" wire:loading.attr="disabled">
+                @foreach($tabs as $tabIndex => $tabTitle)
+                    <option value="{{ $tabIndex }}">{{ $tabTitle }}</option>
                 @endforeach
-            </tbody>
-        </table>
-
-        <div>{{ $results->links() }}</div>
-        @else
-            <div class="alert alert-danger fw-bold">
-                {{ __('Gösterilecek sonuç bulunmuyor!') }}
-            </div>
+            </select>
+        </div>
+        @if($activeSeason)
+            <span class="member-period"><i class="fa-light fa-calendar" aria-hidden="true"></i>{{ __('account.period') }}: {{ dateFormat($activeSeason->start_date, 'd M Y') }} – {{ dateFormat($activeSeason->end_date, 'd M Y') }}</span>
         @endif
     </div>
+    <p class="member-loading" wire:loading role="status"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> {{ __('account.loading') }}…</p>
+    <h2 class="member-report-title">{{ $tabs[$activeTab] }}</h2>
+    @php
+        $results = $this->results();
+    @endphp
+    <div class="member-stat-list">
+        @forelse($results as $result)
+            @php
+                $daily = $activeTab === 'questions';
+                $total = $daily ? $result->question_count : $result->total_count;
+                $incorrect = $daily ? $result->incorrect_count : $total - ($result->empty_count + $result->correct_count);
+                $rate = $total > 0 ? round($result->correct_count * 100.0 / $total, 2) : 0;
+                $recordTitle = $daily ? dateFormat($result->updated_at, 'd M Y') : getJsonLocaleValue($result->name);
+            @endphp
+            <article class="member-stat-card">
+                <header>
+                    <div><span class="member-record-label">{{ __($daily ? 'account.date' : (str_starts_with($activeTab, 'topics') ? 'account.topic' : 'account.lesson')) }}</span><h3>{{ $recordTitle }}</h3></div>
+                    <div class="member-success"><span>{{ __('account.success') }}</span><strong>{{ number_format($rate, 2, ',', '.') }}%</strong></div>
+                </header>
+                <progress class="member-success-progress" max="100" value="{{ $rate }}" aria-label="{{ __('account.success') }}"></progress>
+                <dl class="member-record-metrics">
+                    <div><dt>{{ __('account.questions_count') }}</dt><dd>{{ $total }}</dd></div>
+                    <div><dt>{{ __('account.correct') }}</dt><dd class="member-correct">{{ $result->correct_count }}</dd></div>
+                    <div><dt>{{ __('account.incorrect') }}</dt><dd class="member-incorrect">{{ $incorrect }}</dd></div>
+                    @unless($daily)<div><dt>{{ __('account.unanswered') }}</dt><dd>{{ $result->empty_count }}</dd></div>@endunless
+                </dl>
+            </article>
+        @empty
+            <p class="member-empty">{{ __('account.empty') }}</p>
+        @endforelse
+    </div>
+    {{ $results->links('components.frontend.livewire-pagination', ['scrollTo' => '.member-content']) }}
 </div>

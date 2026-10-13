@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\ExamResult;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -18,10 +17,7 @@ class FilterStatsExamsExport implements FromCollection, ShouldAutoSize, WithHead
         $this->collection = $collection;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function collection()
+    public function collection(): Collection
     {
         return $this->collection;
     }
@@ -32,7 +28,7 @@ class FilterStatsExamsExport implements FromCollection, ShouldAutoSize, WithHead
             __('İsim'),
             __('Soyisim'),
             __('E-posta Adresi'),
-            __('Sınav Adı'),
+            __('Test Adı'),
             __('Toplam Soru'),
             __('Doğru Yanıt'),
             __('Yanlış Yanıt'),

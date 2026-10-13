@@ -1,4 +1,33 @@
 <!-- form -->
+
+@push('script')
+    @php
+        $modelEfforts = [];
+        foreach (\App\Helpers\AiSolutionRequest::MODELS as $key) {
+            $modelEfforts[$key] = \App\Helpers\AiSolutionRequest::efforts($key);
+        }
+    @endphp
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const model = document.getElementById('gptModel');
+            const effort = document.getElementById('gptEffect');
+            if (!model || !effort) return;
+            const allowed = @json($modelEfforts);
+            function updateEffort() {
+                // This Bootstrap Select version appends its internal option data on refresh.
+                // Recreate only this picker so model changes cannot duplicate its options.
+                const picker = window.jQuery?.fn.selectpicker ? window.jQuery(effort) : null;
+                if (picker?.data('selectpicker')) picker.selectpicker('destroy');
+                const choices = allowed[model.value] || ['low'];
+                for (const option of effort.options) option.disabled = !choices.includes(option.value);
+                if (!choices.includes(effort.value)) effort.value = 'low';
+                if (picker) picker.selectpicker();
+            }
+            model.addEventListener('change', updateEffort);
+            updateEffort();
+        });
+    </script>
+@endpush
 <form class="js-validation" action="{{ route('admin.settings.store') }}" method="POST"
       enctype="multipart/form-data">
 

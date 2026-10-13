@@ -39,10 +39,8 @@ class CreateOrUpdateTestSectionsAction
 
             $sectionsToDelete = array_diff($existingSectionIds, $incomingSectionIds);
             if (!empty($sectionsToDelete)) {
-                $test->sections()
-                    ->parentIsZero()
-                    ->whereIn('id', $sectionsToDelete)
-                    ->delete();
+                $fieldIds = $test->sections()->whereIn('parent_id', $sectionsToDelete)->pluck('id')->all();
+                $this->deleteSections($test->id, array_merge($sectionsToDelete, $fieldIds));
             }
 
             DB::commit();
@@ -50,7 +48,7 @@ class CreateOrUpdateTestSectionsAction
             resetCache();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
 
             return false;
@@ -68,7 +66,7 @@ class CreateOrUpdateTestSectionsAction
             $testSection?->update($sectionData);
         }
 
-        if (!empty($section['fields']) && is_array($section['fields'])) {
+        if (isset($section['fields']) && is_array($section['fields'])) {
             $this->createOrUpdateFields($section['fields'], $testSection);
         }
 
@@ -109,14 +107,17 @@ class CreateOrUpdateTestSectionsAction
 
         $fieldsToDelete = array_diff($existingFieldsIds, $incomingFieldsIds);
         if (!empty($fieldsToDelete)) {
-            TestsSection::where('test_id', $testsSection->test_id)
-                ->parent($testsSection->id)
-                ->whereIn('id', $fieldsToDelete)
-                ->delete();
+            $this->deleteSections($testsSection->test_id, $fieldsToDelete);
+        }
+    }
 
-            TestsQuestion::where('test_id', $testsSection->test_id)
-                ->whereIn('section_id', $fieldsToDelete)
-                ->delete();
+    private function deleteSections(int $testId, array $sectionIds): void
+    {
+        TestsQuestion::where('test_id', $testId)->whereIn('section_id', $sectionIds)->delete();
+
+        foreach (TestsSection::where('test_id', $testId)->whereIn('id', $sectionIds)->get() as $section) {
+            $section->deleteMeta();
+            $section->delete();
         }
     }
 

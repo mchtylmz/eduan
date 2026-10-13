@@ -8,14 +8,14 @@
     ])
 @endpush
 @push('breadcrumb')
-    @includeIf('frontend.layouts.section.page-breadcrumb', ['coverImage' => settings()->coverPage])
+    @includeIf('frontend.layouts.section.page-breadcrumb', ['coverImage' => settings()->coverPage, 'showHeading' => false])
 @endpush
 @section('content')
     <section class="contact-area pt-30">
         <div class="container">
             @if(empty(settings()->coverPage))
                 <div class="contact-content pr-40 mb-40 pt-5 pt-sm-0">
-                    <h3 class="contact-title mb-25">{{ $title }}</h3>
+                    <h1 class="h3 contact-title mb-25">{{ $title }}</h1>
                 </div>
             @endif
 

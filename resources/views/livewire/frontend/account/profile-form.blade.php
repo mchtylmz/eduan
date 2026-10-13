@@ -3,46 +3,46 @@
         @csrf
         <div class="account-form-item col-lg-6 mb-15">
             <div class="account-form-label">
-                <label>{{ __('İsim') }}</label>
+                <label for="profile-name">{{ __('account.name') }}</label>
             </div>
             <div class="account-form-input">
-                <input type="text" placeholder="{{ __('İsim') }}" wire:model="name" required>
+                <input type="text" placeholder="{{ __('account.name') }}" id="profile-name" autocomplete="given-name" wire:model="name" required>
             </div>
             @error('name')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
         </div>
         <div class="account-form-item col-lg-6 mb-15">
             <div class="account-form-label">
-                <label>{{ __('Soyisim') }}</label>
+                <label for="profile-surname">{{ __('account.surname') }}</label>
             </div>
             <div class="account-form-input">
-                <input type="text" placeholder="{{ __('Soyisim') }}" wire:model="surname" required>
+                <input type="text" placeholder="{{ __('account.surname') }}" id="profile-surname" autocomplete="family-name" wire:model="surname" required>
             </div>
             @error('surname')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
         </div>
         <div class="account-form-item col-lg-12 mb-15">
             <div class="account-form-label">
-                <label>{{ __('E-posta Adresi') }}</label>
+                <label for="profile-email">{{ __('account.email') }}</label>
             </div>
             <div class="account-form-input">
-                <input type="email" placeholder="{{ __('E-posta Adresi') }}" wire:model="email" required>
+                <input type="email" placeholder="{{ __('account.email') }}" id="profile-email" autocomplete="email" wire:model="email" required>
             </div>
             @error('email')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
         </div>
         <div class="account-form-item col-lg-12 mb-15">
             <div class="account-form-label">
-                <label>{{ __('Telefon Numarası') }}</label>
+                <label for="profile-phone">{{ __('Telefon Numarası') }}</label>
             </div>
             <div class="account-form-input">
-                <input type="tel" placeholder="{{ __('Telefon Numarası') }}" wire:model="phone">
+                <input type="tel" placeholder="{{ __('Telefon Numarası') }}" id="profile-phone" autocomplete="tel" wire:model="phone">
             </div>
             @error('phone')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
         </div>
 
         <div class="account-form-button mt-3 d-flex justify-content-center">
-            <button type="submit" class="account-btn w-50" wire:loading.attr="disabled">
+            <button type="submit" class="account-btn" wire:loading.attr="disabled">
                 <div wire:loading.remove>
                     <i class="fa fa-save me-1"></i>
-                    <span class="fw-medium fs-6">{{ __('Bilgilerimi Güncelle') }}</span>
+                    <span class="fw-medium fs-6">{{ __('account.save') }}</span>
                 </div>
                 <div wire:loading>
                     <i class="fa fa-fw fa-spinner fa-pulse mx-1" style="animation-duration: .5s"></i>

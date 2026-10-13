@@ -1,5 +1,8 @@
 @extends('frontend.layouts.app')
 @section('content')
+    @if(!data_get($page?->content, 'welcomeTitle'))
+        <h1 class="visually-hidden">{{ $title }}</h1>
+    @endif
     <!-- banner area start -->
     @if(!empty($page->content) && (data_get($page->content, 'welcomeTitle') || data_get($page->content, 'search')))
         @livewire('frontend.home.welcome-section', ['page' => $page])

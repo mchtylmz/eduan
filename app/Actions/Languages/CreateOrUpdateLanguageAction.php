@@ -9,7 +9,7 @@ class CreateOrUpdateLanguageAction
 {
     use AsAction;
 
-    public function handle(array $data, Language $language = null)
+    public function handle(array $data, ?Language $language = null)
     {
         if (is_null($language)) {
             $language = Language::create($data);

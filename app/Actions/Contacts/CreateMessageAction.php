@@ -11,7 +11,7 @@ class CreateMessageAction
 
     public function handle(array $data)
     {
-        cache()->forget('countContactMessageNotRead');
+        cache()->forget('data_countContactMessageNotRead');
 
         return Contact::create([
             ...$data,

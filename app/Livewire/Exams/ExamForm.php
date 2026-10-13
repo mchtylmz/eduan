@@ -32,10 +32,13 @@ class ExamForm extends Component
 
     public int $topic_id = 0;
     public int $lesson_id = 0;
+
     public string $locale;
     public string $code;
+
     public string $name;
     public string $content = '';
+
     public VisibilityEnum $visibility = VisibilityEnum::PREMIUM;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
@@ -76,7 +79,7 @@ class ExamForm extends Component
         $this->name = $this->exam->name;
         $this->locale = $this->exam->locale;
         $this->code = $this->exam->code;
-        $this->content = $this->exam->content;
+        $this->content = $this->exam->content ?? '';
         $this->visibility = $this->exam->visibility;
         $this->lesson_id = $this->exam->lesson_id ?? 0;
         $this->topic_id = $this->exam->topic_id ?? 0;
@@ -180,6 +183,8 @@ class ExamForm extends Component
 
     public function save()
     {
+        abort_unless(request()->user()?->can($this->exam?->exists ? 'exams:update' : 'exams:add'), 403);
+
         $this->validate();
 
         $exam = CreateOrUpdateExamAction::run(
@@ -204,7 +209,7 @@ class ExamForm extends Component
             ]);
     }
 
-    public function updateExamRelations(Exam $exam): void
+    private function updateExamRelations(Exam $exam): void
     {
         $examQuestions = [];
         foreach ($this->examQuestions()->values() as $index => $item) {

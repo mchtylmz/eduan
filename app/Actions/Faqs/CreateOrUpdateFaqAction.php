@@ -9,7 +9,7 @@ class CreateOrUpdateFaqAction
 {
     use AsAction;
 
-    public function handle(array $data, Faq $faq = null)
+    public function handle(array $data, ?Faq $faq = null)
     {
         if (is_null($faq)) {
             $faq = Faq::create($data);

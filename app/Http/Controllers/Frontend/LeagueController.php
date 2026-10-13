@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\League;
-use Illuminate\Http\Request;
 
 class LeagueController extends Controller
 {
@@ -18,7 +17,7 @@ class LeagueController extends Controller
             'title' => __('Ligler'),
             'league' => cache()->remember('leagues_first', now()->addHours(12), function () {
                 return League::first();
-            })
+            }),
         ]);
     }
 
@@ -29,8 +28,10 @@ class LeagueController extends Controller
         }
 
         return view('frontend.leagues.index', [
-            'title' => $league->name,
-            'league' => $league
+            'title' => __('Lig Sonuçları').($league->start_at && $league->end_at
+                ? ' | '.dateFormat($league->start_at, 'd M Y').' – '.dateFormat($league->end_at, 'd M Y')
+                : ''),
+            'league' => $league,
         ]);
     }
 }

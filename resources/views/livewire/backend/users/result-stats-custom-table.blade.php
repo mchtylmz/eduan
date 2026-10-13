@@ -92,11 +92,13 @@
                             <i class="fa fa-fw fa-spinner fa-pulse mx-1" style="animation-duration: .5s"></i>
                         </div>
                     </button>
+                    @can('users:send-email')
                     <button type="button" class="btn btn-info px-4 mb-3"
                             wire:click="showSendEmails"
                             wire:loading.attr="disabled">
                         <i class="fa fa-fw fa-at me-1"></i> {{ __('E-posta Gönder') }}
                     </button>
+                    @endcan
                 </div>
 
                 <table class="table table-responsive table-striped table-bordered w-100">
@@ -155,11 +157,13 @@
                             <i class="fa fa-fw fa-spinner fa-pulse mx-1" style="animation-duration: .5s"></i>
                         </div>
                     </button>
+                    @can('users:send-email')
                     <button type="button" class="btn btn-info px-4 mb-3"
                             wire:click="showSendEmails"
                             wire:loading.attr="disabled">
                         <i class="fa fa-fw fa-at me-1"></i> {{ __('E-posta Gönder') }}
                     </button>
+                    @endcan
                 </div>
 
                 <table class="table table-responsive table-striped table-bordered w-100">
@@ -212,11 +216,13 @@
                             <i class="fa fa-fw fa-spinner fa-pulse mx-1" style="animation-duration: .5s"></i>
                         </div>
                     </button>
+                    @can('users:send-email')
                     <button type="button" class="btn btn-info px-4 mb-3"
                             wire:click="showSendEmails"
                             wire:loading.attr="disabled">
                         <i class="fa fa-fw fa-at me-1"></i> {{ __('E-posta Gönder') }}
                     </button>
+                    @endcan
                 </div>
 
                 <table class="table table-responsive table-striped table-bordered w-100">

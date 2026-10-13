@@ -74,3 +74,11 @@
 
     </div>
 @endsection
+
+@push('style')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/katex/katex.min.css') }}">
+@endpush
+@push('script')
+    <script defer src="{{ asset('assets/vendor/katex/katex.min.js') }}"></script>
+    <script defer src="{{ asset('assets/ai-formulas.js') }}?v={{ config('app.version') }}"></script>
+@endpush

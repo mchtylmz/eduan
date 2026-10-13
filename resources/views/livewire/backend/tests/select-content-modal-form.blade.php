@@ -14,7 +14,7 @@
                 wire:key="content"
                 wire:model.defer="content"
                 placeholder="{{ __('İçerik Metni') }}"
-            >{!! $content !!}</textarea>
+            >{{ $content }}</textarea>
             <x-badge.error field="content"/>
         </div>
 

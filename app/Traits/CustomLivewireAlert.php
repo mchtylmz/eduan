@@ -6,8 +6,6 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 trait CustomLivewireAlert
 {
-    use LivewireAlert;
-
     public array $alertOptions = [
         'text' => '',
         'position' => 'top-end',
@@ -34,11 +32,11 @@ trait CustomLivewireAlert
 
     public function error(): void
     {
-        $this->alert(type: 'error', options: $this->alertOptions);
+        (new LivewireAlert($this))->withOptions($this->alertOptions)->error()->show();
     }
 
     public function success(): void
     {
-        $this->alert(type: 'success', options: $this->alertOptions);
+        (new LivewireAlert($this))->withOptions($this->alertOptions)->success()->show();
     }
 }

@@ -12,7 +12,6 @@ namespace SebastianBergmann\Type;
 use function assert;
 use function count;
 use function implode;
-use function in_array;
 use function sort;
 
 /**
@@ -34,7 +33,7 @@ final class IntersectionType extends Type
         $this->ensureOnlyValidTypes(...$types);
         $this->ensureNoDuplicateTypes(...$types);
 
-        assert(!empty($types));
+        assert($types !== []);
 
         $this->types = $types;
     }
@@ -124,11 +123,11 @@ final class IntersectionType extends Type
 
             $classQualifiedName = $type->className()->qualifiedName();
 
-            if (in_array($classQualifiedName, $names, true)) {
+            if (isset($names[$classQualifiedName])) {
                 throw new RuntimeException('An intersection type must not contain duplicate types');
             }
 
-            $names[] = $classQualifiedName;
+            $names[$classQualifiedName] = true;
         }
     }
 }

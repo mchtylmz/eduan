@@ -2,6 +2,8 @@
 
 namespace App\Actions\Exams;
 
+use App\Helpers\FrontendCache;
+use App\Helpers\TableCache;
 use App\Models\Exam;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -27,6 +29,8 @@ class UpdateExamQuestionsAction
         }
 
         $exam->questions()->sync($formattedQuestions);
+        TableCache::invalidate('exams', 'exam-questions');
+        FrontendCache::invalidate('lessons', 'topics', 'tests', 'navigation');
 
         return $exam;
     }

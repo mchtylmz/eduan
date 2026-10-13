@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Frontend\Exams;
 
-use App\Actions\Tests\CreateOrUpdateTestResult;
-use App\Actions\Tests\CreateOrUpdateTestResultDetail;
+use App\Actions\Tests\CompleteTestResult;
+use App\Actions\Tests\SaveTestResultAnswer;
+use App\Actions\Tests\StartTestResult;
+use App\Enums\StatusEnum;
 use App\Enums\TestSectionTypeEnum;
 use App\Enums\YesNoEnum;
 use App\Models\Test;
@@ -12,23 +14,35 @@ use App\Models\TestsSection;
 use App\Traits\CustomLivewireAlert;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 
 class SolveForm extends Component
 {
-    use WithPagination, WithoutUrlPagination, CustomLivewireAlert;
+    use CustomLivewireAlert, WithoutUrlPagination, WithPagination;
 
+    #[Locked]
     public Test $test;
+
+    #[Locked]
     public TestsResult $testResult;
+
     public TestsSection $content;
+
+    #[Locked]
     public Collection $sections;
 
+    #[Locked]
     public array $active = [];
+
+    #[Locked]
     public array $sectionHistory = [];
+
+    #[Locked]
     public array $sectionNavigation = [];
+
     public array $results = [];
     /*
      results = [
@@ -44,8 +58,14 @@ class SolveForm extends Component
     */
 
     public string $sectionTitle = '';
+
+    #[Locked]
     public int $totalQuestionsCount = 0;
+
+    #[Locked]
     public string $expirationTime = '';
+
+    #[Locked]
     public bool $finished = false;
 
     protected $listeners = [
@@ -54,58 +74,63 @@ class SolveForm extends Component
 
     public function mount(Test $test): void
     {
+        abort_unless(auth()->user()?->can('tests:solve'), 403);
+        abort_unless(StatusEnum::ACTIVE->is($test->status), 403);
+
         $this->test = $test;
-        if (!$this->test->sections_with_no_parent()->count() || !$this->test->questions()->count()) {
+        if (! $this->test->sections_with_no_parent()->count() || ! $this->test->questions()->count()) {
             redirect()->route('frontend.exams');
+
             return;
         }
 
-        $this->sections = $test->sections()->parentIsZero()->get();
+        $this->sections = $test->sections()->parentIsZero()->with('parents.question')->get();
+        $this->initializeSectionNavigation();
 
         $this->totalQuestionsCount = $test->questions()->count();
-        $this->setActive(0, $this->sections?->first()->parents->first()?->id);
+        $firstSection = $this->sections->search(fn ($section) => $section->parents->isNotEmpty());
+        if ($firstSection === false) {
+            redirect()->route('frontend.exams');
 
+            return;
+        }
+        $this->setActive($firstSection, $this->sections[$firstSection]->parents->first()->id);
+
+        $this->startedExams();
         $this->initializeResultsArray();
-        $this->initializeExpiration();
     }
 
-    public function initializeResultsArray(): void
+    private function initializeResultsArray(): void
     {
-        collect($this->sections)->each(function ($section, $sectionIndex) {
-            $parents = $section->parents()->where('type', TestSectionTypeEnum::QUESTION)->get();
+        $answers = $this->testResult->details()->get()->keyBy(fn ($detail) => $detail->section_id.':'.$detail->question_id);
+        $this->results = [];
 
-            collect($parents)->each(function ($parent) use ($sectionIndex) {
+        collect($this->sections)->each(function ($section, $sectionIndex) use ($answers) {
+            $parents = $section->parents->filter(fn ($parent) => TestSectionTypeEnum::QUESTION->is($parent->type));
+
+            collect($parents)->each(function ($parent) use ($sectionIndex, $answers) {
+                $questionId = $parent->question->question_id ?? 0;
                 $this->results[$sectionIndex][$parent->id] = [
-                    $parent->question->question_id ?? 0 => 0
+                    $questionId => $answers->get($parent->id.':'.$questionId)?->answer_id ?? 0,
                 ];
             });
         });
     }
 
-    public function initializeExpiration(): void
+    private function initializeExpiration(): void
     {
-        $this->expirationTime = now(settings()->timezone ?? config('app.timezone'))
-            ->addSeconds($this->test->duration)->format('Y-m-d H:i:s');
-
-        if ($expirationTime = request()->session()->get('expirationTime_' . $this->test->id, false)) {
-            // $this->expirationTime = $expirationTime;
-            // geçici kapalı
-        } else {
-            request()->session()->put('expirationTime_' . $this->test->id, $this->expirationTime);
-        }
-    }
-
-    private function forgetExpiration(): void
-    {
-        request()->session()->forget('expirationTime_' . $this->test->id);
+        $this->expirationTime = $this->testResult->expires_at
+            ->timezone(settings()->timezone ?? config('app.timezone'))->format('Y-m-d H:i:s');
     }
 
     public function setActive(int $sectionKey, int $parentId): void
     {
+        $section = $this->sections->get($sectionKey);
+        abort_unless($section && $section->parents()->whereKey($parentId)->exists(), 422);
         $this->active = [
             'index' => $this->sectionNavigationValue($sectionKey, $parentId),
             'section' => $sectionKey,
-            'parent' => $parentId
+            'parent' => $parentId,
         ];
 
         $this->sectionHistory[] = $parentId;
@@ -113,22 +138,38 @@ class SolveForm extends Component
 
     private function sectionNavigationValue(int $sectionKey, int $parentId): string
     {
-        return $sectionKey . ':' . $parentId;
+        return $sectionKey.':'.$parentId;
     }
 
-    public function addSectionNavigation(int $sectionKey, int $parentId): void
+    private function initializeSectionNavigation(): void
     {
-        $value = $this->sectionNavigationValue($sectionKey, $parentId);
-        if (!in_array($value, array_values($this->sectionNavigation))) {
-            $this->sectionNavigation[] = $value;
+        $this->sectionNavigation = [];
+        foreach ($this->sections as $key => $section) {
+            foreach ($section->parents as $parent) {
+                $this->sectionNavigation[] = $this->sectionNavigationValue($key, $parent->id);
+            }
         }
+    }
+
+    #[Computed]
+    public function sectionLabels(): array
+    {
+        $labels = [];
+        foreach ($this->sections as $section) {
+            $number = 1;
+            foreach ($section->parents as $parent) {
+                $labels[$parent->id] = TestSectionTypeEnum::QUESTION->is($parent->type)
+                    ? __('Soru').' '.$number++ : $parent->name;
+            }
+        }
+
+        return $labels;
     }
 
     #[Computed]
     public function getContent()
     {
         if ($this->finished) {
-            $this->dispatch('showFinishedModal');
             return false;
         }
 
@@ -152,8 +193,9 @@ class SolveForm extends Component
         $count = 0;
         foreach ($this->results as $section) {
             foreach ($section as $question) {
-                if (array_values($question)[0])
+                if (array_values($question)[0]) {
                     $count++;
+                }
             }
         }
 
@@ -189,12 +231,39 @@ class SolveForm extends Component
         $activeParent = $this->active['parent'];
 
         $this->results[$activeSection][$activeParent][$questionId] = 0;
+        $this->persistAnswer($activeParent, $questionId, 0);
+    }
+
+    public function updatedResults(mixed $value, ?string $key = null): void
+    {
+        abort_unless($key && preg_match('/^[0-9]+\.([0-9]+)\.([0-9]+)$/', $key, $matches), 422);
+        abort_unless((is_int($value) || is_string($value))
+            && filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) !== false, 422);
+
+        $this->persistAnswer((int) $matches[1], (int) $matches[2], (int) $value);
+    }
+
+    private function persistAnswer(int $sectionId, int $questionId, int $answerId): void
+    {
+        $this->sections->loadMissing('parents.question');
+        $this->testResult = SaveTestResultAnswer::run($this->currentResult(), $sectionId, $questionId, $answerId);
+        $this->finished = YesNoEnum::YES->is($this->testResult->completed);
+        $this->initializeResultsArray();
+    }
+
+    private function currentResult(): TestsResult
+    {
+        abort_unless(auth()->user()?->can('tests:solve'), 403);
+
+        return TestsResult::whereKey($this->testResult->id)
+            ->where('test_id', $this->test->id)->where('user_id', auth()->id())->firstOrFail();
     }
 
     public function prevSection(): void
     {
         if ($this->prevIsDisabled()) {
             $this->message(__('Önceki alan bulunmuyor, işlem tamamlanamamadı!'))->error();
+
             return;
         }
 
@@ -215,6 +284,7 @@ class SolveForm extends Component
     {
         if ($this->nextIsDisabled()) {
             $this->message(__('Sonraki alan bulunmuyor, işlem tamamlanamamadı!'))->error();
+
             return;
         }
 
@@ -233,13 +303,17 @@ class SolveForm extends Component
 
     public function saveIsDisabled(): bool
     {
-        return false;
-        // return $this->resultQuestionsCount() != $this->totalQuestionsCount;
+        return $this->finished;
     }
 
     public function saveAndFinish(): bool
     {
-        $this->forgetExpiration();
+        $result = $this->currentResult();
+        if ($result->expires_at->isFuture()) {
+            return false;
+        }
+
+        $this->testResult = CompleteTestResult::run($result);
 
         return $this->finished = true;
     }
@@ -251,68 +325,39 @@ class SolveForm extends Component
         }
 
         $this->message(__('Sınav sonuçları görüntülenemiyor, işlem tamamlanamadı'))->error();
+
         return false;
     }
 
-    public function startedExams(): bool
+    private function startedExams(): void
     {
-        if ($this->finished) {
-            return false;
-        }
-
-        $this->testResult = CreateOrUpdateTestResult::run(
-            attributes: [
-                'user_id' => auth()->id(),
-                'test_id' => $this->test->id,
-                'completed' => YesNoEnum::NO,
-            ],
-            values: [
-                'question_count' => $this->totalQuestionsCount,
-                'passing_score' => $this->test->passing_score ?? 60,
-                'expires_at' => $this->expirationTime,
-                'season_id' => activeSeason()->id ?? 1
-            ]
-        );
-        return true;
+        $this->testResult = StartTestResult::run($this->test);
+        $this->finished = YesNoEnum::YES->is($this->testResult->completed);
+        $this->initializeExpiration();
     }
 
     public function save()
     {
-        if (request()->user()->cannot('tests:solve')) {
-            $this->message(__('Sınav tamamlama yetkiniz bulunmuyor!'))->error();
-            return false;
-        }
-
-        if ($this->finished) {
+        $result = $this->currentResult();
+        if (YesNoEnum::YES->is($result->completed)) {
+            $this->finished = true;
             $this->message(__('Sınav daha önce tamamlandı, tekrar yanıtlar kayıt edilemez!'))->error();
+
             return false;
         }
 
-        /*
-        if ($this->resultQuestionsCount() != $this->totalQuestionsCount || empty($this->results)) {
-            $this->message(__('Yanıtlanmayan sorular bulunuyor!'))->error();
-            return false;
-        }
-        */
-
-        if (empty($this->testResult)) {
-            $this->startedExams();
-        }
-
-        $this->testResult = CreateOrUpdateTestResultDetail::run(
-            results: $this->results,
-            testResult: $this->testResult
-        );
+        $this->testResult = CompleteTestResult::run($result);
 
         $this->finished = true;
-        $this->forgetExpiration();
-
         $this->message(__('Sınav başarıyla tamamlandı ve yanıtlar kayıt edildi!'))->success();
+
         return true;
     }
 
     public function render()
     {
+        $this->sections->loadMissing('parents.question');
+
         return view('livewire.frontend.exams.solve-form');
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\YesNoEnum;
-use App\Models\ExamResultDetail;
+use App\Helpers\TableCache;
 use App\Models\League;
 use App\Models\LeagueResult;
 use App\Models\User;
@@ -41,7 +41,7 @@ class CalculateLeagueResult implements ShouldQueue
 
         $maxPositionNumber = intval(settings()->leagueUserCount ?? 10);
         $correctPoint = intval(settings()->leagueCorrectPoint ?? 3);
-        $incorrectPoint = intval(settings()->leagueIncorrectPoint ?? -1) * -1;
+        $incorrectPoint = intval(settings()->leagueIncorrectPoint ?? -1);
 
         //$isCompleted = settings()->leagueResultCompleted ?? 1;
         $model = app(settings()->leagueResultModel ?? 'App\Models\ExamResultDetail');
@@ -85,6 +85,7 @@ class CalculateLeagueResult implements ShouldQueue
                             ->where('u.league_approval', 1)
                             ->whereNull('u.deleted_at');
                     })
+                    ->when($baseTableName === 'tests_results', fn ($query) => $query->where('tr.completed', YesNoEnum::YES))
                     ->whereBetween('trd.updated_at', [
                         $this->started_at,
                         $this->ended_at
@@ -117,7 +118,7 @@ class CalculateLeagueResult implements ShouldQueue
             ')
             ->get();
 
-        if (empty($results)) {
+        if ($results->isEmpty()) {
             $this->fail('Lig hesaplama aralığında data yok! - ' . $this->started_at . '-' . $this->ended_at);
             return;
         }
@@ -167,7 +168,8 @@ class CalculateLeagueResult implements ShouldQueue
         LeagueResult::upsert(
             $data,
             ['league_id', 'user_id'],
-            ['total_score', 'total_correct', 'total_incorrect', 'total_duration', 'position', 'rank_position']
+            ['total_score', 'total_correct', 'total_incorrect', 'total_duration', 'position', 'rank_position', 'league_number']
         );
+        TableCache::invalidate('leagues', 'league-results', 'options');
     }
 }

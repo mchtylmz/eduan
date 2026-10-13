@@ -1,0 +1,76 @@
+.admin-management { font-size: 16px; }
+.admin-management > .block-header { flex-wrap: wrap; gap: .75rem; }
+.admin-management > .block-header .block-options { margin-left: auto; }
+.admin-management .form-control, .admin-management .form-select,
+.admin-management .bootstrap-select > .dropdown-toggle { min-height: 44px; font-size: 16px; border-radius: .375rem; }
+.admin-management .form-control:focus, .admin-management .form-select:focus { box-shadow: 0 0 0 .2rem rgba(60, 110, 220, .1); }
+.admin-management .form-label { margin-bottom: .5rem; font-weight: 500; }
+.admin-management .form-check-label { padding-block: .2rem; }
+.admin-management textarea.form-control { min-height: 100px; }
+.admin-management input[type=color].form-control { min-height: 48px; }
+.admin-settings-layout { display: grid; grid-template-columns: 275px minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.admin-settings-nav { padding: .75rem; }
+.admin-settings-nav-title { padding: .75rem .75rem 1rem; font-weight: 600; }
+.admin-settings-link { display: flex; align-items: center; gap: .65rem; padding: .85rem .75rem; margin-bottom: .25rem; border-radius: .375rem; color: inherit; font-size: 15px; }
+.admin-settings-link > span { min-width: 0; overflow-wrap: anywhere; }
+.admin-settings-link > .fa:first-child { flex-shrink: 0; color: #7b8796; }
+.admin-settings-link:hover, .admin-settings-link.active { background: #edf2ff; color: #2855b7; }
+.admin-settings-link.active { font-weight: 600; }
+.admin-settings-cache { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid #e5e8ec; }
+.admin-settings-content { min-width: 0; }
+.admin-settings-content > .block-content { padding: 1.5rem; }
+.admin-settings-content form > .row { row-gap: .5rem; }
+.admin-settings-content form > .mb-3.text-center { display: flex; justify-content: flex-end; border-top: 1px solid #e5e8ec; padding-top: 1.25rem !important; }
+.admin-settings-content .nav-tabs { gap: .25rem; border-bottom: 1px solid #e5e8ec; flex-wrap: wrap; }
+.admin-settings-content .nav-tabs .nav-link { border-radius: .375rem .375rem 0 0; }
+.admin-settings-content .alert { line-height: 1.6; }
+.admin-management .permits { border: 1px solid #e5e8ec; border-top: 0; border-radius: 0 0 .375rem .375rem; }
+.admin-management .permits .form-check { min-height: 34px; display: flex; gap: .5rem; align-items: center; }
+.admin-management .permits .form-check-input { flex-shrink: 0; }
+.admin-season-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
+.admin-management .admin-role-type .form-check-label { min-height: 58px; display: flex; align-items: center; padding: .85rem; }
+.admin-season-card { padding: 1.25rem; background: var(--bs-body-bg, #fff); border: 1px solid #e5e8ec; border-radius: .5rem; margin-bottom: 0; }
+.admin-season-card-header { display: flex; align-items: center; gap: 1rem; justify-content: space-between; margin-bottom: 0; }
+.admin-season-card-header h3 { margin: 0; font-size: 18px; overflow-wrap: anywhere; }
+.admin-season-actions { display: flex; justify-content: flex-end; padding-block: 1rem; }
+.admin-management .logs .table { font-size: 15px; }
+.dark-mode .admin-settings-link:hover, .dark-mode .admin-settings-link.active { background: #273755; color: #bccfff; }
+.dark-mode .admin-settings-cache, .dark-mode .admin-season-card, .dark-mode .admin-management .permits { border-color: #2e3c51; }
+@media (max-width: 991.98px) {
+    .admin-season-grid { grid-template-columns: 1fr; }
+    .admin-settings-layout { grid-template-columns: 1fr; gap: 1rem; }
+    .admin-settings-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
+    .admin-settings-nav-title, .admin-settings-cache { grid-column: 1 / -1; }
+    .admin-settings-link { font-size: 14px; margin-bottom: 0; }
+    .admin-settings-content > .block-content { padding: 1rem; }
+}
+@media (max-width: 575.98px) {
+    .admin-season-card { padding: 1rem; }
+    .admin-season-card-header { flex-wrap: wrap; }
+    .admin-season-card-header .btn { margin-left: auto; }
+}
+
+.admin-log-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+.admin-log-meta > div { border: 1px solid #e5e8ec; border-radius: .375rem; padding: .85rem 1rem; min-width: 0; }
+.admin-log-meta .admin-log-wide { grid-column: 1 / -1; }
+.admin-log-meta dt { font-size: 14px; color: #697586; font-weight: 400; margin-bottom: .35rem; }
+.admin-log-meta dd { margin: 0; overflow-wrap: anywhere; font-size: 15px; }
+.admin-log-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.admin-log-toolbar h3 { font-size: 18px; margin: 0; }
+.admin-log-comparison { width: 100%; table-layout: fixed; font-size: 15px; border: 1px solid #e5e8ec; }
+.admin-log-comparison th, .admin-log-comparison td { padding: .85rem; vertical-align: top; border-bottom: 1px solid #e5e8ec; overflow-wrap: anywhere; }
+.admin-log-comparison thead { background: var(--bs-tertiary-bg, #f6f7f9); }
+.admin-log-comparison th { width: 26%; font-weight: 500; }
+.admin-log-comparison thead th:not(:first-child) { width: 37%; }
+.admin-log-comparison .is-changed > * { background: #e9f3fc; }
+.admin-log-comparison td { white-space: pre-wrap; }
+.dark-mode .admin-season-card { background: #192330; }
+.dark-mode .admin-log-meta > div, .dark-mode .admin-log-comparison th, .dark-mode .admin-log-comparison td { border-color: #2e3c51; }
+.dark-mode .admin-log-comparison .is-changed > * { background: #253d55; }
+@media (max-width: 575.98px) {
+    .admin-log-meta { grid-template-columns: 1fr; }
+    .admin-log-comparison thead { display: none; }
+    .admin-log-comparison, .admin-log-comparison tbody, .admin-log-comparison tr, .admin-log-comparison th, .admin-log-comparison td { display: block; width: 100%; }
+    .admin-log-comparison td::before { content: attr(data-label); display: block; font-size: 13px; color: #697586; margin-bottom: .25rem; }
+    .admin-log-comparison tbody th { font-weight: 600; }
+}

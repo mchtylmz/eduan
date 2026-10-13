@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Stats;
 
-use App\Enums\RoleTypeEnum;
-use App\Exports\FilterStatsExamsExport;
 use App\Exports\FilterStatsQuestionsExport;
+use App\Helpers\LearningTable;
+use App\Helpers\StatisticsTable;
 use App\Traits\CustomLivewireAlert;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -18,11 +17,15 @@ class QuestionsStats extends Component
     use CustomLivewireAlert, WithPagination;
 
     public string $started_at;
+
     public string $ended_at;
+
     public string $locale;
+
     public string $search = '';
 
     public string $selectedOrderBy = 'question_count DESC';
+
     public bool $showResults = false;
 
     public function mount(): void
@@ -52,51 +55,10 @@ class QuestionsStats extends Component
     {
         $this->showResults = true;
 
-        $examResults = DB::table('exam_results')
-            ->whereBetween('updated_at', [$this->started_at, $this->ended_at])
-            ->select(
-                'user_id',
-                'question_count',
-                'correct_count',
-                'incorrect_count',
-                'updated_at'
-            );
-
-        $testResults = DB::table('tests_results')
-            ->whereBetween('updated_at', [$this->started_at, $this->ended_at])
-            ->select(
-                'user_id',
-                'question_count',
-                'correct_count',
-                'incorrect_count',
-                'updated_at'
-            );
-
-        $results = DB::query()
-            ->fromSub(
-                $examResults->unionAll($testResults),
-                'results'
-            )
-            ->leftJoin('users', 'users.id', '=', 'results.user_id')
-            ->select(
-                'results.user_id',
-                'users.username',
-                'users.name',
-                'users.surname',
-                DB::raw('SUM(question_count) as question_count'),
-                DB::raw('SUM(correct_count) as correct_count'),
-                DB::raw('SUM(incorrect_count) as incorrect_count'),
-                DB::raw('ROUND(SUM(correct_count) * 100.0 / SUM(question_count), 2) as success_rate'),
-                DB::raw('MAX(results.updated_at) as updated_at')
-            )
-            ->when(
-                auth()->user()->can(RoleTypeEnum::TEACHER),
-                fn ($query) => $query->whereIn('user_id', auth()->user()->students()->select('id'))
-            )
-            ->groupBy(
-                'results.user_id'
-            )
-            ->orderByRaw($this->selectedOrderBy);
+        LearningTable::access('stats');
+        $this->validate(['started_at' => 'required|date_format:Y-m-d', 'ended_at' => 'required|date_format:Y-m-d|after_or_equal:started_at',
+            'selectedOrderBy' => ['required', Rule::in(array_keys($this->orderByList()))]]);
+        $results = StatisticsTable::questions($this->started_at, $this->ended_at, $this->selectedOrderBy);
 
         return $export ? $results->get() : $results->paginate(20);
     }
@@ -112,6 +74,8 @@ class QuestionsStats extends Component
 
     public function render()
     {
-        return view('livewire.backend.stats.questions-stats');
+        LearningTable::access('stats');
+
+        return view('livewire.backend.stats.questions-server-table');
     }
 }

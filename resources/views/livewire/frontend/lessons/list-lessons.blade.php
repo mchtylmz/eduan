@@ -33,9 +33,11 @@
             @foreach($lessons as $lesson)
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="h10_category-item mb-30 h10_category_bg-{{ $lesson->id %10 }}">
+                        @if($home)<span class="home-lesson-icon"><i class="fa-light fa-book-open" aria-hidden="true"></i></span>@endif
                         <h4 class="h10_category-item-title">
                             <a href="{{ route('frontend.lesson', $lesson->code) }}">
                                 {{ $lesson->name }}
+                                @if($home)<i class="fa-light fa-arrow-up-right home-lesson-arrow" aria-hidden="true"></i>@endif
                             </a>
                         </h4>
                         <p class="my-2 text-muted">
@@ -52,7 +54,7 @@
                             </a>
                             <p>
                                 <i class="fa-light fa-pen mx-1"></i>
-                                <span>{{ collect($lesson->exams)->groupBy('id')->count() }} {{ __('Test') }}</span>
+                                <span>{{ $lesson->exams_count }} {{ __('Test') }}</span>
                             </p>
                         </div>
                     </div>

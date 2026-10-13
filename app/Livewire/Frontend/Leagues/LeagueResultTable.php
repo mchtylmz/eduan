@@ -3,12 +3,9 @@
 namespace App\Livewire\Frontend\Leagues;
 
 use App\Models\League;
-use App\Models\LeagueResult;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class LeagueResultTable extends Component
 {
     public League $league;
@@ -19,7 +16,7 @@ class LeagueResultTable extends Component
 
     public int $ranking = 1;
 
-    public function mount(League $league, string $name, int $ranking = 1, int $userCount = null): void
+    public function mount(League $league, string $name, int $ranking = 1, ?int $userCount = null): void
     {
         $this->league = $league;
         $this->name = $name;
@@ -31,7 +28,7 @@ class LeagueResultTable extends Component
     public function results()
     {
         return cache()->remember(
-            sprintf('league_%d_%d', $this->league->id, $this->ranking),
+            sprintf('league_%d_%d_%d', $this->league->id, $this->ranking, $this->userCount),
             now()->addHours(12),
             function () {
                 return $this->league->results()

@@ -1,0 +1,19 @@
+# DEPLOYMENT CHECKLIST ONLY: apply when releasing the PHP 8.5 project.
+# Do not change the current live scheduler or worker before that release.
+# SiteGround -> Site Tools -> Devs -> Cron Jobs
+# Replace the PHP invocation in the existing tasks; preserve their schedules
+# and any existing queue/timeout/retry options. Do not create duplicate tasks.
+# Paste only the applicable command into the Command field.
+
+# Laravel scheduler
+cd /home/u2930-h840qws8g2us/www/hypotenuse.be && /usr/bin/php85 -d extension=imagick.so artisan schedule:run
+
+# Existing queue worker pattern: exits when the queue is empty.
+cd /home/u2930-h840qws8g2us/www/hypotenuse.be && /usr/bin/php85 -d extension=imagick.so artisan queue:work --stop-when-empty
+
+# Read-only extension check over SSH (does not run scheduled jobs):
+# /usr/bin/php85 -d extension=imagick.so -r 'echo PHP_VERSION, PHP_EOL; echo phpversion("imagick"), PHP_EOL;'
+
+# PHP's -d options apply to that process. If a future Schedule::command
+# starts a separate image-processing Artisan command, its PHP invocation
+# must also load Imagick; the outer schedule:run flag is not inherited.

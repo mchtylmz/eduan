@@ -29,7 +29,7 @@
             </div>
             <div class="col-lg-3 mb-3" wire:ignore>
                 <label class="form-label" for="published_at">{{ __('Paylaşım Zamanı') }}</label>
-                <input type="text" class="js-flatpickr form-control" id="published_at" wire:model="published_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ $locale }}" value="{{ $published_at }}">
+                <input type="text" class="js-flatpickr form-control" id="published_at" wire:model="published_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ app()->getLocale() }}" value="{{ $published_at }}">
             </div>
 
             <div class="col-lg-6">
@@ -71,7 +71,7 @@
 
             <div class="col-lg-12 mb-3" wire:ignore>
                 <label class="form-label" for="content">{{ __('İçerik') }}</label>
-                <x-tinymce.editor name="content" value="{{ $content }}"/>
+                <x-tinymce.editor name="content" :value="$content"/>
             </div>
 
             <div class="col-lg-12 mb-3">

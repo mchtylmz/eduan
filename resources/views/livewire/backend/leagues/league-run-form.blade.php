@@ -11,11 +11,11 @@
         <div class="row">
             <div class="col-lg-4 mb-3" wire:ignore>
                 <label class="form-label" for="start_at">{{ __('Başlangıç Zamanı') }}</label>
-                <input type="text" class="js-flatpickr form-control" id="start_at" wire:model="start_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ $locale }}" value="{{ $start_at }}">
+                <input type="text" class="js-flatpickr form-control" id="start_at" wire:model="start_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ app()->getLocale() }}" value="{{ $start_at }}">
             </div>
             <div class="col-lg-4 mb-3" wire:ignore1>
                 <label class="form-label" for="end_at">{{ __('Bitiş Zamanı') }}</label>
-                <input type="text" class="js-flatpickr form-control" id="end_at" wire:model="end_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ $locale }}" value="{{ $end_at }}">
+                <input type="text" class="js-flatpickr form-control" id="end_at" wire:model="end_at" data-enable-time="true" data-time_24hr="true" data-locale="{{ app()->getLocale() }}" value="{{ $end_at }}">
             </div>
         </div>
 

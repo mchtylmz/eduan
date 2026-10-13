@@ -10,6 +10,7 @@
 namespace PHPUnit\Runner;
 
 use function array_slice;
+use function assert;
 use function dirname;
 use function explode;
 use function implode;
@@ -30,11 +31,21 @@ final class Version
     public static function id(): string
     {
         if (self::$pharVersion !== '') {
+            // @codeCoverageIgnoreStart
             return self::$pharVersion;
+            // @codeCoverageIgnoreEnd
         }
 
         if (self::$version === '') {
-            self::$version = (new VersionId('11.5.19', dirname(__DIR__, 2)))->asString();
+            $path = dirname(__DIR__, 2);
+
+            if ($path === '') {
+                // @codeCoverageIgnoreStart
+                $path = '.';
+                // @codeCoverageIgnoreEnd
+            }
+
+            self::$version = new VersionId('13.4.1', $path)->asString();
         }
 
         return self::$version;
@@ -59,7 +70,10 @@ final class Version
      */
     public static function majorVersionNumber(): int
     {
-        return (int) explode('.', self::series())[0];
+        $majorVersion = (int) explode('.', self::series())[0];
+        assert($majorVersion > 0);
+
+        return $majorVersion;
     }
 
     /**

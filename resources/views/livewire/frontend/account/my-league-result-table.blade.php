@@ -1,40 +1,26 @@
-<div>
-    <div class="table-responsive my-3">
-        <table class="table table-responsive table-striped table-bordered w-100">
-            <thead>
-            <tr>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Başlangıç Tarihi') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Bitiş Tarihi') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Lig') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Toplam Soru') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Doğru') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Yanlış') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Puan') }}</th>
-                <th scope="col" class="bg-secondary text-white text-center">{{ __('Sıra') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            @if(count($results = $this->results()))
-                @foreach($results as $result)
-                    <tr>
-                        <td class="text-center" scope="col">{{ dateFormat($result->league->start_at) }}</td>
-                        <td class="text-center" scope="col">{{ dateFormat($result->league->end_at) }}</td>
-                        <td class="text-center" scope="col">{{ $leagueNames[$result->league_number] ?? '-' }}</td>
-                        <td class="text-center" scope="col">{{ $result->total_correct + $result->total_incorrect }}</td>
-                        <td class="text-center" scope="col">{{ $result->total_correct }}</td>
-                        <td class="text-center" scope="col">{{ $result->total_incorrect }}</td>
-                        <td class="text-center" scope="col">{{ $result->total_score }}</td>
-                        <td class="text-center" scope="col">{{ $result->position }}</td>
-                    </tr>
-                @endforeach
-            @else
-                <tr>
-                    <td colspan="8" scope="col">{{ __('Gösterilecek sonuç bulunmuyor!') }}</td>
-                </tr>
-            @endif
-
-            </tbody>
-        </table>
-
+<div class="member-league-results">
+    @php($results = $this->results())
+    <div class="member-league-grid">
+        @forelse($results as $result)
+            <article class="member-league-card" wire:key="member-league-{{ $result->id }}">
+                <header>
+                    <span class="member-league-badge"><i class="fa-light fa-trophy" aria-hidden="true"></i>{{ __('account.league_number', ['number' => $result->league_number]) }}</span>
+                    <span class="member-position">{{ __('account.position') }} <strong>{{ $result->position }}</strong></span>
+                </header>
+                <div class="member-league-period">
+                    <span class="member-record-label">{{ __('account.period') }}</span>
+                    <h2>@if($result->league){{ dateFormat($result->league->start_at, 'd M Y') }} – {{ dateFormat($result->league->end_at, 'd M Y') }}@else{{ __('account.unavailable_period') }}@endif</h2>
+                </div>
+                <div class="member-league-score"><strong>{{ $result->total_score }}</strong><span>{{ __('account.points') }}</span></div>
+                <dl class="member-record-metrics">
+                    <div><dt>{{ __('account.questions_count') }}</dt><dd>{{ $result->total_correct + $result->total_incorrect }}</dd></div>
+                    <div><dt>{{ __('account.correct') }}</dt><dd class="member-correct">{{ $result->total_correct }}</dd></div>
+                    <div><dt>{{ __('account.incorrect') }}</dt><dd class="member-incorrect">{{ $result->total_incorrect }}</dd></div>
+                </dl>
+            </article>
+        @empty
+            <p class="member-empty">{{ __('account.empty') }}</p>
+        @endforelse
     </div>
+    {{ $results->links('components.frontend.livewire-pagination', ['scrollTo' => '.member-content']) }}
 </div>

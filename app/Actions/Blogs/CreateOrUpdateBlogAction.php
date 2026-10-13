@@ -10,7 +10,7 @@ class CreateOrUpdateBlogAction
 {
     use AsAction;
 
-    public function handle(array $data, Blog $blog = null)
+    public function handle(array $data, ?Blog $blog = null)
     {
         if (is_null($blog)) {
             $blog = Blog::create($data);

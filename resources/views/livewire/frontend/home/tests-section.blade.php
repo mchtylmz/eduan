@@ -1,14 +1,13 @@
 <div>
-    <section class="h2_course-area pt-75 pb-75">
+    <section class="h2_course-area home-catalog home-catalog-tests">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-6">
-                    <div class="section-area-10 mb-55 text-center">
-                        <h1 class="section-title">{{ data_get($content, 'testTitle') }}</h1>
-                        <p class="section-text">{{ data_get($content, 'testDescription') }}</p>
-                    </div>
+            <header class="home-catalog-heading">
+                <div>
+                    <h2 class="section-title">{{ data_get($content, 'testTitle') }}</h2>
+                    <p class="section-text">{{ data_get($content, 'testDescription') }}</p>
                 </div>
-            </div>
+                <a href="{{ route('frontend.tests') }}" class="home-catalog-link">{{ __('learning.home_tests') }} <i class="fa-light fa-arrow-right" aria-hidden="true"></i></a>
+            </header>
             <div class="h2_course-wrap">
                 @livewire('frontend.tests.list-tests', [
                      'showHits' => true,
@@ -18,11 +17,6 @@
                  ])
             </div>
 
-            <div class="col-12">
-                <div class="h10_category-item-btn pt-30">
-                    <a href="{{ route('frontend.tests') }}">{{ __('Tüm Testler') }} <i class="fa-light fa-arrow-right"></i></a>
-                </div>
-            </div>
         </div>
     </section>
 </div>

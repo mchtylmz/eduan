@@ -18,7 +18,7 @@
                     <div class="innerPage_course-right mb-20">
                         @if(empty($topic_id))
                             <div class="innerPage_course-category" wire:ignore>
-                                <select wire:model.change="lesson_id"
+                                <select wire:model.live.change="lesson_id"
                                         class="innerPage_course-category-list selectpicker"
                                         data-live-search="true"
                                         data-size="6">
@@ -47,7 +47,7 @@
         <div class="row">
             @foreach($tests as $test)
                 <div class="col-xl-4 col-lg-6 col-md-6">
-                    <div class="h2_course-item mb-20 border {{ auth()->check() && count($test->userResults) ? 'border-primary' : '' }}">
+                    <div class="h2_course-item mb-20 border {{ auth()->check() && $test->personal_results_count ? 'border-primary' : '' }}">
                         <div class="h2_course-content pb-4">
                             <div class="h2_course-content-top">
                                 <div class="h2_course-rating">
@@ -68,25 +68,20 @@
                                 <a href="{{ route('frontend.test.detail', $test->code) }}">{{ $test->name }}</a>
                             </h5>
                             <div class="h2_course-content-info mb-0">
-                                <span><i class="fa-thin fa-eye"></i>{{ $test->visibility->name() ?? '' }}</span>
+                                <span><i class="fa-thin fa-eye"></i>{{ \App\Enums\VisibilityEnum::PREMIUM->is($test->visibility) ? __('account.premium_only') : __('account.members_only') }}</span>
                             </div>
                         </div>
                         <div class="h2_course-content-bottom">
                                 <span>
                                     <i class="fa-light fa-question-circle me-1"></i>
-                                    {{ $test->questions_count }} {{ __('Soru') }}
+                                    {{ $test->questions_count }} {{ __('learning.questions') }}
                                 </span>
-                            @if(auth()->check() && count($test->userResults))
-                                @php
-                                    $resultStats = examResultStats(exam: $test, user: user());
-                                    $correct_count = $resultStats['correct_count'];
-                                    $incorrect_count = $resultStats['incorrect_count'];
-                                @endphp
+                            @if(auth()->check() && $test->personal_results_count)
                                 <span>
                                     <i class="fa-light fa-poll me-1"></i>
-                                    {{ $correct_count }} {{ __('Doğru') }}
+                                    {{ $test->personal_correct_count }} {{ __('Doğru') }}
                                     /
-                                    {{ $incorrect_count }} {{ __('Yanlış') }}
+                                    {{ $test->personal_incorrect_count }} {{ __('Yanlış') }}
                                 </span>
                             @endif
                         </div>
@@ -108,4 +103,3 @@
     @endif
 
 </div>
-

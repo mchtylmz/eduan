@@ -22,14 +22,19 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "illuminate/contracts": "^10.0|^11.0|^12.0",
-        "lorisleiva/lody": "^0.6"
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "lorisleiva/lody": "^0.7"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.0",
-        "pestphp/pest": "^2.34|^3.0",
-        "phpunit/phpunit": "^10.5|^11.5"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^11.5|^12.0"
     },
     "autoload": {
         "psr-4": {
@@ -39,16 +44,21 @@
     "autoload-dev": {
         "psr-4": {
             "Lorisleiva\\Actions\\Tests\\": "tests"
-        }
+        },
+        "classmap": [
+            "tests/PHPStan/Fixtures"
+        ]
     },
     "scripts": {
+        "phpstan": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --colors=always",
         "test-coverage": "vendor/bin/pest --coverage-html coverage"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {
@@ -59,6 +69,11 @@
             "aliases": {
                 "Action": "Lorisleiva\\Actions\\Facades\\Actions"
             }
+        },
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
         }
     },
     "minimum-stability": "dev",

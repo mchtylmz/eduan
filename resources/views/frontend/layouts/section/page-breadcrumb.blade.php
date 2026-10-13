@@ -1,6 +1,7 @@
 @props([
     'coverImage' => $coverImage ?? false,
-    'previousPage' => $previousPage ?? []
+    'previousPage' => $previousPage ?? [],
+    'showHeading' => $showHeading ?? true
 ])
 <!-- breadcrumb area start -->
 @if($coverImage)
@@ -10,7 +11,7 @@
             <div class="col-12">
                 <div class="breadcrumb-content">
                     @if(!empty($title))
-                        <h2 class="breadcrumb-title">{{ $title }}</h2>
+                        <h1 class="breadcrumb-title">{{ $title }}</h1>
                     @endif
                     <div class="breadcrumb-list">
                         <a href="/">{{ __('Anasayfa') }}</a>
@@ -36,7 +37,7 @@
                     <a href="{{ $previousPage['url'] }}">{{ $previousPage['title'] }}</a>
                 @endif
                 @if(!empty($title))
-                    <span>{{ $title }}</span>
+                    @if($showHeading)<h1 class="h5 mb-0">{{ $title }}</h1>@else<span>{{ $title }}</span>@endif
                 @endif
             </div>
         </div>

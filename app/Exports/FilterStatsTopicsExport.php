@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\ExamResult;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -18,10 +17,7 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
         $this->collection = $collection;
     }
 
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+    public function collection(): Collection
     {
         return $this->collection;
     }
@@ -42,10 +38,7 @@ class FilterStatsTopicsExport implements FromCollection, ShouldAutoSize, WithHea
 
     public function map($row): array
     {
-        $topic_title = '';
-        if (str($row->topic_title)->isJson()) {
-            $topic_title = json_decode($row->topic_title, true)[app()->getLocale()] ?? '-' ;
-        }
+        $topic_title = str($row->topic_title)->isJson() ? getJsonLocaleValue($row->topic_title) : $row->topic_title;
 
         return [
             $row->name,

@@ -1,3 +1,4 @@
+@php($seo = \App\Helpers\FrontendSeo::metadata($title ?? null, $page ?? null))
 <!Doctype html>
 <html class="no-js" lang="{{ app()->getLocale() }}">
 <head>
@@ -9,13 +10,24 @@
     <meta name="agent" content="{{ request()->userAgent() }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="locale" content="{{ app()->getLocale() }}">
+    <meta name="pwa-user-name" content="{{ auth()->user()?->display_name ?? '' }}">
+    <meta name="pwa-offline-message" content="{{ __('pwa.offline_message') }}">
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="app-version" content="{{ config('app.version') }}">
     <meta name="theme-color" content="{{ settings()->primaryColor ?? '#000' }}" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="{{ settings()->primaryColor ?? '#000' }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="ip-address" content="{{ request()->ip() }}" />
-    <meta name="canonical" content="{{ request()->fullUrl() }}" />
-    <meta name="robots" content="index, follow" />
+    @if($seo['canonical'])
+        <link rel="canonical" href="{{ $seo['canonical'] }}" />
+    @endif
+    <meta name="robots" content="{{ $seo['robots'] }}" />
+    @foreach($seo['alternates'] as $code => $href)
+        <link rel="alternate" hreflang="{{ $code }}" href="{{ $href }}" />
+    @endforeach
+    @if(isset($seo['alternates'][settings()->defaultLocale ?? 'nl']))
+        <link rel="alternate" hreflang="x-default" href="{{ $seo['alternates'][settings()->defaultLocale ?? 'nl'] }}" />
+    @endif
     <meta name="apple-mobile-web-app-title" content="{{ settingLocale('siteTitle') }}">
     <link rel="apple-touch-startup-image" href="{{ asset(settings()->siteLogo) }}">
 
@@ -26,16 +38,18 @@
         <x-seo.tags />
     @endif
     <!-- default stack for seo -->
+    @if($schema = \App\Helpers\SeoSchema::graph($seo))
+        <script type="application/ld+json">{!! json_encode($schema, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+    @endif
 
-    <title>{{ !empty($title) ? $title . ' | ' : '' }}{{ settingLocale('siteTitle') }}</title>
+    <title>{{ $seo['title'] }}</title>
 
     @if($siteFavicon = settings()->siteFavicon)
         <link rel="icon" type="image/x-icon" href="{{ asset($siteFavicon) }}">
         <link rel="shortcut icon" href="{{ asset($siteFavicon) }}">
-        <link rel="apple-touch-icon" href="{{ asset($siteFavicon) }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icons/apple-touch-icon.png') }}?v={{ config('app.version') }}">
     @foreach([192, 256, 384, 512, 1024, 2048] as $width)
-        <link rel="icon" type="image/png" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.jpg') }}?v={{ time() }}">
-        <link rel="apple-touch-icon" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.jpg') }}?v={{ time() }}">
+        <link rel="icon" type="image/jpeg" sizes="{{ $width.'x'.$width }}" href="{{ asset('icons/fav-'.$width.'.jpg') }}?v={{ config('app.version') }}">
         @endforeach
     @endif
 
@@ -66,11 +80,9 @@
     <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v={{ config('app.version') }}" />
     <link rel="stylesheet" href="{{ asset('assets/cookieconsent.css') }}">
 
-    @if(request()->routeIs('frontend.home') && isChrome())
-        <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ time() }}">
-    @endif
+    <link rel="manifest" href="{{ asset('pwa-manifest.json') }}?v={{ config('app.version') }}">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/katex/katex.min.css') }}">
 
     @if(!empty(env('ANALYTICS_CDOE')))
         <!-- Google tag (gtag.js) -->
@@ -145,10 +157,16 @@
 <script src="{{ asset('assets/js/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('assets/js/flatpickr/flatpickr.min.js') }}"></script>
+@if(app()->getLocale() !== 'en')
 <script src="{{ asset('assets/js/flatpickr/l10n/'.app()->getLocale().'.js') }}"></script>
+@endif
 
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/app.js') }}?v={{ config('app.version') }}"></script>
+@if(request()->routeIs('frontend.ai.solution'))
+    <script defer src="{{ asset('assets/vendor/katex/katex.min.js') }}"></script>
+    <script defer src="{{ asset('assets/ai-formulas.js') }}?v={{ config('app.version') }}"></script>
+@endif
 <script>
     if (!document.cookie.includes('cc_cookie')) {
         const script = document.createElement('script');
@@ -162,7 +180,6 @@
 @includeIf('frontend.layouts.section.footer-popup')
 
 @livewireScripts
-<x-livewire-alert::scripts/>
 @stack('script')
 
 <script>

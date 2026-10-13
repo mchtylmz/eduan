@@ -5,10 +5,8 @@ namespace App\Livewire\Frontend\Account;
 use App\Actions\Users\UpdatePasswordAction;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class UpdatePasswordForm extends Component
 {
     use CustomLivewireAlert;
@@ -16,13 +14,16 @@ class UpdatePasswordForm extends Component
     public User $user;
 
     public string $current_password;
+
     public string $password;
+
     public string $password_confirmation;
+
     public string $passwordInputType = 'password';
 
     public function mount(): void
     {
-        $this->user = User::find(auth()->id());
+        $this->user = request()->user();
     }
 
     public function changeType(): void
@@ -42,9 +43,9 @@ class UpdatePasswordForm extends Component
     public function validationAttributes(): array
     {
         return [
-            'current_password' => __('Şu Anki Parolanız'),
-            'password' => __('Yeni Parolanız'),
-            'password_confirmation' => __('Tekrar Yeni Parolanız'),
+            'current_password' => __('account.current_password'),
+            'password' => __('account.new_password'),
+            'password_confirmation' => __('account.confirm_password'),
         ];
     }
 

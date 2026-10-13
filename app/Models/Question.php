@@ -39,7 +39,7 @@ class Question extends Model
             return $this->attachment;
         }
 
-        return settings()->siteLogo;
+        return settings()->siteLogo ?? '';
     }
 
     public function getSolutionUrlAttribute(): string
@@ -48,7 +48,7 @@ class Question extends Model
             return $this->solution;
         }
 
-        return settings()->siteLogo;
+        return settings()->siteLogo ?? '';
     }
 
     public function language(): \Illuminate\Database\Eloquent\Relations\BelongsTo

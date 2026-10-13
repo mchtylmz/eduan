@@ -30,7 +30,7 @@
                 <div class="col-lg-3 mb-3">
                     <label class="form-label" for="duration">{{ __('Süre') }}</label>
                     <div class="input-group" wire:ignore>
-                        <input type="number" min="30" class="form-control" id="duration" wire:model.change="duration">
+                        <input type="number" min="30" class="form-control" id="duration" wire:model.live.change="duration">
                         <span class="input-group-text">{{ __('saniye') }}</span>
                     </div>
                     <p class="m-0 bg-light py-1 px-3 rounded-0">

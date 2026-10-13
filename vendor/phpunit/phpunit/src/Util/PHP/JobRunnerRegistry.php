@@ -10,8 +10,8 @@
 namespace PHPUnit\Util\PHP;
 
 use PHPUnit\Event\Facade;
-use PHPUnit\Framework\ChildProcessResultProcessor;
 use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestRunner\ChildProcessResultProcessor;
 use PHPUnit\Runner\CodeCoverage;
 use PHPUnit\TestRunner\TestResult\PassedTests;
 
@@ -30,11 +30,12 @@ final class JobRunnerRegistry
     }
 
     /**
-     * @param non-empty-string $processResultFile
+     * @param non-empty-string  $processResultFile
+     * @param ?non-empty-string $processResultNonce
      */
-    public static function runTestJob(Job $job, string $processResultFile, Test $test): void
+    public static function runTestJob(Job $job, string $processResultFile, Test $test, ?string $processResultNonce = null): void
     {
-        self::runner()->runTestJob($job, $processResultFile, $test);
+        self::runner()->runTestJob($job, $processResultFile, $test, $processResultNonce);
     }
 
     public static function set(JobRunner $runner): void
@@ -45,13 +46,16 @@ final class JobRunnerRegistry
     private static function runner(): JobRunner
     {
         if (self::$runner === null) {
-            self::$runner = new DefaultJobRunner(
+            $emitter = Facade::emitter();
+
+            self::$runner = new JobRunner(
                 new ChildProcessResultProcessor(
                     Facade::instance(),
-                    Facade::emitter(),
+                    $emitter,
                     PassedTests::instance(),
                     CodeCoverage::instance(),
                 ),
+                $emitter,
             );
         }
 

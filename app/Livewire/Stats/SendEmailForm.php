@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Stats;
 
-use App\Mail\NewsletterMail;
+use App\Actions\Users\AuthorizeUserMail;
 use App\Mail\SendEmailToUserMail;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class SendEmailForm extends Component
@@ -14,20 +16,35 @@ class SendEmailForm extends Component
     use CustomLivewireAlert;
 
     public array $emails = [];
+
     public string $subject;
     public string $content;
 
     public function mount(array $emails = []): void
     {
-        $this->emails = collect($emails)->unique('email')->toArray();
+        AuthorizeUserMail::run();
+        $this->emails = array_map(fn ($row) => is_object($row) ? (array) $row : $row, $emails);
     }
 
     public function rules(): array
     {
         return [
+            'emails' => 'required|array|min:1',
+            'emails.*' => 'required|array',
+            'emails.*.user_id' => 'required|integer|min:1',
+            'emails.*.email' => 'nullable|string|email:rfc',
+            'emails.*.name' => 'nullable|string',
+            'emails.*.surname' => 'nullable|string',
+            'emails.*.success_rate' => 'nullable|numeric|min:0|max:100',
             'subject' => 'required|string|min:5',
             'content' => 'required|string|min:10',
         ];
+    }
+
+    #[Computed]
+    public function recipientCount(): int
+    {
+        return collect($this->emails)->filter(fn ($row) => ! empty(data_get($row, 'email')))->unique('email')->count();
     }
 
     public function validationAttributes(): array
@@ -40,7 +57,10 @@ class SendEmailForm extends Component
 
     public function send()
     {
+        AuthorizeUserMail::run();
+        $this->emails = array_map(fn ($row) => is_object($row) ? (array) $row : $row, $this->emails);
         $this->validate();
+        AuthorizeUserMail::run(studentIds: array_column($this->emails, 'user_id'));
 
         if (!settings()->mailHost || !settings()->mailUsername || !settings()->mailPassword) {
             $this->message(__('Mail gönderim ayarları yapılmamış, mail gönderimi yapılamaz!!'))->error();
@@ -49,7 +69,7 @@ class SendEmailForm extends Component
 
         $laterSecond = 3;
 
-        foreach ($this->emails as $row) {
+        foreach (collect($this->emails)->unique('email') as $row) {
             if (empty($row['email'])) {
                 continue;
             }
@@ -74,13 +94,19 @@ class SendEmailForm extends Component
                 Mail::to($row['email'])->later(
                     delay: now()->addSeconds($laterSecond),
                     mailable: new SendEmailToUserMail(
-                        user: User::where('email', $row['email'])->first(),
+                        user: new User(['name' => $row['name'] ?? '', 'surname' => $row['surname'] ?? '', 'email' => $row['email']]),
                         locale: app()->getLocale(),
                         subject: $this->subject,
-                        content: $content
+                        content: $content,
+                        email: $row['email']
                     )
                 );
-            } catch (\Exception $e) {}
+            } catch (\Throwable $exception) {
+                Log::warning('User mail enqueue failed', [
+                    'actor_id' => auth()->id(), 'user_id' => $row['user_id'],
+                    'recipient' => $row['email'], 'exception' => $exception::class,
+                ]);
+            }
 
             $laterSecond += 3;
         }

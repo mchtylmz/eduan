@@ -288,3 +288,10 @@ th.created_at {
     object-fit: contain;
     max-width: 480px !important;
 }
+
+/* Panelde sağdan açılan bütün detaylar aynı genişliği kullanır. */
+.offcanvas.offcanvas-end {
+    --bs-offcanvas-width: 100%;
+    width: 100% !important;
+    max-width: 840px;
+}

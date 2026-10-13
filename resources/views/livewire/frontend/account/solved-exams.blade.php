@@ -1,10 +1,10 @@
 <div>
     @if(count($exams = $this->exams()))
-        <div class="row">
+        <div class="row g-3 member-course-grid">
             @foreach($exams as $exam)
-                <div class="col-xl-4 col-lg-6 col-md-6">
-                    <div class="h2_course-item mb-20 border">
-                        <div class="h2_course-content pb-4">
+                <div class="col-xxl-6 col-lg-6">
+                    <div class="h2_course-item border">
+                        <div class="h2_course-content">
                             <div class="h2_course-content-top">
                                 <div class="h2_course-rating">
                                     <a href="{{ route('frontend.solved.exams.detail', $exam->code) }}">
@@ -19,7 +19,7 @@
                         <div class="h2_course-content-bottom">
                             <span>
                                 <i class="fa-light fa-pen-clip me-1"></i>
-                                {{ $exam->results_count }} {{ __('Yanıt') }}
+                                {{ $exam->results_count }} {{ __('account.answers') }}
                             </span>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
     @else
         <div class="alert alert-warning d-flex align-items-center">
             <i class="fa fa-exclamation-circle mx-2"></i>
-            <strong class="mx-2">{{ __('Gösterilecek sonuç bulunamadı!') }}</strong>
+            <strong class="mx-2">{{ __('account.empty') }}</strong>
         </div>
     @endif
 

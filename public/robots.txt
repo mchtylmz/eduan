@@ -1,2 +1,13 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /account/
+Disallow: /ai/solution/
+Disallow: /unsubscribe/
+Disallow: /auth/create-password/
+Disallow: /auth/verify/
+Disallow: /test/*/start
+Disallow: /test/*/solutions
+Disallow: /exam/*/start
+Disallow: /exam/*/solutions
+
+Sitemap: https://hypotenuse.be/sitemap.xml

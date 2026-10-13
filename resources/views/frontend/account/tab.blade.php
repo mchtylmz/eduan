@@ -1,61 +1,52 @@
-<div class="row mb-1">
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.profile') ? 'active' : '' }}"
-           href="{{ route('frontend.profile') }}">
-            <i class="fa-light fa-user fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('Hesap Bilgilerim') }}</p>
+@php
+    $accountUser = request()->user();
+    $accountLinks = [
+        ['route' => 'frontend.profile', 'key' => 'profile', 'icon' => 'fa-user'],
+        ['route' => 'frontend.favorite', 'key' => 'favorites', 'icon' => 'fa-bookmark'],
+        ['route' => 'frontend.solved', 'key' => 'tests', 'icon' => 'fa-pen-clip'],
+        ['route' => 'frontend.solved.exams', 'key' => 'exams', 'icon' => 'fa-book-alt'],
+    ];
+    if (settings()->leagueStatus === 'active') {
+        $accountLinks[] = ['route' => 'frontend.my.leagues', 'key' => 'leagues', 'icon' => 'fa-trophy'];
+    }
+    $accountLinks[] = ['route' => 'frontend.stats', 'key' => 'stats', 'icon' => 'fa-chart-line'];
+    $currentAccountKey = match (true) {
+        request()->routeIs('frontend.favorite') => 'favorites',
+        request()->routeIs('frontend.solved', 'frontend.solved.notTests') => 'tests',
+        request()->routeIs('frontend.solved.exams', 'frontend.solved.exams.detail') => 'exams',
+        request()->routeIs('frontend.my.leagues') => 'leagues',
+        request()->routeIs('frontend.stats') => 'stats',
+        default => 'profile',
+    };
+@endphp
+<div class="member-hub" x-data="{ menuOpen: false }">
+    <header class="member-heading">
+        <span class="member-avatar" aria-hidden="true">{{ mb_substr($accountUser->name, 0, 1).mb_substr($accountUser->surname, 0, 1) }}</span>
+        <h2>{{ $accountUser->display_name }}</h2>
+    </header>
+    <button type="button" class="member-menu-toggle" @click="menuOpen = !menuOpen"
+            :aria-expanded="menuOpen.toString()" aria-expanded="false" aria-controls="member-account-menu">
+        <span><i class="fa-light fa-bars" aria-hidden="true"></i>{{ __('account.'.$currentAccountKey) }}</span>
+        <i class="fa-light fa-chevron-down" :class="{ 'is-open': menuOpen }" aria-hidden="true"></i>
+    </button>
+    <nav id="member-account-menu" class="member-navigation" aria-label="{{ __('account.navigation') }}"
+         x-show="menuOpen" x-cloak>
+        @foreach($accountLinks as $item)
+            @php($selected = $currentAccountKey === $item['key'])
+            <a href="{{ route($item['route']) }}" @click="menuOpen = false" @class(['member-nav-link', 'is-active' => $selected]) @if($selected) aria-current="page" @endif>
+                <span class="member-nav-icon"><i class="fa-light {{ $item['icon'] }}" aria-hidden="true"></i></span>
+                <span class="member-nav-copy">{{ __('account.'.$item['key']) }}</span>
+            </a>
+        @endforeach
+        @can('dashboard:access')
+            <a href="{{ route('admin.home.index') }}" class="member-nav-link member-admin-link" @click="menuOpen = false">
+                <span class="member-nav-icon"><i class="fa-light fa-cogs" aria-hidden="true"></i></span>
+                <span class="member-nav-copy">{{ __('account.admin') }}</span>
+            </a>
+        @endcan
+        <a href="{{ route('frontend.logout') }}" class="member-nav-link member-logout" @click="menuOpen = false">
+            <span class="member-nav-icon"><i class="fa-light fa-sign-out" aria-hidden="true"></i></span>
+            <span class="member-nav-copy">{{ __('account.logout') }}</span>
         </a>
-    </div>
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.favorite') ? 'active' : '' }}"
-           href="{{ route('frontend.favorite') }}">
-            <i class="fa-solid fa-bookmark fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5"> {{ __('Favori Testlerim') }}</p>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.solved') ? 'active' : '' }}"
-           href="{{ route('frontend.solved') }}">
-            <i class="fa-light fa-pen-clip fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('Çözdüğüm Testler') }}</p>
-        </a>
-    </div>
-
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.solved.exams') ? 'active' : '' }}"
-           href="{{ route('frontend.solved.exams') }}">
-            <i class="fa-light fa-book-alt fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('Çözdüğüm Sınavlar') }}</p>
-        </a>
-    </div>
-    @if(settings()->leagueStatus == 'active')
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.my.leagues') ? 'active' : '' }}"
-           href="{{ route('frontend.my.leagues') }}">
-            <i class="fa-light fa-list-1-2 fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('Lig Sonuçlarım') }}</p>
-        </a>
-    </div>
-    @endif
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 {{ routeIs('frontend.stats') ? 'active' : '' }}"
-           href="{{ route('frontend.stats') }}">
-            <i class="fa-light fa-chart-line fa-2x mx-1"></i>
-            <p class="mb-0 text-black fw-medium fs-5">{{ __('İstatistikler') }}</p>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 bg-secondary"
-           href="{{ route('admin.home.index') }}">
-            <i class="fa-light fa-cogs fa-2x mx-1 text-white"></i>
-            <p class="mb-0 text-black fw-medium fs-5 text-white">{{ __('Yönetim Paneli') }}</p>
-        </a>
-    </div>
-    <div class="col-6 col-lg-3 my-1 px-1 account-menu">
-        <a class="d-grid d-sm-flex align-items-center justify-content-center text-center  gap-2 px-2 py-3 border rounded-2 bg-danger"
-           href="{{ route('frontend.logout') }}">
-            <i class="fa-light fa-sign-out fa-2x mx-1 text-white"></i>
-            <p class="mb-0 text-black fw-medium fs-5 text-white">{{ __('Çıkış Yap') }}</p>
-        </a>
-    </div>
+    </nav>
 </div>

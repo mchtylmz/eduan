@@ -3,30 +3,30 @@
         <div class="course_details-list">
             <ul class="mb-3">
                 <li>
-                    <span><i class="fa-thin fa-language"></i>{{ __('Dil') }}</span>
+                    <span><i class="fa-thin fa-language"></i>{{ __('learning.language') }}</span>
                     <span>{{ $test->language->name ?? '' }}</span>
                 </li>
                 @foreach($this->sectionsWithQuestionsCount() as $section)
                     <li>
                     <span>
                         <i class="fa-thin fa-list-dots"></i>
-                        {{ __('Bölüm') }} {{ $loop->iteration }}
+                        {{ __('learning.section') }} {{ $loop->iteration }}
                     </span>
                         <span class="text-nowrap">
-                        {{ $section->questions_count ?: 0 }} {{ __('Soru') }}
+                        {{ $section->questions_count ?: 0 }} {{ __('learning.questions') }}
                     </span>
                     </li>
                 @endforeach
                 <li>
-                    <span><i class="fa-thin fa-table-columns"></i>{{ __('Toplam Bölüm') }}</span>
-                    <span>{{ $test->sections()->parentIsZero()->count() }}</span>
+                    <span><i class="fa-thin fa-table-columns"></i>{{ __('learning.sections') }}</span>
+                    <span>{{ $this->sectionsWithQuestionsCount()->count() }}</span>
                 </li>
                 <li>
-                    <span><i class="fa-thin fa-file-lines"></i>{{ __('Toplam Soru') }}</span>
+                    <span><i class="fa-thin fa-file-lines"></i>{{ __('learning.total_questions') }}</span>
                     <span>{{ $test->questionsWithQuestion()->active()->count() }}</span>
                 </li>
                 <li>
-                    <span><i class="fa-thin fa-clock"></i>{{ __('Süre') }}</span>
+                    <span><i class="fa-thin fa-clock"></i>{{ __('learning.duration') }}</span>
                     <span>
                         ∼ {{ $secondToTime = secondToTime($test->duration) }}
                         (<small class="text-muted">{{ formatSecondToTime($secondToTime) }}</small>)
@@ -37,25 +37,25 @@
                 @if(\App\Enums\StatusEnum::ACTIVE->is($test->status))
                     @auth()
                         @if(auth()->user()->can('tests:solve'))
-                            @if(count($test->userResults))
+                            @if($test->results()->where('user_id', auth()->id())->exists())
                                 <a onclick="return confirm('{{ __('Sınav başlayacaktır, sınav süresi içerisinde bitirmelisiniz, aksi durumlarda yanıtlanmamış olarak değerlendirilir.') }}')" href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
-                                    {{ __('Sınavı Yeniden Çöz') }}
+                                    {{ __('learning.retry') }}
                                 </a>
                             @else
                                 <a onclick="return confirm('{{ __('Sınav başlayacaktır, sınav süresi içerisinde bitirmelisiniz, aksi durumlarda yanıtlanmamış olarak değerlendirilir.') }}')" href="{{ route('frontend.exam.start', $test->code) }}" class="exam-start-btn course-btn theme-btn theme-btn-big">
-                                    {{ __('Sınava Başla') }}
+                                    {{ __('learning.start') }}
                                 </a>
                             @endif
                         @else
                             <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
                                data-bs-target="#informationModal">
-                                {{ __('Sınava Başla') }}
+                                {{ __('learning.start') }}
                             </a>
-                        @endcan
+                        @endif
                     @else
                         <a href="javascript:void(0)" class="course-btn theme-btn theme-btn-big" data-bs-toggle="modal"
                            data-bs-target="#informationModal">
-                            {{ __('Sınava Başla') }}
+                            {{ __('learning.start') }}
                         </a>
                     @endauth
                 @else
@@ -73,7 +73,7 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-light border-0">
-                        <h5 class="modal-title" id="informationModalLabel">{{ __('Bilgilendirme') }}</h5>
+                        <h5 class="modal-title" id="informationModalLabel">{{ __('learning.information') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body warning-test p-3 rounded-0 m-0">

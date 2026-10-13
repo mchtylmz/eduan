@@ -9,50 +9,80 @@
  */
 namespace SebastianBergmann\CodeCoverage\StaticAnalysis;
 
+use function file_get_contents;
+use SebastianBergmann\CodeCoverage\Serialization\FileCouldNotBeReadException;
+
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
  *
- * @phpstan-import-type CodeUnitFunctionType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitMethodType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitClassType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- * @phpstan-import-type CodeUnitTraitType from \SebastianBergmann\CodeCoverage\StaticAnalysis\CodeUnitFindingVisitor
- *
- * @phpstan-type LinesOfCodeType = array{
- *     linesOfCode: int,
- *     commentLinesOfCode: int,
- *     nonCommentLinesOfCode: int
- * }
- * @phpstan-type LinesType = array<int, int>
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for phpunit/php-code-coverage
  */
-interface FileAnalyser
+final class FileAnalyser
 {
-    /**
-     * @return array<string, CodeUnitClassType>
-     */
-    public function classesIn(string $filename): array;
+    private readonly SourceAnalyser $sourceAnalyser;
+    private readonly bool $useAnnotationsForIgnoringCode;
+    private readonly bool $ignoreDeprecatedCode;
 
     /**
-     * @return array<string, CodeUnitTraitType>
+     * @var array<non-empty-string, AnalysisResult>
      */
-    public function traitsIn(string $filename): array;
+    private array $cache = [];
 
     /**
-     * @return array<string, CodeUnitFunctionType>
+     * @var array<non-empty-string, non-empty-string>
      */
-    public function functionsIn(string $filename): array;
+    private array $parseErrors = [];
+
+    public function __construct(SourceAnalyser $sourceAnalyser, bool $useAnnotationsForIgnoringCode, bool $ignoreDeprecatedCode)
+    {
+        $this->sourceAnalyser                = $sourceAnalyser;
+        $this->useAnnotationsForIgnoringCode = $useAnnotationsForIgnoringCode;
+        $this->ignoreDeprecatedCode          = $ignoreDeprecatedCode;
+    }
 
     /**
-     * @return LinesOfCodeType
+     * @param non-empty-string $sourceCodeFile
+     *
+     * @throws FileCouldNotBeReadException
      */
-    public function linesOfCodeFor(string $filename): array;
+    public function analyse(string $sourceCodeFile): AnalysisResult
+    {
+        if (isset($this->cache[$sourceCodeFile])) {
+            return $this->cache[$sourceCodeFile];
+        }
+
+        $sourceCode = file_get_contents($sourceCodeFile);
+
+        if ($sourceCode === false) {
+            // @codeCoverageIgnoreStart
+            throw new FileCouldNotBeReadException($sourceCodeFile);
+            // @codeCoverageIgnoreEnd
+        }
+
+        $analysisResult = $this->sourceAnalyser->analyse(
+            $sourceCodeFile,
+            $sourceCode,
+            $this->useAnnotationsForIgnoringCode,
+            $this->ignoreDeprecatedCode,
+        );
+
+        if (!$analysisResult->wasParsed()) {
+            $this->parseErrors[$sourceCodeFile] = $analysisResult->parseError();
+        }
+
+        $this->cache[$sourceCodeFile] = $analysisResult;
+
+        return $analysisResult;
+    }
 
     /**
-     * @return LinesType
+     * Returns the files that could not be parsed for static analysis,
+     * mapped to the parser's error message.
+     *
+     * @return array<non-empty-string, non-empty-string>
      */
-    public function executableLinesIn(string $filename): array;
-
-    /**
-     * @return LinesType
-     */
-    public function ignoredLinesFor(string $filename): array;
+    public function parseErrors(): array
+    {
+        return $this->parseErrors;
+    }
 }

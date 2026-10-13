@@ -2,204 +2,89 @@
 
 All notable changes are documented in this file using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
-## [6.3.0] - 2024-12-05
+## [8.2.1] - 2026-08-07
+
+### Fixed
+
+* Removed `"minimum-stability": "dev"` from `composer.json`
+
+## [8.2.0] - 2026-08-07
 
 ### Added
 
-* Optional constructor argument to control maximum string length
+* `ObjectExporter` interface, `ObjectExporterChain`, and `ExportContext` for customizing how objects are exported (an object exporter can be passed to `Exporter`'s constructor and is consulted before the default representation of an object is used)
+* `Exporter::shortenedExport()` and `Exporter::shortenedRecursiveExport()` use the representation provided by an object exporter as well; it is collapsed to a single line and shortened when it is longer than the configured maximum length
+* `Exporter::hasCustomRepresentationFor()` for checking whether an object exporter provides the representation for an object
 
-### Deprecated
-
-* Optional argument for `shortenedRecursiveExport()` and `shortenedExport()` to control maximum string length
-
-## [6.2.0] - 2024-12-05
-
-### Added
-
-* [#67](https://github.com/sebastianbergmann/exporter/issues/67): Optional argument for `shortenedRecursiveExport()` and `shortenedExport()` to control maximum string length
-
-### Changed
-
-* [#69](https://github.com/sebastianbergmann/exporter/pull/69): Do not initialize lazy objects during export
-
-## [6.1.3] - 2024-07-03
-
-### Changed
-
-* [#66](https://github.com/sebastianbergmann/exporter/pull/66): Avoid using the Reflection API for some classes
-* This project now uses PHPStan instead of Psalm for static analysis
-
-## [6.1.2] - 2024-06-18
-
-### Changed
-
-* [#64](https://github.com/sebastianbergmann/exporter/pull/64): Improve performance of `Exporter::exportString()`
-* [#65](https://github.com/sebastianbergmann/exporter/pull/65): Prevent unnecessary calls to `str_repeat()`
+## [8.1.1] - 2026-07-13
 
 ### Fixed
 
-* [#62](https://github.com/sebastianbergmann/exporter/issues/62): Do not limit export of arrays by default (to restore BC with versions prior to 6.1.0)
+* A lone `\n` (LF) followed by a lone `\r` (CR) was incorrectly treated as a single `\n\r` line ending when exporting a string; these are now treated as two separate line endings
 
-## [6.1.1] - 2024-06-18
+## [8.1.0] - 2026-05-21
+
+### Changed
+
+* [#57](https://github.com/sebastianbergmann/exporter/issues/57): Preserve `SplObjectStorage` iterator position instead of resetting to first element
+* [#91](https://github.com/sebastianbergmann/exporter/pull/91): Make binary string output readable for mostly-printable values
+
+## [8.0.3] - 2026-05-20
 
 ### Fixed
 
-* [#61](https://github.com/sebastianbergmann/exporter/issues/61): `count(): Recursion detected` warning triggered
+* [#90](https://github.com/sebastianbergmann/exporter/issues/90): `Exporter::toArray()` silently drops a private property that is redeclared in a derived class
 
-## [6.1.0] - 2024-06-18
+## [8.0.2] - 2026-04-15
 
-### Added
+* [#74](https://github.com/sebastianbergmann/exporter/pull/74): Int cast warning when exporting large floats
 
-* [#59](https://github.com/sebastianbergmann/exporter/pull/59): Option to limit export of (large) arrays (to speed up PHPUnit)
-
-### Changed
-
-* [#60](https://github.com/sebastianbergmann/exporter/pull/60): Take shortcut when exporting a string
-
-## [6.0.3] - 2024-06-17
-
-### Fixed
-
-* Fixed code coverage metadata
-
-## [6.0.2] - 2024-06-17 [YANKED]
+## [8.0.1] - 2026-04-10
 
 ### Changed
 
-* [#58](https://github.com/sebastianbergmann/exporter/pull/58): Remove unnecessary `sprintf()` in hot path
+* Explicitly handle `NAN`, `INF`, and `-INF` in `exportFloat()`
 
-## [6.0.1] - 2024-03-02
-
-### Changed
-
-* Do not use implicitly nullable parameters
-
-## [6.0.0] - 2024-02-02
+## [8.0.0] - 2026-02-06
 
 ### Removed
 
-* This component is no longer supported on PHP 8.1
+* This component is no longer supported on PHP 8.3
 
-## [5.1.2] - 2024-03-02
-
-### Changed
-
-* Do not use implicitly nullable parameters
-
-## [5.1.1] - 2023-09-24
-
-### Changed
-
-* [#52](https://github.com/sebastianbergmann/exporter/pull/52): Optimize export of large arrays and object graphs
-
-## [5.1.0] - 2023-09-18
-
-### Changed
-
-* [#51](https://github.com/sebastianbergmann/exporter/pull/51): Export arrays using short array syntax
-
-## [5.0.1] - 2023-09-08
+## [7.0.3] - 2026-05-20
 
 ### Fixed
 
-* [#49](https://github.com/sebastianbergmann/exporter/issues/49): `Exporter::toArray()` changes `SplObjectStorage` index
+* [#90](https://github.com/sebastianbergmann/exporter/issues/90): `Exporter::toArray()` silently drops a private property that is redeclared in a derived class
 
-## [5.0.0] - 2023-02-03
+## [7.0.2] - 2025-09-24
 
 ### Changed
 
-* [#42](https://github.com/sebastianbergmann/exporter/pull/42): Improve export of enumerations
+* Suppress `unexpected NAN value was coerced to string` warning triggered on PHP 8.5
+
+## [7.0.1] - 2025-09-22
+
+### Changed
+
+* Suppress `not representable as an int, cast occurred` warning triggered on PHP 8.5
+
+## [7.0.0] - 2025-02-07
 
 ### Removed
 
-* This component is no longer supported on PHP 7.3, PHP 7.4 and PHP 8.0
+* This component is no longer supported on PHP 8.2
 
-## [4.0.5] - 2022-09-14
-
-### Fixed
-
-* [#47](https://github.com/sebastianbergmann/exporter/pull/47): Fix `float` export precision
-
-## [4.0.4] - 2021-11-11
-
-### Changed
-
-* [#37](https://github.com/sebastianbergmann/exporter/pull/37): Improve export of closed resources
-
-## [4.0.3] - 2020-09-28
-
-### Changed
-
-* Changed PHP version constraint in `composer.json` from `^7.3 || ^8.0` to `>=7.3`
-
-## [4.0.2] - 2020-06-26
-
-### Added
-
-* This component is now supported on PHP 8
-
-## [4.0.1] - 2020-06-15
-
-### Changed
-
-* Tests etc. are now ignored for archive exports
-
-## [4.0.0] - 2020-02-07
-
-### Removed
-
-* This component is no longer supported on PHP 7.0, PHP 7.1, and PHP 7.2
-
-## [3.1.5] - 2022-09-14
-
-### Fixed
-
-* [#47](https://github.com/sebastianbergmann/exporter/pull/47): Fix `float` export precision
-
-## [3.1.4] - 2021-11-11
-
-### Changed
-
-* [#38](https://github.com/sebastianbergmann/exporter/pull/38): Improve export of closed resources
-
-## [3.1.3] - 2020-11-30
-
-### Changed
-
-* Changed PHP version constraint in `composer.json` from `^7.0` to `>=7.0`
-
-## [3.1.2] - 2019-09-14
-
-### Fixed
-
-* [#29](https://github.com/sebastianbergmann/exporter/pull/29): Second parameter for `str_repeat()` must be an integer
-
-### Removed
-
-* Remove HHVM-specific code that is no longer needed
-
-[6.3.0]: https://github.com/sebastianbergmann/exporter/compare/6.2.0...6.3.0
-[6.2.0]: https://github.com/sebastianbergmann/exporter/compare/6.1.3...6.2.0
-[6.1.3]: https://github.com/sebastianbergmann/exporter/compare/6.1.2...6.1.3
-[6.1.2]: https://github.com/sebastianbergmann/exporter/compare/6.1.1...6.1.2
-[6.1.1]: https://github.com/sebastianbergmann/exporter/compare/6.1.0...6.1.1
-[6.1.0]: https://github.com/sebastianbergmann/exporter/compare/6.0.3...6.1.0
-[6.0.3]: https://github.com/sebastianbergmann/exporter/compare/fe0dca49a60d34440e2f086951952dd13aa9a5d2...6.0.3
-[6.0.2]: https://github.com/sebastianbergmann/exporter/compare/6.0.1...fe0dca49a60d34440e2f086951952dd13aa9a5d2
-[6.0.1]: https://github.com/sebastianbergmann/exporter/compare/6.0.0...6.0.1
-[6.0.0]: https://github.com/sebastianbergmann/exporter/compare/5.1...6.0.0
-[5.1.2]: https://github.com/sebastianbergmann/exporter/compare/5.1.1...5.1.2
-[5.1.1]: https://github.com/sebastianbergmann/exporter/compare/5.1.0...5.1.1
-[5.1.0]: https://github.com/sebastianbergmann/exporter/compare/5.0.1...5.1.0
-[5.0.1]: https://github.com/sebastianbergmann/exporter/compare/5.0.0...5.0.1
-[5.0.0]: https://github.com/sebastianbergmann/exporter/compare/4.0.5...5.0.0
-[4.0.5]: https://github.com/sebastianbergmann/exporter/compare/4.0.4...4.0.5
-[4.0.4]: https://github.com/sebastianbergmann/exporter/compare/4.0.3...4.0.4
-[4.0.3]: https://github.com/sebastianbergmann/exporter/compare/4.0.2...4.0.3
-[4.0.2]: https://github.com/sebastianbergmann/exporter/compare/4.0.1...4.0.2
-[4.0.1]: https://github.com/sebastianbergmann/exporter/compare/4.0.0...4.0.1
-[4.0.0]: https://github.com/sebastianbergmann/exporter/compare/3.1.2...4.0.0
-[3.1.5]: https://github.com/sebastianbergmann/exporter/compare/3.1.4...3.1.5
-[3.1.4]: https://github.com/sebastianbergmann/exporter/compare/3.1.3...3.1.4
-[3.1.3]: https://github.com/sebastianbergmann/exporter/compare/3.1.2...3.1.3
-[3.1.2]: https://github.com/sebastianbergmann/exporter/compare/3.1.1...3.1.2
+[8.2.1]: https://github.com/sebastianbergmann/exporter/compare/8.2.0...8.2.1
+[8.2.0]: https://github.com/sebastianbergmann/exporter/compare/8.1.1...8.2.0
+[8.1.1]: https://github.com/sebastianbergmann/exporter/compare/8.1.0...8.1.1
+[8.1.0]: https://github.com/sebastianbergmann/exporter/compare/8.0.3...8.1.0
+[8.0.3]: https://github.com/sebastianbergmann/exporter/compare/8.0.2...8.0.3
+[8.0.2]: https://github.com/sebastianbergmann/exporter/compare/8.0.1...8.0.2
+[8.0.1]: https://github.com/sebastianbergmann/exporter/compare/8.0.0...8.0.1
+[8.0.0]: https://github.com/sebastianbergmann/exporter/compare/7.0...8.0.0
+[7.0.3]: https://github.com/sebastianbergmann/exporter/compare/7.0.2...7.0
+[7.0.3]: https://github.com/sebastianbergmann/exporter/compare/7.0.2...7.0.3
+[7.0.2]: https://github.com/sebastianbergmann/exporter/compare/7.0.1...7.0.2
+[7.0.1]: https://github.com/sebastianbergmann/exporter/compare/7.0.0...7.0.1
+[7.0.0]: https://github.com/sebastianbergmann/exporter/compare/6.3...7.0.0

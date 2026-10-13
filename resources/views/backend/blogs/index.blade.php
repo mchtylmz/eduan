@@ -1,8 +1,9 @@
 @extends('backend.layouts.app')
 
 @section('content')
+    <x-admin.management-assets />
     <!-- block -->
-    <div class="block block-rounded">
+    <div class="block block-rounded admin-management">
         <!-- block-header -->
         <div class="block-header block-header-default">
             <h3 class="block-title">{{ $title }}</h3>

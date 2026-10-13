@@ -8,9 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
 
 class CreatePasswordMail extends Mailable implements HasLocalePreference, ShouldQueue
 {
@@ -25,7 +23,7 @@ class CreatePasswordMail extends Mailable implements HasLocalePreference, Should
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $locale = null)
+    public function __construct(User $user, ?string $locale = null)
     {
         $this->user = $user;
         $this->locale = $locale;
@@ -49,8 +47,6 @@ class CreatePasswordMail extends Mailable implements HasLocalePreference, Should
 
     public function build()
     {
-        $this->resetPasswordToken();
-
         $viewContent = View::make('email.create-password', [
             'user' => $this->user,
             'locale' => $this->locale,
@@ -72,10 +68,5 @@ class CreatePasswordMail extends Mailable implements HasLocalePreference, Should
     public function attachments(): array
     {
         return [];
-    }
-
-    private function resetPasswordToken(): void
-    {
-        DB::table('password_reset_tokens')->where('email', $this->user->email)->delete();
     }
 }

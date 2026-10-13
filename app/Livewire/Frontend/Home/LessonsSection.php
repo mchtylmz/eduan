@@ -3,19 +3,19 @@
 namespace App\Livewire\Frontend\Home;
 
 use App\Models\Page;
-use Livewire\Attributes\Lazy;
+use Illuminate\Support\Arr;
 use Livewire\Component;
 
-#[Lazy(isolate: true)]
 class LessonsSection extends Component
 {
     public Page $page;
+
     public array $content;
 
     public function mount(Page $page)
     {
         $this->page = $page;
-        $this->content = collect($page->content)->toArray();
+        $this->content = Arr::only((array) $page->content, ['lessonCount', 'lessonDescription', 'lessonTitle']);
     }
 
     public function render()

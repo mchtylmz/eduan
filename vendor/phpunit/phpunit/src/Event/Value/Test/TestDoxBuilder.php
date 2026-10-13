@@ -9,6 +9,7 @@
  */
 namespace PHPUnit\Event\Code;
 
+use PHPUnit\Event\Facade;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Logging\TestDox\NamePrettifier;
 
@@ -17,11 +18,13 @@ use PHPUnit\Logging\TestDox\NamePrettifier;
  *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
-final readonly class TestDoxBuilder
+final class TestDoxBuilder
 {
+    private static ?NamePrettifier $namePrettifier = null;
+
     public static function fromTestCase(TestCase $testCase): TestDox
     {
-        $prettifier = new NamePrettifier;
+        $prettifier = self::namePrettifier();
 
         return new TestDox(
             $prettifier->prettifyTestClassName($testCase::class),
@@ -36,7 +39,7 @@ final readonly class TestDoxBuilder
      */
     public static function fromClassNameAndMethodName(string $className, string $methodName): TestDox
     {
-        $prettifier = new NamePrettifier;
+        $prettifier = self::namePrettifier();
 
         $prettifiedMethodName = $prettifier->prettifyTestMethodName($methodName);
 
@@ -45,5 +48,22 @@ final readonly class TestDoxBuilder
             $prettifiedMethodName,
             $prettifiedMethodName,
         );
+    }
+
+    /**
+     * @param class-string $className
+     */
+    public static function prettifyClassName(string $className): string
+    {
+        return self::namePrettifier()->prettifyTestClassName($className);
+    }
+
+    private static function namePrettifier(): NamePrettifier
+    {
+        if (self::$namePrettifier === null) {
+            self::$namePrettifier = new NamePrettifier(Facade::emitter());
+        }
+
+        return self::$namePrettifier;
     }
 }

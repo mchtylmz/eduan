@@ -21,7 +21,7 @@
                                         data-bs-target="#pills-{{ $loop->index }}" type="button" role="tab"
                                         aria-controls="pills-{{ $loop->index }}" aria-selected="false">
                                     <i class="fa fa-fw fa-poll"></i>
-                                    <span>{{ $loop->iteration }}. {{ __('Sonuç') }}</span>
+                                    <span>{{ $results->firstItem() + $loop->index }}. {{ __('Sonuç') }}</span>
                                 </button>
                             </li>
                         @endforeach
@@ -95,6 +95,8 @@
                     </div>
                 </div>
             </div>
+
+            {{ $results->links('components.frontend.pagination') }}
 
         </div>
     </div>

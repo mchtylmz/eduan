@@ -46,9 +46,11 @@
                     <a @class(['nav-link py-3', 'active' => $activeTab == 'topicsStats']) type="button" href="?tab=topicsStats">
                         <i class="fa fa-percentage mx-1"></i> {{ __('Sonuç İstatistiği') }}
                     </a>
+                    @can('users:send-email')
                     <a @class(['nav-link py-3', 'active' => $activeTab == 'mailing']) type="button" href="?tab=mailing">
                         <i class="fa fa-envelope mx-1"></i> {{ __('E-posta Gönder') }}
                     </a>
+                    @endcan
                 </div>
             </li>
         </ul>

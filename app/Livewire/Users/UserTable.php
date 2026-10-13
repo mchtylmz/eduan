@@ -2,184 +2,78 @@
 
 namespace App\Livewire\Users;
 
+use App\Actions\Users\AuthorizeStudentAccess;
 use App\Enums\RoleTypeEnum;
-use App\Enums\StatusEnum;
 use App\Enums\YesNoEnum;
-use App\Models\User;
+use App\Helpers\TableCache;
 use App\Models\Role;
+use App\Models\User;
 use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
+use App\Traits\ServerTableActions;
 use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ArrayColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Filters\DateRangeFilter;
-use Rappasoft\LaravelLivewireTables\Views\Filters\MultiSelectDropdownFilter;
-use Rappasoft\LaravelLivewireTables\Views\Filters\MultiSelectFilter;
-use Rappasoft\LaravelLivewireTables\Views\Filter;
-use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
+use Livewire\Component;
 
-#[Lazy(isolate: true)]
-class UserTable extends DataTableComponent
+class UserTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
+    use CustomLivewireAlert, ServerTableActions;
 
-    protected $model = User::class;
+    protected string $resource = 'users';
 
-    public function builder(): Builder
+    protected function builder(): Builder
     {
-        if (auth()->user()->can(RoleTypeEnum::TEACHER->value)) {
-            return User::with(['roles', 'students'])->whereIn('id', auth()->user()->students()->select('id'));
+        return User::with('roles')->withCount(['students', 'teachers'])
+            ->when(auth()->user()->can(RoleTypeEnum::TEACHER->value),
+                fn ($query) => $query->whereIn('users.id', auth()->user()->students()->select('users.id')));
+    }
+
+    public function render()
+    {
+        $record = $this->selectedRecord();
+        $metrics = [];
+        if ($record && ! $record->can(RoleTypeEnum::ADMIN->value)) {
+            if ($record->can(RoleTypeEnum::TEACHER->value)) {
+                $metrics[__('tables.student_count')] = $record->students_count;
+            } elseif ($record->can(RoleTypeEnum::USER->value)) {
+                $metrics[__('tables.teacher_count')] = $record->teachers_count;
+            }
         }
 
-        return User::with(['roles']);
-    }
-
-    public function filters(): array
-    {
-        return [
-            $this->roleFilter(),
-            $this->emailVerifiedFilter('users.email_verified'),
-            $this->statusFilter('users.status'),
-            $this->lastLoginDateFilter('users.last_login_at'),
-            $this->registrationDateFilter('users.created_at'),
-        ];
-    }
-
-    public function columns(): array
-    {
-        return [
-            $this->hiddenColumn(),
-            $this->roleColumn(),
-            $this->usernameColumn(),
-            $this->nameColumn(),
-            $this->surnameColumn(),
-            $this->emailVerifiedColumn(),
-            $this->statusColumn(),
-            $this->lastLoginColumn(),
-        ];
-    }
-
-    protected function hiddenColumn(): Column
-    {
-        return Column::make('Id', 'id')->hideIf(true);
-    }
-
-    protected function roleColumn(): ArrayColumn
-    {
-        return ArrayColumn::make(__('Yetki'), 'name')
-            ->data(fn($value, $row) => $row->getRoleNames())
-            ->outputFormat(fn($index, $value) => $value)
-            ->separator('<br>')
-            ->emptyValue('-');
-    }
-
-    protected function usernameColumn(): Column
-    {
-        return Column::make(__('Kullanıcı Adı'), "username")
-            ->searchable()
-            ->sortable();
-    }
-
-    protected function nameColumn(): Column
-    {
-        return Column::make(__('İsim'), "name")
-            ->searchable()
-            ->collapseOnMobile()
-            ->sortable();
-    }
-
-    protected function surnameColumn(): Column
-    {
-        return Column::make(__('Soyisim'), "surname")
-            ->searchable()
-            ->collapseOnMobile()
-            ->sortable();
-    }
-
-    protected function statusColumn(): Column
-    {
-        return ComponentColumn::make(__('Durum'), "status")
-            ->collapseOnMobile()
-            ->component('table.status')
-            ->attributes(fn ($value, $row, Column $column) => [
-                'type' => $value->class(),
-                'label' => $value->name(),
-            ])
-            ->searchable()
-            ->sortable();
-    }
-
-    protected function emailVerifiedColumn(): Column
-    {
-        return ComponentColumn::make(__('E-posta Onay'), "email_verified")
-            ->collapseOnMobile()
-            ->component('table.status')
-            ->attributes(fn ($value, $row, Column $column) => [
-                'type' => YesNoEnum::YES->is($value) ? 'success fw-medium' : 'danger fw-medium',
-                'label' => YesNoEnum::YES->is($value) ? __('Onaylı') : __('Onaylı Değil'),
-            ])
-            ->searchable()
-            ->sortable();
-    }
-
-    protected function lastLoginColumn(): Column
-    {
-        return Column::make(__('Son Giriş'), "last_login_at")
-            ->collapseOnMobile()
-            ->format(fn($value) => $value ? dateFormat($value) : '-')
-            ->sortable();
-    }
-
-    public function appendColumns(): array
-    {
-        return [
-            $this->editButton(),
-            $this->deleteButton(),
-        ];
-    }
-
-    protected function editButton(): LinkColumn
-    {
-        return LinkColumn::make(__('Düzenle'))
-            ->collapseOnMobile()
-            ->title(fn($row) => sprintf('<i class="fa fa-user mx-1"></i> %s', __('Görüntüle')))
-            ->location(fn($row) => route('admin.users.edit', $row->id))
-            ->attributes(fn($row) => ['class' => 'btn btn-info btn-sm'])
-            ->html();
-    }
-
-    protected function deleteButton(): WireLinkColumn
-    {
-        return WireLinkColumn::make(__('Kaldır'))
-            ->collapseOnMobile()
-            ->hideIf(auth()?->user()->cannot('users:delete'))
-            ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Kaldır')))
-            ->confirmMessage(__('Kullanıcının giriş yapabilme özelliği kapatılacaktır, işleme devam edilsin mi?'))
-            ->action(fn($row) => 'delete("'.$row->id.'")')
-            ->attributes(fn($row) => ['class' => 'btn btn-danger btn-sm'])
-            ->html();
+        return view('livewire.backend.users.server-table', [
+            'roles' => TableCache::options('roles', fn () => Role::orderBy('name')
+                ->when(auth()->user()->can(RoleTypeEnum::TEACHER->value),
+                    fn ($query) => $query->permission(RoleTypeEnum::USER->value))
+                ->pluck('name', 'name')->all()),
+            'metrics' => $metrics,
+            'details' => $record ? [__('Kullanıcı Adı') => $record->username, __('İsim') => $record->name,
+                __('Soyisim') => $record->surname, __('tables.email') => $record->email,
+                __('Yetki') => $record->roles->pluck('name')->implode(', '), __('Durum') => $record->status->name(),
+                __('E-posta Onay') => YesNoEnum::YES->is($record->email_verified) ? __('Onaylı') : __('Onaylı Değil'),
+                __('Son Giriş') => $record->last_login_at ? dateFormat($record->last_login_at) : '-',
+                __('Kayıt Tarihi') => dateFormat($record->created_at), ...$metrics] : [],
+        ]);
     }
 
     public function delete(User $user): ?bool
     {
+        $this->requireTableAccess('delete');
+        AuthorizeStudentAccess::run($user, 'users:delete');
         if (auth()->user()->cannot('users:delete')) {
             $this->message(__('Kullanıcı silinemez, yetkiniz bulunmuyor!'))->error();
+
             return false;
         }
 
         if ($user->id == auth()->id()) {
             $this->message(__('Kendi kullanıcınızı kaldıramazsınız!'))->error();
+
             return false;
         }
 
         $this->message(__('Kullanıcı giriş yapabilme kaldırıldı!'))->success();
 
-        return $user->delete();
+        $deleted = $user->delete();
+        $this->dispatch('refresh-server-table', table: $this->resource);
+
+        return $deleted;
     }
 }

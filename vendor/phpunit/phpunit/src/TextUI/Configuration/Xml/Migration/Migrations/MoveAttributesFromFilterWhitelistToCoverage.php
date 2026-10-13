@@ -26,15 +26,17 @@ final readonly class MoveAttributesFromFilterWhitelistToCoverage implements Migr
     {
         $whitelist = $document->getElementsByTagName('whitelist')->item(0);
 
-        if (!$whitelist) {
+        if ($whitelist === null) {
             return;
         }
 
         $coverage = $document->getElementsByTagName('coverage')->item(0);
 
+        // @codeCoverageIgnoreStart
         if (!$coverage instanceof DOMElement) {
             throw new MigrationException('Unexpected state - No coverage element');
         }
+        // @codeCoverageIgnoreEnd
 
         $map = [
             'addUncoveredFilesFromWhitelist'     => 'includeUncoveredFiles',

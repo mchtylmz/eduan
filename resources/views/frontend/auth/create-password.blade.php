@@ -15,7 +15,7 @@
                                 <h3 class="account-title">{{ $title }}</h3>
                             @endif
 
-                            @livewire('frontend.auth.create-password', ['user' => $user])
+                            @livewire('frontend.auth.create-password', ['user' => $user, 'token' => $token])
                         </div>
                     </div>
                 </div>

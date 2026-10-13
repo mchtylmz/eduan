@@ -7,8 +7,8 @@ use App\Enums\StatusEnum;
 use App\Models\Lesson;
 use App\Models\Topic;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -17,8 +17,10 @@ class LessonForm extends Component
     public Lesson $lesson;
 
     public array $name = [];
+
     public array $description = [];
     public string $code;
+
     public int $sort = 1;
     public StatusEnum $status = StatusEnum::ACTIVE;
 
@@ -65,6 +67,7 @@ class LessonForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can(! empty($this->lesson) && $this->lesson->exists ? 'lessons:update' : 'lessons:add'), 403);
         $this->validate();
 
         CreateOrUpdateLessonAction::run(

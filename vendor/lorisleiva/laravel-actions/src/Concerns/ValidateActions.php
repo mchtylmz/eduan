@@ -106,7 +106,9 @@ trait ValidateActions
     protected function failedValidation(Validator $validator)
     {
         if ($this->hasMethod('getValidationFailure')) {
-            return $this->resolveAndCallMethod('getValidationFailure', compact('validator'));
+            $this->resolveAndCallMethod('getValidationFailure', compact('validator'));
+
+            return;
         }
 
         throw (new ValidationException($validator))
@@ -134,7 +136,7 @@ trait ValidateActions
     {
         try {
             $response = $this->hasMethod('authorize')
-                ? $this->resolveAndCallMethod('authorize')
+                ? $this->callAuthorizationMethod()
                 : true;
         } catch (AuthorizationException $e) {
             return $e->toResponse();
@@ -145,6 +147,16 @@ trait ValidateActions
         }
 
         return $response ? Response::allow() : Response::deny();
+    }
+
+    /**
+     * Resolve the dependencies of the action's authorize method and call it.
+     *
+     * @return mixed
+     */
+    protected function callAuthorizationMethod()
+    {
+        return $this->resolveAndCallMethod('authorize');
     }
 
     protected function deniedAuthorization(Response $response): void
@@ -166,7 +178,7 @@ trait ValidateActions
     protected function prepareForValidation()
     {
         if ($this->hasMethod('prepareForValidation')) {
-            return $this->resolveAndCallMethod('prepareForValidation');
+            $this->resolveAndCallMethod('prepareForValidation');
         }
     }
 }

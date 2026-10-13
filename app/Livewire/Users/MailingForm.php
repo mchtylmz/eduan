@@ -2,16 +2,13 @@
 
 namespace App\Livewire\Users;
 
-use App\Enums\YesNoEnum;
-use App\Jobs\PrepareNewsletterMails;
-use App\Mail\ContactReplyMail;
-use App\Mail\NewsletterMail;
+use App\Actions\Users\AuthorizeUserMail;
 use App\Mail\SendEmailToUserMail;
 use App\Models\Contact;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
 class MailingForm extends Component
@@ -22,11 +19,13 @@ class MailingForm extends Component
 
     public string $locale;
     public string $email;
+
     public string $subject;
     public string $content;
 
     public function mount(User $user): void
     {
+        AuthorizeUserMail::run($user);
         $this->user = $user;
         $this->email = $user->email ?? $user->username;
 
@@ -53,6 +52,7 @@ class MailingForm extends Component
 
     public function send()
     {
+        AuthorizeUserMail::run($this->user);
         $this->validate();
 
         if (!settings()->mailHost || !settings()->mailUsername || !settings()->mailPassword) {
@@ -60,15 +60,23 @@ class MailingForm extends Component
             return false;
         }
 
-        Mail::to($this->email)->later(
-            delay: now()->addSeconds(15),
-            mailable: new SendEmailToUserMail(
-                user: $this->user,
-                locale: $this->locale ?? app()->getLocale(),
-                subject: $this->subject,
-                content: $this->content
-            )
-        );
+        try {
+            Mail::to($this->email)->later(
+                delay: now()->addSeconds(15),
+                mailable: new SendEmailToUserMail(
+                    user: $this->user,
+                    locale: $this->locale ?? app()->getLocale(),
+                    subject: $this->subject,
+                    content: $this->content,
+                    email: $this->email
+                )
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('User mail enqueue failed', [
+                'actor_id' => auth()->id(), 'user_id' => $this->user->id,
+                'recipient' => $this->email, 'exception' => $exception::class,
+            ]);
+        }
 
         return redirect()->route('admin.users.edit', $this->user->id)->with([
             'status' => 'success',

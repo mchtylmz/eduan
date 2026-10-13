@@ -19,6 +19,7 @@ class SeasonForm extends Component
 
     public function mount(): void
     {
+        $this->requireAccess();
         $this->locale = app()->getLocale();
 
         $this->seasons = Season::latest()->get()->toArray();
@@ -26,12 +27,13 @@ class SeasonForm extends Component
 
     public function create(): void
     {
+        $this->requireAccess('update');
         array_unshift($this->seasons, [
             'id' => 0,
             'name' => '',
             'start_date' => '',
             'end_date' => '',
-            'status' => 'active'
+            'status' => 'active',
         ]);
     }
 
@@ -43,8 +45,8 @@ class SeasonForm extends Component
             'seasons.*.end_date' => 'required|date_format:Y-m-d|after:seasons.*.start_date',
             'seasons.*.status' => [
                 'required',
-                new Enum(StatusEnum::class)
-            ]
+                new Enum(StatusEnum::class),
+            ],
         ];
     }
 
@@ -54,12 +56,13 @@ class SeasonForm extends Component
             'seasons.*.name' => __('Dönem Adı'),
             'seasons.*.start_date' => __('Başlangıç Tarihi'),
             'seasons.*.end_date' => __('Bitiş Tarihi'),
-            'seasons.*.status' => __('Durum')
+            'seasons.*.status' => __('Durum'),
         ];
     }
 
     public function save()
     {
+        $this->requireAccess('update');
         $this->validate();
 
         $duplicatesStartDate = collect($this->seasons)
@@ -68,6 +71,7 @@ class SeasonForm extends Component
             ->keys();
         if ($duplicatesStartDate->isNotEmpty()) {
             $this->message(__('Aynı başlangıç tarihi birden fazla kez kullanılamaz'))->error();
+
             return false;
         }
 
@@ -77,6 +81,7 @@ class SeasonForm extends Component
             ->keys();
         if ($duplicatesEndDate->isNotEmpty()) {
             $this->message(__('Aynı bitiş tarihi birden fazla kez kullanılamaz'))->error();
+
             return false;
         }
 
@@ -85,10 +90,10 @@ class SeasonForm extends Component
                 'name' => $season['name'],
                 'start_date' => $season['start_date'],
                 'end_date' => $season['end_date'],
-                'status' => $season['status']
+                'status' => $season['status'],
             ];
 
-            if (!empty($season['id'])) {
+            if (! empty($season['id'])) {
                 Season::where('id', $season['id'])->update($data);
             } else {
                 Season::create($data);
@@ -100,12 +105,15 @@ class SeasonForm extends Component
         UpdateSeasonIdForResults::dispatch();
 
         $this->message(__('Bilgileriniz başarıyla güncellendi'))->success();
+
         return true;
     }
 
     public function delete(int $key): void
     {
-        if (!empty($this->seasons[$key]['id'])) {
+        $this->requireAccess('delete');
+        abort_unless(array_key_exists($key, $this->seasons), 422);
+        if (! empty($this->seasons[$key]['id'])) {
             Season::where('id', $this->seasons[$key]['id'])->delete();
         }
 
@@ -116,6 +124,14 @@ class SeasonForm extends Component
 
     public function render()
     {
+        $this->requireAccess();
+
         return view('livewire.backend.season.season-form');
+    }
+
+    private function requireAccess(string $operation = 'view'): void
+    {
+        $actor = auth()->user();
+        abort_unless($actor?->can('dashboard:access') && $actor->can('seasons:view') && $actor->can('seasons:'.$operation), 403);
     }
 }

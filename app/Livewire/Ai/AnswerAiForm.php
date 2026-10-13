@@ -12,7 +12,9 @@ class AnswerAiForm extends Component
     public AnswerAI $answerAI;
 
     public string $content = '';
+
     public string $locale = '';
+
     public YesNoEnum $report = YesNoEnum::NO;
 
     public string $permission = 'ai:update';
@@ -30,18 +32,24 @@ class AnswerAiForm extends Component
         $this->report = $this->answerAI->report;
 
         if ($steps = $this->answerAI->content['steps'] ?? []) {
-            foreach($steps as $step) {
-                if ($definition = $step['definition'] ?? '')
-                    $this->content .= convertLatexToImg($definition, 'definition') . '<br>';
-                if ($explanation = $step['explanation'] ?? '')
-                    $this->content .= convertLatexToImg($explanation, 'explanation') . '<br>';
-                if ($latex = $step['latex'] ?? '')
-                    $this->content .= convertLatexToImg($latex, 'latex') . '<br>';
+            foreach ($steps as $step) {
+                if ($definition = $step['definition'] ?? '') {
+                    $this->content .= convertLatexToImg($definition, 'definition').'<br>';
+                }
+                if ($explanation = $step['explanation'] ?? '') {
+                    $this->content .= convertLatexToImg($explanation, 'explanation').'<br>';
+                }
+                if ($latex = $step['latex'] ?? '') {
+                    $this->content .= convertLatexToImg($latex, 'latex').'<br>';
+                }
             }
         }
 
-        if($final_answer = $this->answerAI->content['final_answer'] ?? '') {
-            $this->content .= '<br>' . __('Final Answer:') . convertLatexToImg($final_answer, 'final_answer');
+        if ($final_answer = $this->answerAI->content['final_answer'] ?? '') {
+            $this->content .= '<br>'.__('Final Answer:').convertLatexToImg($final_answer, ($this->answerAI->content['status'] ?? '') === 'ready' ? 'text' : 'final_answer');
+        }
+        if ($formula = $this->answerAI->content['final_answer_latex'] ?? '') {
+            $this->content .= convertLatexToImg($formula, 'latex');
         }
     }
 
@@ -51,9 +59,9 @@ class AnswerAiForm extends Component
             'locale' => 'required|string|exists:languages,code',
             'report' => [
                 'required',
-                new Enum(YesNoEnum::class)
+                new Enum(YesNoEnum::class),
             ],
-            'content' => 'required|string'
+            'content' => 'required|string',
         ];
     }
 
@@ -79,15 +87,15 @@ class AnswerAiForm extends Component
                 'steps' => [
                     [
                         'explanation' => $explodeContent[0],
-                    ]
+                    ],
                 ],
                 'final_answer' => trim($explodeContent[1] ?? ''),
-            ]
+            ],
         ]);
 
         return redirect()->route('admin.ai.edit', $this->answerAI->id)->with([
             'status' => 'success',
-            'message' => __('Yanıt kayıt edildi!')
+            'message' => __('Yanıt kayıt edildi!'),
         ]);
     }
 

@@ -12,16 +12,23 @@ namespace PHPUnit\Framework\Constraint;
 use const DIRECTORY_SEPARATOR;
 use const PHP_EOL;
 use function array_slice;
-use function array_splice;
-use function count;
+use function assert;
 use function explode;
 use function implode;
+use function is_string;
+use function preg_last_error_msg;
 use function preg_match;
 use function preg_quote;
 use function preg_replace;
+use function sprintf;
+use function str_replace;
+use function strlen;
+use function strpos;
 use function strtr;
+use function substr;
+use PHPUnit\Framework\Exception as FrameworkException;
+use PHPUnit\Util\DifferBuilder;
 use SebastianBergmann\Diff\Differ;
-use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
@@ -41,19 +48,42 @@ final class StringMatchesFormatDescription extends Constraint
     }
 
     /**
+     * Returns the negated string representation of the constraint.
+     */
+    protected function negatedToString(): string
+    {
+        return 'does not match format description:' . PHP_EOL . $this->formatDescription;
+    }
+
+    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
+     *
+     * @throws FrameworkException
      */
     protected function matches(mixed $other): bool
     {
+        if (!is_string($other)) {
+            return false;
+        }
+
         $other = $this->convertNewlines($other);
 
-        $matches = preg_match(
+        $matches = @preg_match(
             $this->regularExpressionForFormatDescription(
                 $this->convertNewlines($this->formatDescription),
             ),
             $other,
         );
+
+        if ($matches === false) {
+            throw new FrameworkException(
+                sprintf(
+                    'Format description cannot be matched: %s',
+                    preg_last_error_msg(),
+                ),
+            );
+        }
 
         return $matches > 0;
     }
@@ -63,73 +93,130 @@ final class StringMatchesFormatDescription extends Constraint
         return 'string matches format description';
     }
 
+    protected function negatedFailureDescription(mixed $other): string
+    {
+        return 'string does not match format description';
+    }
+
     /**
-     * Returns a useful diff with the 'actual' differences.
+     * Returns a cleaned up diff.
      *
      * The expected string can contain placeholders like %s and %d.
-     * By using 'diff' such placeholders compared to the real output are
-     * always objectively different, although we don't want to show them as different.
+     * By using 'diff' such placeholders compared to the real output will
+     * always be different, although we don't want to show them as different.
+     * This method removes the expected differences by figuring out if a difference
+     * is allowed by the use of a placeholder.
      *
-     * This method removes the objective differences by figuring out if an objective
-     * difference is allowed by a placeholder.
-     *
-     * The final result should only contain the differences that caused the failing test.
+     * For %A and %a multiline placeholders that can match across multiple lines,
+     * we use anchor lookahead: find the next non-multiline expected line and search
+     * for it in the actual output to determine how many actual lines the placeholder
+     * consumed, keeping expected and actual in sync.
      */
     protected function additionalFailureDescription(mixed $other): string
     {
-        $expected = explode("\n", $this->formatDescription);
-        $output   = explode("\n", $this->convertNewlines($other));
+        if (is_string($other)) {
+            $otherAsString = $other;
+        } else {
+            $otherAsString = '';
+        }
 
-        for ($oIndex = 0, $eIndex = 0, $length = count($output); $oIndex < $length; $oIndex++) {
-            $multiLineMatch = false;
+        $expected      = explode("\n", $this->formatDescription);
+        $actual        = explode("\n", $this->convertNewlines($otherAsString));
+        $synced        = [];
+        $expectedIndex = 0;
+        $actualIndex   = 0;
 
-            if (isset($expected[$eIndex]) && $expected[$eIndex] !== $output[$oIndex]) {
-                $regEx     = $this->regularExpressionForFormatDescription($expected[$eIndex]);
-                $compareTo = $output[$oIndex];
-                $matches   = [];
+        while (isset($expected[$expectedIndex], $actual[$actualIndex])) {
+            $expectedLine = $expected[$expectedIndex];
+            $actualLine   = $actual[$actualIndex];
 
-                // if we do a multiline match we have to consider all following lines as well
-                if ($this->isMultilineMatch($expected[$eIndex])) {
-                    $multiLineMatch = true;
-                    $compareTo      = implode("\n", array_slice($output, $oIndex));
-                }
+            if ($expectedLine === $actualLine) {
+                $synced[] = $actualLine;
 
-                if (preg_match($regEx, $compareTo, $matches) > 0) {
-                    $lines = 1;
+                $expectedIndex++;
+                $actualIndex++;
 
-                    // if we matched multiple lines we have to sync $expected and $output
-                    if ($multiLineMatch) {
-                        $lines = count(explode("\n", $matches[0]));
+                continue;
+            }
+
+            if ($this->isMultilineMatch($expectedLine)) {
+                $anchor = $this->findNextAnchor($expected, $expectedIndex + 1);
+
+                if ($anchor !== null) {
+                    [$anchorExpectedIndex, $anchorLine] = $anchor;
+
+                    $anchorActualIndex = $this->findAnchorInActual($anchorLine, $actual, $actualIndex);
+
+                    if ($anchorActualIndex !== null) {
+                        foreach (array_slice($actual, $actualIndex, $anchorActualIndex - $actualIndex + 1) as $line) {
+                            $synced[] = $line;
+                        }
+
+                        $expectedIndex = $anchorExpectedIndex + 1;
+                        $actualIndex   = $anchorActualIndex + 1;
+
+                        continue;
+                    }
+                } else {
+                    // No anchor after multiline placeholder(s): consume all remaining actual lines
+                    foreach (array_slice($actual, $actualIndex) as $line) {
+                        $synced[] = $line;
                     }
 
-                    // we sync at least one line
-                    $expected[$eIndex] = $output[$oIndex];
-
-                    // for multiline matches we sync the matched lines to $expected
-                    for ($i = 1; $i < $lines; $i++) {
-                        $eIndex++;
-                        $oIndex++;
-
-                        array_splice($expected, $eIndex, 0, [$output[$oIndex]]);
-                    }
+                    return $this->differ()->diff(implode("\n", $synced), implode("\n", $actual));
                 }
             }
 
-            $eIndex++;
+            // Single-line comparison
+            $regex = $this->regularExpressionForFormatDescription($expectedLine);
+
+            if (@preg_match($regex, $actualLine) > 0) {
+                $synced[] = $actualLine;
+            } else {
+                $synced[] = $expectedLine;
+            }
+
+            $expectedIndex++;
+            $actualIndex++;
         }
 
-        $expectedString = implode("\n", $expected);
-        $outputString   = implode("\n", $output);
+        foreach (array_slice($expected, $expectedIndex) as $line) {
+            $synced[] = $line;
+        }
 
-        return $this->differ()->diff($expectedString, $outputString);
+        return $this->differ()->diff(implode("\n", $synced), implode("\n", $actual));
     }
 
     private function regularExpressionForFormatDescription(string $string): string
     {
-        // only add the end of string check ($) for single line comparisons
-        $endOfLine = $this->isMultilineMatch($string) ? '' : '$';
-        $string    = strtr(
-            preg_quote($string, '/'),
+        $quoted      = '';
+        $startOffset = 0;
+        $length      = strlen($string);
+
+        while ($startOffset < $length) {
+            $start = strpos($string, '%r', $startOffset);
+
+            if ($start !== false) {
+                $end = strpos($string, '%r', $start + 2);
+
+                if ($end === false) {
+                    $end = $start = $length;
+                }
+            } else {
+                $start = $end = $length;
+            }
+
+            $quoted .= preg_quote(substr($string, $startOffset, $start - $startOffset), '/');
+
+            if ($end > $start) {
+                $quoted .= '(' . substr($string, $start + 2, $end - $start - 2) . ')';
+            }
+
+            $startOffset = $end + 2;
+        }
+
+        $string = strtr(
+            $quoted,
             [
                 '%%' => '%',
                 '%e' => preg_quote(DIRECTORY_SEPARATOR, '/'),
@@ -147,21 +234,65 @@ final class StringMatchesFormatDescription extends Constraint
             ],
         );
 
-        return '/^' . $string . $endOfLine . '/s';
-    }
-
-    private function convertNewlines(string $text): string
-    {
-        return preg_replace('/\r\n/', "\n", $text);
-    }
-
-    private function differ(): Differ
-    {
-        return new Differ(new UnifiedDiffOutputBuilder("--- Expected\n+++ Actual\n"));
+        return '/^' . $string . '$/s';
     }
 
     private function isMultilineMatch(string $line): bool
     {
-        return preg_match('#%a#i', $line) > 0;
+        return preg_match('/%[aA]/', str_replace('%%', '', $line)) > 0;
+    }
+
+    /**
+     * @param list<string> $expected
+     *
+     * @return null|array{int, string}
+     */
+    private function findNextAnchor(array $expected, int $startIdx): ?array
+    {
+        foreach ($expected as $i => $line) {
+            if ($i < $startIdx) {
+                continue;
+            }
+
+            if (!$this->isMultilineMatch($line)) {
+                return [$i, $line];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<string> $actual
+     */
+    private function findAnchorInActual(string $anchorLine, array $actual, int $startIdx): ?int
+    {
+        $anchorRegex = $this->regularExpressionForFormatDescription($anchorLine);
+
+        foreach ($actual as $i => $line) {
+            if ($i < $startIdx) {
+                continue;
+            }
+
+            if ($anchorLine === $line || @preg_match($anchorRegex, $line) > 0) {
+                return $i;
+            }
+        }
+
+        return null;
+    }
+
+    private function convertNewlines(string $text): string
+    {
+        $result = preg_replace('/\r\n/', "\n", $text);
+
+        assert($result !== null);
+
+        return $result;
+    }
+
+    private function differ(): Differ
+    {
+        return DifferBuilder::build();
     }
 }

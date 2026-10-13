@@ -12,14 +12,13 @@ trait DefaultOrderBy
             return;
         }
 
-        $class = get_called_class();
-        $table = (new $class())->getTable();
-
         $column = self::$orderByColumn;
 
         $direction = self::$orderByColumnDirection ?? 'DESC';
 
-        static::addGlobalScope('default_order_by', function (Builder $builder) use ($table, $column, $direction) {
+        static::addGlobalScope('default_order_by', function (Builder $builder) use ($column, $direction) {
+            $table = $builder->getModel()->getTable();
+
             if (str_contains($column, $table.'.')) {
                 $builder->orderBy($column, $direction);
             } else {

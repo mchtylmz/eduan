@@ -12,12 +12,11 @@ class CreateNewsLetterAction
 
     public function handle(array $data)
     {
-       resetCache();
 
         return Newsletter::create([
             ...$data,
             'ip' => request()->ip(),
-            'token' => Str::random(60)
+            'token' => Str::random(60),
         ]);
     }
 }

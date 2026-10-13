@@ -3,15 +3,12 @@
 namespace App\Livewire\Frontend\Leagues;
 
 use App\Models\League;
-use Carbon\Carbon;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
-#[Lazy(isolate: false)]
 class LeagueTable extends Component
 {
-    public League|null $selectedLeague;
+    public ?League $selectedLeague;
 
     #[Computed(cache: true)]
     public function leagues()

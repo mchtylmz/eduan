@@ -2,123 +2,48 @@
 
 namespace App\Livewire\Users;
 
-use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
-use Illuminate\Database\Eloquent\Builder;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
+use App\Actions\Users\AuthorizeStudentAccess;
+use App\Actions\Users\AuthorizeTeacherAccess;
+use App\Helpers\TableCache;
 use App\Models\User;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use App\Traits\CustomLivewireAlert;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
 
-class TeachersTable extends DataTableComponent
+class TeachersTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
+    use CustomLivewireAlert;
 
-    protected $model = User::class;
-
-    public int $defaultPerPage = 10;
-
+    #[Locked]
     public int $studentId;
 
     public function mount(int $studentId): void
     {
+        AuthorizeStudentAccess::run(User::findOrFail($studentId));
         $this->studentId = $studentId;
-        $this->resetPage($this->getComputedPageName());
-        $this->clearSorts();
     }
 
-    public function builder(): Builder
+    public function render()
     {
-        return User::find($this->studentId)?->teachers()->getQuery();
+        AuthorizeStudentAccess::run(User::findOrFail($this->studentId));
+
+        return view('livewire.backend.users.assignments-server-table', [
+            'contextUserId' => $this->studentId, 'table' => 'user-teachers',
+            'endpoint' => 'admin.users.getTeachersData',
+        ]);
     }
 
-    public function columns(): array
+    public function delete(User $user)
     {
-        return [
-            $this->hiddenColumn(),
-            $this->usernameColumn(),
-            $this->nameColumn(),
-            $this->surnameColumn(),
-            $this->statusColumn(),
-        ];
-    }
-
-    protected function hiddenColumn(): Column
-    {
-        return Column::make('Id', 'id')->hideIf(true);
-    }
-
-    protected function usernameColumn(): Column
-    {
-        return Column::make(__('Kullanıcı Adı'), "username")
-            ->searchable()
-            ->sortable();
-    }
-
-    protected function nameColumn(): Column
-    {
-        return Column::make(__('İsim'), "name")
-            ->searchable()
-            ->collapseOnMobile()
-            ->sortable();
-    }
-
-    protected function surnameColumn(): Column
-    {
-        return Column::make(__('Soyisim'), "surname")
-            ->searchable()
-            ->collapseOnMobile()
-            ->sortable();
-    }
-
-    protected function statusColumn(): Column
-    {
-        return ComponentColumn::make(__('Durum'), "status")
-            ->collapseOnMobile()
-            ->component('table.status')
-            ->attributes(fn ($value, $row, Column $column) => [
-                'type' => $value->class(),
-                'label' => $value->name(),
-            ])
-            ->searchable()
-            ->sortable();
-    }
-
-    public function appendColumns(): array
-    {
-        return [
-            $this->deleteButton()
-        ];
-    }
-
-    protected function deleteButton(): WireLinkColumn
-    {
-        return WireLinkColumn::make(__('Kaldır'))
-            ->collapseOnMobile()
-            ->hideIf(auth()?->user()->cannot('users:teacher-delete'))
-            ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Kaldır')))
-            ->confirmMessage(__('Öğrencinin/Kullanıcının öğretmen ataması/eşleşmesi kaldırılacaktır, işleme devam edilsin mi?'))
-            ->action(fn($row) => 'delete("'.$row->id.'")')
-            ->attributes(fn($row) => ['class' => 'btn btn-danger btn-sm'])
-            ->html();
-    }
-
-    public function delete(User $user): ?bool
-    {
-        if (auth()->user()->cannot('users:teacher-delete')) {
-            $this->message(__('Öğrencinin/Kullanıcının öğretmen ataması/eşleşmesi kaldırılamaz, yetkiniz bulunmuyor!'))->error();
-            return false;
-        }
-
-        if (!$user->students()->find($this->studentId)) {
-            $this->message(__('Kendi öğrenciniz olmayan kullanıcıyı kaldıramazsınız!'))->error();
-            return false;
-        }
-
+        $context = User::findOrFail($this->studentId);
+        AuthorizeStudentAccess::run($context, 'users:teacher-delete');
+        AuthorizeTeacherAccess::run($user, 'users:teacher-delete');
+        abort_unless($context->teachers()->where('users.id', $user->id)->exists(), 404);
+        $context->teachers()->detach($user->id);
+        TableCache::invalidate('user-students', 'user-teachers', 'options');
         $this->message(__('Öğrencinin/Kullanıcının öğretmen ataması/eşleşmesi kaldırıldı!'))->success();
+        $this->dispatch('refresh-server-table', table: 'user-teachers');
 
-        return $user->students()->detach($this->studentId);
+        return true;
     }
 }

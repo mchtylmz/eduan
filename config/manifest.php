@@ -16,35 +16,35 @@ return [
     'related_applications' => [],
     'prefer_related_applications' => false,
     'display_override' => [
-        "window-controls-overlay"
+        'window-controls-overlay',
     ],
     'screenshots' => [],
     'features' => [
-        "Cross Platform",
-        "low-latency inking",
-        "fast",
-        "useful AI"
+        'Cross Platform',
+        'low-latency inking',
+        'fast',
+        'useful AI',
     ],
-    "icons" => [
+    'icons' => [
         [
-            "src" => "icons/manifest-icon-192.maskable.jpg",
-            "sizes" => "192x192",
-            "type" => "image/png",
-            "purpose" => "any"
+            'src' => 'icons/manifest-icon-192.maskable.png',
+            'sizes' => '192x192',
+            'type' => 'image/png',
+            'purpose' => 'maskable',
         ],
         [
-            "src" => "icons/manifest-icon-512.maskable.jpg",
-            "sizes" => "512x512",
-            "type" => "image/png",
-            "purpose" => "any"
-        ]
+            'src' => 'icons/manifest-icon-512.maskable.png',
+            'sizes' => '512x512',
+            'type' => 'image/png',
+            'purpose' => 'maskable',
+        ],
     ],
-    "categories" => [
-        "productivity"
+    'categories' => [
+        'productivity',
     ],
-    "launch_handler" => [
-        "client_mode" => "navigate-existing"
+    'launch_handler' => [
+        'client_mode' => 'navigate-existing',
     ],
-    "edge_side_panel" => [],
-    "shortcuts" => []
+    'edge_side_panel' => [],
+    'shortcuts' => [],
 ];

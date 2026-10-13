@@ -18,10 +18,7 @@ class FilterStatsQuestionsExport implements FromCollection, ShouldAutoSize, With
         $this->collection = $collection;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function collection()
+    public function collection(): Collection
     {
         return $this->collection;
     }

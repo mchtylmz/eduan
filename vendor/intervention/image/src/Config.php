@@ -11,10 +11,6 @@ class Config
     /**
      * Create config object instance
      *
-     * @param bool $autoOrientation
-     * @param bool $decodeAnimation
-     * @param mixed $blendingColor
-     * @param bool $strip
      * @return void
      */
     public function __construct(
@@ -29,9 +25,7 @@ class Config
     /**
      * Set values of given config options
      *
-     * @param mixed $options
      * @throws InputException
-     * @return Config
      */
     public function setOptions(mixed ...$options): self
     {
@@ -51,7 +45,7 @@ class Config
      * array instead of named parameters
      *
      * @param array<mixed> $options
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
     private function prepareOptions(array $options): array
     {

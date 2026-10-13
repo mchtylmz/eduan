@@ -2,16 +2,13 @@
 
 namespace App\Livewire\Frontend\Lessons;
 
-use App\Filters\LessonFilter;
-use App\Models\Faq;
+use App\Helpers\FrontendCache;
 use App\Models\Lesson;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Lazy]
 class ListLessons extends Component
 {
     use WithPagination;
@@ -19,12 +16,19 @@ class ListLessons extends Component
     protected string $paginationTheme = 'bootstrap';
 
     public bool $showHits = false;
+
     public bool $showPaginate = true;
+
     public int $paginate = 21;
+
     public bool $showSearch = true;
 
     public bool $visibilityLite = false;
+
+    public bool $home = false;
+
     public bool $search = false;
+
     public string $word = '';
 
     public function searchLesson(): void
@@ -32,6 +36,7 @@ class ListLessons extends Component
         $this->search = true;
         $this->resetPage();
     }
+
     public function clearSearch(): void
     {
         $this->search = false;
@@ -42,24 +47,21 @@ class ListLessons extends Component
     #[Computed]
     public function lessons()
     {
-        return Cache::remember(
-            implode('_', [
-                'frontend_lessons', $this->word, intval($this->showHits), $this->paginate
-            ]),
-            60 * 60 * 60 * 365,
+        return FrontendCache::paginate(
+            'lessons',
+            ['search' => $this->search ? $this->word : '', 'hits' => $this->showHits, 'limit' => $this->paginate, 'page' => $this->getPage()],
             function () {
-                return Lesson::withCount([
-                        'topics' => fn($query) => $query->active(),
-                        'exams' => fn($query) => $query->active()
-                    ])
-                    ->with([
-                        'exams' => fn($query) => $query->active()
-                    ])
+                return Lesson::select(['id', 'code', 'name', 'description', 'sort', 'hits', 'status'])->withCount([
+                    'topics' => fn ($query) => $query->active(),
+                    'exams' => fn ($query) => $query->active()->select(DB::raw('COUNT(DISTINCT exams.id)')),
+                ])
                     ->when($this->search, function ($query) {
-                        $query->where('code', 'like', "%{$this->word}%")
-                            ->orWhere('name', 'like', "%{$this->word}%");
+                        $query->where(function ($query) {
+                            $query->where('code', 'like', "%{$this->word}%")
+                                ->orWhere('name', 'like', "%{$this->word}%");
+                        });
                     })
-                    ->when(!$this->showHits, function ($query) {
+                    ->when(! $this->showHits, function ($query) {
                         $query->orderByDesc('hits');
                     })
                     ->active()

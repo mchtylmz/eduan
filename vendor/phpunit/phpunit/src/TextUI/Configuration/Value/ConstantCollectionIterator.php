@@ -9,13 +9,13 @@
  */
 namespace PHPUnit\TextUI\Configuration;
 
-use function count;
+use function assert;
 use Iterator;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
  *
- * @template-implements Iterator<int, Constant>
+ * @template-implements Iterator<non-negative-int, Constant>
  */
 final class ConstantCollectionIterator implements Iterator
 {
@@ -23,6 +23,10 @@ final class ConstantCollectionIterator implements Iterator
      * @var list<Constant>
      */
     private readonly array $constants;
+
+    /**
+     * @var non-negative-int
+     */
     private int $position = 0;
 
     public function __construct(ConstantCollection $constants)
@@ -37,9 +41,12 @@ final class ConstantCollectionIterator implements Iterator
 
     public function valid(): bool
     {
-        return $this->position < count($this->constants);
+        return isset($this->constants[$this->position]);
     }
 
+    /**
+     * @return non-negative-int
+     */
     public function key(): int
     {
         return $this->position;
@@ -47,6 +54,8 @@ final class ConstantCollectionIterator implements Iterator
 
     public function current(): Constant
     {
+        assert(isset($this->constants[$this->position]));
+
         return $this->constants[$this->position];
     }
 

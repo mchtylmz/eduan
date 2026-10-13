@@ -9,6 +9,7 @@
  */
 namespace PHPUnit\Framework\Constraint;
 
+use function is_array;
 use Closure;
 use ReflectionFunction;
 
@@ -42,13 +43,15 @@ final class Callback extends Constraint
 
     public function isVariadic(): bool
     {
-        foreach ((new ReflectionFunction(Closure::fromCallable($this->callback)))->getParameters() as $parameter) {
-            if ($parameter->isVariadic()) {
-                return true;
-            }
-        }
+        return new ReflectionFunction(Closure::fromCallable($this->callback))->isVariadic();
+    }
 
-        return false;
+    /**
+     * Returns the negated string representation of the constraint.
+     */
+    protected function negatedToString(): string
+    {
+        return 'is not accepted by specified callback';
     }
 
     /**
@@ -59,7 +62,7 @@ final class Callback extends Constraint
      */
     protected function matches(mixed $other): bool
     {
-        if ($this->isVariadic()) {
+        if ($this->isVariadic() && is_array($other)) {
             return ($this->callback)(...$other);
         }
 

@@ -29,12 +29,6 @@ composer require livewire/livewire
 ```
 
 ```
-composer require rappasoft/laravel-livewire-tables
-php artisan vendor:publish --provider="Rappasoft\LaravelLivewireTables\LaravelLivewireTablesServiceProvider" --tag=livewire-tables-config
-php artisan vendor:publish --provider="Rappasoft\LaravelLivewireTables\LaravelLivewireTablesServiceProvider" --tag=livewire-tables-views
-```
-
-```
 composer require jantinnerezo/livewire-alert
 php artisan vendor:publish --tag=livewire-alert:config
 ```
@@ -45,10 +39,6 @@ composer require archtechx/enums
 
 ```
 composer require spatie/laravel-translatable
-```
-
-```
-druc/laravel-langscanner
 ```
 
 ```
@@ -66,6 +56,12 @@ php artisan vendor:publish --provider="Intervention\Image\Laravel\ServiceProvide
 https://github.com/wotzebra/livewire-sortablejs
 ```
 
+## Paket geçiş durumu
+
+Langscanner, Telescope, Rappasoft Tables, Sentry, Laravel Backup, S3 adapter ve Debugbar kaldırıldı. Yerel PHP 8.5.8, Laravel 13.34.0, Livewire 4.4.7 ve PHPUnit 13.4.1 kuruldu; Alert 4 ve Excel 4 uyarlamaları uygulandı.
+
+Paneldeki son LaTeX tablo da kendi Blade + Bootstrap Table/server JSON karşılığına geçti; kullanılmayan Rappasoft trait/config/şablonları kaldırıldı. Çeviri anahtarı tarayıcısı Faz2 ile, Laravel bağımsız SQL.gz/ZIP → R2 bash yedeği Faz3 ile geliştirildi; gerçek sunucu/R2/cron kurulumu ayrı adımdır. Mevcut çeviri düzenleme ve yerel yüklemeler korunur; bu geçiş tek başına canlıya hazır kabulü değildir. Faz ve dar test kaydı: [60](Codex/60-RAPPASOFT-SON-TABLO-VE-PAKET-KARSILIK-FAZLARI.md). Ayrıntı: [paket temizleme kaydı](Codex/34-PAKET-CIKARMA-VE-PROJE-TEMIZLIGI.md), [PHP8.5/Laravel13 sonucu](Codex/35-PHP85-VE-LARAVEL13-GUNCELLEME.md).
+
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
@@ -73,3 +69,21 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+### Çeviri tarayıcısı — Faz2
+
+[Kaynak ve test raporu](Codex/61-CEVIRI-TARAYICISI-VE-KAYNAK-YONETIMI.md): Diller/Çeviriler ekranında Kaynakları tara → Eksikleri ekle. Mevcut değerler/diller korunur; dosya/route/grup/boş filtreleri ve40 kayıtlık düzenleme. Blur DB’ye, Dil dosyalarını kaydet JSON/PHP kaynaklarına yazar. Onaylı tek kullanım tablosu migration’ı yerel ana/testing’de uygulandı; ana tarama ekleme henüz başlatılmadı. SQL.gz + ZIP/R2 bash ayrı Faz3’tür.
+
+
+### Bağımsız yedek — Faz3
+
+[`scripts/backup-to-r2.sh`](scripts/backup-to-r2.sh): `db` SQL.gz, `project` tam ZIP; Laravel başlatılmadan kök `.env` okunur. Ayrı private `BACKUP_WORK_DIR`, `BACKUP_R2_BUCKET`, `BACKUP_R2_PREFIX` ve AWS R2 erişim/endpoint değerleri gereklidir. `--check` yalnız yerel araç/ayar kontrolüdür. R2 aktarımı boyut ve geri okunan SHA-256 ile doğrulanmadan yerel arşiv silinmez. Hata arşivi korunur. [Kullanım, sunucu komutları ve dar test raporu](Codex/62-LARAVEL-BAGIMSIZ-BASH-YEDEK-VE-R2.md).11 farklı fixture test başarılı; gerçek aktarım/cron/restore uygulanmadı.
+
+### SiteGround PHP 8.5 CLI / Imagick
+
+[`scripts/siteground-cli-cron.example`](scripts/siteground-cli-cron.example): **PHP 8.5 proje yayını sırasında yapılacak adım:** mevcut scheduler ve queue worker cron komutları `/usr/bin/php85 -d extension=imagick.so` kullanacak şekilde güncellenir. O yayına kadar mevcut canlı görevler korunur. Mevcut zaman/worker seçenekleri korunur; örnek dosya otomatik kurulmaz. [CLI kapsamı ve kontrol](Codex/66-GENEL-TEST-DUZELTMELERI-VE-IMAGICK.md).
+
+### Canlı AI ayarları ve son test kapısı
+
+[Canlı aktarım listesi ve test sonucu](Codex/69-SON-TESTLER-VE-CANLI-AKTARIM-LISTESI.md): yayın gününde yalnız `gptModel=gpt-6-luna`, `gptEffect=low`, `gptDeveloperMessage` ve `gptUserMessage` v3 metinleri etkinleştirilir. Mevcut API anahtarı, günlük/kullanıcı limitleri ve kayıtlı AI cevapları korunur. Aktivasyon ücretli API isteği göndermez; her ajan denemesi ayrı onaylıdır. Henüz canlıda uygulanmadı. Mevcut test aşaması tamamlandı: genel koşudaki tek lig başlığı beklentisi düzeltildi, ilgili 1 test/16 doğrulama geçti; genel koşu tekrar edilmedi. Yeni özelliklere geçilebilir. Sunucu/migration kontrolleri ve yayın/geri dönüş hazırlığı kullanıcı kararıyla yayın aşamasına bırakıldı.

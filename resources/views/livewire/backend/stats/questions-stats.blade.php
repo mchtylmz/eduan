@@ -3,12 +3,12 @@
         <div class="row align-items-end">
             <div class="col-lg-3 mb-3" wire:ignore>
                 <label class="form-label" for="started_at">{{ __('Başlangıç Tarihi') }}</label>
-                <input type="text" class="js-flatpickr form-control" id="started_at" wire:model="started_at" data-enable-time="false" data-time_24hr="false" data-locale="{{ $locale }}" value="{{ $started_at }}">
+                <input type="text" class="js-flatpickr form-control" id="started_at" wire:model="started_at" data-enable-time="false" data-time_24hr="false" data-locale="{{ app()->getLocale() }}" value="{{ $started_at }}">
             </div>
 
             <div class="col-lg-3 mb-3" wire:ignore>
                 <label class="form-label" for="ended_at">{{ __('Bitiş Tarihi') }}</label>
-                <input type="text" class="js-flatpickr form-control" id="ended_at" wire:model="ended_at" data-enable-time="false" data-time_24hr="false" data-locale="{{ $locale }}" value="{{ $ended_at }}">
+                <input type="text" class="js-flatpickr form-control" id="ended_at" wire:model="ended_at" data-enable-time="false" data-time_24hr="false" data-locale="{{ app()->getLocale() }}" value="{{ $ended_at }}">
             </div>
 
             <div class="col-lg-3 mb-3" wire:ignore>

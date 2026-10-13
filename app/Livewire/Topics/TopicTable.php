@@ -2,118 +2,59 @@
 
 namespace App\Livewire\Topics;
 
+use App\Helpers\TableCache;
+use App\Models\Language;
+use App\Models\Lesson;
 use App\Models\Topic;
 use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
+use App\Traits\ServerTableActions;
 use Illuminate\Database\Eloquent\Builder;
-use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Columns\ComponentColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\CountColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use Livewire\Component;
 
-#[Lazy(isolate: true)]
-class TopicTable extends DataTableComponent
+class TopicTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure, CustomLivewireTableFilters;
+    use CustomLivewireAlert, ServerTableActions;
 
-    protected $model = Topic::class;
+    protected string $resource = 'topics';
 
-    public function mount(): void
+    protected function builder(): Builder
     {
-        $this->setFilter('locale', settings()->examlanguageCode ?? app()->getLocale());
-        //$this->setSortAsc('sort');
+        return Topic::with('lesson')->withCount('questions');
     }
 
-    public function builder(): Builder
+    public function render()
     {
-        return Topic::query();
-    }
+        $record = $this->selectedRecord();
 
-    public function filters(): array
-    {
-        return [
-            $this->activeLessonFilter(
-                fn(Builder $builder, array $value) => $builder->whereIn('lesson_id', $value)
-            ),
-            $this->languageFilter('name'),
-            $this->statusFilter('topics.status'),
-        ];
-    }
-
-    public function columns(): array
-    {
-        return [
-            Column::make('id', 'id')
-                ->hideIf(true),
-            Column::make(__('Ders'), "lesson.name")
-                ->format(fn($value) => json_decode($value, true)[app()->getLocale()] ?? '')
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Kodu'), "code")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Konu'), "title")
-                ->searchable()
-                ->sortable(),
-            CountColumn::make(__('Soru Sayısı'))
-                ->setDataSource('questions')
-                ->sortable(),
-            Column::make(__('Sıra'), "sort")
-                ->sortable(),
-            Column::make(__('Görüntüleme'), "hits")
-                ->sortable(),
-            ComponentColumn::make(__('Durum'), "status")
-                ->collapseOnMobile()
-                ->component('table.status')
-                ->attributes(fn($value, $row, Column $column) => [
-                    'type' => $value->class(),
-                    'label' => $value->name(),
-                ])
-                ->searchable()
-                ->sortable(),
-        ];
-    }
-
-    public function appendColumns(): array
-    {
-        return [
-            LinkColumn::make(__('Düzenle'))
-                ->collapseOnMobile()
-                ->hideIf(auth()?->user()->cannot('topics:update'))
-                ->title(fn($row) => sprintf('<i class="fa fa-pen mx-1"></i> %s', __('Düzenle')))
-                ->location(fn($row) => route('admin.topics.edit', $row->id))
-                ->attributes(fn($row) => ['class' => 'btn btn-warning btn-sm'])
-                ->html(),
-
-            WireLinkColumn::make(__('Sil'))
-                ->collapseOnMobile()
-                ->hideIf(auth()?->user()->cannot('topics:delete'))
-                ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Sil')))
-                ->confirmMessage(__('Konu silinecektir, işleme devam edilsin mi?'))
-                ->action(fn($row) => 'delete("' . $row->id . '")')
-                ->attributes(fn($row) => ['class' => 'btn btn-danger btn-sm'])
-                ->html(),
-        ];
+        return view('livewire.backend.topics.server-table', [
+            'languages' => TableCache::options('languages', fn () => Language::orderBy('id')->pluck('name', 'code')->all()),
+            'lessons' => TableCache::options('lessons', fn () => Lesson::active()->orderBy('sort')->get()->pluck('name', 'id')->all()),
+            'details' => $record ? [__('Ders') => $record->lesson?->name ?? '-', __('Kodu') => $record->code,
+                __('Konu') => $record->title, __('Soru Sayısı') => $record->questions_count,
+                __('Sıra') => $record->sort, __('Görüntüleme') => $record->hits, __('Durum') => $record->status->name()] : [],
+        ]);
     }
 
     public function delete(Topic $topic)
     {
+        $this->requireTableAccess('delete');
         if (auth()->user()->cannot('topics:delete')) {
             $this->message(__('Konu silinemedi!'))->error();
+
             return false;
         }
 
         if ($topic->questions()->count()) {
             $this->message(__('Konu silinemez, bağlı soru bulunuyor!'))->error();
+
             return false;
         }
 
         $this->message(__('Konu başarıyla silindi!'))->success();
 
-        return $topic->delete();
+        $deleted = $topic->delete();
+        $this->dispatch('refresh-server-table', table: $this->resource);
+
+        return $deleted;
     }
 }

@@ -10,7 +10,7 @@ class CreateReviewAction
 {
     use AsAction;
 
-    public function handle(array $data, Exam $exam = null)
+    public function handle(array $data, ?Exam $exam = null)
     {
         $data['ip'] = request()->getClientIp();
 

@@ -7,69 +7,69 @@ use App\Enums\YesNoEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Newsletter;
 use App\Models\Test;
-use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
     public function index()
     {
         return view('frontend.account.index', [
-            'title' => __('Hesabım')
+            'title' => __('account.title'),
         ]);
     }
 
     public function favorite()
     {
         return view('frontend.account.favorite', [
-            'title' => __('Favori Testlerim')
+            'title' => __('account.favorites'),
         ]);
     }
 
     public function stats()
     {
         return view('frontend.account.stats', [
-            'title' => __('İstatistikler')
+            'title' => __('account.stats'),
         ]);
     }
 
     public function solved()
     {
         return view('frontend.account.solved', [
-            'title' => __('Testlerim')
+            'title' => __('account.tests'),
         ]);
     }
 
     public function solvedNotCompleteTests()
     {
         return view('frontend.account.solved-not-complete', [
-            'title' => __('Çözmediğim Testler')
+            'title' => __('account.not_completed'),
         ]);
     }
 
     public function results()
     {
         return view('frontend.account.results', [
-            'title' => __('Sınavlarım')
+            'title' => __('account.exams'),
         ]);
     }
 
     public function myLeagues()
     {
         return view('frontend.account.my-leagues', [
-            'title' => __('Lig Sonuçları')
+            'title' => __('account.leagues'),
         ]);
     }
 
     public function result(Test $test)
     {
         return view('frontend.account.result', [
-            'title' => __('Sınav Sonucu') . ' ' . $test->name,
+            'title' => __('account.exam_result').' '.$test->name,
             'test' => $test,
+            'sections' => $test->sections()->parentIsZero()->with('parents.metarelation')->get(),
             'results' => $test->userResultsWithoutGroupBy()
-                ->with(['details', 'test'])
+                ->with(['details.question', 'details.answer'])
                 ->where('completed', YesNoEnum::YES)
                 ->orderBy('id')
-                ->get()
+                ->paginate(5)->withQueryString(),
         ]);
     }
 
@@ -78,7 +78,7 @@ class AccountController extends Controller
         $newsletter->delete();
 
         return view('frontend.account.unsubscribe', [
-            'title' => __('Abonelikten Çık')
+            'title' => __('Abonelikten Çık'),
         ]);
     }
 

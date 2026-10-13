@@ -1,6 +1,6 @@
 <div>
     <div class="bg-light p-3 mb-3">
-        <h5 class="mb-0">{{ __('Toplam :count kullanıcıya mail gönderilecek.', ['count' => count($emails)]) }}</h5>
+        <h5 class="mb-0">{{ __('Toplam :count kullanıcıya mail gönderilecek.', ['count' => $this->recipientCount]) }}</h5>
     </div>
 
     @if($errors->any())

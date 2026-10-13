@@ -1,28 +1,21 @@
 <div>
-    <section class="h10_category-area pt-75 pb-75 bg-white">
+    <section class="h10_category-area home-catalog home-catalog-lessons bg-white">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-6">
-                    <div class="section-area-10 mb-55 text-center">
-                        <h2 class="section-title mb-20">{{ data_get($content, 'lessonTitle') }}</h2>
-                        <p class="section-text">{{ data_get($content, 'lessonDescription') }}</p>
-                    </div>
+            <header class="home-catalog-heading">
+                <div>
+                    <h2 class="section-title">{{ data_get($content, 'lessonTitle') }}</h2>
+                    <p class="section-text">{{ data_get($content, 'lessonDescription') }}</p>
                 </div>
-            </div>
+                <a href="{{ route('frontend.lessons') }}" class="home-catalog-link">{{ __('learning.home_lessons') }} <i class="fa-light fa-arrow-right" aria-hidden="true"></i></a>
+            </header>
             <div class="row">
                 @livewire('frontend.lessons.list-lessons', [
                     'showHits' => true,
                     'showPaginate' => false,
                     'paginate' => intval(data_get($content, 'lessonCount', 12)),
-                    'showSearch' => false
+                    'showSearch' => false,
+                    'home' => true
                 ])
-                <div class="col-12">
-                    <div class="h10_category-item-btn pt-30">
-                        <a href="{{ route('frontend.lessons') }}">
-                            {{ __('Tüm Dersler') }} <i class="fa-light fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </section>

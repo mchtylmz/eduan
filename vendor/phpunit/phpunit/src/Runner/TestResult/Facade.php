@@ -9,10 +9,10 @@
  */
 namespace PHPUnit\TestRunner\TestResult;
 
+use function array_filter;
+use function count;
 use function str_contains;
-use PHPUnit\Event\EventFacadeIsSealedException;
 use PHPUnit\Event\Facade as EventFacade;
-use PHPUnit\Event\UnknownSubscriberTypeException;
 use PHPUnit\Runner\DeprecationCollector\Facade as DeprecationCollectorFacade;
 use PHPUnit\TestRunner\IssueFilter;
 use PHPUnit\TextUI\Configuration\Configuration;
@@ -26,47 +26,73 @@ use PHPUnit\TextUI\Configuration\Registry as ConfigurationRegistry;
 final class Facade
 {
     private static ?Collector $collector = null;
+    private static bool $interrupted     = false;
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
     public static function init(): void
     {
         self::collector();
     }
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
+    public static function interrupt(): void
+    {
+        self::$interrupted = true;
+    }
+
+    public static function wasInterrupted(): bool
+    {
+        return self::$interrupted;
+    }
+
     public static function result(): TestResult
     {
         return self::collector()->result();
     }
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
     public static function shouldStop(): bool
     {
+        if (self::$interrupted) {
+            return true;
+        }
+
         $configuration = ConfigurationRegistry::get();
         $collector     = self::collector();
 
-        if (($configuration->stopOnDefect() || $configuration->stopOnError()) && $collector->hasErroredTests()) {
+        if ($collector->wasTimeLimitExceeded()) {
             return true;
         }
 
-        if (($configuration->stopOnDefect() || $configuration->stopOnFailure()) && $collector->hasFailedTests()) {
+        $numberOfErrors   = $collector->numberOfErroredTests();
+        $numberOfFailures = $collector->numberOfFailedTests();
+        $numberOfWarnings = $collector->numberOfWarnings();
+        $numberOfRisky    = $collector->numberOfRiskyTests();
+
+        $stopOnDefect = $configuration->stopOnDefectThreshold();
+
+        if ($stopOnDefect > 0 && ($numberOfErrors + $numberOfFailures + $numberOfWarnings + $numberOfRisky) >= $stopOnDefect) {
             return true;
         }
 
-        if (($configuration->stopOnDefect() || $configuration->stopOnWarning()) && $collector->hasWarnings()) {
+        $stopOnError = $configuration->stopOnErrorThreshold();
+
+        if ($stopOnError > 0 && $numberOfErrors >= $stopOnError) {
             return true;
         }
 
-        if (($configuration->stopOnDefect() || $configuration->stopOnRisky()) && $collector->hasRiskyTests()) {
+        $stopOnFailure = $configuration->stopOnFailureThreshold();
+
+        if ($stopOnFailure > 0 && $numberOfFailures >= $stopOnFailure) {
+            return true;
+        }
+
+        $stopOnWarning = $configuration->stopOnWarningThreshold();
+
+        if ($stopOnWarning > 0 && $numberOfWarnings >= $stopOnWarning) {
+            return true;
+        }
+
+        $stopOnRisky = $configuration->stopOnRiskyThreshold();
+
+        if ($stopOnRisky > 0 && $numberOfRisky >= $stopOnRisky) {
             return true;
         }
 
@@ -74,25 +100,27 @@ final class Facade
             return true;
         }
 
-        if ($configuration->stopOnNotice() && $collector->hasNotices()) {
+        $stopOnNotice = $configuration->stopOnNoticeThreshold();
+
+        if ($stopOnNotice > 0 && $collector->numberOfNotices() >= $stopOnNotice) {
             return true;
         }
 
-        if ($configuration->stopOnIncomplete() && $collector->hasIncompleteTests()) {
+        $stopOnIncomplete = $configuration->stopOnIncompleteThreshold();
+
+        if ($stopOnIncomplete > 0 && $collector->numberOfIncompleteTests() >= $stopOnIncomplete) {
             return true;
         }
 
-        if ($configuration->stopOnSkipped() && $collector->hasSkippedTests()) {
+        $stopOnSkipped = $configuration->stopOnSkippedThreshold();
+
+        if ($stopOnSkipped > 0 && $collector->numberOfSkippedTests() >= $stopOnSkipped) {
             return true;
         }
 
         return false;
     }
 
-    /**
-     * @throws EventFacadeIsSealedException
-     * @throws UnknownSubscriberTypeException
-     */
     private static function collector(): Collector
     {
         if (self::$collector === null) {
@@ -109,22 +137,24 @@ final class Facade
 
     private static function stopOnDeprecation(Configuration $configuration): bool
     {
-        if (!$configuration->stopOnDeprecation()) {
+        $threshold = $configuration->stopOnDeprecationThreshold();
+
+        if ($threshold === 0) {
             return false;
         }
 
         $deprecations = DeprecationCollectorFacade::filteredDeprecations();
 
-        if (!$configuration->hasSpecificDeprecationToStopOn()) {
-            return $deprecations !== [];
+        if ($configuration->hasSpecificDeprecationToStopOn()) {
+            $deprecations = array_filter(
+                $deprecations,
+                static fn (string $deprecation) => str_contains(
+                    $deprecation,
+                    $configuration->specificDeprecationToStopOn(),
+                ),
+            );
         }
 
-        foreach ($deprecations as $deprecation) {
-            if (str_contains($deprecation, $configuration->specificDeprecationToStopOn())) {
-                return true;
-            }
-        }
-
-        return false;
+        return count($deprecations) >= $threshold;
     }
 }

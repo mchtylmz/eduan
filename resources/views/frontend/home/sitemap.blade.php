@@ -1,95 +1,14 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-			    http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+{!! '<?xml version="1.0" encoding="UTF-8"?>' !!}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+@foreach($entries as $entry)
     <url>
-        <loc>{{ url('/') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>1</priority>
+        <loc>{{ $entry['loc'] }}</loc>
+        @if($entry['lastmod'])
+            <lastmod>{{ $entry['lastmod'] }}</lastmod>
+        @endif
+        @foreach($entry['alternates'] as $code => $href)
+            <xhtml:link rel="alternate" hreflang="{{ $code }}" href="{{ $href }}" />
+        @endforeach
     </url>
-    <url>
-        <loc>{{ route('frontend.home') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>1</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.leagues') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>1</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.blog') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.lessons') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.faqs') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.contact') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>{{ route('frontend.search') }}</loc>
-        <lastmod>{{  date('c', time()) }}</lastmod>
-        <priority>0.5</priority>
-    </url>
-    @foreach(\App\Models\Page::all() as $page)
-        <url>
-            <loc>{{ route('frontend.page', $page->slug) }}</loc>
-            <lastmod>{{  date('c', strtotime($page->updated_at)) }}</lastmod>
-            <priority>0.3</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\Blog::all() as $blog)
-        <url>
-            <loc>{{ route('frontend.blog.detail', $blog->slug) }}</loc>
-            <lastmod>{{  date('c', strtotime($blog->updated_at)) }}</lastmod>
-            <priority>0.4</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\Topic::all() as $topic)
-        <url>
-            <loc>{{ route('frontend.tests', $topic->code) }}</loc>
-            <lastmod>{{  date('c', strtotime($topic->updated_at)) }}</lastmod>
-            <priority>1</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\Lesson::all() as $lesson)
-        <url>
-            <loc>{{ route('frontend.lesson', $lesson->code) }}</loc>
-            <lastmod>{{  date('c', strtotime($lesson->updated_at)) }}</lastmod>
-            <priority>1</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\Exam::all() as $exam)
-        <url>
-            <loc>{{ route('frontend.exams', $exam->code) }}</loc>
-            <lastmod>{{  date('c', strtotime($exam->updated_at)) }}</lastmod>
-            <priority>1</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\Test::all() as $test)
-        <url>
-            <loc>{{ route('frontend.tests', $test->code) }}</loc>
-            <lastmod>{{  date('c', strtotime($test->updated_at)) }}</lastmod>
-            <priority>1</priority>
-        </url>
-    @endforeach
-    @foreach(\App\Models\League::all() as $league)
-        <url>
-            <loc>{{ route('frontend.leagues.detail', $league->code) }}</loc>
-            <lastmod>{{  date('c', strtotime($league->updated_at)) }}</lastmod>
-            <priority>1</priority>
-        </url>
-    @endforeach
+@endforeach
 </urlset>

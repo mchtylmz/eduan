@@ -2,69 +2,49 @@
 
 namespace App\Livewire\Newsletters;
 
-use App\Models\Lesson;
-use App\Traits\CustomLivewireAlert;
-use App\Traits\CustomLivewireTableFilters;
-use App\Traits\LivewireTableConfigure;
-use Livewire\Attributes\Lazy;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\Newsletter;
-use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-use Rappasoft\LaravelLivewireTables\Views\Columns\WireLinkColumn;
+use App\Traits\CustomLivewireAlert;
+use App\Traits\ServerTableActions;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 
-#[Lazy(isolate: true)]
-class NewsletterTable extends DataTableComponent
+class NewsletterTable extends Component
 {
-    use CustomLivewireAlert, LivewireTableConfigure;
+    use CustomLivewireAlert, ServerTableActions;
 
-    protected $model = Newsletter::class;
+    protected string $resource = 'newsletter';
 
-    public function mount(): void
+    protected string $tableName = 'newsletter';
+
+    protected function builder(): Builder
     {
-        $this->setSortDesc('id');
+        return Newsletter::query();
     }
 
-    public function columns(): array
+    public function render()
     {
-        return [
-            Column::make("ID", "id")
-                ->sortable(),
-            Column::make(__('Email'), "email")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('IP'), "ip")
-                ->searchable()
-                ->sortable(),
-            Column::make(__('Kayıt Tarihi'), "created_at")
-                ->format(fn($value) => dateFormat($value, 'd M Y, H:i'))
-                ->sortable(),
-        ];
-    }
+        $record = $this->selectedRecord();
 
-    public function appendColumns(): array
-    {
-        return [
-            WireLinkColumn::make(__('Sil'))
-                ->collapseOnMobile()
-                ->hideIf(auth()?->user()->cannot('newsletter:delete'))
-                ->title(fn($row) => sprintf('<i class="fa fa-trash-alt mx-1"></i> %s', __('Sil')))
-                ->confirmMessage(__('Kayıt silinecektir, işleme devam edilsin mi?'))
-                ->action(fn($row) => 'delete("' . $row->id . '")')
-                ->attributes(fn($row) => ['class' => 'btn btn-danger btn-sm'])
-                ->html(),
-        ];
+        return view('livewire.backend.newsletter.server-table', [
+            'details' => $record ? [__('ID') => $record->id, __('Email') => $record->email, __('IP') => $record->ip, __('Kayıt Tarihi') => dateFormat($record->created_at, 'd M Y, H:i')] : [],
+            'editUrl' => null,
+        ]);
     }
 
     public function delete(Newsletter $newsletter)
     {
+        $this->requireTableAccess('delete');
         if (auth()->user()->cannot('newsletter:delete')) {
             $this->message(__('Kayıt silinemedi!'))->error();
+
             return false;
         }
 
         $this->message(__('Kayıt silindi!'))->success();
 
-        return $newsletter->delete();
+        $deleted = $newsletter->delete();
+        $this->dispatch('refresh-server-table', table: 'newsletter');
+
+        return $deleted;
     }
 }

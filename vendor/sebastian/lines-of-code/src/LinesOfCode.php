@@ -15,7 +15,7 @@ namespace SebastianBergmann\LinesOfCode;
 final readonly class LinesOfCode
 {
     /**
-     * @var non-negative-int
+     * @var positive-int
      */
     private int $linesOfCode;
 
@@ -35,36 +35,15 @@ final readonly class LinesOfCode
     private int $logicalLinesOfCode;
 
     /**
-     * @param non-negative-int $linesOfCode
+     * @param positive-int     $linesOfCode
      * @param non-negative-int $commentLinesOfCode
      * @param non-negative-int $nonCommentLinesOfCode
      * @param non-negative-int $logicalLinesOfCode
      *
      * @throws IllogicalValuesException
-     * @throws NegativeValueException
      */
     public function __construct(int $linesOfCode, int $commentLinesOfCode, int $nonCommentLinesOfCode, int $logicalLinesOfCode)
     {
-        /** @phpstan-ignore smaller.alwaysFalse */
-        if ($linesOfCode < 0) {
-            throw new NegativeValueException('$linesOfCode must not be negative');
-        }
-
-        /** @phpstan-ignore smaller.alwaysFalse */
-        if ($commentLinesOfCode < 0) {
-            throw new NegativeValueException('$commentLinesOfCode must not be negative');
-        }
-
-        /** @phpstan-ignore smaller.alwaysFalse */
-        if ($nonCommentLinesOfCode < 0) {
-            throw new NegativeValueException('$nonCommentLinesOfCode must not be negative');
-        }
-
-        /** @phpstan-ignore smaller.alwaysFalse */
-        if ($logicalLinesOfCode < 0) {
-            throw new NegativeValueException('$logicalLinesOfCode must not be negative');
-        }
-
         if ($linesOfCode - $commentLinesOfCode !== $nonCommentLinesOfCode) {
             throw new IllogicalValuesException('$linesOfCode !== $commentLinesOfCode + $nonCommentLinesOfCode');
         }
@@ -76,7 +55,7 @@ final readonly class LinesOfCode
     }
 
     /**
-     * @return non-negative-int
+     * @return positive-int
      */
     public function linesOfCode(): int
     {

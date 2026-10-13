@@ -1,90 +1,77 @@
-<div>
-    <div class="card border mb-3">
-        <div class="card-header border-0 py-2">
-            <!-- league-header -->
-            <div class="row align-items-center justify-content-between">
-                <!-- col-lg-8 -->
-                <div class="col-lg-8 order-2 order-sm-1">
-                    <h5 class="card-title mt-3 mt-sm-0 mb-1 mb-sm-0">
-                        @if($selectedLeague)
-                            <span>{{ dateFormat($selectedLeague->start_at, 'd M Y, l') }}</span>
-                            -
-                            <span>{{ dateFormat($selectedLeague->end_at, 'd M Y, l') }}</span>
-                        @else
-                            <span>{{ __('Lig Sonuçları') }}</span>
-                        @endif
-                    </h5>
-                </div>
-                <!-- col-lg-8 -->
-                <!-- col-lg-4 -->
-                <div class="col-lg-4 order-1 order-sm-2 d-flex align-items-center">
-                    <i class="fa fw-medium fa-spinner fa-pulse fa-2x mx-1 choose-league-loading d-none"></i>
-                    <div class="btn-group w-100 border border-2">
-                        <button type="button"
-                                class="py-2 btn btn-default dropdown-toggle d-flex align-items-center justify-content-between"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <strong>{{ __('Geçmiş Lig Sonuçları') }}</strong>
-                        </button>
-                        <ul class="dropdown-menu w-100">
-                            @if(count($leagues = $this->leagues()))
-                                @foreach($leagues as $league)
-                                    <li>
-                                        <a class="dropdown-item d-flex justify-content-between align-items-center choose-league"
-                                           href="{{ route('frontend.leagues.detail', $league->code) }}">
-                                            <div>
-                                                <span>{{ dateFormat($league->start_at, 'd M Y') }}</span>
-                                                -
-                                                <span>{{ dateFormat($league->end_at, 'd M Y') }}</span>
-                                            </div>
-                                            @if($selectedLeague && $selectedLeague->id == $league->id)
-                                                <i class="fa fa-check mx-1"></i>
-                                            @endif
-                                        </a>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li>
-                                    <p class="mb-0 p-3">{{ __('Gösterilecek sonuç bulunmuyor!') }}</p>
-                                </li>
-                            @endif
-                        </ul>
+<div class="league-results-page">
+    <div class="league-period-header">
+        <div class="league-period-summary">
+            <span class="league-section-label"><i class="fa fa-trophy" aria-hidden="true"></i> {{ __('Lig Sonuçları') }}</span>
+            <h2 class="league-period-title">
+                @if($selectedLeague)
+                    <span>{{ dateFormat($selectedLeague->start_at, 'd M Y') }}</span>
+                    <span class="league-date-divider" aria-hidden="true">—</span>
+                    <span>{{ dateFormat($selectedLeague->end_at, 'd M Y') }}</span>
+                @else
+                    {{ __('Geçmiş Lig Sonuçları') }}
+                @endif
+            </h2>
+        </div>
+        <div class="dropdown league-history" x-data="{
+            search: '',
+            matches(value) {
+                const normalize = text => text.toLocaleLowerCase(document.documentElement.lang || 'nl').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return normalize(value).includes(normalize(this.search.trim()));
+            }
+        }">
+            <button id="league-history-toggle" type="button" class="league-history-toggle dropdown-toggle"
+                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                <span><i class="fa fa-calendar-alt me-2" aria-hidden="true"></i>{{ __('Geçmiş Lig Sonuçları') }}</span>
+                <i class="fa fa-spinner fa-pulse choose-league-loading d-none" aria-hidden="true"></i>
+            </button>
+            <div class="dropdown-menu league-history-menu" aria-labelledby="league-history-toggle">
+                <div class="league-history-search">
+                    <label for="league-history-search" class="form-label">{{ __('leagues.search_label') }}</label>
+                    <div class="league-search-control">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <input id="league-history-search" type="search" class="form-control" x-model="search"
+                               placeholder="{{ __('leagues.search_placeholder') }}" autocomplete="off">
                     </div>
                 </div>
-                <!-- col-lg-4 -->
+                <ul class="league-history-options" x-ref="periods">
+                    @foreach($this->leagues() as $league)
+                        <li data-search="{{ dateFormat($league->start_at, 'd M Y').' '.dateFormat($league->end_at, 'd M Y').' '.$league->start_at?->format('d.m.Y Y-m-d').' '.$league->end_at?->format('d.m.Y Y-m-d') }}"
+                            x-show="matches($el.dataset.search)">
+                            <a @class(['dropdown-item choose-league', 'is-selected' => $selectedLeague?->id === $league->id])
+                               href="{{ route('frontend.leagues.detail', $league->code) }}"
+                               @if($selectedLeague?->id === $league->id) aria-current="page" @endif>
+                                <span>{{ dateFormat($league->start_at, 'd M Y') }} — {{ dateFormat($league->end_at, 'd M Y') }}</span>
+                                @if($selectedLeague?->id === $league->id)
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                @endif
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                <p class="league-history-empty" role="status" x-cloak
+                   x-show="!Array.from($refs.periods.children).some(item => matches(item.dataset.search))">
+                    {{ __('Gösterilecek sonuç bulunmuyor!') }}
+                </p>
             </div>
-            <!-- league-header -->
         </div>
     </div>
-    <!-- card -->
 
     @if($selectedLeague)
-        <div class="row">
-            <div class="col-lg-4 mb-3 px-2">
-                @livewire('frontend.leagues.league-result-table', [
-                'league' => $selectedLeague,
-                'name' => __('1. Lig'),
-                'ranking' => 1
-                ])
-            </div>
-            <div class="col-lg-4 mb-3 px-2">
-                @livewire('frontend.leagues.league-result-table', [
-                'league' => $selectedLeague,
-                'name' => __('2. Lig'),
-                'ranking' => 2
-                ])
-            </div>
-            <div class="col-lg-4 mb-3 px-2">
-                @livewire('frontend.leagues.league-result-table', [
-                'league' => $selectedLeague,
-                'name' => __('3. Lig'),
-                'ranking' => 3
-                ])
-            </div>
+        <div class="row g-3 league-standings-grid">
+            @foreach(range(1, 3) as $ranking)
+                <div class="col-lg-4">
+                    @livewire('frontend.leagues.league-result-table', [
+                        'league' => $selectedLeague,
+                        'name' => __($ranking.'. Lig'),
+                        'ranking' => $ranking
+                    ], key('league-'.$selectedLeague->id.'-'.$ranking))
+                </div>
+            @endforeach
         </div>
     @else
-        <div class="alert alert-danger py-3">
-            <strong>{{ __('Gösterilecek sonuç bulunmuyor!') }}</strong>
+        <div class="league-page-empty" role="status">
+            <i class="fa fa-trophy" aria-hidden="true"></i>
+            <p>{{ __('Gösterilecek sonuç bulunmuyor!') }}</p>
         </div>
     @endif
-
 </div>

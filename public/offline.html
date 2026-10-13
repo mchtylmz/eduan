@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Offline</title>
+    <style>body{max-width:600px;margin:60px auto;padding:24px;font:18px/1.6 system-ui;color:#202124}a{color:#164c87}</style>
+</head>
+<body>
+    <p id="pwa-user-name" hidden></p>
+    <h1>Geen internetverbinding</h1>
+    <p>Maak verbinding met het internet om verder te gaan.</p>
+    <a href="/">Opnieuw proberen</a>
+    <script>
+        try {
+            const name = localStorage.getItem('pwa-user-name');
+            if (name) {
+                const element = document.getElementById('pwa-user-name');
+                element.textContent = name;
+                element.hidden = false;
+            }
+        } catch (error) {
+            // The offline screen also works when local storage is unavailable.
+        }
+    </script>
+</body>
+</html>

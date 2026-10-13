@@ -19,18 +19,18 @@
     </div>
 
     <!-- course details area start -->
-    <section class="course_details-area bg-white pt-25 pb-50">
+    <section class="course_details-area practice-detail bg-white pt-25 pb-50">
         <div class="container bg-white">
             <div class="row">
                 <div class="col-xl-8 col-lg-8">
                     <div class="course_details-wrap mb-55">
-                        <h3 class="course_details-title mt-2 mb-2">{{ $test->name }}</h3>
-                        <div class="course_details-content">
+                        <h1 class="h3 course_details-title mt-2 mb-2">{{ $test->name }}</h1>
+                        <div class="course_details-content" lang="{{ $test->locale }}">
                             {!! html_entity_decode($test->content) !!}
                         </div>
 
                         <div class="course_details-sections my-3">
-                            @foreach($test->sections()->parentIsZero()->get() as $section)
+                            @foreach($sections as $section)
                                 <div class="block bg-body-light mb-2 px-3 py-2 rounded-2 d-flex align-items-center gap-2">
                                     <span class="badge bg-dark">{{ $loop->iteration }}</span>
                                     <p class="my-0 text-dark fw-bold">{{ $section->name }}</p>
@@ -45,7 +45,7 @@
                                                 </span>
                                                 <span class="my-0 text-dark">
                                                     @if(App\Enums\TestSectionTypeEnum::QUESTION->is($parent->type))
-                                                        {{ __('Soru') }}
+                                                        {{ __('learning.question') }}
                                                     @else
                                                         {{ $parent->name }}
                                                     @endif

@@ -13,8 +13,8 @@
             @livewire('frontend.ai.answer-ai-vote', ['answerAI' => $answerAi, 'user' => user()])
         </div>
 
-        @if($warningTranslateAiText = __('Not: Yapay Zeka modülü hala geliştirme aşamasındadır. Bazen formüllerde veya hesaplamalarda boşluk yerine "+" işareti görünür. Bu sorun üzerinde çalışıyoruz.'))
-            <div class="alert alert-warning p-2 my-1">{{ $warningTranslateAiText }}</div>
+        @if(($answerAi->content['status'] ?? '') !== 'ready')
+            <div class="alert alert-warning p-2 my-1">{{ __('Not: Yapay Zeka modülü hala geliştirme aşamasındadır. Bazen formüllerde veya hesaplamalarda boşluk yerine "+" işareti görünür. Bu sorun üzerinde çalışıyoruz.') }}</div>
         @endif
 
     @endif

@@ -17,12 +17,16 @@ class PageForm extends Component
     public Page $page;
 
     public string $slug;
+
     public array $title;
     public array $brief = [];
+
     public array $content = [];
     public array $keywords = [];
+
     public array $link = [];
     public int $sort = 1;
+
     public StatusEnum $status = StatusEnum::ACTIVE;
     public YesNoEnum $linkStatus = YesNoEnum::NO;
 
@@ -85,6 +89,7 @@ class PageForm extends Component
 
     public function save()
     {
+        abort_unless(auth()->user()?->can('dashboard:access') && auth()->user()?->can(! empty($this->page) && $this->page->exists ? 'pages:update' : 'pages:add'), 403);
         $this->validate();
 
         CreateOrUpdatePageAction::run(

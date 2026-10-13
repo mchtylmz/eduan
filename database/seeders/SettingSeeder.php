@@ -20,7 +20,7 @@ class SettingSeeder extends Seeder
             ['name' => 'siteFavicon', 'value' => 'uploads/favicon.png'],
             ['name' => 'siteLogo', 'value' => 'uploads/logo.png'],
             ['name' => 'siteLogoWhite', 'value' => 'uploads/logo.png'],
-            ['name' => 'defaultLocale', 'value' => 'tr'],
+            ['name' => 'defaultLocale', 'value' => 'nl'],
             ['name' => 'primaryColor', 'value' => '#ED1B24'],
             ['name' => 'secondaryColor', 'value' => '#EFEFEF'],
             ['name' => 'thirdColor', 'value' => 'orange'],

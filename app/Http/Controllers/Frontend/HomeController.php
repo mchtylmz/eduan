@@ -5,32 +5,31 @@ namespace App\Http\Controllers\Frontend;
 use App\Enums\PageMenuEnum;
 use App\Enums\PageTypeEnum;
 use App\Enums\StatusEnum;
+use App\Helpers\FrontendCache;
+use App\Helpers\SeoSitemap;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Question;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-
     public function index()
     {
-        $page = cache()->remember(
-            'homepage',
-            60 * 60 * 24 * 30,
-            fn() => Page::where('menu', PageMenuEnum::HOME)->first()
+        $page = FrontendCache::remember(
+            'pages', ['homepage'],
+            fn () => Page::where('menu', PageMenuEnum::HOME)->first()
         );
 
         return view('frontend.home.index', [
             'title' => $page->title ?? __('Anasayfa'),
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
     public function search()
     {
         return view('frontend.home.search', [
-            'title' => __('Arama Sonucu')
+            'title' => __('Arama Sonucu'),
         ]);
     }
 
@@ -43,7 +42,7 @@ class HomeController extends Controller
 
         return view('frontend.home.ai-solution', [
             'title' => __('Yapay Zeka Soru Cevaplama'),
-            'question' => $question
+            'question' => $question,
         ]);
     }
 
@@ -61,20 +60,20 @@ class HomeController extends Controller
             abort(404);
         }
 
-        if (!empty(trim($page->link)) && str_starts_with($page->link, 'http')) {
+        if (! empty(trim($page->link)) && str_starts_with($page->link, 'http')) {
             return redirect()->to($page->link);
         }
 
         return view('frontend.home.page', [
             'title' => $page->title,
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
     public function sitemap()
     {
         return response()
-            ->view('frontend.home.sitemap')
+            ->view('frontend.home.sitemap', ['entries' => SeoSitemap::entries()])
             ->header('Content-Type', 'text/xml');
 
     }
