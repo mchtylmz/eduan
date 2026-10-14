@@ -16,11 +16,13 @@ class SettingsController extends Controller
     public function index()
     {
         $activeTab = SettingsTabsEnum::tryFrom(request('activeTab')) ?? SettingsTabsEnum::GENERAL;
+        $canStudySettings = auth()->user()?->can('user-type:admin');
+        abort_if($activeTab === SettingsTabsEnum::STUDY && ! $canStudySettings, 403);
 
         return view('backend.settings.index', [
             'title' => __('Site Ayarları'),
             'activeTab' => $activeTab,
-            'tabs' => SettingsTabsEnum::cases(),
+            'tabs' => array_filter(SettingsTabsEnum::cases(), fn ($tab) => $tab !== SettingsTabsEnum::STUDY || $canStudySettings),
         ]);
     }
 

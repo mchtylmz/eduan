@@ -103,4 +103,14 @@ class User extends Authenticatable
 
         return $this->aiUsages()->where('usage_date', $date)->count();
     }
+
+    public function studyTargets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudyWeeklyTarget::class);
+    }
+
+    public function studyActivities(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(StudyActivityEntry::class);
+    }
 }

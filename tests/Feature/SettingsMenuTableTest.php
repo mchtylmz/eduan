@@ -50,8 +50,9 @@ class SettingsMenuTableTest extends TestCase
         $this->get(route('admin.seasons.index'))->assertOk()->assertSee('admin-season-card')->assertSee('season-start_date-0');
     }
 
-    public function test_all_thirteen_settings_tabs_keep_existing_forms_and_controls(): void
+    public function test_all_settings_tabs_keep_existing_forms_and_controls(): void
     {
+        $this->actor->givePermissionTo(RoleTypeEnum::ADMIN->value);
         foreach (SettingsTabsEnum::cases() as $tab) {
             $this->get(route('admin.settings.index', ['activeTab' => $tab->value]))->assertOk()
                 ->assertSee('data-settings-tab="'.$tab->value.'"', false)->assertSee('admin-settings-nav');

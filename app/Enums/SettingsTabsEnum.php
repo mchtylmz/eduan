@@ -8,7 +8,7 @@ use ArchTech\Enums\Values;
 
 enum SettingsTabsEnum: string
 {
-    use Names, Values, Comparable;
+    use Comparable, Names, Values;
 
     case GENERAL = 'general';
     case AI = 'ai';
@@ -23,6 +23,7 @@ enum SettingsTabsEnum: string
     case EMAIL = 'emailTemplate';
     case USER = 'user';
     case CONTACT = 'contact';
+    case STUDY = 'study';
 
     public static function options(): array
     {
@@ -40,6 +41,7 @@ enum SettingsTabsEnum: string
             self::COVER->value => __('Sayfa Kapak Görseli Ayarları'),
             self::EMAIL->value => __('E-posta Şablon Ayarları'),
             self::CONTACT->value => __('İletişim Ayarları'),
+            self::STUDY->value => __('study.title'),
         ];
     }
 
@@ -63,7 +65,8 @@ enum SettingsTabsEnum: string
             self::USER->value => 'fa-user-cog',
             self::MAIL->value => 'fa-envelope-circle-check',
             self::EMAIL->value => 'fa-envelope-open-text',
-            self::CONTACT->value => 'fa-contact-card'
+            self::CONTACT->value => 'fa-contact-card',
+            self::STUDY->value => 'fa-calendar-check',
         };
     }
 }

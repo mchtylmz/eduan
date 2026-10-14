@@ -3,12 +3,15 @@
 namespace App\Actions\Settings;
 
 use App\Actions\Files\UploadFileAction;
+use App\Actions\Study\PrepareStudyTrackingSettings;
 use App\Helpers\AiSolutionRequest;
 use App\Helpers\FrontendCache;
 use App\Helpers\PwaIcons;
+use App\Helpers\StudyTrackingSettings;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -39,15 +42,23 @@ class SettingSaveAction
         if ($request->has('settings.gptModel') && ! in_array($request->input('settings.gptEffect') ?: (settings()->gptEffect ?: 'low'), AiSolutionRequest::efforts($request->input('settings.gptModel')), true)) {
             throw ValidationException::withMessages(['settings.gptEffect' => __('validation.in', ['attribute' => __('Yapa Zeka Reasoning effort')])]);
         }
+        $values = PrepareStudyTrackingSettings::run($request->input('settings', []));
         if ($request->hasFile('images')) {
             $this->images($request->file('images'));
         }
-        if ($request->get('settings')) {
-            $this->settings($request->get('settings'));
+        if ($values) {
+            $this->settings($values);
         }
 
-        settings()->set($this->data);
-        settings()->save();
+        $save = function () {
+            settings()->set($this->data);
+            settings()->save();
+        };
+        if (StudyTrackingSettings::contains($values)) {
+            DB::transaction($save);
+        } else {
+            $save();
+        }
         FrontendCache::invalidate('settings', 'sitemap');
 
         if ($request->hasFile('images.siteFavicon')) {

@@ -29,6 +29,7 @@
         'dashboard' => __('Yönetim Paneli'),
         'tests' => __('Sınavlar'),
         'stats' => __('İstatistikler'),
+        'study' => __('study.title'),
         'ai' => __('Yapay Zeka'),
         'leagues' => __('Ligler'),
         'solution' => __('Çözüm'),
