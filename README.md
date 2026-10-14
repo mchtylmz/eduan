@@ -103,3 +103,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 
 Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md). SMTP testi kullanıcı kararıyla atlandı. Settings1.2.0 deprecated fatal değil; iki ilgili test2/12 geçti, vendor/Composer değişmedi. Onaylı yerel APP_URL localhost; Chrome giriş tamam; girilen yerel ID canlı ID ile aynı olduğu için ayrı localhost uygulaması bekleniyor. Onaylı canlı origin yerel DB’de hypotenuse.be olarak geri düzeltildi. Gerçek push henüz doğrulanmadı.
+
+
+### Çalışma Takibi — geliştirme tamamlandı
+
+[Son kullanıcı kabulü ve yayın sınırı —76 bölüm13](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md): yedi geliştirme fazı ve planlanan ekranlar tamamlandı. Bildirim testi kullanıcı talimatıyla başarılı kabul edildi; ajan gerçek cihaz teslim testi yapmadı. APP_URL ve bildirim origin'i https://hypotenuse.be ile eşleşir. Önceki localhost/gerçek test bekleme notları tarihsel; sıradaki aşama canlı hazırlığı/aktarımı ve canlı kontrolüdür. Yeni genel test veya deploy yapılmadı.

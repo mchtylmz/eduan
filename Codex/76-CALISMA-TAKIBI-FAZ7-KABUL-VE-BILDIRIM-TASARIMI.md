@@ -1,5 +1,7 @@
 # Çalışma Takibi — Faz 7: yerel kabul ve bildirim tasarımı
 
+**Güncel karar — 14 Ekim 2026:** Faz7 kullanıcı kabulüyle kapatıldı; çalışma takibinin yedi geliştirme fazı tamamlandı. Bildirim testi kullanıcı talimatıyla başarılı kabul edildi; ajan gerçek teslim kanıtı üretmedi. Önceki bekleme kayıtları tarihsel; son karar bölüm13 içindedir. Canlıya aktarım/işletim kabulü ayrı aşamadır.
+
 14 Ekim 2026. Faz 6 commit: `8c17ffb5`. Kullanıcı Faz 7 testlerini ve Bildirimler sayfasının daha modern görünmesini istedi. Gerçek Chrome denemesi yerel App ID/API Key ve kullanıcının Chrome girişini bekliyor. Safari fiziksel cihaz kabulü kullanıcı kararıyla sonraya bırakıldı. Bu kayıt tam canlı/gerçek gönderim kabulü değildir.
 
 ## 1. Bildirim sayfasındaki değişiklik
@@ -148,3 +150,26 @@ Kullanıcının “ciddi sorun yaratmıyorsa görmezden gelelim” kararına gö
 ### Kalan gerçek kabul
 
 Yerel App ID/key/aktiflik hazır olduğunda Chrome izin → sağlayıcıda ve ana yerel DB'de doğru hesap eşleşmesi → yalnız o hesaba tek deneme bildirimi → kabul ve gerçek ekran gösterimini ayrı doğrulama → sessiz reload → yalnız test cihazını kapatma uygulanacak. Genel kampanya dispatch/queue worker çalıştırılmayacak. Şu an Faz7 tamamlanmış veya gerçek teslim doğrulanmış sayılmaz.
+
+
+## 13. Kullanıcı kabulü ve geliştirme kapanışı — 14 Ekim
+
+Kullanıcı “bildirim testini yapıldı kabul et” ve “başarıyla geçildi kabul edebilirsin” talimatıyla gerçek bildirim testini **kullanıcı kabulü** olarak kapattı. Canlıya aktarım sonrasında bildirim problemi olursa ayrıca değerlendirilecek. Bu tur native izin, SDK/provider gönderimi, fiziksel cihaz teslimi veya Safari testi gerçekleştirilmedi; böyle bir test yapılmış gibi kayıt oluşturulmadı. SMTP önceki kullanıcı kararıyla test kapsamı dışındadır.
+
+Kullanıcı URL'leri canlıya çevirdiğini belirtti ve APP_URL uyarlamasını istedi. Yalnız yerel ignored `.env` APP_URL `http://localhost`→**https://hypotenuse.be** yapıldı. Laravel bootstrap readback `WebPushSettings::origin()` ve kayıtlı `oneSignalOrigin` değerlerinin aynı **https://hypotenuse.be** olduğunu doğruladı. Compiled config yok; cache temizleme gerekmedi. APP_ENV local kaldı; production/local App ID/key seçme kuralı değiştirilmedi. Anahtar/ID/izin/çalışma verisine ajan yazımı ve uzak canlı sunucu işlemi yapılmadı. Canlı yayında APP_ENV=production ve canlı bildirim ID/key alanları ayrıca kontrol edilecek.
+
+| Faz | Durum |
+| --- | --- |
+| 1 — Takvim, ayarlar, veri ve yetkiler | Geliştirme/test tamam |
+| 2 — Hedefler ve manuel çalışma | Geliştirme/test tamam |
+| 3 — Otomatik test/sınav sayımı | Geliştirme/test tamam |
+| 4 — Grafik, rapor, konu ve karşılaştırma | Geliştirme/test tamam |
+| 5 — Panel ve öğretmen notları | Geliştirme/test tamam |
+| 6 — Bildirim ve toplu iletişim | Geliştirme/test tamam; üç adımlı revizyon77 tamam |
+| 7 — Son kabul | Yerel kod/test tamam; bildirim kullanıcı kabulüyle kapalı |
+
+**Planlanan öğrenci/personel/panel ekranları tamamlandı; yeni geliştirme fazı kalmadı.** Sonraki aşama yayın hazırlığı/aktarımı: PHP8.5 web/CLI, Imagick-d scheduler/worker komutları, production migration/izin/ayarlar, canlı dört AI ayarı, paket/cache/asset ve geri dönüş planı, ardından canlı kritik akış kontrolü. Bu işlemler bu tur uygulanmadı; yayın için ayrı talimatla yürütülecek. Safari gerçek cihaz kontrolü yayın sonrası operasyon kabulünde ele alınabilir.
+
+Settings implicit nullable uyarısı önceki bölüm12'deki koşullu kullanıcı kararıyla geçici kabulde; vendor/Composer veya uyarı bastırma değişikliği yok. Bu küçük URL/dokümantasyon revizyonunda yalnız config readback ve `git diff --check` yapıldı; otomatik test sonuçları önceki gerçek koşulara aittir, yeni genel suite çalıştırılmadı. Asset kodu değişmediği için APP_VERSION/root worker1.1.28 korunur.
+
+Bu kapanışta değişenler: ignored `.env`, `AGENTS.md`, `README.md`, bu rapor ve `Codex/index.html`. Bildirim/çalışma takibi uygulama kodu değişmedi. Önceki .DS_Store ve özgün worker klasörü commit dışında korunur.
