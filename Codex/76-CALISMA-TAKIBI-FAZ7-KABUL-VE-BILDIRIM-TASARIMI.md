@@ -122,3 +122,29 @@ Yerelde `/account/notifications` açıp masaüstü/mobil görünümü inceleyebi
 - `tests/Frontend/WebPushTest.cjs`
 
 Yerel `.env` APP_VERSION1.1.27 için güncellendi; Git’e dahil edilmez.
+
+
+## 12. Gerçek Chrome hazırlığı ve Settings uyarısı — 14 Ekim devam
+
+Kullanıcı sıradaki kabul testiyle devam edilmesini istedi; **SMTP çalıştığını belirterek gerçek e-posta testini kapsamdan çıkardı**. Bu, bu tur ajan tarafından yapılmış SMTP teslim testi değildir. Safari hâlâ sonraya bırakılmıştır.
+
+- Eduan'ın mevcut Laravel/MySQL servisleri çalışıyor; servis/port/volume değiştirilmedi.
+- Ana DB'de yalnız doluluk ve kayıt sayısı SELECT kontrol edildi: bildirim kapalı, yerel App ID ve API Key boş, subscription0, pending/scheduled/sending push0. Key/parola değeri okunup çıktıya verilmedi.
+- Gerçek Chrome `http://localhost/account/notifications` açıldı. Kullanıcı kendi hesabıyla giriş yaptı; hesap `admin admin`. İzin kontrolü ayarlar eksik olduğu için pasif; native izin veya gerçek gönderim henüz gerçekleşmedi.
+- Kullanıcı açık onayıyla yalnız yerel ignored `.env` **APP_URL=http://localhost** yapıldı; önceki `http://hypotenuse.test` origin ile Chrome origin farkı giderildi. Compiled config yoktu, cache temizleme gerekmedi; canlı adres değişmedi.
+- Kullanıcının ilk “hazır” yanıtında Chrome giriş tamam ama ayarlar boştu. İkinci hazır yanıtında enabled1/yerel ID-key dolu/readytrue oldu; ancak yerel ID canlı ID ile aynıydı. SDK/izin/provider isteği başlatılmadan bu ayrım soruldu. Kullanıcı ayrı localhost uygulaması oluşturacağını belirtti.
+- Kullanıcı açık onayıyla Ayarlar ekranında yerel DB’deki canlı origin `https://localhost`→`https://hypotenuse.be` olarak düzeltildi ve SELECT readback doğrulandı. Bu uzak canlı sunucu veya OneSignal panel ayarı değişikliği değildir. Yerel App/key değerleri kullanıcı tarafından kaydedildi; ajan anahtarları okumadı veya yazmadı. Son ölçümde abonelik/pending push0; ayrı yerel App ID/key kaydı beklenir.
+
+### Settings paketi kararı
+
+Kurulu `pharaonic/laravel-settings` **1.2.0**, ref `9187e89677581c2bd4da901e69e0e4bd86207724`. 14 Ekim resmî Composer metadata kontrolünde en yeni kararlı sürüm aynı **1.2.0**; yükselterek giderilebilen bir kararlı sürüm yok. [Paket kaydı](https://packagist.org/packages/pharaonic/laravel-settings).
+
+Uyarı `Classes/Settings.php:37` constructor'ındaki `Model $model = null` ve `Collection $data = null` türlerinin implicit nullable olmasından kaynaklanıyor. Bu yazım PHP8.4'ten beri deprecated; açık nullable tür öneriliyor. [PHP resmî geçiş belgesi](https://www.php.net/manual/en/migration84.deprecated.php).
+
+PHP8.5.8 native lint iki deprecated uyarısı verdi ve **exit0 / No syntax errors** döndü. Laravel bootstrap sonrası sınıf yüklendi, iki parametre `allowsNull=true/optional=true`, ayar okuması başarılı. Mevcut `logging.deprecations.channel` null; Laravel'in null logger fallback davranışı korunuyor. `StudyTrackingSettingsTest` içinden yalnız iki ilgili okuma/yazma/diğer ayar koruma senaryosu **2 test /12 assertion** ile geçti; testing transaction geri alındı.
+
+Kullanıcının “ciddi sorun yaratmıyorsa görmezden gelelim” kararına göre bu sürümde uyarı **fatal engel olarak değerlendirilmedi ve geçici kabul edildi**. PHP'nin ilerideki sürümleri için uyum garantisi değildir. Vendor/paket/Composer/uygulama exception veya error_reporting ayarı değiştirilmedi; yeni genel uyarı bastırması yapılmadı. Geçici salt okunur kontrol scriptinin ilk yazım hatası yalnız /tmp dosyasında düzeltildi; uygulama kodu etkilenmedi.
+
+### Kalan gerçek kabul
+
+Yerel App ID/key/aktiflik hazır olduğunda Chrome izin → sağlayıcıda ve ana yerel DB'de doğru hesap eşleşmesi → yalnız o hesaba tek deneme bildirimi → kabul ve gerçek ekran gösterimini ayrı doğrulama → sessiz reload → yalnız test cihazını kapatma uygulanacak. Genel kampanya dispatch/queue worker çalıştırılmayacak. Şu an Faz7 tamamlanmış veya gerçek teslim doğrulanmış sayılmaz.

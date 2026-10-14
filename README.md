@@ -100,3 +100,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Toplu iletişim — standart tablo ve üç adım
 
 [Yapılanlar, dosyalar ve dar test sonucu](Codex/77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md): Yönetim → Toplu E-posta ve Bildirim, Kullanıcılar'ın üstündedir. `/admin/communications` önce ortak Bootstrap Table/server JSON gönderim geçmişini açar. Yeni gönderim: alıcı seçimi → mesaj → kişisel ön izleme/Gönder. Güncel izin ve alıcı kontrolleri, UUID, asenkron beş/dakika gönderim korunur. 34 PHP/236 assertion,15 Node ve testing Chrome kontrolleri geçti; gerçek servis gönderimi yapılmadı. APP_VERSION/root worker1.1.28. Geliştirme öncesi standart okuma zorunluluğu AGENTS.md'de kalıcıdır.
+
+
+Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md). SMTP testi kullanıcı kararıyla atlandı. Settings1.2.0 deprecated fatal değil; iki ilgili test2/12 geçti, vendor/Composer değişmedi. Onaylı yerel APP_URL localhost; Chrome giriş tamam; girilen yerel ID canlı ID ile aynı olduğu için ayrı localhost uygulaması bekleniyor. Onaylı canlı origin yerel DB’de hypotenuse.be olarak geri düzeltildi. Gerçek push henüz doğrulanmadı.
