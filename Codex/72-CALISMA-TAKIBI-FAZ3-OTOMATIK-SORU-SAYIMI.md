@@ -129,3 +129,15 @@ Eduan ortamı açılıp gerekli migration onayları/uygulaması tamamlandıktan 
 - Diğer kullanıcının sonucu görünmez; yetki geri alındığında sayfa403. Mobil yatay tablo, ayrıntı/pagination ve console kontrol edilir.
 
 Sonraki faz **Faz4 öğrenci grafikleri, dönem/geçmiş ve analizler**. Faz3 kod hazırlığı tamamdır; bekleyen DB/browser kapısı tamamlanmadan tam faz kabulü verilmez.
+
+## 11. 14 Ekim yerel kontrol kapısı tamamlandı
+
+Kullanıcı Docker’ı açtı ve bekleyen bütün yerel migration/test işlemlerini açıkça onayladı. Eduan80/3306 çalışır, PHP8.5.8. Yalnız dört migration hypotenuse ve testing’de uygulandı. Ana languages3/translations2557/exam_result_details149914/tests_result_details10695 satırları aynı kaldı; study ayarları null kaldı, modül aktive edilmedi. Testing’de de eski cevap/dil/çeviri sayıları ve ayarlar migration öncesi/sonrası aynı. Canlıya erişim yok.
+
+İlk155test/663assert koşusu153pass/2failure verdi. İki fixture sorunu: test configEurope/Brussels iken PHP varsayılanEurope/Istanbul idi; HTTP middleware no-store/private üstüne ek cache direktifleri ekliyordu. Tests/Concerns/UsesStudyTimezone kurulum ve geri yükleme sağlar; cache testi gerekli private/no-store direktiflerini denetler. Uygulama iş kuralı değiştirilmedi.
+
+Düzeltme sonrası yalnız ilgili82DB/HTTP/Livewire/TimedExam senaryosu430assert başarılı. Önceki aynıtur73saf/239assert ile155farklısenaryo geçti; son155tamkoşu tekrarı değildir. Testing transaction’ları geri alındı.
+
+Browser plugin not available; mevcut bundled Playwright/Chrome kullanıldı. HTTP istekleri aynılocalhost adresinde geçici CLI QA köprüsüyle gerçek testing Laravel kernel’ine yönlendirildi; persistent outer transaction sonunda rollback. Servis/port/ana DB ayarı değişmedi. Hedef150save, çalışma50save, reloadkalıcılık ve düzenleme25, desktop1440/mobile390 ve NLsettings tabı doğrulandı. JSerror0/HTTP5xx0/pageoverflow0. QA başlatma Request/Cookie/BinaryFileResponse ve Livewire flush-state adaptörü gerekir; bu düzeltmeler geçici QA aracına aittir, ürün değişikliği değildir. Gerçek ayrı webserver ortamı/gerçek cihaz/queue teslimi/üretim performansı iddiası yok. Kanıt /private/tmp/eduan-study-faz3-browser-result.json ve desktop/mobile PNG.
+
+Faz3kodcommit4bf2f14e korunur; bu kontrolün test hazırlığı ve dokümantasyonu ayrı commit edilir. Kullanıcı onayıyla Faz4’e geçilir: devam eden sınavların doğruluk analizi dahil, karşılaştırmalar yalnız öğrenci hesaplarında. Ücretli API/SMTP/push/deploy yok.

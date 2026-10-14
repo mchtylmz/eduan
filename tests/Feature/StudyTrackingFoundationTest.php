@@ -18,18 +18,20 @@ use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\Concerns\UsesStudyTimezone;
 use Tests\TestCase;
 
 class StudyTrackingFoundationTest extends TestCase
 {
     use DatabaseTransactions;
+    use UsesStudyTimezone;
 
     private User $actor;
 
     protected function setUp(): void
     {
         parent::setUp();
-        config(['app.timezone' => 'Europe/Brussels']);
+        $this->useStudyTimezone();
         $this->travelTo(now()->setDateTime(2026, 10, 14, 12, 0, 0));
         foreach (['study:access', 'study:view', 'study:update', 'dashboard:access', 'users:view', ...RoleTypeEnum::values()] as $name) {
             Permission::findOrCreate($name, 'web');

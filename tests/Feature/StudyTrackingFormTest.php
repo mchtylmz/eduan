@@ -19,18 +19,20 @@ use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
+use Tests\Concerns\UsesStudyTimezone;
 use Tests\TestCase;
 
 class StudyTrackingFormTest extends TestCase
 {
     use DatabaseTransactions;
+    use UsesStudyTimezone;
 
     private User $owner;
 
     protected function setUp(): void
     {
         parent::setUp();
-        config(['app.timezone' => 'Europe/Brussels']);
+        $this->useStudyTimezone();
         $this->travelTo(now()->setDateTime(2026, 10, 14, 12, 0, 0));
         foreach (['nl', 'en', 'tr', 'fr'] as $locale) {
             Language::firstOrCreate(['code' => $locale], ['name' => $locale, 'status' => StatusEnum::ACTIVE]);
@@ -55,7 +57,10 @@ class StudyTrackingFormTest extends TestCase
         $this->get(route('frontend.study').'?lang=tr')->assertOk()
             ->assertSee('Çalışma Takibim')->assertSee('wire:submit="saveTarget"', false)
             ->assertSee('wire:submit="saveActivity"', false)->assertDontSee('member-sidebar', false)
-            ->assertSee('noindex, nofollow', false)->assertHeader('Cache-Control', 'no-store, private');
+            ->assertSee('noindex, nofollow', false);
+        $response = $this->get(route('frontend.study'));
+        $this->assertTrue($response->baseResponse->headers->hasCacheControlDirective('private'));
+        $this->assertTrue($response->baseResponse->headers->hasCacheControlDirective('no-store'));
         $this->get(route('frontend.profile'))->assertOk()->assertSee(route('frontend.study'), false);
         $this->owner->revokePermissionTo('study:access');
         $this->get(route('frontend.study'))->assertForbidden();

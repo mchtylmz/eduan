@@ -9,11 +9,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
+use Tests\Concerns\UsesStudyTimezone;
 use Tests\TestCase;
 
 class StudyTrackingSettingsTest extends TestCase
 {
     use DatabaseTransactions;
+    use UsesStudyTimezone;
 
     private User $actor;
 
@@ -22,7 +24,7 @@ class StudyTrackingSettingsTest extends TestCase
         parent::setUp();
         Language::firstOrCreate(['code' => 'nl'], ['name' => 'Nederlands', 'status' => StatusEnum::ACTIVE]);
         app()->setLocale('nl');
-        config(['app.timezone' => 'Europe/Brussels']);
+        $this->useStudyTimezone();
         $this->travelTo(now()->setDateTime(2026, 10, 14, 12, 0, 0));
         foreach (['dashboard:access', 'settings:view', 'settings:update', 'user-type:admin', 'user-type:teacher'] as $name) {
             Permission::findOrCreate($name, 'web');

@@ -28,18 +28,20 @@ use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\Concerns\UsesStudyTimezone;
 use Tests\TestCase;
 
 class StudyAutomaticIntegrationTest extends TestCase
 {
     use DatabaseTransactions;
+    use UsesStudyTimezone;
 
     private User $owner;
 
     protected function setUp(): void
     {
         parent::setUp();
-        config(['app.timezone' => 'Europe/Brussels']);
+        $this->useStudyTimezone();
         $this->travelTo(now()->setDateTime(2026, 10, 14, 12, 0, 0));
         Language::firstOrCreate(['code' => 'nl'], ['name' => 'Nederlands', 'status' => StatusEnum::ACTIVE]);
         foreach (['study:access', 'tests:solve', 'exams:solve'] as $permission) {
