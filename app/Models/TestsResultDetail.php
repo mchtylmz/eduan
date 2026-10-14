@@ -14,13 +14,14 @@ class TestsResultDetail extends Model
     /** @use HasFactory<TestsResultDetailFactory> */
     use HasFactory, Loggable;
 
-    public $fillable = ['tests_result_id', 'section_id', 'question_id', 'answer_id', 'correct', 'point', 'lesson_id', 'topic_id', 'time'];
+    public $fillable = ['tests_result_id', 'section_id', 'question_id', 'answer_id', 'study_answered_at', 'correct', 'point', 'lesson_id', 'topic_id', 'time'];
 
     protected function casts(): array
     {
         return [
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'study_answered_at' => 'immutable_datetime',
             'correct' => YesNoEnum::class,
         ];
     }

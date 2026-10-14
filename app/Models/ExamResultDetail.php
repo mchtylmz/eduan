@@ -2,49 +2,51 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use App\Enums\YesNoEnum;
 use App\Traits\Loggable;
+use Database\Factories\ExamResultDetailFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\belongsTo;
 
 class ExamResultDetail extends Model
 {
-    /** @use HasFactory<\Database\Factories\ExamResultDetailFactory> */
+    /** @use HasFactory<ExamResultDetailFactory> */
     use HasFactory, Loggable;
 
-    public $fillable = ['exam_result_id','question_id','answer_id','correct','lesson_id','topic_id','time'];
+    public $fillable = ['exam_result_id', 'question_id', 'answer_id', 'study_answered_at', 'correct', 'lesson_id', 'topic_id', 'time'];
 
     protected function casts(): array
     {
         return [
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
-            'correct' => YesNoEnum::class
+            'study_answered_at' => 'immutable_datetime',
+            'correct' => YesNoEnum::class,
         ];
     }
 
-    public function examResult(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function examResult(): belongsTo
     {
         return $this->belongsTo(ExamResult::class);
     }
 
-    public function question(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function question(): belongsTo
     {
         return $this->belongsTo(Question::class);
     }
 
-    public function lesson(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function lesson(): belongsTo
     {
         return $this->belongsTo(Lesson::class);
     }
 
-    public function topic(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function topic(): belongsTo
     {
         return $this->belongsTo(Topic::class);
     }
 
-    public function answer(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function answer(): belongsTo
     {
         return $this->belongsTo(Answer::class);
     }

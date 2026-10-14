@@ -39,7 +39,7 @@ return [
     'date' => 'Tarih',
     'activity_saved' => 'Çalışma kaydedildi.',
     'activity_removed' => 'Çalışma kaldırıldı.',
-    'daily_totals' => 'Günlük manuel toplamlar',
+    'daily_totals' => 'Günlük çalışma toplamları',
     'manual_only' => 'Yalnız site dışında yapılan ve manuel girilen çalışmaların toplamıdır.',
     'fragments' => 'Giriş sayısı',
     'no_activity' => 'Bu hafta manuel çalışma kaydı yok.',
@@ -56,4 +56,9 @@ return [
     'conflict' => 'Kayıt başka bir işlemde değişti. Sayfayı yenileyip güncel kaydı kontrol edin.',
     'outside_week' => 'Çalışma tarihi seçilen haftanın içinde olmalı.',
     'no_target' => 'Hedef belirlenmedi.',
+    'combined_help' => 'Manuel çalışmalar ile sitede cevapladığınız test ve sınav soruları birlikte hesaplanır. Boş cevaplar sayılmaz; tekrar denemeler dahildir.',
+    'manual_questions' => 'Manuel soru',
+    'automatic_tests' => 'Test sorusu',
+    'automatic_exams' => 'Sınav sorusu',
+    'no_work' => 'Bu hafta çalışma bulunmuyor.',
 ];

@@ -39,7 +39,7 @@ return [
     'date' => 'Date',
     'activity_saved' => 'Study activity saved.',
     'activity_removed' => 'Study activity removed.',
-    'daily_totals' => 'Daily manual totals',
+    'daily_totals' => 'Daily study totals',
     'manual_only' => 'These totals include only manually entered study done outside this website.',
     'fragments' => 'Entries',
     'no_activity' => 'No manual study entries this week.',
@@ -56,4 +56,9 @@ return [
     'conflict' => 'The entry has changed in another operation. Refresh the page and check the current values.',
     'outside_week' => 'The study date must fall within the selected week.',
     'no_target' => 'No target set.',
+    'combined_help' => 'Manual study and answered test and exam questions are counted together. Unanswered questions are excluded; repeated attempts count.',
+    'manual_questions' => 'Manual questions',
+    'automatic_tests' => 'Test questions',
+    'automatic_exams' => 'Exam questions',
+    'no_work' => 'No study activity this week.',
 ];

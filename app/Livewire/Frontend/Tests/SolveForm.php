@@ -5,6 +5,7 @@ namespace App\Livewire\Frontend\Tests;
 use App\Enums\StatusEnum;
 use App\Enums\VisibilityEnum;
 use App\Enums\YesNoEnum;
+use App\Helpers\StudyAnswerClock;
 use App\Models\Exam;
 use App\Models\ExamResultDetail;
 use App\Models\Question;
@@ -165,6 +166,7 @@ class SolveForm extends Component
             $this->resultId = $result->id;
             $detail = $result->details()->firstOrCreate(['question_id' => $question->id], [
                 'answer_id' => $answer->id, 'correct' => $answer->correct,
+                'study_answered_at' => StudyAnswerClock::next(0, (int) $answer->id, null, now()),
                 'lesson_id' => $question->lesson_id, 'topic_id' => $question->topic_id,
                 'time' => max(0, now()->timestamp - ($this->startedAt[$this->questionIndex] ?? now()->timestamp)),
             ]);

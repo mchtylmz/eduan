@@ -8,7 +8,9 @@ use App\Actions\Study\RemoveStudyActivity;
 use App\Actions\Study\SaveStudyActivity;
 use App\Actions\Study\SaveStudyTarget;
 use App\Actions\Study\StudyWrite;
+use App\Helpers\StudyAutomaticWork;
 use App\Helpers\StudyCalendar;
+use App\Helpers\StudyDailyTotals;
 use App\Helpers\StudyInput;
 use App\Helpers\StudyTrackingSettings;
 use App\Models\StudyActivityEntry;
@@ -227,6 +229,10 @@ class StudyForm extends Component
                 ->where('activity_date', '>=', $this->weekStart)->where('activity_date', '<', $bounds['end']->toDateString());
             $days = (clone $query)->selectRaw('activity_date, COUNT(*) AS fragments, SUM(questions) AS questions, SUM(pages) AS pages, SUM(minutes) AS minutes')
                 ->groupBy('activity_date')->orderBy('activity_date')->get();
+            $manual = $days->map(fn ($day) => ['activity_date' => $day->activity_date->toDateString(),
+                'manual_questions' => (int) $day->questions, 'pages' => (int) $day->pages,
+                'minutes' => (int) $day->minutes, 'fragments' => (int) $day->fragments])->all();
+            $days = collect(StudyDailyTotals::merge($manual, StudyAutomaticWork::daily(auth()->user(), $this->weekStart)));
             $entries = $query->orderByDesc('activity_date')->orderByDesc('id')->paginate(15);
         }
 

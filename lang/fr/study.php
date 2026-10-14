@@ -39,7 +39,7 @@ return [
     'date' => 'Date',
     'activity_saved' => 'L’activité est enregistrée.',
     'activity_removed' => 'L’activité est supprimée.',
-    'daily_totals' => 'Totaux quotidiens manuels',
+    'daily_totals' => 'Totaux quotidiens des études',
     'manual_only' => 'Ces totaux comprennent uniquement le travail effectué en dehors de ce site et saisi manuellement.',
     'fragments' => 'Nombre de saisies',
     'no_activity' => 'Aucune activité manuelle cette semaine.',
@@ -56,4 +56,9 @@ return [
     'conflict' => 'L’activité a été modifiée entre-temps. Actualisez la page et vérifiez les valeurs actuelles.',
     'outside_week' => 'La date de l’activité doit être comprise dans la semaine sélectionnée.',
     'no_target' => 'Aucun objectif défini.',
+    'combined_help' => 'Le travail manuel et les questions auxquelles vous avez répondu dans les tests et examens sont comptés ensemble. Les questions sans réponse sont exclues ; les tentatives répétées sont incluses.',
+    'manual_questions' => 'Questions manuelles',
+    'automatic_tests' => 'Questions de test',
+    'automatic_exams' => 'Questions d’examen',
+    'no_work' => 'Aucune activité cette semaine.',
 ];

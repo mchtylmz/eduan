@@ -59,19 +59,19 @@
             </div>
         </div>
         <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.daily_totals') }}</h2><p>{{ __('study.manual_only') }}</p></div></header>
+            <header class="member-form-heading"><div><h2>{{ __('study.daily_totals') }}</h2><p>{{ __('study.combined_help') }}</p></div></header>
             <div class="member-form-body table-responsive">
                 <table class="table align-middle">
-                    <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.fragments') }}</th></tr></thead>
+                    <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.manual_questions') }}</th><th scope="col">{{ __('study.automatic_tests') }}</th><th scope="col">{{ __('study.automatic_exams') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.fragments') }}</th></tr></thead>
                     <tbody>
                         @forelse($days as $day)
-                            <tr><th scope="row">{{ $day->activity_date->format('d/m/Y') }}</th><td>{{ $day->questions }}</td><td>{{ $day->pages }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $day->minutes) }}</td><td>{{ $day->fragments }}</td></tr>
+                            <tr><th scope="row">{{ \App\Helpers\StudyCalendar::day($day['activity_date'])->format('d/m/Y') }}</th><td>{{ $day['manual_questions'] }}</td><td>{{ $day['automatic_tests'] }}</td><td>{{ $day['automatic_exams'] }}</td><td>{{ $day['questions'] }}</td><td>{{ $day['pages'] }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $day['minutes']) }}</td><td>{{ $day['fragments'] }}</td></tr>
                         @empty
-                            <tr><td colspan="5" class="text-muted">{{ __('study.no_activity') }}</td></tr>
+                            <tr><td colspan="8" class="text-muted">{{ __('study.no_work') }}</td></tr>
                         @endforelse
                     </tbody>
                     @if($days->isNotEmpty())
-                        <tfoot><tr><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td>{{ $days->sum('fragments') }}</td></tr></tfoot>
+                        <tfoot><tr><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('manual_questions') }}</td><td>{{ $days->sum('automatic_tests') }}</td><td>{{ $days->sum('automatic_exams') }}</td><td>{{ $days->sum('questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td>{{ $days->sum('fragments') }}</td></tr></tfoot>
                     @endif
                 </table>
             </div>

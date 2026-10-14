@@ -3,6 +3,7 @@
 namespace App\Actions\Tests;
 
 use App\Enums\YesNoEnum;
+use App\Helpers\StudyAnswerClock;
 use App\Models\Answer;
 use App\Models\TestsQuestion;
 use App\Models\TestsResult;
@@ -37,17 +38,19 @@ class SaveTestResultAnswer
             abort_unless($answerId === 0 || Answer::whereKey($answerId)
                 ->where('question_id', $questionId)->exists(), 422);
 
-            $result->details()->updateOrCreate([
+            $detail = $result->details()->firstOrNew([
                 'section_id' => $sectionId,
                 'question_id' => $questionId,
-            ], [
+            ]);
+            $detail->fill([
+                'study_answered_at' => StudyAnswerClock::next((int) $detail->answer_id, $answerId, $detail->study_answered_at, now()),
                 'answer_id' => $answerId,
                 'correct' => YesNoEnum::EMPTY,
                 'point' => 0,
                 'lesson_id' => $question->lesson_id,
                 'topic_id' => $question->topic_id,
                 'time' => 0,
-            ]);
+            ])->save();
 
             return $result;
         });

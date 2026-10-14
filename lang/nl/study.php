@@ -39,7 +39,7 @@ return [
     'date' => 'Datum',
     'activity_saved' => 'Het studiewerk is opgeslagen.',
     'activity_removed' => 'Het studiewerk is verwijderd.',
-    'daily_totals' => 'Dagtotalen van handmatige invoer',
+    'daily_totals' => 'Dagelijkse studietotalen',
     'manual_only' => 'Dit zijn de totalen van handmatig ingevoerd studiewerk buiten deze website.',
     'fragments' => 'Aantal registraties',
     'no_activity' => 'Geen handmatig studiewerk geregistreerd deze week.',
@@ -56,4 +56,9 @@ return [
     'conflict' => 'De registratie is intussen gewijzigd. Vernieuw de pagina en controleer de actuele gegevens.',
     'outside_week' => 'De studiedatum moet binnen de geselecteerde week vallen.',
     'no_target' => 'Geen doel ingesteld.',
+    'combined_help' => 'Handmatig studiewerk en beantwoorde vragen uit bundels en examens worden samen geteld. Onbeantwoorde vragen tellen niet mee; herhaalde pogingen wel.',
+    'manual_questions' => 'Handmatige vragen',
+    'automatic_tests' => 'Bundelvragen',
+    'automatic_exams' => 'Examenvragen',
+    'no_work' => 'Geen studiewerk deze week.',
 ];
