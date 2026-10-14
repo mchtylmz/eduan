@@ -112,3 +112,19 @@ Yerelde Ayarlar → Çalışma Takibi bölümünden modülü etkinleştirip baş
 6. Notu düzenle/kaldır; öğrenci ekranındaki karşılığını kontrol et.
 
 Faz 5 tamamlandı. Sırada **Faz 6: OneSignal izin/cihaz yönetimi, son10bildirim ve yetkili seçilmiş alıcılara kuyruklu e-posta/push**. Harici anahtarlar, ayarlar ve gerçek gönderim kontrolleri o fazın ayrı onaylı adımlarıdır.
+
+## 10. Güncel yerel aktivasyon ve Faz 1–5 tekrar kontrolü — 14 Ekim 2026
+
+Kullanıcı çalışma takibini yerelde kalıcı açmayı istedi. Mevcut yetkili yönetici ve SettingSaveAction ile yalnız `studyTrackingEnabled=1` / ilk `studyTrackingStartedOn=2026-10-14` kaydedildi. Önceki iki ayar kaydı konteynerde `/tmp/eduan-study-activation-before-20261014.json` dosyasına private izinle alındı. Transaction içinde diğer ayar satırlarının hash’i aynı kaldı. Geçmiş çalışma kapalı ve asgari soru10 davranışı korunur; ham iki ayar null olarak kalır. Canlı değişmedi. Önceki bölümlerdeki kapalı/null aktivasyon kanıtı artık tarihsel durumdur; **yerel modül şu anda açıktır**.
+
+Faz 1–5 + TimedExam aynı birleşik kapsam bir kez tekrarlandı: **203 test / 867 assertion başarılı**, PHP8.5.8,13.790s; hata/atlama yok. Bütün proje suite’i değildir. Testing DB fixture ve tarayıcı yazmaları transaction sonunda geri alındı.
+
+Testing Chrome NL1440/390 + FR390 tekrar: gerçek tablo/filter/Entersearch/refresh, öğrenci hedef ve manuel kayıt/raporrefresh, not create/edit/confirmdelete ve öğrenci görünürlüğü başarılı. JSerror0/5xx0 ve liste/detay document taşması yok.
+
+Ek olarak ana yerel DB’de sadece GET kabul eden HTTPKernel köprüsüyle mevcut yönetici üzerinden gerçek veri okunarak Ayarlar→Çalışma Takibi aktif1/tarih14Ekim/kapalı geçmiş/min10 kontrol edildi. Kişisel çalışma ekranı ve panel sayfası anlamlı ilk HTML; admin panel SQL371öğrenci. Kişisel manuel tarih alanı minimum2026-10-14. Ana ekran1440/390kontrolünde JSerror0/5xx0/overflowyok. Ana GET yan etkileri outer transaction ile rollback, örnek kayıt oluşturulmadı. Mevcut uygulama saat dilimi **Europe/Istanbul**; değiştirilmedi. Testing iş kuralları Brussels/DST varyasyonlarını ayrıca kapsar.
+
+Kanıt `/private/tmp/eduan-study-local-enabled-browser-result.json`, `eduan-study-local-enabled-settings.png`, `eduan-study-local-account.png`, `eduan-study-local-account-mobile.png`; testing kanıtı Faz5browser-result güncel. Son ana SELECT: eskiDilCevapSayıları aynı; hedef/çalışma/not/revision0; enabled1 ve startedOn2026-10-14. Kod/migration/izin değişmedi. Dış API/mail/push/servis/port/deploy yok.
+
+Kullanıcı OneSignal hesabının olduğunu, Hypotenuse uygulamasının olmadığını belirtti. Faz6hazırlığı: WebPush/CustomCode uygulaması; localhost için ayrı test uygulaması; AppID ve backend AppAPIKey. OneSignal’ın resmi belgeleri ayrı localhost uygulaması ve PWA çakışması için `/push/onesignal/` alt worker scope önerir. Henüz OneSignal uygulaması oluşturulmadı, secret kaydedilmedi, SDK yükleme/ücretli işlem/gerçek bildirim yapılmadı.
+
+Kaynaklar: [Custom Code setup](https://documentation.onesignal.com/docs/en/web-push-custom-code-setup), [service worker](https://documentation.onesignal.com/docs/en/onesignal-service-worker), [Keys & IDs](https://documentation.onesignal.com/docs/en/keys-and-ids).
