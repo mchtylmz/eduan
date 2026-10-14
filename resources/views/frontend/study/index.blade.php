@@ -22,6 +22,7 @@
                 <a href="{{ route('frontend.study') }}" class="d-inline-block mb-3">{{ __('study.current_week') }}</a>
             @endif
             <livewire:frontend.study.study-report :week-start="$bounds['start']->toDateString()" />
+            <livewire:frontend.study.visible-study-notes />
             <livewire:frontend.study.study-form :week-start="$bounds['start']->toDateString()" />
         </div>
     </section>

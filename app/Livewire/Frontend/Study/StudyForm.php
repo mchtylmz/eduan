@@ -15,6 +15,7 @@ use App\Helpers\StudyInput;
 use App\Helpers\StudyTrackingSettings;
 use App\Models\StudyActivityEntry;
 use App\Models\StudyWeeklyTarget;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -61,9 +62,19 @@ class StudyForm extends Component
     #[Locked]
     public string $notice = '';
 
+    protected function owner(): User
+    {
+        return auth()->user();
+    }
+
+    protected function reportComponent(): string
+    {
+        return StudyReport::class;
+    }
+
     public function mount(string $weekStart): void
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $bounds = StudyCalendar::bounds($weekStart);
         abort_unless($bounds['start']->toDateString() === $weekStart && ! $bounds['start']->isFuture(), 422);
         $this->weekStart = $weekStart;
@@ -74,9 +85,9 @@ class StudyForm extends Component
         }
     }
 
-    private function loadTarget(): void
+    protected function loadTarget(): void
     {
-        $target = StudyWeeklyTarget::query()->where('user_id', auth()->id())
+        $target = StudyWeeklyTarget::query()->where('user_id', $this->owner()->id)
             ->whereHas('week', fn ($query) => $query->where('starts_on', $this->weekStart))->first();
         $this->targetBefore = $target ? StudyWrite::snapshot($target) : null;
         $this->targetQuestions = $target?->questions ?? '';
@@ -94,7 +105,7 @@ class StudyForm extends Component
     {
         $this->resetErrorBag();
         $this->notice = '';
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         try {
             $callback();
 
@@ -117,13 +128,13 @@ class StudyForm extends Component
     public function saveTarget(): void
     {
         if ($this->attempt(function () {
-            SaveStudyTarget::run(auth()->user(), $this->weekStart, [
+            SaveStudyTarget::run($this->owner(), $this->weekStart, [
                 'questions' => $this->targetQuestions, 'pages' => $this->targetPages, 'hours' => $this->targetHours,
             ], $this->targetBefore);
             $this->loadTarget();
         }, ['questions' => 'targetQuestions', 'pages' => 'targetPages', 'hours' => 'targetHours'])) {
             $this->notice = __('study.target_saved');
-            $this->dispatch('study-changed')->to(StudyReport::class);
+            $this->dispatch('study-changed')->to($this->reportComponent());
         }
     }
 
@@ -134,23 +145,23 @@ class StudyForm extends Component
             $bounds = StudyCalendar::bounds($this->weekStart);
             $date = StudyCalendar::day($this->activityDate);
             abort_unless($date->greaterThanOrEqualTo($bounds['start']) && $date->lessThan($bounds['end']), 422, __('study.outside_week'));
-            SaveStudyActivity::run(auth()->user(), $this->activityDate, [
+            SaveStudyActivity::run($this->owner(), $this->activityDate, [
                 'questions' => $this->activityQuestions, 'pages' => $this->activityPages, 'hours' => $this->activityHours,
             ], $this->submissionKey, $this->editingEntryId, $this->editingBefore);
             $this->clearEditor();
             $this->resetPage();
         }, ['date' => 'activityDate', 'questions' => 'activityQuestions', 'pages' => 'activityPages', 'hours' => 'activityHours'])) {
             $this->notice = __('study.activity_saved');
-            $this->dispatch('study-changed')->to(StudyReport::class);
+            $this->dispatch('study-changed')->to($this->reportComponent());
         }
     }
 
     private function entry(int $id): StudyActivityEntry
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $bounds = StudyCalendar::bounds($this->weekStart);
 
-        return StudyActivityEntry::query()->where('user_id', auth()->id())->whereKey($id)
+        return StudyActivityEntry::query()->where('user_id', $this->owner()->id)->whereKey($id)
             ->where('activity_date', '>=', $bounds['start']->toDateString())
             ->where('activity_date', '<', $bounds['end']->toDateString())->firstOrFail();
     }
@@ -159,7 +170,7 @@ class StudyForm extends Component
     {
         $this->attempt(function () use ($id) {
             $entry = $this->entry($id);
-            AuthorizeStudyChange::run(auth()->user(), 'activity', $entry->activity_date->toDateString());
+            AuthorizeStudyChange::run($this->owner(), 'activity', $entry->activity_date->toDateString());
             $this->editingEntryId = $entry->id;
             $this->editingBefore = StudyWrite::snapshot($entry);
             $this->activityDate = $entry->activity_date->toDateString();
@@ -174,18 +185,18 @@ class StudyForm extends Component
         if ($this->attempt(function () {
             abort_unless($this->editingEntryId && $this->editingBefore, 422);
             $this->entry($this->editingEntryId);
-            RemoveStudyActivity::run(auth()->user(), $this->editingEntryId, $this->editingBefore);
+            RemoveStudyActivity::run($this->owner(), $this->editingEntryId, $this->editingBefore);
             $this->clearEditor();
             $this->resetPage();
         })) {
             $this->notice = __('study.activity_removed');
-            $this->dispatch('study-changed')->to(StudyReport::class);
+            $this->dispatch('study-changed')->to($this->reportComponent());
         }
     }
 
     public function cancelEdit(): void
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $this->clearEditor();
         $this->resetErrorBag();
         $this->notice = '';
@@ -203,7 +214,7 @@ class StudyForm extends Component
     private function denial(string $kind, string $date): ?string
     {
         try {
-            AuthorizeStudyChange::run(auth()->user(), $kind, $date);
+            AuthorizeStudyChange::run($this->owner(), $kind, $date);
 
             return null;
         } catch (HttpException $exception) {
@@ -217,7 +228,7 @@ class StudyForm extends Component
 
     public function render()
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $enabled = StudyTrackingSettings::enabled() && StudyTrackingSettings::startedOn();
         $bounds = StudyCalendar::bounds($this->weekStart);
         $today = StudyCalendar::day(now())->toDateString();
@@ -228,14 +239,14 @@ class StudyForm extends Component
         $entries = null;
         $days = collect();
         if ($enabled) {
-            $query = StudyActivityEntry::query()->where('user_id', auth()->id())
+            $query = StudyActivityEntry::query()->where('user_id', $this->owner()->id)
                 ->where('activity_date', '>=', $this->weekStart)->where('activity_date', '<', $bounds['end']->toDateString());
             $days = (clone $query)->selectRaw('activity_date, COUNT(*) AS fragments, SUM(questions) AS questions, SUM(pages) AS pages, SUM(minutes) AS minutes')
                 ->groupBy('activity_date')->orderBy('activity_date')->get();
             $manual = $days->map(fn ($day) => ['activity_date' => $day->activity_date->toDateString(),
                 'manual_questions' => (int) $day->questions, 'pages' => (int) $day->pages,
                 'minutes' => (int) $day->minutes, 'fragments' => (int) $day->fragments])->all();
-            $days = collect(StudyDailyTotals::merge($manual, StudyAutomaticWork::daily(auth()->user(), $this->weekStart)));
+            $days = collect(StudyDailyTotals::merge($manual, StudyAutomaticWork::daily($this->owner(), $this->weekStart)));
             $entries = $query->orderByDesc('activity_date')->orderByDesc('id')->paginate(15);
         }
 

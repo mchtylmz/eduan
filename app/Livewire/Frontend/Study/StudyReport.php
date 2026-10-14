@@ -7,6 +7,7 @@ use App\Helpers\StudyAnalytics;
 use App\Helpers\StudyCalendar;
 use App\Helpers\StudyTrackingSettings;
 use App\Models\Season;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -24,9 +25,14 @@ class StudyReport extends Component
 
     public $seasonId = '';
 
+    protected function owner(): User
+    {
+        return auth()->user();
+    }
+
     public function mount(string $weekStart): void
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $bounds = StudyCalendar::bounds($weekStart);
         abort_unless($weekStart === $bounds['start']->toDateString() && ! $bounds['start']->isFuture(), 422);
         $this->weekStart = $weekStart;
@@ -46,7 +52,7 @@ class StudyReport extends Component
     #[On('study-changed')]
     public function refreshReport(): void
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
     }
 
     private function pages(array $rows, string $name): LengthAwarePaginator
@@ -59,12 +65,12 @@ class StudyReport extends Component
 
     public function render()
     {
-        AuthorizeStudyAccess::run(auth()->user());
+        AuthorizeStudyAccess::run($this->owner());
         $enabled = StudyTrackingSettings::enabled() && StudyTrackingSettings::startedOn();
         $seasons = $enabled ? Season::select('id', 'name', 'start_date', 'end_date')->orderByDesc('start_date')->get() : collect();
         $valid = is_int($this->seasonId) || (is_string($this->seasonId) && ctype_digit($this->seasonId));
         $season = $valid ? $seasons->firstWhere('id', (int) $this->seasonId) : null;
-        $report = $enabled ? StudyAnalytics::report(auth()->user(), $this->weekStart, $season) : null;
+        $report = $enabled ? StudyAnalytics::report($this->owner(), $this->weekStart, $season) : null;
         $history = $this->pages($report['history'] ?? [], 'studyHistoryPage');
         $topics = $this->pages($report['topics'] ?? [], 'studyTopicsPage');
 

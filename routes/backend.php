@@ -82,3 +82,7 @@ AutoRoute::auto('seasons', \App\Http\Controllers\Backend\SeasonController::class
 Route::get('logout', [\App\Http\Controllers\Backend\Auth\LogoutController::class, 'index'])
     ->name('logout');
 
+
+Route::get('study', [\App\Http\Controllers\Backend\StudyController::class, 'index'])->name('study.index');
+Route::get('study/data', [\App\Http\Controllers\Backend\StudyController::class, 'data'])->name('study.data');
+Route::get('study/students/{user}', [\App\Http\Controllers\Backend\StudyController::class, 'show'])->name('study.show');

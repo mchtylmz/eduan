@@ -37,7 +37,7 @@ class StudyAutomaticWork
     }
 
     /** Internal query factory; callers authorize the report owner before executing. */
-    public static function forOwners(array $ownerIds, bool $timed, string $from, string $to, bool $accuracy = false): Builder
+    public static function forOwners(array|Builder $ownerIds, bool $timed, string $from, string $to, bool $accuracy = false): Builder
     {
         // Site "test" is Exam; site "exam" is TestsResult. Do not filter completed attempts.
         $details = $timed ? 'tests_result_details' : 'exam_result_details';

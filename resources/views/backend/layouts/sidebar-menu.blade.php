@@ -82,6 +82,14 @@
             </a>
         </li>
     @endcan
+    @if(auth()->user()->can('users:view') && auth()->user()->can('study:access') && auth()->user()->can('study:view') && auth()->user()->canany(['user-type:admin', 'user-type:teacher']))
+        <li class="nav-main-item">
+            <a @class(['nav-main-link', 'active' => request()->routeIs('admin.study.*')]) href="{{ route('admin.study.index') }}">
+                <i class="nav-main-link-icon fa fa-chart-line"></i>
+                <span class="nav-main-link-name">{{ __('study.title') }}</span>
+            </a>
+        </li>
+    @endif
     @canany(['stats:view', 'leagues:view'])
         <li class="nav-main-heading" data-menu-group="results">{{ __('menus.results') }}</li>
         @can('stats:view')

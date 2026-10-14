@@ -1,3 +1,4 @@
+@php($panel = $this instanceof \App\Livewire\Backend\Study\StudyEditor)
 <div>
     @error('study')<div role="alert" class="alert alert-warning">{{ $message }}</div>@enderror
     @if($notice)<div role="status" class="alert alert-success">{{ $notice }}</div>@endif
@@ -6,9 +7,9 @@
     @else
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
-                <section class="member-form-card h-100">
-                    <header class="member-form-heading"><div><h2>{{ __('study.weekly_target') }}</h2><p>{{ __('study.target_help') }}</p></div></header>
-                    <form wire:submit="saveTarget" class="member-form-body">
+                <section class="{{ $panel ? 'block block-rounded border h-100' : 'member-form-card h-100' }}">
+                    <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __($panel ? 'study.weekly_target_panel' : 'study.weekly_target') }}</h2><p>{{ __('study.target_help') }}</p></div></header>
+                    <form wire:submit="saveTarget" class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                         @if(! $targetBefore || ! collect($targetBefore)->contains(fn ($value) => $value !== null && $value > 0))<p class="text-muted">{{ __('study.no_target') }}</p>@endif
                         @if($targetDenial)<p class="alert alert-info">{{ $targetDenial }}</p>@endif
                         <fieldset @disabled($targetDenial) wire:loading.attr="disabled">
@@ -28,9 +29,9 @@
                 </section>
             </div>
             <div class="col-lg-6">
-                <section class="member-form-card h-100">
-                    <header class="member-form-heading"><div><h2>{{ $editingEntryId ? __('study.edit_activity') : __('study.add_activity') }}</h2><p>{{ __('study.activity_help') }}</p></div></header>
-                    <form wire:submit="saveActivity" class="member-form-body">
+                <section class="{{ $panel ? 'block block-rounded border h-100' : 'member-form-card h-100' }}">
+                    <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ $editingEntryId ? __('study.edit_activity') : __('study.add_activity') }}</h2><p>{{ __('study.activity_help') }}</p></div></header>
+                    <form wire:submit="saveActivity" class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                         @if($activityDenial)<p class="alert alert-info">{{ $activityDenial }}</p>@endif
                         <fieldset @disabled($activityDenial) wire:loading.attr="disabled">
                             <label for="activityDate" class="form-label">{{ __('study.date') }}</label>
@@ -58,9 +59,10 @@
                 </section>
             </div>
         </div>
-        <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.daily_totals') }}</h2><p>{{ __('study.combined_help') }}</p></div></header>
-            <div class="member-form-body table-responsive">
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __('study.daily_totals') }}</h2><p>{{ __('study.combined_help') }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
+                <div class="table-responsive">
                 <table class="table align-middle">
                     <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.manual_questions') }}</th><th scope="col">{{ __('study.automatic_tests') }}</th><th scope="col">{{ __('study.automatic_exams') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.fragments') }}</th></tr></thead>
                     <tbody>
@@ -74,11 +76,12 @@
                         <tfoot><tr><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('manual_questions') }}</td><td>{{ $days->sum('automatic_tests') }}</td><td>{{ $days->sum('automatic_exams') }}</td><td>{{ $days->sum('questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td>{{ $days->sum('fragments') }}</td></tr></tfoot>
                     @endif
                 </table>
+                </div>
             </div>
         </section>
-        <section class="member-form-card">
-            <header class="member-form-heading"><div><h2>{{ __('study.entries') }}</h2><p>{{ __('study.fragments_help') }}</p></div></header>
-            <div class="member-form-body">
+        <section class="{{ $panel ? 'block block-rounded border' : 'member-form-card' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __('study.entries') }}</h2><p>{{ __('study.fragments_help') }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                 <div class="table-responsive">
                     <table class="table align-middle">
                         <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.actions') }}</th></tr></thead>

@@ -1,8 +1,9 @@
+@php($panel = $this instanceof \App\Livewire\Backend\Study\StudentReport)
 <div class="mb-4">
     @if($report)
-        <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.weekly_report') }}</h2><p>{{ __('study.rates_help') }}</p></div></header>
-            <div class="member-form-body">
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __($panel ? 'study.weekly_report_panel' : 'study.weekly_report') }}</h2><p>{{ __('study.rates_help') }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                 <div class="row g-4">
                     @foreach(['questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours'] as $field => $label)
                         @php($rate = $report['current']['rates'][$field])
@@ -21,9 +22,9 @@
                 <div class="border-top mt-3 pt-3"><strong>{{ __('study.overall') }}: {{ $report['current']['rates']['overall'] !== null ? $report['current']['rates']['overall'].'%' : __('study.no_target') }}</strong><span class="small text-muted ms-2">{{ __('study.state_'.$report['current']['state']) }}</span></div>
             </div>
         </section>
-        <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.four_weeks') }}</h2><p>{{ __('study.trend_help') }}</p></div></header>
-            <div class="member-form-body row g-4">
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __('study.four_weeks') }}</h2><p>{{ __('study.trend_help') }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3 row g-4' : 'member-form-body row g-4' }}">
                 @foreach(['questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours'] as $field => $label)
                     @php($scale = max(1, collect($report['trend'])->max(fn ($row) => max($row['actual'][$field], $row['target'][$field] ?? 0))))
                     <div class="col-lg-4">
@@ -41,9 +42,9 @@
                 @endforeach
             </div>
         </section>
-        <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.period_history') }}</h2><p>{{ __('study.period_help') }}</p></div></header>
-            <div class="member-form-body">
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __($panel ? 'study.period_history_panel' : 'study.period_history') }}</h2><p>{{ __('study.period_help') }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                 <label for="study-season" class="form-label">{{ __('study.period') }}</label>
                 <select id="study-season" class="form-select mb-3" wire:model.live="seasonId">
                     @if($seasons->isEmpty())<option value="">{{ __('study.no_period') }}</option>@endif
@@ -55,7 +56,7 @@
                         <thead><tr><th scope="col">{{ __('study.week') }}</th><th scope="col">{{ __('study.questions') }}<br>{{ __('study.goal_actual') }}</th><th scope="col">{{ __('study.pages') }}<br>{{ __('study.goal_actual') }}</th><th scope="col">{{ __('study.hours') }}<br>{{ __('study.goal_actual') }}</th><th scope="col">{{ __('study.overall') }}</th><th scope="col">{{ __('study.state') }}</th></tr></thead>
                         <tbody>
                             @forelse($history as $row)
-                                <tr><th scope="row">@if($row['start'] <= \App\Helpers\StudyCalendar::bounds(now())['start']->toDateString())<a href="{{ route('frontend.study', ['week' => $row['start'], 'season' => $seasonId]) }}">{{ $row['start'] }} — {{ $row['end'] }}</a>@else{{ $row['start'] }} — {{ $row['end'] }}@endif</th><td>{{ $row['target']['questions'] ?? '—' }} / {{ $row['actual']['questions'] }}</td><td>{{ $row['target']['pages'] ?? '—' }} / {{ $row['actual']['pages'] }}</td><td>{{ \App\Helpers\StudyInput::hours($row['target']['minutes'] ?? null) ?: '—' }} / {{ \App\Helpers\StudyInput::hours($row['actual']['minutes']) }}</td><td>{{ $row['rates']['overall'] !== null ? $row['rates']['overall'].'%' : '—' }}</td><td>{{ __('study.state_'.$row['state']) }}</td></tr>
+                                <tr><th scope="row">@if($row['start'] <= \App\Helpers\StudyCalendar::bounds(now())['start']->toDateString())<a href="{{ route($panel ? 'admin.study.show' : 'frontend.study', ['week' => $row['start'], 'season' => $seasonId] + ($panel ? ['user' => $studentId] : [])) }}">{{ $row['start'] }} — {{ $row['end'] }}</a>@else{{ $row['start'] }} — {{ $row['end'] }}@endif</th><td>{{ $row['target']['questions'] ?? '—' }} / {{ $row['actual']['questions'] }}</td><td>{{ $row['target']['pages'] ?? '—' }} / {{ $row['actual']['pages'] }}</td><td>{{ \App\Helpers\StudyInput::hours($row['target']['minutes'] ?? null) ?: '—' }} / {{ \App\Helpers\StudyInput::hours($row['actual']['minutes']) }}</td><td>{{ $row['rates']['overall'] !== null ? $row['rates']['overall'].'%' : '—' }}</td><td>{{ __('study.state_'.$row['state']) }}</td></tr>
                             @empty
                                 <tr><td colspan="6" class="text-muted">{{ __('study.no_period') }}</td></tr>
                             @endforelse
@@ -65,9 +66,10 @@
                 {{ $history->links() }}
             </div>
         </section>
-        <section class="member-form-card mb-4">
-            <header class="member-form-heading"><div><h2>{{ __('study.topic_analysis') }}</h2><p>{{ __('study.topic_help', ['minimum' => \App\Helpers\StudyTrackingSettings::minimumTopicQuestions()]) }}</p></div></header>
-            <div class="member-form-body table-responsive">
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+            <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __('study.topic_analysis') }}</h2><p>{{ __('study.topic_help', ['minimum' => \App\Helpers\StudyTrackingSettings::minimumTopicQuestions()]) }}</p></div></header>
+            <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
+                <div class="table-responsive">
                 <table class="table align-middle">
                     <thead><tr><th scope="col">{{ __('study.topic') }}</th><th scope="col">{{ __('study.correct') }}</th><th scope="col">{{ __('study.incorrect') }}</th><th scope="col">{{ __('study.accuracy') }}</th><th scope="col">{{ __('study.state') }}</th></tr></thead>
                     <tbody>
@@ -78,13 +80,14 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
                 {{ $topics->links() }}
             </div>
         </section>
         @if($report['comparisons'])
-            <section class="member-form-card mb-4">
-                <header class="member-form-heading"><div><h2>{{ __('study.comparison') }}</h2><p>{{ __('study.comparison_help') }}</p></div></header>
-                <div class="member-form-body row g-4">
+            <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
+                <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __('study.comparison') }}</h2><p>{{ __('study.comparison_help') }}</p></div></header>
+                <div class="{{ $panel ? 'block-content pb-3 row g-4' : 'member-form-body row g-4' }}">
                     @foreach($report['comparisons'] as $group => $scores)
                         <div class="col-lg-6"><h3 class="h6">{{ __('study.'.$group) }}</h3>
                             <dl class="mb-0">
