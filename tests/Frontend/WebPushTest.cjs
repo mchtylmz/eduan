@@ -7,14 +7,14 @@ const source = fs.readFileSync('public/assets/web-push.js', 'utf8');
 function screen({stored=false, ios=false, standalone=false, ready=true}={}) {
     const events={}; let requests=0, scripts=0;
     const button={disabled:!ready,addEventListener:(event,fn)=>events.enable=fn};
-    const checkbox={checked:false}; const status={textContent:''};
+    const checkbox={checked:false}; const status={textContent:''}; const badge={dataset:{state:'pending'},textContent:'Permission status'};
     const guide={hidden:true}, browser={hidden:false};
-    const selectors={'[data-push-enable]':button,'[data-push-consent]':checkbox,'[data-push-status]':status,'[data-ios-guide]':guide,'[data-browser-guide]':browser,'[data-push-check]':{addEventListener:(event,fn)=>events.check=fn}};
+    const selectors={'[data-push-enable]':button,'[data-push-consent]':checkbox,'[data-push-status]':status,'[data-push-badge]':badge,'[data-ios-guide]':guide,'[data-browser-guide]':browser,'[data-push-check]':{addEventListener:(event,fn)=>events.check=fn}};
     const page={querySelector:selector=>selectors[selector]};
-    const data={ready,accountKey:'private-id',contextUrl:'/context',messages:{consent_required:'Consent needed',ios_browser:'Use installed app',service_error:'Unavailable'}};
+    const data={ready,accountKey:'private-id',contextUrl:'/context',messages:{consent_required:'Consent needed',ios_browser:'Use installed app',service_error:'Unavailable',unavailable_state:'Not available',enabled_state:'Enabled',disabled_state:'Disabled'}};
     const context={module:{exports:{}},window:{matchMedia:()=>({matches:standalone}),navigator:{standalone}},navigator:{userAgent:ios?'iPhone':'Chrome',platform:ios?'iPhone':'MacIntel',maxTouchPoints:ios?5:0},localStorage:{getItem:()=>stored?'1':null},fetch:async()=>{requests++;return {ok:false}},document:{querySelector:s=>s==='#eduan-web-push-config'?{textContent:JSON.stringify(data)}:s==='[data-web-push-page]'?page:null,querySelectorAll:()=>[],head:{appendChild:()=>scripts++}},setTimeout};
     vm.runInNewContext(source,context);
-    return {events,button,checkbox,status,guide,browser,context,requests:()=>requests,scripts:()=>scripts};
+    return {events,button,checkbox,status,badge,guide,browser,context,requests:()=>requests,scripts:()=>scripts};
 }
 
 test('iPhone and desktop-mode iPad detection does not misclassify a Mac',()=>{
@@ -47,3 +47,12 @@ test('selection is retained across pages and clearing a page keeps other selecte
  handlers['uncheck-all.bs.table']();assert.deepEqual([...selectedIds],[1]);
  windowEvents['communication-created']();assert.deepEqual([...selectedIds],[]);assert.equal(count,'Selected 0');
 });
+
+ test('context failure updates the visible state and keeps the retry control usable',async()=>{
+ const view=screen();view.checkbox.checked=true;await view.events.enable();
+ assert.equal(view.status.textContent,'Unavailable');assert.equal(view.badge.dataset.state,'error');assert.equal(view.badge.textContent,'Not available');assert.equal(view.button.disabled,false);assert.equal(view.scripts(),0);
+ });
+ test('configuration failure cannot accidentally enable a disabled permission button',async()=>{
+ const view=screen({ready:false});view.checkbox.checked=true;await view.events.enable();
+ assert.equal(view.button.disabled,true);assert.equal(view.scripts(),0);
+ });

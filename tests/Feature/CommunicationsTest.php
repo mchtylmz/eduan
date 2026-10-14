@@ -266,4 +266,28 @@ class CommunicationsTest extends TestCase
             $lock->release();
         }
     }
+
+    public function test_interrupted_worker_records_uncertain_failure_without_retry_or_secret_and_preserves_terminal_delivery(): void
+    {
+        $batch = CreateCommunicationBatch::run($this->batchInput());
+        $row = CommunicationDelivery::where('batch_id', $batch->id)->first();
+        $job = new DeliverCommunication($row->id);
+        foreach (['scheduled', 'sending'] as $status) {
+            $row->update(['status' => $status]);
+            $job->failed(new \RuntimeException('Sensitive SMTP or provider text'));
+            $this->assertSame('failed', $row->fresh()->status);
+            $this->assertSame('worker_interrupted', $row->fresh()->error_code);
+            $this->assertNotNull($row->fresh()->completed_at);
+        }
+        $row->refresh()->update(['status' => 'sent', 'error_code' => null]);
+        $job->failed(new \RuntimeException('Late failure'));
+        $this->assertSame('sent', $row->fresh()->status);
+        $this->assertNull($row->fresh()->error_code);
+        $job->handle();
+        Mail::assertNothingSent();
+        Http::assertNothingSent();
+        Queue::assertNothingPushed();
+        $this->assertTrue($job->failOnTimeout);
+        $this->assertSame(1, $job->tries);
+    }
 }

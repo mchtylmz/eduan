@@ -182,4 +182,36 @@ class WebNotificationsTest extends TestCase
         $this->assertSame($this->pushApp, settings()->oneSignalLocalAppId);
         Http::assertNothingSent();
     }
+
+    public function test_redesigned_page_omits_provider_name_in_all_localized_explanations_without_overwriting_page(): void
+    {
+        $this->actingAs($this->student);
+        $page = Page::where('menu', PageMenuEnum::NOTIFICATIONS)->firstOrFail();
+        $before = $page->getRawOriginal('content');
+        foreach (['tr', 'nl', 'en', 'fr'] as $locale) {
+            $this->get(route('frontend.notifications', ['lang' => $locale]))->assertOk()
+                ->assertSee('notifications-setup', false)->assertSee('data-push-badge', false)->assertDontSee('OneSignal');
+        }
+        $this->assertSame($before, $page->fresh()->getRawOriginal('content'));
+        Http::assertNothingSent();
+    }
+
+    public function test_custom_explanation_html_is_preserved_while_provider_label_is_neutral(): void
+    {
+        $page = Page::where('menu', PageMenuEnum::NOTIFICATIONS)->firstOrFail();
+        $page->setTranslation('content', 'nl', '<p><strong>Custom explanation</strong>: oneSIGNAL</p>');
+        $page->save();
+        $this->get(route('frontend.notifications', ['lang' => 'nl']))->assertOk()
+            ->assertSee('<strong>Custom explanation</strong>', false)->assertSee('de meldingsdienst')->assertDontSee('oneSIGNAL');
+        $this->assertStringContainsString('oneSIGNAL', $page->fresh()->getTranslation('content', 'nl'));
+    }
+
+    public function test_not_configured_page_disables_consent_and_permission_without_sdk_request(): void
+    {
+        settings()->set('notificationsEnabled', '0');
+        settings()->save();
+        $this->get(route('frontend.notifications'))->assertOk()->assertSee('data-push-consent disabled', false)
+            ->assertSee('data-push-enable disabled', false)->assertSee('data-state="unavailable"', false);
+        Http::assertNothingSent();
+    }
 }

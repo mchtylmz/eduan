@@ -28,7 +28,17 @@ class DeliverCommunication implements ShouldQueue
 
     public int $timeout = 60;
 
+    public bool $failOnTimeout = true;
+
     public function __construct(public int $deliveryId) {}
+
+    public function failed(?Throwable $exception): void
+    {
+        // A stopped worker leaves delivery uncertain; never automatically resend it.
+        // Keep terminal records unchanged and never retain the raw exception text.
+        CommunicationDelivery::whereKey($this->deliveryId)->whereIn('status', ['scheduled', 'sending'])
+            ->update(['status' => 'failed', 'error_code' => 'worker_interrupted', 'completed_at' => now()]);
+    }
 
     public function handle(): void
     {

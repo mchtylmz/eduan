@@ -16,10 +16,14 @@ class PackageRemovalTest extends TestCase
         $names = array_map(fn ($event) => $event->description, app(Schedule::class)->events());
 
         $this->assertSame([
+            'communications_dispatch',
             'update_gpt_limit_for_users',
             'update_season_id_for_results',
             'cache_clear',
             'run_league_result',
         ], $names);
+        $communication = app(Schedule::class)->events()[0];
+        $this->assertSame('* * * * *', $communication->expression);
+        $this->assertTrue($communication->withoutOverlapping);
     }
 }

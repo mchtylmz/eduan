@@ -91,3 +91,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Çalışma Takibi — Faz 6 web bildirimleri / iletişim
 
 [Kurulum, test sınırları ve değişen dosyalar](Codex/75-CALISMA-TAKIBI-FAZ6-WEB-BILDIRIM-VE-TOPLU-ILETISIM.md): Ayarlar → Bildirimler, Sayfalar’daki açıklama, `/account/notifications` ve `/admin/communications`. Ayrı localhost App ID/key gerekir; canlı ID yerelde kullanılmaz. Onaylı iki migration ana/testing’de uygulandı; bildirim kapalı ve secrets boş. `communications:dispatch` scheduler ile asenkron job’ları kanal başına beş/dakika hazırlar; gerçek provider/SMTP/Safari cihaz kabulü Faz 7’dedir. Kök PWA worker korunur, var olan çalışma takibi açık kalır.
+
+### Faz 7 — bildirim görünümü ve yerel kabul
+
+[Yerel test/inceleme kaydı](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md): `/account/notifications` yenilendi; kullanıcı ekranındaki sağlayıcı adı nötr, mevcut Sayfalar içerikleri korunur. Genel715 koşudaki tek eski scheduler beklentisi düzeltildi; ilgili44/263 ve20Node başarılı. Gerçek Chrome testi yerel App ID/key ve kullanıcının Chrome girişini bekler; Safari kullanıcı kararıyla sonraya bırakıldı. APP_VERSION/root worker1.1.27; tam yayın kabulü değildir.
