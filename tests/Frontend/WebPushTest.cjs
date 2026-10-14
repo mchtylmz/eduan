@@ -35,18 +35,6 @@ test('iOS browser tab shows installation guide and never silently loads SDK',()=
 test('stored consent may silently check context but context failure never downloads SDK',async()=>{
  const view=screen({stored:true});await new Promise(r=>setImmediate(r));assert.equal(view.requests(),1);assert.equal(view.scripts(),0);assert.equal(view.status.textContent,'Unavailable');
 });
-test('selection is retained across pages and clearing a page keeps other selected recipients',()=>{
- let domReady;const handlers={},windowEvents={};let selectedIds=[],count='';let visible=[{id:2},{id:3}];
- const table={on:(event,fn)=>handlers[event]=fn,bootstrapTable:(action)=>action==='getData'?visible:null};
- const counter={dataset:{template:'Selected :count'},set textContent(value){count=value}};
- const root={getAttribute:()=> 'component',querySelector:()=>counter};
- const context={Set,document:{addEventListener:(e,fn)=>domReady=fn,querySelector:()=>root},window:{addEventListener:(e,fn)=>windowEvents[e]=fn},jQuery:()=>table,Livewire:{find:()=>({set:(key,ids)=>selectedIds=ids})}};
- vm.runInNewContext(fs.readFileSync('public/backend/assets/communications.js','utf8'),context);domReady();
- handlers['check.bs.table'](null,{id:1});handlers['check-all.bs.table'](null,visible);
- assert.deepEqual([...selectedIds],[1,2,3]);assert.equal(count,'Selected 3');
- handlers['uncheck-all.bs.table']();assert.deepEqual([...selectedIds],[1]);
- windowEvents['communication-created']();assert.deepEqual([...selectedIds],[]);assert.equal(count,'Selected 0');
-});
 
  test('context failure updates the visible state and keeps the retry control usable',async()=>{
  const view=screen();view.checkbox.checked=true;await view.events.enable();

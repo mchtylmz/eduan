@@ -89,3 +89,4 @@ Route::get('study/students/{user}', [\App\Http\Controllers\Backend\StudyControll
 
 Route::get('communications', [\App\Http\Controllers\Backend\CommunicationController::class, 'index'])->name('communications.index');
 Route::get('communications/recipients', [\App\Http\Controllers\Backend\CommunicationController::class, 'recipients'])->name('communications.recipients');
+Route::get('communications/history', [\App\Http\Controllers\Backend\CommunicationController::class, 'history'])->name('communications.history');

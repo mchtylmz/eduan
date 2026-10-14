@@ -42,9 +42,9 @@ class CommunicationsTest extends TestCase
 
     public function test_recipient_table_and_composer_are_teacher_scoped(): void
     {
-        $this->get(route('admin.communications.index'))->assertOk()->assertSee('communication-recipients-table', false);
+        $this->get(route('admin.communications.index'))->assertOk()->assertSee('communication-history-table', false)->assertDontSee('communication-recipients-table', false);
         $this->getJson(route('admin.communications.recipients'))->assertOk()->assertJsonPath('total', 1)->assertJsonPath('rows.0.id', $this->student->id);
-        Livewire::test(CommunicationForm::class)->set('recipients', [$this->outsider->id])->set('title', 'X')->set('body', 'Y')->call('enqueue')->assertForbidden();
+        Livewire::test(CommunicationForm::class)->call('start')->set('recipients', [$this->outsider->id])->call('next')->assertForbidden();
         $this->assertSame(0, CommunicationBatch::where('actor_id', $this->staff->id)->count());
     }
 
@@ -203,8 +203,9 @@ class CommunicationsTest extends TestCase
     public function test_composer_validation_and_success_feedback_keep_delivery_separate(): void
     {
         $component = Livewire::test(CommunicationForm::class);
-        $component->call('enqueue')->assertHasErrors(['recipients', 'title', 'body']);
-        $component->set('recipients', [$this->student->id])->set('title', 'Title')->set('body', 'Body')->call('enqueue')->assertHasNoErrors()->assertSee(__('notifications.queued'));
+        $component->call('start')->call('next')->assertHasErrors(['recipients']);
+        $component->set('recipients', [$this->student->id])->call('next')->assertSet('step', 2)->call('next')->assertHasErrors(['title', 'body']);
+        $component->set('title', 'Title')->set('body', 'Body')->call('next')->assertSet('step', 3)->call('enqueue')->assertHasNoErrors()->assertSee(__('notifications.queued'))->assertSet('step', 0);
         $this->assertSame(1, CommunicationBatch::where('actor_id', $this->staff->id)->count());
     }
 

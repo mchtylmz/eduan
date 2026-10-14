@@ -95,3 +95,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Faz 7 — bildirim görünümü ve yerel kabul
 
 [Yerel test/inceleme kaydı](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md): `/account/notifications` yenilendi; kullanıcı ekranındaki sağlayıcı adı nötr, mevcut Sayfalar içerikleri korunur. Genel715 koşudaki tek eski scheduler beklentisi düzeltildi; ilgili44/263 ve20Node başarılı. Gerçek Chrome testi yerel App ID/key ve kullanıcının Chrome girişini bekler; Safari kullanıcı kararıyla sonraya bırakıldı. APP_VERSION/root worker1.1.27; tam yayın kabulü değildir.
+
+
+### Toplu iletişim — standart tablo ve üç adım
+
+[Yapılanlar, dosyalar ve dar test sonucu](Codex/77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md): Yönetim → Toplu E-posta ve Bildirim, Kullanıcılar'ın üstündedir. `/admin/communications` önce ortak Bootstrap Table/server JSON gönderim geçmişini açar. Yeni gönderim: alıcı seçimi → mesaj → kişisel ön izleme/Gönder. Güncel izin ve alıcı kontrolleri, UUID, asenkron beş/dakika gönderim korunur. 34 PHP/236 assertion,15 Node ve testing Chrome kontrolleri geçti; gerçek servis gönderimi yapılmadı. APP_VERSION/root worker1.1.28. Geliştirme öncesi standart okuma zorunluluğu AGENTS.md'de kalıcıdır.

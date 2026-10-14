@@ -6,6 +6,7 @@ use App\Helpers\WebPushSettings;
 use App\Models\CommunicationBatch;
 use App\Models\CommunicationDelivery;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -15,30 +16,57 @@ class CreateCommunicationBatch
 {
     use AsAction;
 
-    public function handle(array $input): CommunicationBatch
+    public static function rules(): array
+    {
+        return ['recipients' => 'required|array|min:1|max:500', 'recipients.*' => 'required|integer|distinct|exists:users,id',
+            'channel' => 'required|in:email,push', 'title' => 'required|string|max:160', 'body' => 'required|string|max:10000',
+            'locale' => 'required|in:tr,nl,en,fr', 'submission_key' => 'required|uuid'];
+    }
+
+    public static function validatedInput(array $input): array
     {
         AuthorizeCommunication::run(write: true);
-        $v = Validator::make($input, ['recipients' => 'required|array|min:1|max:500', 'recipients.*' => 'required|integer|distinct|exists:users,id',
-            'channel' => 'required|in:email,push', 'title' => 'required|string|max:160', 'body' => 'required|string|max:10000',
-            'locale' => 'required|in:tr,nl,en,fr', 'submission_key' => 'required|uuid'])->validate();
+        foreach (['title', 'body'] as $field) {
+            if (is_string($input[$field] ?? null)) {
+                $input[$field] = trim($input[$field]);
+            }
+        }
+        $v = Validator::make($input, self::rules(), [], [
+            'recipients' => __('notifications.recipients'), 'title' => __('notifications.subject'),
+            'body' => __('notifications.body'), 'channel' => __('notifications.channel'), 'locale' => __('Dil'),
+        ])->validate();
         abort_if($v['channel'] === 'push' && ! WebPushSettings::ready(), 422, __('notifications.not_configured'));
         abort_if($v['channel'] === 'email' && (! settings()->mailHost || ! settings()->mailFromEmail), 422, __('notifications.mail_not_configured'));
-        $ids = array_map('intval', $v['recipients']);
-        sort($ids);
-        $v['body'] = trim($v['body']);
-        $v['title'] = trim($v['title']);
-        abort_if($v['title'] === '' || $v['body'] === '', 422);
+        $v['recipients'] = array_map('intval', $v['recipients']);
+        sort($v['recipients']);
+
+        return $v;
+    }
+
+    public static function recipients(array $ids): Collection
+    {
+        AuthorizeCommunication::run(write: true);
+        $recipients = User::whereIn('id', $ids)->get(['id', 'name', 'surname', 'username', 'status'])->keyBy('id');
+        abort_unless($recipients->count() === count($ids), 422);
+        if (! auth()->user()->can('user-type:admin')) {
+            $assigned = auth()->user()->students()->whereIn('users.id', $ids)->distinct()->count('users.id');
+            abort_unless($assigned === count($ids), 403);
+        }
+        abort_if($recipients->contains(fn ($recipient) => $recipient->status->value !== 'active'), 422);
+
+        return $recipients;
+    }
+
+    public function handle(array $input): CommunicationBatch
+    {
+        $v = self::validatedInput($input);
+        $ids = $v['recipients'];
 
         return DB::transaction(function () use ($v, $ids) {
             $actor = auth()->user();
             User::whereKey($actor->id)->lockForUpdate()->firstOrFail();
             AuthorizeCommunication::run(write: true);
-            $recipients = User::whereIn('id', $ids)->get()->keyBy('id');
-            abort_unless($recipients->count() === count($ids), 422);
-            foreach ($recipients as $recipient) {
-                AuthorizeCommunication::run($recipient, true);
-                abort_unless($recipient->status->value === 'active', 422);
-            }
+            $recipients = self::recipients($ids);
             $values = ['channel' => $v['channel'], 'title' => $v['title'], 'body' => $v['body'], 'locale' => $v['locale'], 'recipient_ids' => $ids];
             $existing = CommunicationBatch::where('actor_id', $actor->id)->where('submission_key', $v['submission_key'])->first();
             if ($existing) {

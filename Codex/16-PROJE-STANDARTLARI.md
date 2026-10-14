@@ -445,3 +445,14 @@ Kanıt: [65-SORGU-CACHE-VE-YAYIN-KONTROL-KAPISI.md](65-SORGU-CACHE-VE-YAYIN-KONT
 - **F24 — Kaydetme geri bildirimi.** Kaydedildi gerçek başarılı render sonrası gösterilir. Ağ hatası cevap kaydı sayılmaz; yenileme/explicit retry sunulur, otomatik tekrar veya süre uzatma eklenmez. Başarısız cevap kaydı çözülmeden elle tamamlama engellenir.
 - **F25 — Dar görünüm.** Tam genişlikte sol bölüm menüsü/sağ içerik; mobil menü seçimde kapanır. Native radio klavye/focus ve okunabilir seçenekler; soru/PDF/bağlı içerik davranışı ve mevcut sınav hakları korunur. Header/footer değişimi ayrı kapsamdır.
 - **T31 — Dar kabul.**10 farklı PHP senaryosu66doğrulama üç koşuda,7sayaç/istek JS ve1PWA sürüm eşleşmesi testi geçti. Testing gerçek Chrome desktop/mobile seçme-kaldırma/reload/menu/save failure/sonuç modalı kanıtı69 bölüm7; canlı worker/gerçek cihaz/genel suite kanıtı değildir.
+
+
+## 36. Toplu iletişim —77
+
+- **P141 — Geliştirme öncesi okuma.** Her talepte AGENTS.md, README, bu standartlar, kod yazım rehberi ve ilgili özellik rehberi okunur; yakın ekranın gerçek bileşenleri incelenir. Bu zorunluluk kaldırılmaz. Sonuç doğru olsa bile bu okuma yapılmadan geliştirme kabul edilmez.
+- **P142 — Panel listeleri.** Yeni panel listelerinin tamamı ortak Blade + `x-admin.server-table` + Bootstrap Table/server JSON kullanır. Gönderim geçmişi için düz HTML tablo istisnası yoktur. Sunucuda arama, sıralama, sayfalama ve güncel yetki uygulanır; gizli mesaj/provider ayrıntıları JSON'a eklenmez. Worker durumu değişen iletişim geçmişi canlı private/no-store veri döndürür.
+- **P143 — İletişim akışı.** Yönetim grubunda Kullanıcılar'ın üstünde mevcut Toplu E-posta ve Bildirim menüsü. İlk ekran kayıtlı gönderim geçmişi; Yeni gönderim → alıcı seçimi → mesaj → ön izleme/Gönder. Üçüncü adım gönderim onayıdır. Alıcı sayısı/devam düğmesi tablonun üstünde; adım geçişi formun başına döner. Geri dönüş seçim ve taslağı korur; iptal temizler.
+- **P144 — Güncel doğrulama.** Adım/ön izleme/UUID Locked; ön izleme özeti ve son gönderim girdisi karşılaştırılır. İçerik değişirse yeniden ön izleme gerekir. Son işlem güncel rol, alıcı ilişkisi, aktiflik, kanal ayarı ve UUID sözleşmesini tekrar doğrular. Gönder işlemi mevcut asenkron kuyruğu oluşturur; başarı bildirimi teslim edildi anlamına gelmez.
+- **T32 — Dar kabul.** 34 PHP/236 assertion ve 15 Node testi; testing rollback Chrome1440/390 geçmiş, arama/filtre/sayfa, farklı sayfalardan seçim, üç adım, geri dönüş, kişisel ön izleme ve kayıt yenileme. Gerçek SMTP/push yok; genel suite tekrarı yok. TR/NL/EN/FR94 anahtar, APP_VERSION/root worker1.1.28.
+
+Kanıt: [77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md](77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md).
