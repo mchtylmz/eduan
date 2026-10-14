@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withSchedule(function () {
+        Schedule::command('communications:dispatch')->everyMinute()->withoutOverlapping();
         Schedule::job(\App\Jobs\UpdateGptLimitForUsers::class)
             ->name('update_gpt_limit_for_users')
             ->timezone(config('app.timezone'))

@@ -87,3 +87,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Canlı AI ayarları ve son test kapısı
 
 [Canlı aktarım listesi ve test sonucu](Codex/69-SON-TESTLER-VE-CANLI-AKTARIM-LISTESI.md): yayın gününde yalnız `gptModel=gpt-6-luna`, `gptEffect=low`, `gptDeveloperMessage` ve `gptUserMessage` v3 metinleri etkinleştirilir. Mevcut API anahtarı, günlük/kullanıcı limitleri ve kayıtlı AI cevapları korunur. Aktivasyon ücretli API isteği göndermez; her ajan denemesi ayrı onaylıdır. Henüz canlıda uygulanmadı. Mevcut test aşaması tamamlandı: genel koşudaki tek lig başlığı beklentisi düzeltildi, ilgili 1 test/16 doğrulama geçti; genel koşu tekrar edilmedi. Yeni özelliklere geçilebilir. Sunucu/migration kontrolleri ve yayın/geri dönüş hazırlığı kullanıcı kararıyla yayın aşamasına bırakıldı.
+
+### Çalışma Takibi — Faz 6 web bildirimleri / iletişim
+
+[Kurulum, test sınırları ve değişen dosyalar](Codex/75-CALISMA-TAKIBI-FAZ6-WEB-BILDIRIM-VE-TOPLU-ILETISIM.md): Ayarlar → Bildirimler, Sayfalar’daki açıklama, `/account/notifications` ve `/admin/communications`. Ayrı localhost App ID/key gerekir; canlı ID yerelde kullanılmaz. Onaylı iki migration ana/testing’de uygulandı; bildirim kapalı ve secrets boş. `communications:dispatch` scheduler ile asenkron job’ları kanal başına beş/dakika hazırlar; gerçek provider/SMTP/Safari cihaz kabulü Faz 7’dedir. Kök PWA worker korunur, var olan çalışma takibi açık kalır.

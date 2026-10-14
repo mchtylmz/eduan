@@ -17,12 +17,12 @@ class SettingsController extends Controller
     {
         $activeTab = SettingsTabsEnum::tryFrom(request('activeTab')) ?? SettingsTabsEnum::GENERAL;
         $canStudySettings = auth()->user()?->can('user-type:admin');
-        abort_if($activeTab === SettingsTabsEnum::STUDY && ! $canStudySettings, 403);
+        abort_if(in_array($activeTab, [SettingsTabsEnum::STUDY, SettingsTabsEnum::NOTIFICATIONS], true) && ! $canStudySettings, 403);
 
         return view('backend.settings.index', [
             'title' => __('Site Ayarları'),
             'activeTab' => $activeTab,
-            'tabs' => array_filter(SettingsTabsEnum::cases(), fn ($tab) => $tab !== SettingsTabsEnum::STUDY || $canStudySettings),
+            'tabs' => array_filter(SettingsTabsEnum::cases(), fn ($tab) => ! in_array($tab, [SettingsTabsEnum::STUDY, SettingsTabsEnum::NOTIFICATIONS], true) || $canStudySettings),
         ]);
     }
 

@@ -30,6 +30,7 @@
         'tests' => __('Sınavlar'),
         'stats' => __('İstatistikler'),
         'study' => __('study.title'),
+        'communications' => __('notifications.communications'),
         'ai' => __('Yapay Zeka'),
         'leagues' => __('Ligler'),
         'solution' => __('Çözüm'),

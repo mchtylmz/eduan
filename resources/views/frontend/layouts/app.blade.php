@@ -138,9 +138,7 @@
 @includeIf('frontend.layouts.section.footer')
 <!-- footer area end -->
 
-@if(\App\Enums\StatusEnum::ACTIVE->value == settings()->floatWhatsapp)
-    @includeIf('frontend.layouts.section.floating-button')
-@endif
+@includeIf('frontend.layouts.section.floating-button')
 
 <!-- JS here -->
 <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -180,6 +178,7 @@
 @includeIf('frontend.layouts.section.footer-popup')
 
 @livewireScripts
+@include('frontend.layouts.section.notification-script')
 @stack('script')
 
 <script>

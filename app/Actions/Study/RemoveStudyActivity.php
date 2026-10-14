@@ -2,6 +2,7 @@
 
 namespace App\Actions\Study;
 
+use App\Actions\Communications\RecordStudyNotification;
 use App\Models\StudyActivityEntry;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,8 @@ class RemoveStudyActivity
             $before = StudyWrite::snapshot($record);
             StudyWrite::unchanged($expected, $before);
             $record->delete();
-            $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => 'delete', 'before' => $before, 'after' => null]);
+            $revision = $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => 'delete', 'before' => $before, 'after' => null]);
+            RecordStudyNotification::run($user, 'activity', $revision->id);
         });
     }
 }

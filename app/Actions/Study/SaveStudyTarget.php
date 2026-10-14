@@ -2,6 +2,7 @@
 
 namespace App\Actions\Study;
 
+use App\Actions\Communications\RecordStudyNotification;
 use App\Models\StudyWeeklyTarget;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +30,8 @@ class SaveStudyTarget
             $operation = $record ? 'update' : 'create';
             $record ??= new StudyWeeklyTarget(['user_id' => $user->id, 'study_week_id' => $week->id]);
             $record->fill($values)->save();
-            $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => $operation, 'before' => $before, 'after' => $values]);
+            $revision = $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => $operation, 'before' => $before, 'after' => $values]);
+            RecordStudyNotification::run($user, 'target', $revision->id);
 
             return $record;
         });

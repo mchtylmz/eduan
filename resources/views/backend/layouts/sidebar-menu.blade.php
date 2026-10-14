@@ -1,4 +1,7 @@
 <ul class="nav-main">
+    @if(auth()->user()->can('users:view') && auth()->user()->can('communications:view') && auth()->user()->canany(['user-type:admin','user-type:teacher']))
+        <li class="nav-main-item"><a @class(['nav-main-link','active'=>request()->routeIs('admin.communications.*')]) href="{{ route('admin.communications.index') }}"><i class="nav-main-link-icon fa fa-paper-plane"></i><span class="nav-main-link-name">{{ __('notifications.communications') }}</span></a></li>
+    @endif
     <li class="nav-main-item">
         <a @class(['nav-main-link', 'active' => request()->routeIs('admin.home.*')])
            href="{{ route('admin.home.index') }}">

@@ -8,8 +8,9 @@ use ArchTech\Enums\Values;
 
 enum PageMenuEnum: string
 {
-    use Names, Values, Comparable;
+    use Comparable, Names, Values;
 
+    case NOTIFICATIONS = 'notifications';
     case HOME = 'home';
     case HEADER = 'header';
     case FOOTER = 'footer';
@@ -17,6 +18,7 @@ enum PageMenuEnum: string
     public static function options(): array
     {
         return [
+            self::NOTIFICATIONS->value => __('notifications.title'),
             self::HOME->value => __('Anasayfa'),
             self::HEADER->value => __('Üst Menü'),
             self::FOOTER->value => __('Alt Menü'),

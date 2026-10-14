@@ -3,6 +3,7 @@
 namespace App\Actions\Settings;
 
 use App\Actions\Files\UploadFileAction;
+use App\Actions\Notifications\PrepareNotificationSettings;
 use App\Actions\Study\PrepareStudyTrackingSettings;
 use App\Helpers\AiSolutionRequest;
 use App\Helpers\FrontendCache;
@@ -42,7 +43,7 @@ class SettingSaveAction
         if ($request->has('settings.gptModel') && ! in_array($request->input('settings.gptEffect') ?: (settings()->gptEffect ?: 'low'), AiSolutionRequest::efforts($request->input('settings.gptModel')), true)) {
             throw ValidationException::withMessages(['settings.gptEffect' => __('validation.in', ['attribute' => __('Yapa Zeka Reasoning effort')])]);
         }
-        $values = PrepareStudyTrackingSettings::run($request->input('settings', []));
+        $values = PrepareNotificationSettings::run(PrepareStudyTrackingSettings::run($request->input('settings', [])));
         if ($request->hasFile('images')) {
             $this->images($request->file('images'));
         }

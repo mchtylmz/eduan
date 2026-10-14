@@ -93,3 +93,10 @@ Route::middleware(['guest'])
         Route::get('create-password/{token}', 'createPassword')->name('create.password');
         Route::get('verify/{user:email_verified_token}', 'verify')->name('verify');
     });
+
+Route::middleware(['auth'])->prefix('account/notifications')->controller(\App\Http\Controllers\Frontend\NotificationController::class)->group(function () {
+    Route::get('/', 'index')->name('notifications');
+    Route::get('/context', 'context')->name('notifications.context');
+    Route::post('/register', 'register')->middleware('throttle:30,1')->name('notifications.register');
+    Route::post('/devices/{id}/revoke', 'revoke')->middleware('throttle:30,1')->name('notifications.revoke');
+});

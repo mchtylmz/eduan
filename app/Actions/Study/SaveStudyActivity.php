@@ -2,6 +2,7 @@
 
 namespace App\Actions\Study;
 
+use App\Actions\Communications\RecordStudyNotification;
 use App\Models\StudyActivityEntry;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,8 @@ class SaveStudyActivity
             }
             $week = EnsureStudyWeek::run($date);
             $record->fill($values + ['study_week_id' => $week->id])->save();
-            $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => $operation, 'before' => $before, 'after' => $values]);
+            $revision = $record->revisions()->create(['actor_id' => auth()->id(), 'operation' => $operation, 'before' => $before, 'after' => $values]);
+            RecordStudyNotification::run($user, 'activity', $revision->id);
 
             return $record;
         });

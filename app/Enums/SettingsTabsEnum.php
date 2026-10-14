@@ -23,6 +23,7 @@ enum SettingsTabsEnum: string
     case EMAIL = 'emailTemplate';
     case USER = 'user';
     case CONTACT = 'contact';
+    case NOTIFICATIONS = 'notifications';
     case STUDY = 'study';
 
     public static function options(): array
@@ -41,6 +42,7 @@ enum SettingsTabsEnum: string
             self::COVER->value => __('Sayfa Kapak Görseli Ayarları'),
             self::EMAIL->value => __('E-posta Şablon Ayarları'),
             self::CONTACT->value => __('İletişim Ayarları'),
+            self::NOTIFICATIONS->value => __('notifications.settings'),
             self::STUDY->value => __('study.title'),
         ];
     }
@@ -66,6 +68,7 @@ enum SettingsTabsEnum: string
             self::MAIL->value => 'fa-envelope-circle-check',
             self::EMAIL->value => 'fa-envelope-open-text',
             self::CONTACT->value => 'fa-contact-card',
+            self::NOTIFICATIONS->value => 'fa-bell',
             self::STUDY->value => 'fa-calendar-check',
         };
     }

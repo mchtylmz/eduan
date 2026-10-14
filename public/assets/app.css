@@ -628,3 +628,7 @@
 @media (prefers-reduced-motion: reduce) {
     .exam-time-progress .progress-bar {transition: none;}
 }
+
+.float-notifications { position:fixed; left:30px; bottom:132px; width:60px; height:60px; border-radius:50%; background:#34317d; color:#fff!important; display:flex; align-items:center; justify-content:center; font-size:26px; z-index:100; border:1px solid rgba(255,255,255,.5); }
+.float-notifications:hover,.float-notifications:focus-visible { background:#25225e; outline:3px solid #c5c4ed; outline-offset:3px; }
+.float-notifications.is-alone { bottom:60px; }
