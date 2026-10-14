@@ -11,7 +11,7 @@ class StudyActivityEntry extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'study_week_id', 'recorded_by_id', 'activity_date', 'questions', 'pages', 'minutes'];
+    protected $fillable = ['user_id', 'study_week_id', 'recorded_by_id', 'submission_key', 'activity_date', 'questions', 'pages', 'minutes'];
 
     protected function casts(): array
     {

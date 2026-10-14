@@ -6,6 +6,9 @@
         ['route' => 'frontend.solved', 'key' => 'tests', 'icon' => 'fa-pen-clip'],
         ['route' => 'frontend.solved.exams', 'key' => 'exams', 'icon' => 'fa-book-alt'],
     ];
+    if ($accountUser->can('study:access')) {
+        $accountLinks[] = ['route' => 'frontend.study', 'key' => 'study', 'label' => __('study.my_study'), 'icon' => 'fa-calendar-check'];
+    }
     if (settings()->leagueStatus === 'active') {
         $accountLinks[] = ['route' => 'frontend.my.leagues', 'key' => 'leagues', 'icon' => 'fa-trophy'];
     }
@@ -35,7 +38,7 @@
             @php($selected = $currentAccountKey === $item['key'])
             <a href="{{ route($item['route']) }}" @click="menuOpen = false" @class(['member-nav-link', 'is-active' => $selected]) @if($selected) aria-current="page" @endif>
                 <span class="member-nav-icon"><i class="fa-light {{ $item['icon'] }}" aria-hidden="true"></i></span>
-                <span class="member-nav-copy">{{ __('account.'.$item['key']) }}</span>
+                <span class="member-nav-copy">{{ $item['label'] ?? __('account.'.$item['key']) }}</span>
             </a>
         @endforeach
         @can('dashboard:access')

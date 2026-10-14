@@ -72,6 +72,7 @@ Route::middleware(['auth'])
     ->prefix('account')
     ->group(function () {
         Route::get('/profile', 'index')->name('profile');
+        Route::get('/study', 'study')->name('study');
         Route::get('/favorite', 'favorite')->name('favorite');
         Route::get('/stats', 'stats')->name('stats');
         Route::get('/my-leagues', 'myLeagues')->name('my.leagues');

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Actions\Auth\LogoutAction;
+use App\Actions\Study\AuthorizeStudyAccess;
 use App\Enums\YesNoEnum;
+use App\Helpers\StudyCalendar;
 use App\Http\Controllers\Controller;
 use App\Models\Newsletter;
 use App\Models\Test;
+use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
@@ -15,6 +18,19 @@ class AccountController extends Controller
         return view('frontend.account.index', [
             'title' => __('account.title'),
         ]);
+    }
+
+    public function study(Request $request)
+    {
+        AuthorizeStudyAccess::run($request->user());
+        $currentWeek = StudyCalendar::bounds(now())['start'];
+        $request->validate(['week' => 'sometimes|required|date_format:Y-m-d']);
+        $bounds = StudyCalendar::bounds($request->query('week', $currentWeek->toDateString()));
+        abort_unless(! $bounds['start']->greaterThan($currentWeek), 422);
+
+        return response()->view('frontend.study.index', [
+            'title' => __('study.my_study'), 'bounds' => $bounds, 'currentWeek' => $currentWeek,
+        ])->header('Cache-Control', 'private, no-store');
     }
 
     public function favorite()
