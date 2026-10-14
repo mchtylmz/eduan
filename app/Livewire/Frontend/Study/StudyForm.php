@@ -123,6 +123,7 @@ class StudyForm extends Component
             $this->loadTarget();
         }, ['questions' => 'targetQuestions', 'pages' => 'targetPages', 'hours' => 'targetHours'])) {
             $this->notice = __('study.target_saved');
+            $this->dispatch('study-changed')->to(StudyReport::class);
         }
     }
 
@@ -140,6 +141,7 @@ class StudyForm extends Component
             $this->resetPage();
         }, ['date' => 'activityDate', 'questions' => 'activityQuestions', 'pages' => 'activityPages', 'hours' => 'activityHours'])) {
             $this->notice = __('study.activity_saved');
+            $this->dispatch('study-changed')->to(StudyReport::class);
         }
     }
 
@@ -177,6 +179,7 @@ class StudyForm extends Component
             $this->resetPage();
         })) {
             $this->notice = __('study.activity_removed');
+            $this->dispatch('study-changed')->to(StudyReport::class);
         }
     }
 
