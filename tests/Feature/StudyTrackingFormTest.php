@@ -6,12 +6,15 @@ use App\Actions\Study\SaveStudyActivity;
 use App\Actions\Study\SaveStudyTarget;
 use App\Actions\Study\StudyWrite;
 use App\Enums\StatusEnum;
+use App\Helpers\StudyCalendar;
 use App\Livewire\Frontend\Study\StudyForm;
 use App\Models\Language;
 use App\Models\StudyActivityEntry;
 use App\Models\StudyWeeklyTarget;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
@@ -85,12 +88,54 @@ class StudyTrackingFormTest extends TestCase
                 ->assertSee(__('study.week_simple'))->assertSee(__('study.back_account'))
                 ->assertSee(__('study.future_week_help'))->assertDontSee(__('study.calendar_help'))
                 ->assertSee('study-section-nav', false)->assertSee('study-week-chart', false)
-                ->assertSee('study-details', false)->assertSee('wire:submit="saveActivity"', false);
+                ->assertSee('study-details', false)->assertSee('wire:submit="saveActivity"', false)
+                ->assertSee('study-target-drawer', false)->assertSee('study-activity-drawer', false)
+                ->assertSee(__('study.placeholder_questions'))->assertSee(__('study.placeholder_hours'));
             $response->assertViewHas('bounds', fn ($bounds) => $bounds['start']->toDateString() === '2026-10-10');
             $this->get(route('frontend.study', ['week' => '2026-10-03', 'lang' => $locale]))->assertOk()
                 ->assertViewHas('bounds', fn ($bounds) => $bounds['start']->toDateString() === '2026-10-03')
                 ->assertSee(route('frontend.study', ['week' => '2026-10-10']), false)
                 ->assertSee(__('study.current_week'));
+        }
+    }
+
+    public function test_drawers_preserve_new_draft_but_new_activity_does_not_edit_an_existing_entry(): void
+    {
+        $form = $this->form()->set('activityQuestions', 12)->call('openEditor', 'activity')
+            ->assertSet('activityQuestions', 12)->assertDispatched('study-editor-opened', kind: 'activity');
+        $form->set('activityQuestions', -1)->call('saveActivity')->assertHasErrors('activityQuestions')
+            ->assertNotDispatched('study-editor-saved');
+        $form->set('activityQuestions', 20)->call('saveActivity')->assertHasNoErrors()
+            ->assertDispatched('study-editor-saved', kind: 'activity');
+        $entry = StudyActivityEntry::where('user_id', $this->owner->id)->firstOrFail();
+        $form->call('editActivity', $entry->id)->assertSet('editingEntryId', $entry->id)
+            ->assertDispatched('study-editor-opened', kind: 'activity');
+        $form->call('openEditor', 'activity')->assertSet('editingEntryId', null)->assertSet('activityQuestions', '');
+        $this->assertSame(20, $entry->fresh()->questions);
+        $this->form()->call('openEditor', 'target')->assertDispatched('study-editor-opened', kind: 'target');
+        $this->form()->call('openEditor', 'invalid')->assertUnprocessable();
+    }
+
+    public function test_calendar_labels_keep_the_calendar_day_and_pagination_summary_is_localized(): void
+    {
+        $timezone = date_default_timezone_get();
+        try {
+            date_default_timezone_set('Europe/Istanbul');
+            config(['app.timezone' => 'Europe/Brussels']);
+            $day = CarbonImmutable::parse('2026-10-24 00:00:00', 'Europe/Istanbul');
+            foreach (['tr' => '24 Ekim 2026', 'nl' => '24 oktober 2026', 'en' => '24 October 2026', 'fr' => '24 octobre 2026'] as $locale => $label) {
+                app()->setLocale($locale);
+                $this->assertSame($label, StudyCalendar::label($day));
+                $this->assertSame($label, StudyCalendar::label('2026-10-24'));
+                $paginator = new LengthAwarePaginator(range(41, 44), 44, 20, 3);
+                $html = (string) $paginator->links('vendor.livewire.bootstrap');
+                $this->assertStringContainsString(__('pagination.summary', ['first' => 41, 'last' => 44, 'total' => 44]), $html);
+                if ($locale !== 'en') {
+                    $this->assertStringNotContainsString('Showing', $html);
+                }
+            }
+        } finally {
+            date_default_timezone_set($timezone);
         }
     }
 

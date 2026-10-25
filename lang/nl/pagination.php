@@ -16,4 +16,5 @@ return [
     'previous' => '&laquo; Vorige',
     'next' => 'Volgende &raquo;',
 
+    'summary' => ':first–:last van :total resultaten',
 ];

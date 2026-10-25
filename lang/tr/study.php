@@ -135,4 +135,9 @@ return [
     'period_with_dates' => 'Eğitim dönemi ve tarih aralığı',
     'analysis_simple' => 'En az :minimum cevap verdiğin konular gösterilir. Doğruların %70’i aşarsa güçlü, yanlışların %70’i aşarsa zayıf; diğer durumlarda dengeli.',
     'history_title' => 'Çalışma geçmişim',
+    'close' => 'Kapat',
+    'placeholder_questions' => 'Örn. 150',
+    'placeholder_pages' => 'Örn. 30',
+    'placeholder_hours' => 'Örn. 1,5',
+    'placeholder_date' => 'Çalışma tarihini seçin',
 ];

@@ -14,6 +14,9 @@
             </div>
         </section>
     @else
-        <div class="member-form-card p-4"><h2 class="h5">{{ __('study.notes') }}</h2><p class="text-muted mb-0">{{ __('study.no_notes') }}</p></div>
+        <section class="member-form-card">
+            <header class="member-form-heading"><div><h2>{{ __('study.notes') }}</h2></div></header>
+            <div class="member-form-body"><p class="text-muted mb-0">{{ __('study.no_notes') }}</p></div>
+        </section>
     @endif
 </div>

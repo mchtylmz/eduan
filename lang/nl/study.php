@@ -135,4 +135,9 @@ return [
     'period_with_dates' => 'Schoolperiode en datums',
     'analysis_simple' => 'Onderwerpen verschijnen vanaf :minimum antwoorden. Meer dan 70% juist: sterk. Meer dan 70% fout: zwak. Anders: evenwichtig.',
     'history_title' => 'Mijn studiehistoriek',
+    'close' => 'Sluiten',
+    'placeholder_questions' => 'Bijv. 150',
+    'placeholder_pages' => 'Bijv. 30',
+    'placeholder_hours' => 'Bijv. 1,5',
+    'placeholder_date' => 'Kies de studiedatum',
 ];

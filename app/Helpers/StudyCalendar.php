@@ -25,6 +25,14 @@ class StudyCalendar
         return $date;
     }
 
+    /** Study dates are calendar days, not timestamps to convert between timezones. */
+    public static function label(string|DateTimeInterface $value, string $format = 'j F Y'): string
+    {
+        $date = $value instanceof DateTimeInterface ? $value->format('Y-m-d') : $value;
+
+        return self::day($date)->locale(app()->getLocale())->translatedFormat($format);
+    }
+
     /** The upper boundary belongs to the next week. Calendar days preserve DST. */
     public static function bounds(string|DateTimeInterface $value, ?string $timezone = null): array
     {

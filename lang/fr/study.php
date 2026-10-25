@@ -135,4 +135,9 @@ return [
     'period_with_dates' => 'Période scolaire et dates',
     'analysis_simple' => 'Les sujets apparaissent à partir de :minimum réponses. Plus de 70 % de bonnes réponses : fort. Plus de 70 % d’erreurs : faible. Sinon : équilibré.',
     'history_title' => 'Mon historique de travail',
+    'close' => 'Fermer',
+    'placeholder_questions' => 'Ex. 150',
+    'placeholder_pages' => 'Ex. 30',
+    'placeholder_hours' => 'Ex. 1,5',
+    'placeholder_date' => 'Choisis la date du travail',
 ];

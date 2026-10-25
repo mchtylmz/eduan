@@ -135,4 +135,9 @@ return [
     'period_with_dates' => 'School period and dates',
     'analysis_simple' => 'Topics appear after :minimum answers. Over 70% correct: strong. Over 70% incorrect: weak. Otherwise: balanced.',
     'history_title' => 'My study history',
+    'close' => 'Close',
+    'placeholder_questions' => 'e.g. 150',
+    'placeholder_pages' => 'e.g. 30',
+    'placeholder_hours' => 'e.g. 1.5',
+    'placeholder_date' => 'Choose the study date',
 ];

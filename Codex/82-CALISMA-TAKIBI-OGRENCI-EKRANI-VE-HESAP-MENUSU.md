@@ -1,5 +1,7 @@
 # Çalışma takibi öğrenci ekranı ve hesap menüsü
 
+**Güncel devam revizyonu bölüm5:** hedef/çalışma ayrı sağ panellere alındı; grafik, outline gezinme, tarih ve sayfalama dili iyileştirildi. İlk sürüm kayıtları aşağıda tarihsel olarak korunur.
+
 25 Ekim 2026. Kullanıcının ekran revizyonu: lise öğrencisinin haftayı, hedefi ve çalışma girişini kolayca bulması. Bu kayıt önceki çalışma takibi raporlarının sunum kararlarını günceller; veri/hesaplama ve yetki kuralları aynı kalır.
 
 ## 1. Hesap menüsü
@@ -67,3 +69,61 @@ Kanıtlar `/tmp/eduan-study-redesign-desktop.png`, `/tmp/eduan-study-redesign-39
 Elle kontrol: Üye girişi → üst Hesabım → Hesap bilgilerimin altındaki Çalışma Takibim. İlk sekmede hedef/çalışma formları; Geçmişim'de tarihli dönem ve sayfalama; Konu analizi ve Öğretmen notları ayrı açılır.
 
 Yeni migration, DB ayarı/aktivasyonu, mevcut hedef/çalışma/not değişikliği, dış servis gönderimi veya canlı aktarım yapılmadı. Hesaplama kaynakları, görevler, haftalık kurallar ve izin action'ları değiştirilmedi. Kullanıcının `.DS_Store`, wiki dosya taşıması ve özgün OneSignal klasörü bu commit kapsamı dışındadır.
+
+## 5. İkinci ekran revizyonu — sağ paneller ve grafikler
+
+25 Ekim 2026, kullanıcının ek ekran görüntüleriyle istediği devam düzenlemesi. Bu bölüm, yukarıdaki ilk sürümün sayfa içi form ve kaydırma davranışını günceller.
+
+### Güncel kullanım
+
+- Hesabıma dön, önceki/sonraki hafta, güncel haftaya dönüş ve haftalık hedef düğmeleri outline görünümündedir. Pasif gelecek hafta hover sırasında çizilmez; hedef ve çalışma ayrı ikonlu düğmelerdir.
+- Hedef ve çalışma için **iki ayrı Bootstrap offcanvas** sağdan açılır. Formlar artık raporun altında yer kaplamaz. Günlük toplamlar ve çalışma kayıtları haftalık özetin hemen altındadır.
+- Yeni giriş taslağı X/Escape ile kapatıldığında korunur. Kayıt düzenlemeyi kapatıp “Çalışma ekle” seçmek yeni kayıt moduna geçer; eski kaydı yanlışlıkla güncellemez. Mevcut kaydı Düzenle aynı çalışma panelinde açar.
+- Hatalar panelin içinde kalır; başarısız işlem paneli kapatmaz. Başarılı hedef/kayıt işlemi mevcut rapor yenilemesini tetikler ve ilgili panel kapanır. Açılışta ilk uygun alana, kapanışta açan düğmeye odak döner. Hızlı iki panel isteğinde yalnız son istenen panel açık kalır.
+- Sayısal alanlar ve tarih alanında çevrilebilir placeholder vardır. Native tarih kontrolü dolu değeri kendi tarayıcı biçiminde gösterir; placeholder görünümü tarayıcı desteğine bağlıdır. Kaydet/ekle/düzenle/kaldır/vazgeç ve sekme düğmeleri ikonludur.
+- Hafta alanı ve rapor/analiz/not başlıkları hafif tema zeminlidir. Sekmeler çerçeveli, mobilde iki sütundur. Öğretmen notu boş durumu da aynı başlık düzenini kullanır.
+- Geçmişte üç ölçü için dörder haftalık hedef/gerçekleşen **eşli sütun grafikleri** ve açıklama renkleri vardır. Gerçek miktarlar ve %100'ü aşan oran korunur; yeni hesaplama kuralı eklenmez. Tablo başlıkları, satırlar ve durum metinleri sade biçimde belirginleştirilir; normal Bootstrap sayfalama sürer.
+- Ortak yayınlanmış Livewire Bootstrap sayfalama şablonu `pagination.summary` kullanır. TR/NL/EN/FR'de sayı aralığı ve toplam ilgili dilde gelir; İngilizce JSON parça anahtarlarına bağımlılık kaldırıldı. Mobilde Bootstrap'ın mevcut kısa önceki/sonraki düzeni korunur.
+- Çalışma tarihleri artık `StudyCalendar::label` ile **takvim günü korunarak** biçimlenir. Tarih/saat dönüşümü nedeniyle önceki güne kayma engellenir; hafta sınırı veya kayıt tarihi değiştirilmez. İstanbul/Brüksel farkı ve dört dil testlidir.
+
+### Dar test ve tarayıcı sonucu
+
+İlgili birleşik kapsam: `StudyTrackingFormTest`, `StudyAnalyticsTest`, `StudyPanelTest`, `StudyCalendarTest`, `PwaReleaseTest`: **80 test / 488 doğrulama başarılı**. Son küçük görünüm/formatter düzenlemelerinden sonra yalnız üç yeni sözleşme testi tekrarlandı: **3 test / 106 doğrulama başarılı**; bunlar80'in içindedir,83 farklı test değildir. Yeni kapsam: taslak/yeniden giriş ayrımı, geçersiz panel türü, hata halinde kapanmama, başarılı panel olayları, takvim günü/ay adı ve dört dil sayfalama metni. Ortak panel, kişisel sahiplik ve kapalı hafta kuralları ilgili mevcut testlerde geçti.
+
+Değişen PHP dosyalarında Pint kontrolü; test dosyasındaki import biçimi Pint ile düzeltildi. Yeni JS syntax ve `git diff --check` başarılı. Dört dilde137 eş study anahtarı ve3 eş pagination anahtarı var; boş değer yok. APP_VERSION ve kök PWA worker **1.1.31**.
+
+Browser plugin mevcut değil; geçici Playwright/Chrome, gerçek localhost Blade/Livewire akışı ve yalnız transaction ile geri alınan testing fixture'ları kullanıldı. Dış servisler engellidir. Ana DB üzerinde işlem yapılmadı.
+
+| Kontrol | Sonuç |
+|---|---|
+| Outline hover/pasif hafta, sayfa içi formun kaldırılması | Başarılı |
+| Hedef paneli ilk alan odağı/placeholder/kaydet/kapanma/odak dönüşü | Başarılı |
+| Yeni çalışma taslağı, negatif giriş hatası, panelin açık kalması | Başarılı |
+| Hedef150 ve çalışma180 ile %120; reload ve rapor güncellemesi | Başarılı |
+| Düzenle → panel, yeni girişe geçiş,120 olarak güncelleme | Başarılı |
+| Açık kayıt ayrıntılarının Livewire güncellemesinde korunması | Başarılı |
+| Dört hafta24 sütun, geçmiş ikinci sayfa, geçmişten panel aç/kapat | Başarılı |
+| NL1440/768/390, FR390 ve TR390 düzen/odak/Escape | Başarılı |
+| Son ayrı390px kontrol: gerçek TR/FR/NL/EN HTML dili, ay, placeholder ve sayfalama çevirisi | Başarılı |
+| Kapalı haftada hedef panelinin salt okunur olması | Başarılı |
+| Hızlı hedef/çalışma tıklaması: tek panel, tek backdrop, doğru odak | Başarılı |
+| Masaüstü Türkçe sayfalama özetinin görünür doğrulaması | Başarılı |
+| Son koşularda JS hatası / HTTP5xx / yatay taşma | 0 / 0 / 0 |
+
+Kanıtlar: `/tmp/eduan-study-drawer-target-desktop.png`, `/tmp/eduan-study-refine-history-desktop.png`, `/tmp/eduan-study-refine-final-desktop-tr.png`, `/tmp/eduan-study-refine-final-mobile-tr.png`, `/tmp/eduan-study-refine-final-drawer-tr.png`. İlk tarayıcı geçişinde bulunan, yeni girişe geçince kayıt ayrıntılarının kapanması `wire:ignore.self` ile düzeltildi ve aynı akış geçti. Son dil kontrolünde geçici testing fixture'ında dört dil etkinleştirilerek `html[lang]` ayrıca doğrulandı; önceki fallback görünümü gerçek Türkçe kabulü sayılmadı.
+
+Genel proje suite'i/build tekrar edilmedi. Fiziksel telefon/Safari/üretim kontrolü bu revizyonun kanıtı değildir. Yeni migration veya ana ayar/veri değişikliği, dış servis gönderimi ve canlı aktarım yoktur.
+
+### Bu revizyonun dosyaları
+
+- `app/Helpers/StudyCalendar.php`: takvim günü için yerelleştirilmiş gösterim.
+- `app/Livewire/Frontend/Study/StudyForm.php`: panel aç/kapat UI olayları; mevcut yazma action'ları aynı.
+- `resources/views/frontend/study/index.blade.php`: outline gezinme ve panel düğmeleri.
+- `resources/views/livewire/frontend/study/study-form.blade.php`: iki offcanvas, placeholder/ikon ve doğrudan erişilen ayrıntılar.
+- `resources/views/livewire/frontend/study/study-report.blade.php`: sütun grafikleri, tarih etiketleri ve tablo sunumu.
+- `resources/views/livewire/frontend/study/visible-study-notes.blade.php`: boş durumda ortak başlık.
+- `resources/views/vendor/livewire/bootstrap.blade.php`: çevrilebilir tek sayfalama özeti.
+- `public/assets/study-workspace.js` (yeni), `public/assets/app.css`, `public/pwa-sw.js`: panel yaşam döngüsü, stil ve asset sürümü.
+- `lang/{tr,nl,en,fr}/study.php`, `lang/{tr,nl,en,fr}/pagination.php`: yeni metinler.
+- `tests/Feature/StudyTrackingFormTest.php`: yeni panel/tarih/sayfalama testleri.
+- Bu82 raporu, AGENTS.md, README.md ve rehber indeksi: güncel kullanım ve kabul kaydı.

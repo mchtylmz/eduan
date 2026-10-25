@@ -130,3 +130,5 @@ Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-V
 ### Çalışma takibi — öğrenci ekranı revizyonu
 
 [82 — kullanım, dosyalar ve dar test raporu](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md): Hesabım menüsünde hesap bilgilerinin altında Çalışma Takibim. Beyaz sayfa, açık tarih/hafta bağlantıları, haftalık özet ve hızlı hedef/çalışma girişi; geçmiş, analiz ve notlar ayrı bölümlerde.69ilgili test/575 doğrulama ve Chrome masaüstü/tablet/mobil kontrolleri geçti. TR/NL/EN/FR metinler; APP_VERSION/rootworker1.1.30. İş kuralları ve ana veriler korunur; canlı aktarım yapılmadı.
+
+Devam revizyonu [82 bölüm5](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md): hedef ve çalışma ayrı sağ panellerde; outline hafta/hesap düğmeleri, ikon/placeholder, belirgin başlıklar ve dört haftalık eşli sütun grafikleri. Tarihler takvim gününü korur; ortak sayfalama özeti TR/NL/EN/FR'de çevrilir.80ilgili test/488 doğrulama; son üç test106altküme ve Chrome responsive/panel/odak/dil kontrolleri başarılı. Asset1.1.31; ana DB/migration/canlı işlem yok.

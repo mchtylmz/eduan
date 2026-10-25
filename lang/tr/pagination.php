@@ -16,4 +16,5 @@ return [
     'previous' => '&laquo; Önceki',
     'next' => 'Sonraki &raquo;',
 
+    'summary' => 'Toplam :total kaydın :first–:last arası',
 ];

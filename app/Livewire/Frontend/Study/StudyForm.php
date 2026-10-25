@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -125,6 +126,19 @@ class StudyForm extends Component
         return false;
     }
 
+    #[On('study-open-editor')]
+    public function openEditor(string $kind): void
+    {
+        AuthorizeStudyAccess::run($this->owner());
+        abort_unless(in_array($kind, ['target', 'activity'], true), 422);
+        if ($kind === 'activity' && $this->editingEntryId) {
+            $this->clearEditor();
+        }
+        $this->resetErrorBag();
+        $this->notice = '';
+        $this->dispatch('study-editor-opened', kind: $kind);
+    }
+
     public function saveTarget(): void
     {
         if ($this->attempt(function () {
@@ -135,6 +149,7 @@ class StudyForm extends Component
         }, ['questions' => 'targetQuestions', 'pages' => 'targetPages', 'hours' => 'targetHours'])) {
             $this->notice = __('study.target_saved');
             $this->dispatch('study-changed')->to($this->reportComponent());
+            $this->dispatch('study-editor-saved', kind: 'target');
         }
     }
 
@@ -153,6 +168,7 @@ class StudyForm extends Component
         }, ['date' => 'activityDate', 'questions' => 'activityQuestions', 'pages' => 'activityPages', 'hours' => 'activityHours'])) {
             $this->notice = __('study.activity_saved');
             $this->dispatch('study-changed')->to($this->reportComponent());
+            $this->dispatch('study-editor-saved', kind: 'activity');
         }
     }
 
@@ -168,7 +184,7 @@ class StudyForm extends Component
 
     public function editActivity(int $id): void
     {
-        $this->attempt(function () use ($id) {
+        if ($this->attempt(function () use ($id) {
             $entry = $this->entry($id);
             AuthorizeStudyChange::run($this->owner(), 'activity', $entry->activity_date->toDateString());
             $this->editingEntryId = $entry->id;
@@ -177,7 +193,9 @@ class StudyForm extends Component
             $this->activityQuestions = $entry->questions;
             $this->activityPages = $entry->pages;
             $this->activityHours = StudyInput::hours($entry->minutes);
-        });
+        })) {
+            $this->dispatch('study-editor-opened', kind: 'activity');
+        }
     }
 
     public function removeActivity(): void
@@ -191,6 +209,7 @@ class StudyForm extends Component
         })) {
             $this->notice = __('study.activity_removed');
             $this->dispatch('study-changed')->to($this->reportComponent());
+            $this->dispatch('study-editor-saved', kind: 'activity');
         }
     }
 
@@ -200,6 +219,7 @@ class StudyForm extends Component
         $this->clearEditor();
         $this->resetErrorBag();
         $this->notice = '';
+        $this->dispatch('study-editor-saved', kind: 'activity');
     }
 
     private function clearEditor(): void
