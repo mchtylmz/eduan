@@ -72,9 +72,26 @@ class StudyTrackingFormTest extends TestCase
     public function test_future_week_is_rejected_and_existing_week_is_normalized(): void
     {
         $this->get(route('frontend.study', ['week' => '2026-10-17']))->assertUnprocessable();
-        $this->get(route('frontend.study', ['week' => '2026-10-13']))->assertOk()->assertSee('10/10/2026');
+        $this->get(route('frontend.study', ['week' => '2026-10-13', 'lang' => 'tr']))->assertOk()->assertSee('10 Ekim');
         $this->getJson(route('frontend.study', ['week' => 'tomorrow']))->assertUnprocessable();
         $this->getJson(route('frontend.study', ['week' => ['bad']]))->assertUnprocessable();
+    }
+
+    public function test_student_workspace_has_clear_sections_week_links_and_permission_aware_account_menu(): void
+    {
+        foreach (['tr', 'nl', 'en', 'fr'] as $locale) {
+            $response = $this->get(route('frontend.study').'?lang='.$locale)->assertOk();
+            $response->assertSeeInOrder(['header-account-menu', __('account.profile'), __('study.my_study'), __('account.favorites')])
+                ->assertSee(__('study.week_simple'))->assertSee(__('study.back_account'))
+                ->assertSee(__('study.future_week_help'))->assertDontSee(__('study.calendar_help'))
+                ->assertSee('study-section-nav', false)->assertSee('study-week-chart', false)
+                ->assertSee('study-details', false)->assertSee('wire:submit="saveActivity"', false);
+            $response->assertViewHas('bounds', fn ($bounds) => $bounds['start']->toDateString() === '2026-10-10');
+            $this->get(route('frontend.study', ['week' => '2026-10-03', 'lang' => $locale]))->assertOk()
+                ->assertViewHas('bounds', fn ($bounds) => $bounds['start']->toDateString() === '2026-10-03')
+                ->assertSee(route('frontend.study', ['week' => '2026-10-10']), false)
+                ->assertSee(__('study.current_week'));
+        }
     }
 
     public function test_disabled_module_reads_no_study_tables_and_blocks_forged_save(): void

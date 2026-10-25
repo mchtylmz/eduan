@@ -117,4 +117,22 @@ return [
     'weekly_target_panel' => 'Haftalık hedef',
     'weekly_report_panel' => 'Haftalık rapor',
     'period_history_panel' => 'Dönem geçmişi',
+
+    // Student workspace labels.
+    'student_intro' => 'Hedefini belirle, çalışmanı ekle ve ilerlemeni gör.',
+    'back_account' => 'Hesabıma dön',
+    'this_week' => 'Bu hafta',
+    'selected_week' => 'Seçilen hafta',
+    'week_simple' => 'Her çalışma haftası cumartesi başlar, cuma günü biter.',
+    'future_week_help' => 'Yeni hafta başladığında açılır.',
+    'sections' => 'Çalışma takibi bölümleri',
+    'week_overview' => 'Haftalık özet',
+    'my_history' => 'Geçmişim',
+    'week_summary_help' => 'Bu hafta yaptıkların ve hedeflerin yan yana.',
+    'target_simple' => 'Bu hafta kaç soru çözmek, kaç sayfa okumak ve kaç saat çalışmak istiyorsun?',
+    'hours_simple' => 'Örnek: 1,5 saat = 1 saat 30 dakika.',
+    'history_help' => 'Geçmiş haftalardaki hedeflerini ve çalışmalarını seçtiğin tarih aralığında incele.',
+    'period_with_dates' => 'Eğitim dönemi ve tarih aralığı',
+    'analysis_simple' => 'En az :minimum cevap verdiğin konular gösterilir. Doğruların %70’i aşarsa güçlü, yanlışların %70’i aşarsa zayıf; diğer durumlarda dengeli.',
+    'history_title' => 'Çalışma geçmişim',
 ];

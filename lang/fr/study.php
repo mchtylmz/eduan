@@ -117,4 +117,22 @@ return [
     'weekly_target_panel' => 'Objectif hebdomadaire',
     'weekly_report_panel' => 'Rapport hebdomadaire',
     'period_history_panel' => 'Historique de la période',
+
+    // Student workspace labels.
+    'student_intro' => 'Fixe ton objectif, ajoute ton travail et suis tes progrès.',
+    'back_account' => 'Retour à mon compte',
+    'this_week' => 'Cette semaine',
+    'selected_week' => 'Semaine sélectionnée',
+    'week_simple' => 'Chaque semaine de travail va du samedi au vendredi inclus.',
+    'future_week_help' => 'Disponible au début de la nouvelle semaine.',
+    'sections' => 'Rubriques de mon suivi',
+    'week_overview' => 'Résumé de la semaine',
+    'my_history' => 'Mon historique',
+    'week_summary_help' => 'Ton travail et tes objectifs de la semaine, côte à côte.',
+    'target_simple' => 'Combien de questions veux-tu résoudre, de pages lire et d’heures étudier cette semaine ?',
+    'hours_simple' => 'Exemple : 1,5 heure = 1 heure et 30 minutes.',
+    'history_help' => 'Consulte tes objectifs et ton travail des semaines précédentes pour la période choisie.',
+    'period_with_dates' => 'Période scolaire et dates',
+    'analysis_simple' => 'Les sujets apparaissent à partir de :minimum réponses. Plus de 70 % de bonnes réponses : fort. Plus de 70 % d’erreurs : faible. Sinon : équilibré.',
+    'history_title' => 'Mon historique de travail',
 ];

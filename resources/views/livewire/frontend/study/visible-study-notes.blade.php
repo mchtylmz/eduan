@@ -13,5 +13,7 @@
                 {{ $notes->links() }}
             </div>
         </section>
+    @else
+        <div class="member-form-card p-4"><h2 class="h5">{{ __('study.notes') }}</h2><p class="text-muted mb-0">{{ __('study.no_notes') }}</p></div>
     @endif
 </div>

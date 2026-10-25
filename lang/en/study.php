@@ -117,4 +117,22 @@ return [
     'weekly_target_panel' => 'Weekly goal',
     'weekly_report_panel' => 'Weekly report',
     'period_history_panel' => 'Period history',
+
+    // Student workspace labels.
+    'student_intro' => 'Set your goal, add your work and see your progress.',
+    'back_account' => 'Back to my account',
+    'this_week' => 'This week',
+    'selected_week' => 'Selected week',
+    'week_simple' => 'Each study week runs from Saturday through Friday.',
+    'future_week_help' => 'Available when the new week begins.',
+    'sections' => 'Study tracking sections',
+    'week_overview' => 'Weekly overview',
+    'my_history' => 'My history',
+    'week_summary_help' => 'Your work and your goals for this week, side by side.',
+    'target_simple' => 'How many questions, pages and study hours are you aiming for this week?',
+    'hours_simple' => 'Example: 1.5 hours = 1 hour and 30 minutes.',
+    'history_help' => 'Review your goals and work from previous weeks in the selected period.',
+    'period_with_dates' => 'School period and dates',
+    'analysis_simple' => 'Topics appear after :minimum answers. Over 70% correct: strong. Over 70% incorrect: weak. Otherwise: balanced.',
+    'history_title' => 'My study history',
 ];

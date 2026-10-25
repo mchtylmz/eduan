@@ -126,3 +126,7 @@ Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-V
 ### Genel proje kabulü —25 Ekim 2026
 
 [81 — Fransızca düzeltmeler, genel test ve yayın sınırı](Codex/81-GENEL-TEST-KABULU-VE-FRANSIZCA-DUZELTMELER.md): kayıtlı ortak FR bulguları giderildi; son tek temiz816PHP/5130assert,31Node/16backup, syntax/Composer ve54ziyaretlik gerçekChrome kabulü başarılı. Tek503 test-fixture HTTP/HTTPS eşlemesiyle düzeldi; uygulama origin koruması korunur. Ana veri özetleri aynı, yeni kalıcı migration/ayar/gönderim/deploy yok. Sunucu salt okunur PHP8.5.12/Imagick3.7.0/WebP başarılı; CLI için-d bayrağı gerekli. Yerel kod kontrollü canlı aktarıma uygun; migration/cron-worker/productionayarları ve canlısmoke yayın sırasında tamamlanır. APP_VERSION/rootworker1.1.29.
+
+### Çalışma takibi — öğrenci ekranı revizyonu
+
+[82 — kullanım, dosyalar ve dar test raporu](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md): Hesabım menüsünde hesap bilgilerinin altında Çalışma Takibim. Beyaz sayfa, açık tarih/hafta bağlantıları, haftalık özet ve hızlı hedef/çalışma girişi; geçmiş, analiz ve notlar ayrı bölümlerde.69ilgili test/575 doğrulama ve Chrome masaüstü/tablet/mobil kontrolleri geçti. TR/NL/EN/FR metinler; APP_VERSION/rootworker1.1.30. İş kuralları ve ana veriler korunur; canlı aktarım yapılmadı.

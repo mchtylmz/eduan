@@ -117,4 +117,22 @@ return [
     'weekly_target_panel' => 'Weekdoel',
     'weekly_report_panel' => 'Weekrapport',
     'period_history_panel' => 'Periodeoverzicht',
+
+    // Student workspace labels.
+    'student_intro' => 'Bepaal je doel, voeg je studiewerk toe en bekijk je vooruitgang.',
+    'back_account' => 'Terug naar mijn account',
+    'this_week' => 'Deze week',
+    'selected_week' => 'Geselecteerde week',
+    'week_simple' => 'Elke studieweek loopt van zaterdag tot en met vrijdag.',
+    'future_week_help' => 'Beschikbaar zodra de nieuwe week begint.',
+    'sections' => 'Onderdelen van mijn studiewerk',
+    'week_overview' => 'Weekoverzicht',
+    'my_history' => 'Mijn historiek',
+    'week_summary_help' => 'Je werk en je doelen voor deze week naast elkaar.',
+    'target_simple' => 'Hoeveel vragen wil je deze week oplossen, hoeveel pagina’s lezen en hoeveel uur studeren?',
+    'hours_simple' => 'Voorbeeld: 1,5 uur = 1 uur en 30 minuten.',
+    'history_help' => 'Bekijk je doelen en studiewerk van vorige weken binnen de gekozen periode.',
+    'period_with_dates' => 'Schoolperiode en datums',
+    'analysis_simple' => 'Onderwerpen verschijnen vanaf :minimum antwoorden. Meer dan 70% juist: sterk. Meer dan 70% fout: zwak. Anders: evenwichtig.',
+    'history_title' => 'Mijn studiehistoriek',
 ];
