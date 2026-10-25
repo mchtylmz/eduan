@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Ligues',
+    'search_label' => 'Rechercher une période',
+    'search_placeholder' => 'Rechercher une date, un mois ou une année…',
+    'position' => 'Place',
+    'status_single' => 'Calcul unique',
+    'status_scheduled' => 'Pas encore commencée',
+    'status_live' => 'En direct',
+    'status_finalizing' => 'Calcul final en attente',
+    'status_closed' => 'Clôturée',
+    'mode' => 'Mode de calcul',
+    'mode_help' => 'Une ligue en direct est actualisée toutes les quatre heures. Sa source, ses points et sa capacité sont fixés à la création.',
+    'period_help' => 'La semaine par défaut va du samedi à 00:00 au vendredi à 23:59. Vous pouvez modifier les dates et les heures.',
+    'create' => 'Créer / calculer une ligue',
+    'recalculate' => 'Recalculer',
+    'confirm_recalculate' => 'La ligue clôturée sera recalculée avec sa source, ses points et sa capacité enregistrés. Continuer ?',
+    'calculated' => 'Dernier calcul',
+    'through' => 'Données jusqu’au',
+    'refresh_help' => 'Les ligues ouvertes sont calculées toutes les quatre heures. Actualisez la page pour voir les derniers résultats.',
+    'saved' => 'La ligue est enregistrée.',
+    'no_data' => 'Aucun résultat à calculer pour cette période. Aucune ligue n’a été créée.',
+    'busy' => 'Le calcul de cette ligue est déjà en cours. Réessayez une fois terminé.',
+    'invalid_configuration' => 'Impossible de créer la ligue. Vérifiez la période et les paramètres. Un calcul unique existant pour la même source et période ne peut pas être converti en ligue en direct.',
+    'failed' => 'Le calcul de la ligue a échoué. Les derniers résultats valides sont conservés ; réessayez plus tard.',
+];

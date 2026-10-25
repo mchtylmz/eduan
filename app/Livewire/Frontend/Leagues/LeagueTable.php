@@ -10,7 +10,7 @@ class LeagueTable extends Component
 {
     public ?League $selectedLeague;
 
-    #[Computed(cache: true)]
+    #[Computed]
     public function leagues()
     {
         return cache()->remember('leagues_all', now()->addHours(24), function () {

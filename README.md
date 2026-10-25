@@ -116,3 +116,8 @@ Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-V
 ### Canlı lig — Faz 2 yerel backend kabulü tamamlandı
 
 [79 — zamanlama/kapanış ve test raporu](Codex/79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md): `leagues:refresh-live` dört saatte bir, ortak DB kilidi ve atomik son hesaplama/kapanış. Eski haftalık görev korunur; aynı aralıktaki canlı kaydı sabit ayarlarla hesaplar. Kapalı lig yeniden hesaplama yetki altyapısı hazır. Faz1+2 toplam84 farklı ilgili senaryo başarıkanıtı; dar koşuların ayrıntısı raporda. Yeni migration/ana DB gerçek hesaplaması/canlı işlem yok. Form, durumlar, ön yüz cache ve tarayıcı kabulü Faz3'tür.
+
+
+### Canlı lig — Faz 3 ve yerel kabul tamamlandı
+
+[80 — ekranlar, cache, test ve dosya listesi](Codex/80-CANLI-LIG-FAZ3-EKRANLAR-VE-KABUL.md): panelde tek/canlı seçim, yeni Cumartesi–Cuma varsayılanı, durum/veri tarihi ve kapanmış canlı ligde izinli yeniden hesaplama. Ön yüzde durum/iki saat ve sabit kapasite; başarılı hesaplamada hedefli cache yenilenir. Son birleşik104test/617assert,12PWA+17formatterassert, gerçek Chrome1440/390 NL ve FR kontrolleri geçti. Eski verilerin hash/count aynı; yeni migration/ana DB hesabı/canlı işlem yok. APP_VERSION/root worker1.1.29. Üç geliştirme fazı tamam; yayın ayrı adımdır.

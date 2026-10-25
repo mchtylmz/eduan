@@ -37,4 +37,19 @@ class League extends Model
     {
         return $this->hasMany(LeagueResult::class);
     }
+
+    public function calculationStatus(): string
+    {
+        if (! $this->is_live) {
+            return 'single';
+        }
+        if ($this->closed_at !== null) {
+            return 'closed';
+        }
+        if ($this->start_at?->isFuture()) {
+            return 'scheduled';
+        }
+
+        return $this->end_at?->isPast() ? 'finalizing' : 'live';
+    }
 }

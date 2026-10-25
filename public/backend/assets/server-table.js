@@ -36,9 +36,10 @@
         const edit = row.edit_url ? `<a class="btn btn-sm btn-warning" href="${escapeHtml(row.edit_url)}"><i class="fa fa-pen me-1"></i>${escapeHtml(messages.edit)}</a>` : '';
         const sections = row.sections_url ? `<a class="btn btn-sm btn-alt-primary" href="${escapeHtml(row.sections_url)}">${escapeHtml(messages.sections)}</a>` : '';
         const translate = row.translate_url ? `<a class="btn btn-sm btn-alt-primary" href="${escapeHtml(row.translate_url)}"><i class="fa fa-language me-1"></i>${escapeHtml(messages.translate)}</a>` : '';
+        const recalculate = row.table === 'leagues' && row.can_recalculate ? `<button type="button" class="btn btn-sm btn-alt-primary js-table-recalculate" data-record-id="${Number(row.id)}"><i class="fa fa-sync me-1"></i>${escapeHtml(root?.dataset.recalculateLabel || '')}</button>` : '';
         const remove = row.can_delete ? `<button type="button" class="btn btn-sm btn-danger js-table-delete" data-record-id="${Number(row.id)}"><i class="fa fa-trash-alt me-1"></i>${escapeHtml(messages.delete)}</button>` : '';
         const results = row.results_url ? `<a class="btn btn-sm btn-alt-primary" href="${escapeHtml(row.results_url)}"><i class="fa fa-poll me-1"></i>${escapeHtml(messages.results)}</a><button type="button" class="btn btn-sm btn-alt-secondary js-table-favorites" data-record-id="${Number(row.id)}"><i class="fa fa-heart me-1"></i>${escapeHtml(messages.favorites)}</button>` : '';
-        return `<div class="d-inline-flex flex-column align-items-stretch gap-1 admin-table-actions">${detail}${results}${sections}${translate}${edit}${remove}</div>`;
+        return `<div class="d-inline-flex flex-column align-items-stretch gap-1 admin-table-actions">${detail}${results}${sections}${translate}${edit}${recalculate}${remove}</div>`;
     };
 
     window.eduanTableLogFormatter = (value, row) => `<div>${escapeHtml(value)}</div><small class="text-muted">${escapeHtml(row.table_name)}</small>`;
@@ -219,16 +220,17 @@
             const remove = event.target.closest('.js-table-delete');
             const questions = event.target.closest('.js-table-questions');
             const favorites = event.target.closest('.js-table-favorites');
-            const button = detail || remove || questions || favorites;
+            const recalculate = event.target.closest('.js-table-recalculate');
+            const button = detail || remove || questions || favorites || recalculate;
             if (!button) return;
-            if (remove) {
-                const result = await Swal.fire({icon: 'warning', text: messages.confirm, showCancelButton: true,
+            if (remove || recalculate) {
+                const result = await Swal.fire({icon: 'warning', text: recalculate ? root.dataset.recalculateConfirm : messages.confirm, showCancelButton: true,
                     confirmButtonText: messages.ok, cancelButtonText: messages.cancel});
                 if (!result.isConfirmed) return;
             }
             button.disabled = true;
             try {
-                await component().call(detail ? 'showDetail' : questions ? 'showModal' : favorites ? 'showFavorites' : 'delete', Number(button.dataset.recordId));
+                await component().call(detail ? 'showDetail' : questions ? 'showModal' : favorites ? 'showFavorites' : recalculate ? 'recalculate' : 'delete', Number(button.dataset.recordId));
             } catch (error) {
                 Swal.fire({icon: 'error', text: messages.error, confirmButtonText: messages.ok});
             } finally {

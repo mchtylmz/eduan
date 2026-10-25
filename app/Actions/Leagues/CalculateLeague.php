@@ -4,6 +4,7 @@ namespace App\Actions\Leagues;
 
 use App\Enums\YesNoEnum;
 use App\Exceptions\LeagueCalculationInProgress;
+use App\Helpers\LeagueCache;
 use App\Helpers\LeaguePeriod;
 use App\Helpers\LeagueRules;
 use App\Helpers\TableCache;
@@ -86,6 +87,12 @@ class CalculateLeague
                     $league->save();
                 }
                 if ($league->wasRecentlyCreated) {
+                    // Legacy MySQL may run without strict mode and coerce unsupported
+                    // TIMESTAMP values to zero dates. Never commit a different period.
+                    $stored = $league->newQueryWithoutScopes()->select(['id', 'start_at', 'end_at'])->findOrFail($league->id);
+                    if (! $stored->start_at?->equalTo($period->start) || ! $stored->end_at?->equalTo($period->end)) {
+                        throw new InvalidArgumentException('League dates cannot be stored by the database.');
+                    }
                     $league->code = 'hyp'.$league->id;
                 }
 
@@ -135,6 +142,7 @@ class CalculateLeague
         }
         if ($league !== null) {
             TableCache::invalidate('leagues', 'league-results', 'options');
+            LeagueCache::invalidate($league->id);
         }
 
         return $league;

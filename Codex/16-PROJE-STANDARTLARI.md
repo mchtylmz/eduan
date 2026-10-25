@@ -473,3 +473,11 @@ Kanıt ve dosyalar: [78](78-CANLI-LIG-FAZ1-VERI-VE-HESAPLAMA.md).
 - **T34 — Faz2 kanıtı.** İlk72koşuda71pass/1fixture timestamp, düzeltilen/ek sınırlar ve regresyonlarla son13/132green; toplam84farklıilgili senaryo başarıkanıtı. Tektemizgenelkoşu değil. Main/testing veri özetleri aynı,8syntax/Pint. Yeni migration/sunucucron/anaDBhesap yok; Faz3UI/cache/çeviri/tarayıcı ayrı kabul.
 
 Kanıt ve değişen dosyalar: [79](79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md).
+
+
+## 39. Canlı lig —80 Faz3 ekran/cache/kabul
+
+- **P149 — Form ve durum.** Tek/canlı seçim, yeni formda Cumartesi00–Cuma23:59; özel aralık serbest/eski tarihler korunur. Beş durum güncel saatten; gerçek hesaplama ile veri üst sınırı ayrı gösterilir. DB'nin saklayamadığı yeni tarih transaction rollback ile reddedilir, sessiz sıfır tarih bırakılmaz.
+- **P150 — Tablo ve eylem.** Bootstrap/serverJSON/15sayfa korunur; lig listesi private/no-store ve yanıt cache'sizdir. Kapalı canlı recalc izin+durum sunucuda tekrar kontrol edilir, ayrı onayda iptal istek göndermez; kapalı durum/sabit ayarlar korunur. Mobil header düğmesi alt satıra geçer.
+- **F28 — Canlı lig cache/sunum.** Başarılı hesaplamada ilk/tüm liste cache'i ve ilgili sonuç UUID revizyonu/sitemap yenilenir; aynı saniye iki hesap birbirinden ayrılır. Hata son başarılı cache'i korur. Canlı kart kapasitesi snapshot; açık tarayıcıda polling/otomatik reload yoktur.
+- **T35 — Üç faz kabulü.** Son birleşik104PHP/617assert ve12PWA+17formatterassert başarılı. ChromeNL1440/390FR390 gerçek route/Livewire/Bootstrap/Flatpickr, onay/iptal/create/search/detail ve overflow/JS/5xx0. Browser plugin yok, kuruluChrome/Playwright/testing transaction; gerçekSafari/yayın kabulü değildir. Main/testing veri hash/count aynı; yeni migration/anaDBhesap/API/canlı yok. APP_VERSION/root worker1.1.29. Yeni19metin4dil; eskiFRgenelbaşlık fallback ayrıbulgu.

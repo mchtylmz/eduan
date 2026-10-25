@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Leagues\CalculateLeague;
 use App\Enums\StatusEnum;
 use App\Jobs\CalculateLeagueResult;
 use App\Jobs\UpdateSeasonIdForResults;
@@ -13,6 +14,7 @@ use App\Livewire\Season\SeasonForm;
 use App\Models\AnswerAI;
 use App\Models\Exam;
 use App\Models\Language;
+use App\Models\League;
 use App\Models\Lesson;
 use App\Models\Question;
 use App\Models\Season;
@@ -205,8 +207,10 @@ class StabilityReleaseTest extends TestCase
         Livewire::test(LeagueRunForm::class)->set('start_at', 'not-a-date')->call('run')->assertHasErrors('start_at');
         Livewire::test(LeagueRunForm::class)->set('start_at', '2026-10-07 00:00')->set('end_at', '2026-10-06 23:59')->call('run')->assertHasErrors('end_at');
         Bus::assertNothingDispatched();
+        CalculateLeague::mock()->shouldReceive('handle')->once()
+            ->with('2026-10-01 00:00', '2026-10-07 23:59', false)->andReturn(new League);
         Livewire::test(LeagueRunForm::class)->set('start_at', '2026-10-01 00:00')->set('end_at', '2026-10-07 23:59')->call('run')->assertRedirect(route('admin.leagues.index'));
-        Bus::assertDispatchedSync(CalculateLeagueResult::class);
+        Bus::assertNothingDispatched();
     }
 
     public function test_review_screen_uses_existing_scoped_table(): void

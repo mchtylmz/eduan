@@ -29,9 +29,9 @@ class ServerTable
         return $parameters;
     }
 
-    public static function page(string $table, Builder $query, array $parameters, array $sorts, callable $row, array $scope = []): array
+    public static function page(string $table, Builder $query, array $parameters, array $sorts, callable $row, array $scope = [], bool $cache = true): array
     {
-        return TableCache::remember($table, $parameters, function () use ($table, $query, $parameters, $sorts, $row) {
+        $load = function () use ($table, $query, $parameters, $sorts, $row) {
             $total = (clone $query)->count();
             $rows = $query->reorder()->orderBy($sorts[$parameters['sort']], $parameters['order'])
                 ->orderBy($query->getModel()->getQualifiedKeyName())
@@ -39,6 +39,8 @@ class ServerTable
                 ->map(fn ($record) => ['table' => $table, ...$row($record)])->all();
 
             return ['total' => $total, 'rows' => $rows];
-        }, $scope);
+        };
+
+        return $cache ? TableCache::remember($table, $parameters, $load, $scope) : $load();
     }
 }

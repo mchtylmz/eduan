@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Frontend\Leagues;
 
+use App\Helpers\LeagueCache;
+use App\Helpers\LeagueRules;
 use App\Models\League;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -21,14 +23,16 @@ class LeagueResultTable extends Component
         $this->league = $league;
         $this->name = $name;
         $this->ranking = $ranking;
-        $this->userCount = intval($userCount ?? (settings()->leagueUserCount ?? 10));
+        $this->userCount = $league->is_live
+            ? LeagueRules::fromSnapshot($league->label, $league->calculation_settings ?? [])->userCount
+            : intval($userCount ?? (settings()->leagueUserCount ?? 10));
     }
 
     #[Computed]
     public function results()
     {
         return cache()->remember(
-            sprintf('league_%d_%d_%d', $this->league->id, $this->ranking, $this->userCount),
+            LeagueCache::resultsKey($this->league->id, $this->ranking, $this->userCount),
             now()->addHours(12),
             function () {
                 return $this->league->results()

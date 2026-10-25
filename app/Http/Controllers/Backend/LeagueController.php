@@ -35,7 +35,12 @@ class LeagueController extends Controller
             'id' => $r->id, 'code' => $r->code, 'label' => in_array($r->label, ['tests_result_details', 'tests_results'], true) ? __('Sınav Sonuçları') : __('Test Sonuçları'),
             'start_at' => dateFormat($r->start_at, 'd M Y H:i'), 'end_at' => dateFormat($r->end_at, 'd M Y H:i'),
             'calculated_at' => $r->calculated_at ? dateFormat($r->calculated_at, 'd/m/Y H:i') : '-', 'can_delete' => auth()->user()->can('leagues:delete'),
-        ]))->header('Cache-Control', 'private, no-store');
+            'calculated_through_at' => $r->calculated_through_at ? dateFormat($r->calculated_through_at, 'd/m/Y H:i') : '-',
+            'status' => ['label' => __('leagues.status_'.$r->calculationStatus()), 'class' => match ($r->calculationStatus()) {
+                'live' => 'success', 'scheduled', 'finalizing' => 'warning', default => 'secondary',
+            }],
+            'can_recalculate' => $r->is_live && $r->closed_at !== null && auth()->user()->can('leagues:run'),
+        ], cache: false))->header('Cache-Control', 'private, no-store');
     }
 
     public function getResultsData(Request $request)

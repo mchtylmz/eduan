@@ -11,6 +11,19 @@
                     {{ __('Geçmiş Lig Sonuçları') }}
                 @endif
             </h2>
+            @if($selectedLeague)
+                <p class="small text-muted mt-2 mb-0">{{ dateFormat($selectedLeague->start_at, 'd M Y H:i') }} — {{ dateFormat($selectedLeague->end_at, 'd M Y H:i') }}</p>
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-2 fs-sm">
+                    <span class="badge {{ $selectedLeague->calculationStatus() === 'live' ? 'bg-success' : 'bg-secondary' }}">{{ __('leagues.status_'.$selectedLeague->calculationStatus()) }}</span>
+                    <span>{{ __('leagues.calculated') }}: {{ $selectedLeague->calculated_at ? dateFormat($selectedLeague->calculated_at, 'd M Y H:i') : '—' }}</span>
+                    @if($selectedLeague->calculated_through_at)
+                        <span>· {{ __('leagues.through') }}: {{ dateFormat($selectedLeague->calculated_through_at, 'd M Y H:i') }}</span>
+                    @endif
+                </div>
+                @if($selectedLeague->is_live)
+                    <p class="small text-muted mt-2 mb-0">{{ __('leagues.refresh_help') }}</p>
+                @endif
+            @endif
         </div>
         <div class="dropdown league-history" x-data="{
             search: '',

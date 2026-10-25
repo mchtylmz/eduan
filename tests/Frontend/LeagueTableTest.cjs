@@ -1,0 +1,16 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const root = {dataset: {tableMessages: JSON.stringify({view: 'View', delete: 'Delete'}), recalculateLabel: 'Recalculate <script>x</script>'}};
+const sandbox = {window: {location: {origin: 'http://localhost'}, addEventListener() {}}, document: {readyState: 'loading', addEventListener() {}, querySelector: () => root}, URL};
+vm.runInNewContext(fs.readFileSync('public/backend/assets/server-table.js', 'utf8'), sandbox);
+const format = sandbox.window.eduanTableActionsFormatter;
+assert.match(format(null, {table: 'leagues', id: 12, can_recalculate: true}), /js-table-recalculate/);
+assert.match(format(null, {table: 'leagues', id: 12, can_recalculate: true}), /data-record-id="12"/);
+assert.match(format(null, {table: 'leagues', id: 12, can_recalculate: true}), /&lt;script&gt;/);
+assert.doesNotMatch(format(null, {table: 'leagues', id: 12, can_recalculate: true}), /<script>/);
+assert.doesNotMatch(format(null, {table: 'leagues', id: 12, can_recalculate: false}), /js-table-recalculate/);
+assert.doesNotMatch(format(null, {table: 'questions', id: 12, can_recalculate: true}), /js-table-recalculate/);
+assert.match(sandbox.window.eduanTableStatusFormatter({label: '<img>', class: 'evil'}), /bg-secondary/);
+assert.match(sandbox.window.eduanTableStatusFormatter({label: '<img>', class: 'success'}), /&lt;img&gt;/);
+console.log('League table: 8 assertions passed');
