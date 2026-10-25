@@ -481,3 +481,10 @@ Kanıt ve değişen dosyalar: [79](79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md).
 - **P150 — Tablo ve eylem.** Bootstrap/serverJSON/15sayfa korunur; lig listesi private/no-store ve yanıt cache'sizdir. Kapalı canlı recalc izin+durum sunucuda tekrar kontrol edilir, ayrı onayda iptal istek göndermez; kapalı durum/sabit ayarlar korunur. Mobil header düğmesi alt satıra geçer.
 - **F28 — Canlı lig cache/sunum.** Başarılı hesaplamada ilk/tüm liste cache'i ve ilgili sonuç UUID revizyonu/sitemap yenilenir; aynı saniye iki hesap birbirinden ayrılır. Hata son başarılı cache'i korur. Canlı kart kapasitesi snapshot; açık tarayıcıda polling/otomatik reload yoktur.
 - **T35 — Üç faz kabulü.** Son birleşik104PHP/617assert ve12PWA+17formatterassert başarılı. ChromeNL1440/390FR390 gerçek route/Livewire/Bootstrap/Flatpickr, onay/iptal/create/search/detail ve overflow/JS/5xx0. Browser plugin yok, kuruluChrome/Playwright/testing transaction; gerçekSafari/yayın kabulü değildir. Main/testing veri hash/count aynı; yeni migration/anaDBhesap/API/canlı yok. APP_VERSION/root worker1.1.29. Yeni19metin4dil; eskiFRgenelbaşlık fallback ayrıbulgu.
+
+
+## 40. Genel test ve ortak Fransızca bulgular —81
+
+- **F29 — Ortak FR kaynakları.** Kayıtlı lig/hesap/panel fallback bulguları; FRaccount63/tables30/menus3,JSON84eksik ve ortak Bootstrapfr-FR ile giderildi. Mevcut dolu metin ve DBdil/çeviri/aktivasyon kararları korunur; bütün authored içeriğin FR olduğu iddia edilmez.
+- **T36 — Genel kabul.** İlkgenel815/816 tek503 fixture şemasıydı; iletişim HTTP localhost fixture'ı forceSchemehttp ile sabitlendi, origin reddi gevşetilmedi. Sontektemiz816/5130,31Node/16backup;574PHPsyntax ve16JSsyntax/Composer/Pint başarılı. Chrome54ziyaret22panel gerçeklogin/test/examreloadfinish/hesap/panel NL1440FR390, JS0/5xx0/overflow0; fake servis/testingrollback.
+- **Y01 — Yayın sınırı.** 25Ekim saltokunur sunucu PHP8.5.12/Imagick3.7.0/WebP/PNG başarılı; CLI varsayılanImagick0,-d gerekir. Yerel kod/test kabulü kontrollü yayına uygundur; production migration/izin/ayar/cronworker/assetcache/geri dönüş ve canlısmoke yayın sırasında yapılır. Bu tur canlı yazma/API yok;1.1.29 korunur. Ayrıntı81.

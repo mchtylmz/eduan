@@ -121,3 +121,8 @@ Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-V
 ### Canlı lig — Faz 3 ve yerel kabul tamamlandı
 
 [80 — ekranlar, cache, test ve dosya listesi](Codex/80-CANLI-LIG-FAZ3-EKRANLAR-VE-KABUL.md): panelde tek/canlı seçim, yeni Cumartesi–Cuma varsayılanı, durum/veri tarihi ve kapanmış canlı ligde izinli yeniden hesaplama. Ön yüzde durum/iki saat ve sabit kapasite; başarılı hesaplamada hedefli cache yenilenir. Son birleşik104test/617assert,12PWA+17formatterassert, gerçek Chrome1440/390 NL ve FR kontrolleri geçti. Eski verilerin hash/count aynı; yeni migration/ana DB hesabı/canlı işlem yok. APP_VERSION/root worker1.1.29. Üç geliştirme fazı tamam; yayın ayrı adımdır.
+
+
+### Genel proje kabulü —25 Ekim 2026
+
+[81 — Fransızca düzeltmeler, genel test ve yayın sınırı](Codex/81-GENEL-TEST-KABULU-VE-FRANSIZCA-DUZELTMELER.md): kayıtlı ortak FR bulguları giderildi; son tek temiz816PHP/5130assert,31Node/16backup, syntax/Composer ve54ziyaretlik gerçekChrome kabulü başarılı. Tek503 test-fixture HTTP/HTTPS eşlemesiyle düzeldi; uygulama origin koruması korunur. Ana veri özetleri aynı, yeni kalıcı migration/ayar/gönderim/deploy yok. Sunucu salt okunur PHP8.5.12/Imagick3.7.0/WebP başarılı; CLI için-d bayrağı gerekli. Yerel kod kontrollü canlı aktarıma uygun; migration/cron-worker/productionayarları ve canlısmoke yayın sırasında tamamlanır. APP_VERSION/rootworker1.1.29.

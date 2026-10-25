@@ -128,3 +128,8 @@ Kanıt `/private/tmp/eduan-study-local-enabled-browser-result.json`, `eduan-stud
 Kullanıcı OneSignal hesabının olduğunu, Hypotenuse uygulamasının olmadığını belirtti. Faz6hazırlığı: WebPush/CustomCode uygulaması; localhost için ayrı test uygulaması; AppID ve backend AppAPIKey. OneSignal’ın resmi belgeleri ayrı localhost uygulaması ve PWA çakışması için `/push/onesignal/` alt worker scope önerir. Henüz OneSignal uygulaması oluşturulmadı, secret kaydedilmedi, SDK yükleme/ücretli işlem/gerçek bildirim yapılmadı.
 
 Kaynaklar: [Custom Code setup](https://documentation.onesignal.com/docs/en/web-push-custom-code-setup), [service worker](https://documentation.onesignal.com/docs/en/onesignal-service-worker), [Keys & IDs](https://documentation.onesignal.com/docs/en/keys-and-ids).
+
+
+### Güncel kapanış —25 Ekim 2026
+
+Bu raporda tarihsel olarak ayrı bırakılan ortak Fransızca hesap/panel/lig çeviri bulguları kullanıcı onayıyla [81 — genel test ve FR düzeltmeleri](81-GENEL-TEST-KABULU-VE-FRANSIZCA-DUZELTMELER.md) kapsamında kaynak dosyalarında giderildi. Eski özel değerler ve DB dil/aktivasyonları korundu; son genel816/5130 ve Chrome54ziyaret kabulü81'de. Yukarıdaki faza ait test/sınır kayıtları tarihsel kanıttır.

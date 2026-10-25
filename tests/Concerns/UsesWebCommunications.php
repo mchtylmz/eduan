@@ -44,6 +44,8 @@ trait UsesWebCommunications
         $this->staff->students()->attach($this->student);
         $this->actingAs($this->staff);
         URL::forceRootUrl('http://localhost');
+        // A developer's HTTPS APP_URL must not change this HTTP localhost fixture.
+        URL::forceScheme('http');
         config(['app.url' => 'http://localhost', 'queue.default' => 'database', 'cache.default' => 'array', 'mail.default' => 'array']);
         settings()->set(['notificationsEnabled' => '1', 'oneSignalLocalAppId' => $this->pushApp, 'oneSignalLocalApiKey' => Crypt::encryptString('test-key-never-returned'),
             'studyTrackingEnabled' => '1', 'studyTrackingStartedOn' => '2026-10-01', 'mailHost' => 'test.invalid', 'mailFromEmail' => 'test@example.test']);

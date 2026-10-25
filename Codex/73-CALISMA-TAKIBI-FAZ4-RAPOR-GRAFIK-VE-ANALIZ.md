@@ -110,3 +110,8 @@ Docker servisi/port/volume değiştirilmedi; Eduan açık bırakıldı. Yeni mig
 Yerel modülü etkinleştirdikten sonra Hesap→Çalışma Takibim (/account/study): haftalık hedef ve miktarı,4hafta grafiği, dönem seçimi/20sayfa geçmiş ve konu analizini gör. Aynı haftaya yeni giriş yapınca rapor kendini yenilemeli. Öğrenci rolünde pozitif hedef varsa anonim karşılaştırma görünür; öğretmen/yönetici kendi raporunu görür. Diğer öğrencilerin kimliği açıklanmaz.
 
 Sonraki **Faz5:** panel/öğrenci kapsamlı liste-filtre-detay ve öğretmen notları. Bildirim ve toplu iletişim Faz6, genel modül/yayın kapısı Faz7. Bu tur sonraki faza geçilmedi.
+
+
+### Güncel kapanış —25 Ekim 2026
+
+Bu raporda tarihsel olarak ayrı bırakılan ortak Fransızca hesap/panel/lig çeviri bulguları kullanıcı onayıyla [81 — genel test ve FR düzeltmeleri](81-GENEL-TEST-KABULU-VE-FRANSIZCA-DUZELTMELER.md) kapsamında kaynak dosyalarında giderildi. Eski özel değerler ve DB dil/aktivasyonları korundu; son genel816/5130 ve Chrome54ziyaret kabulü81'de. Yukarıdaki faza ait test/sınır kayıtları tarihsel kanıttır.

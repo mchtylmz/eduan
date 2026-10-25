@@ -7,7 +7,7 @@
     @endpush
     @push('script')
         <script src="{{ asset('backend/assets/js/plugins/bootstrap-table/dist/bootstrap-table.min.js') }}"></script>
-        <script src="{{ asset('backend/assets/js/plugins/bootstrap-table/dist/locale/bootstrap-table-'.(['nl' => 'nl-NL', 'en' => 'en-US', 'tr' => 'tr-TR'][app()->getLocale()] ?? 'en-US').'.min.js') }}"></script>
+        <script src="{{ asset('backend/assets/js/plugins/bootstrap-table/dist/locale/bootstrap-table-'.(['nl' => 'nl-NL', 'en' => 'en-US', 'tr' => 'tr-TR', 'fr' => 'fr-FR'][app()->getLocale()] ?? 'en-US').'.min.js') }}"></script>
         <script src="{{ asset('backend/assets/server-table.js') }}?v={{ config('app.version') }}"></script>
     @endpush
 @endonce
@@ -20,7 +20,7 @@
         data-search-align="right" data-buttons-align="left" data-show-refresh="true"
         data-icons-prefix="fa" data-icons='{"refresh":"fa-sync-alt"}' data-id-field="id"
         data-sort-name="{{ $sortName }}" data-sort-order="{{ $sortOrder }}" data-escape="false"
-        data-locale="{{ ['nl' => 'nl-NL', 'en' => 'en-US', 'tr' => 'tr-TR'][app()->getLocale()] ?? 'en-US' }}">
+        data-locale="{{ ['nl' => 'nl-NL', 'en' => 'en-US', 'tr' => 'tr-TR', 'fr' => 'fr-FR'][app()->getLocale()] ?? 'en-US' }}">
         {{ $slot }}
     </table>
     @if($cardView)
