@@ -3,6 +3,7 @@
 namespace App\Actions\Leagues;
 
 use App\Enums\YesNoEnum;
+use App\Exceptions\LeagueCalculationInProgress;
 use App\Helpers\LeaguePeriod;
 use App\Helpers\LeagueRules;
 use App\Helpers\TableCache;
@@ -19,8 +20,11 @@ class CalculateLeague
 {
     use AsAction;
 
-    public function handle(string $start, string $end, bool $live = false, ?int $leagueId = null): ?League
+    public function handle(string $start, string $end, bool $live = false, ?int $leagueId = null, bool $scheduled = false): ?League
     {
+        if ($scheduled && ($leagueId === null || $live)) {
+            throw new InvalidArgumentException('Scheduled calculation requires an existing league.');
+        }
         if (settings()->leagueStatus === 'passive') {
             throw new RuntimeException('League calculation is disabled.');
         }
@@ -38,16 +42,19 @@ class CalculateLeague
         // MySQL advisory locks also serialize creation before a league row exists.
         // They survive cache:clear and are released on connection loss.
         if ((int) $connection->selectOne('SELECT GET_LOCK(?, 0) AS acquired', [$key])->acquired !== 1) {
-            throw new RuntimeException('League calculation is already running.');
+            throw new LeagueCalculationInProgress('League calculation is already running.');
         }
 
         try {
-            $league = $connection->transaction(function () use ($period, $source, $live, $leagueId) {
+            $league = $connection->transaction(function () use ($period, $source, $live, $leagueId, $scheduled) {
                 $league = League::where('label', $source)
                     ->where('start_at', $period->start)->where('end_at', $period->end)
                     ->lockForUpdate()->first();
                 if ($leagueId !== null && $league?->id !== $leagueId) {
                     throw new RuntimeException('League changed before calculation.');
+                }
+                if ($scheduled && (! $league?->is_live || $league->closed_at !== null || $period->start->isFuture())) {
+                    return null;
                 }
                 // An explicit new-live request must not silently convert historical records.
                 if ($live && $league && ! $league->is_live) {
@@ -105,6 +112,9 @@ class CalculateLeague
                     if ($through !== null) {
                         $league->calculated_through_at = $through;
                         $league->calculated_at = CarbonImmutable::now();
+                        if ($through->greaterThanOrEqualTo($period->end) && $period->end->isPast() && $league->closed_at === null) {
+                            $league->closed_at = $league->calculated_at;
+                        }
                     }
                 } else {
                     $league->calculated_at = CarbonImmutable::now();

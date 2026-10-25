@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Exceptions\LeagueCalculationInProgress;
 use App\Jobs\CalculateLeagueResult;
 use Illuminate\Console\Command;
 
@@ -27,39 +28,49 @@ class RunCalculateLeagueResult extends Command
     public function handle()
     {
         if (settings()->leagueStatus == 'passive') {
-            $this->error('lig hesaplama kapalı');
-            return self::FAILURE;
+            $this->comment('lig hesaplama kapalı');
+
+            return self::SUCCESS;
         }
 
+        $timezone = settings()->timezone ?? config('app.timezone');
+        $now = now()->timezone($timezone);
         $day = (int) (settings()->leagueDay ?? 6);
-        if (now()->dayOfWeek !== $day) {
-            $this->error(sprintf(
+        if ($now->dayOfWeek !== $day) {
+            $this->comment(sprintf(
                 'Seçilen gün (%d) ile çalışan gün (%d) aynı değil!',
-                now()->dayOfWeek,
+                $now->dayOfWeek,
                 $day
             ));
-            return self::FAILURE;
+
+            return self::SUCCESS;
         }
 
         $hour = settings()->leagueHour ?? '00:00';
-        if (now()->format('H:00') !== $hour) {
-            $this->error(sprintf(
+        if ($now->format('H:00') !== $hour) {
+            $this->comment(sprintf(
                 'Seçilen saat (%s) ile çalışan saat (%s) aynı değil!',
-                now()->format('H:00'),
+                $now->format('H:00'),
                 $hour
             ));
-            return self::FAILURE;
+
+            return self::SUCCESS;
         }
 
         $offsetDays = intval(settings()->leagueStartDays ?? 7);
-        $timezone = settings()->timezone ?? config('app.timezone');
+        try {
+            CalculateLeagueResult::dispatchSync(
+                started_at: $now->copy()->subDays($offsetDays)->format('Y-m-d H:00:00'),
+                ended_at: $now->format('Y-m-d H:00:00')
+            );
+        } catch (LeagueCalculationInProgress) {
+            $this->comment('League calculation is already running; nothing changed.');
 
-        CalculateLeagueResult::dispatchSync(
-            started_at: now()->timezone($timezone)->subDays($offsetDays)->format('Y-m-d H:00:00'),
-            ended_at: now()->timezone($timezone)->format('Y-m-d H:00:00')
-        );
+            return self::SUCCESS;
+        }
 
-        $this->comment('Lig sonuçları hesaplaması çalıştırıldı > ' . now()->format('Y-m-d H:00'));
+        $this->comment('Lig sonuçları hesaplaması çalıştırıldı > '.now()->format('Y-m-d H:00'));
+
         return self::SUCCESS; // = 0
     }
 }

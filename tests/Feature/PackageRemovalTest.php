@@ -21,6 +21,7 @@ class PackageRemovalTest extends TestCase
             'update_season_id_for_results',
             'cache_clear',
             'run_league_result',
+            'refresh_live_leagues',
         ], $names);
         $communication = app(Schedule::class)->events()[0];
         $this->assertSame('* * * * *', $communication->expression);

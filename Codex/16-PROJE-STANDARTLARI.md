@@ -465,3 +465,11 @@ Kanıt: [77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md](77-TOPLU-ILETISIM-UC-A
 - **T33 — Faz1 kabul sınırı.** Onaylı tek migration ana16/testing10 uygulandı; eski veri özetleri korundu. Container saf/DB toplam60farklıilgili senaryo başarıkanıtı; ilk JSON-key-order beklentisi düzeltilip dar tekrar10/115 ve ek sınır2/10 geçti. Tektemizgenelkoşu değil. Faz1 veri/hesaplama kapısı tamam; Faz2scheduler/kapanış ve Faz3UI/cache/çeviri/tarayıcı ayrı kabul. Canlı yayın veya ana DB gerçek hesaplama yok.
 
 Kanıt ve dosyalar: [78](78-CANLI-LIG-FAZ1-VERI-VE-HESAPLAMA.md).
+
+## 38. Canlı lig —79 Faz2 yerel backend kabulü
+
+- **D19 — Zamanlama/kapanış.** SiteTZ00/04/08/12/16/20; başlayan/açık canlılar IDchunk50 ile seçilir ve DB dönem kilidinde yeniden doğrulanır. Son başarılı cutoff dönem sonuna ulaşmadan kapanış yok; sonuçlar/calculated_at/closed_at atomiktir. İlk kapanış anı yeniden hesaplamada korunur.
+- **D20 — Eski görev ve elle hesap.** Eski konfigüre gün/saat/ofset/dakika aralığı korunur; aynı kaynak/aralık canlı kaydına sabit ayarlar uygulanır. Busy/notdue/passive normal skip; gerçek hata ID/class ile loglanır. Yeniden hesaplama dashboard+leagues:view+leagues:run ve kapalı canlı kayıt ister.
+- **T34 — Faz2 kanıtı.** İlk72koşuda71pass/1fixture timestamp, düzeltilen/ek sınırlar ve regresyonlarla son13/132green; toplam84farklıilgili senaryo başarıkanıtı. Tektemizgenelkoşu değil. Main/testing veri özetleri aynı,8syntax/Pint. Yeni migration/sunucucron/anaDBhesap yok; Faz3UI/cache/çeviri/tarayıcı ayrı kabul.
+
+Kanıt ve değişen dosyalar: [79](79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md).
