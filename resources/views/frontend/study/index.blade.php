@@ -47,6 +47,10 @@
     </section>
 @endsection
 
+@push('style')
+    <link rel="stylesheet" href="{{ asset('assets/js/flatpickr/flatpickr.min.css') }}">
+@endpush
+
 @push('script')
     <script defer src="{{ asset('assets/study-workspace.js') }}?v={{ config('app.version') }}"></script>
 @endpush

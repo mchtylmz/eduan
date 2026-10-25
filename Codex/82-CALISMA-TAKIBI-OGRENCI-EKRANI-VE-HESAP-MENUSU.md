@@ -127,3 +127,45 @@ Genel proje suite'i/build tekrar edilmedi. Fiziksel telefon/Safari/üretim kontr
 - `lang/{tr,nl,en,fr}/study.php`, `lang/{tr,nl,en,fr}/pagination.php`: yeni metinler.
 - `tests/Feature/StudyTrackingFormTest.php`: yeni panel/tarih/sayfalama testleri.
 - Bu82 raporu, AGENTS.md, README.md ve rehber indeksi: güncel kullanım ve kabul kaydı.
+
+## 6. Geniş paneller, ortak tarih seçici ve yerel örnekler — 25 Ekim 2026
+
+### İstenen düzenleme ve hafta ayarı
+
+Hedef ve çalışma panelleri `%100` genişlik, `640px` üst sınırla açılır; dar ekranlarda viewport'u aşmaz. Çalışma tarihi artık projede zaten bulunan yerel Flatpickr ile seçilir. TR/NL/EN/FR ay/gün adları kullanılır, görünen tarih `25 Ekim 2026` gibi okunur; Livewire'a ve DB'ye yalnız `YYYY-MM-DD` gider. Android/iPhone için yerel native picker'a dönme kapalıdır. Takvim tıklama/Enter/Aşağı ok ile açılır, panel ilk açıldığında kapalıdır; seçili gün proje ana rengindedir. Düzenlenecek kayıt, yeni giriş ve başarılı/başarısız kaydetme sonrası tarih eşleşmesi korunur. Panel içindeki mevcut yönetim editörünün tarih alanı değiştirilmedi.
+
+Ayarlar → Çalışma Takibi içinde etkinlik, başlangıç tarihi, geçmiş çalışma izni ve konu analizi minimum soru sayısı vardır. **Haftanın başlangıç gününü değiştirme ayarı yoktur.** Mevcut sabit kural cumartesi 00:00–cuma 23:59'dur; sonraki cumartesi yeni haftadır. Başlangıç günü için yeni ayar eklenmedi. Seçilen haftanın, modül başlangıcının ve bugünün sınırları hem picker'da hem mevcut sunucu doğrulamasında korunur.
+
+### İzinli, kalıcı yerel örnekler
+
+Kullanıcının açık isteğiyle yalnız `APP_ENV=local`, DB `hypotenuse`, tekil `admin admin` (ID1) hesabında örnekler eklendi. Ön kontrolde hedef/manuel çalışma/not sayıları sıfırdı. Tek transaction kullanıldı; önceden kayıt varsa durma ve ikinci çalıştırmayı engelleyen manifest kontrolü uygulandı. Eski kayıtlar, modül başlangıcı `2026-10-14`, roller ve dönem tarihleri değiştirilmedi.
+
+| Örnek | Eklenen kayıt |
+| --- | --- |
+| Haftalık hedef | 10–16, 17–23 ve 24–30 Ekim için 3; ID1–3 |
+| Manuel çalışma | 14–25 Ekim arasında 9 günlük parça; ID1–9 |
+| Konu analizi | Mevcut test116/229/69 ve gerçek sorularından 3 ayrı örnek deneme, 30 yanıt; sonuç ID16238–16240 |
+| Not | ID1 görünür örnek, ID2 gizli örnek; metinlerde açıkça “Yerel örnek” yazar |
+
+Mevcut test/soru/cevap içeriğine dokunulmadı; seçilen gerçek cevaplar ve deneme toplamları tutarlıdır. Örnek denemeler yerel test geçmişi/istatistiklerine de yansır. Aktif eğitim dönemi bulunmadığından bu örnek sonuçların `season_id` alanı null bırakıldı. Admin personel olduğu için karşılaştırmalar yine gösterilmez; öğrenci rolü atanmadı. Admin hesabına örnek notlar yalnız yerel fixture olarak, aynı admin yazarıyla ve revision'larıyla oluşturuldu; üretimde panelin yalnız öğrenciye not yazma yetki kuralı değiştirilmedi. Hedef/manuel girişler mevcut SaveStudyTarget/SaveStudyActivity eylemlerinden geçti. HTTP dış istek engeli ve Queue/Mail fake kullanıldı; gönderim yapılmadı.
+
+24–30 Ekim raporu: **150 hedef / 110 soru** (80 manuel +30 otomatik), **60 hedef /35 sayfa**, **4 hedef /2,5 saat**, genel gerçekleşme **%64,7**. Önceki hafta genel **%115,1** ile hedef aşımı örneği vardır. Konular **%90 güçlü**, **%20 doğru /%80 yanlış zayıf**, **%50 dengeli** görünür. Görünür not kendi notlar sekmesinde çıkar, gizli not çıkmaz.
+
+Yerel dönemler Temmuz2026'da sona erdiği için eski dönem geçmiş tablosu bu Ekim kayıtlarını kapsamaz; dönem tarihleri otomatik değiştirilmedi. Son dört haftalık grafik ve hafta seçimiyle yeni örnekler incelenebilir. 3–9 Ekim'deki 23 otomatik cevap zaten vardı ve korundu; modül başlangıcından önce manuel örnek eklenmedi.
+
+Örneklerin kimlik manifesti host ve konteynerde `/tmp/eduan-study-local-samples-20261025.json` (0600); tek seferlik script host `/tmp/eduan-study-local-samples.php` içindedir. **Script/manifest Git'e alınmadı, seeder/migration eklenmedi; canlı aktarımda otomatik çalışmaz.** Örnekler kullanıcı incelemesi için yerelde kalır; temizleme yapılmadı.
+
+### Doğrulama
+
+- İlk dar koşu: StudyTrackingFormTest + StudyPanelTest + PwaReleaseTest **51 test /404 doğrulama** başarılı. Yeni dört dilli ISO tarih regresyonu ayrı **1 test /18 doğrulama** başarılı: toplam **52 farklı test /422 doğrulama**; tek temiz birleşik koşu iddiası değildir.
+- Yeni test, yerelleştirilmiş `13/10/2026` girdisini reddederken aynı `2026-10-13` gününü dört dilde değişmeden kaydeder. Mevcut testler geleceği, seçili hafta dışını, başlangıç öncesini, kapalı hafta ve yetki sınırlarını denetler.
+- Değişen PHP test dosyası Pint başarılı; `git diff --check` temiz. Asset sürümü yerel APP_VERSION/root PWA worker birlikte **1.1.32**.
+- Browser plugin bulunmadığı için kurulu Chrome/Playwright kullanıldı. Testing köprüsü yalnız geçici fixture + transaction/rollback ile çalıştı; 1440/768/390px'de iki panel ölçümü `min(viewport,640)` doğrulandı. TR/NL/FR/EN gerçek HTML dili, takvim/düzen ve yatay taşma kontrolü geçti.
+- Gerçek kaydet/düzenle akışı: takvimden24Ekim seçimi → ISO kayıt → hata halinde panel/tarih korunması → düzeltip kaydetme → yeni girişte25Ekim; başarılı. Android ve iPhone UA taklidinde aynı picker, Enter açılışı,23/26Ekim kapalı ve24/25Ekim açık, seçili günün kaydı başarılı. **Fiziksel Android/iOS veya gerçek Safari motoru testi değildir.**
+- Gerçek ana yerel admin raporu ayrı GET-only köprüyle (okuma transaction'ı rollback) incelendi; özet/grafik/üç konu etiketi/görünür-gizli not ayrımı başarılı. Mevcut tanıtım modalı normal kapatılarak devam edildi; modalın davranışı değiştirilmedi.
+- Son tarayıcı koşularında uygulama JS hatası/HTTP5xx yok, testing responsive akışında yatay taşma yok. Görseller: `/tmp/eduan-study-date-calendar-final.png`, `/tmp/eduan-study-date-1440-tr.png`, `/tmp/eduan-study-date-390-fr.png`, `/tmp/eduan-study-local-admin-{overview,history,topics,notes}.png`.
+- Genel suite/build, migration, dış API/AI/mail/push ve canlı aktarım yapılmadı.
+
+### Değişen dosyalar
+
+`public/assets/app.css` (panel/takvim stili), `resources/views/frontend/study/index.blade.php` (mevcut picker CSS'i), `resources/views/livewire/frontend/study/study-form.blade.php` (yerelleştirilmiş picker ve ISO model), `tests/Feature/StudyTrackingFormTest.php` (tarih regresyonu), `public/pwa-sw.js` (asset sürümü); bu82 rehberi, AGENTS.md, README.md ve Codex/index.html. Yerel `.env` sürümü ignored'dır; commit'e girmez.

@@ -55,7 +55,33 @@
                         @if($activityDenial)<p class="alert alert-info">{{ $activityDenial }}</p>@endif
                         <fieldset @disabled($activityDenial) wire:loading.attr="disabled">
                             <label for="activityDate" class="form-label">{{ __('study.date') }}</label>
-                            <input id="activityDate" type="date" class="form-control mb-3" placeholder="{{ __('study.placeholder_date') }}" min="{{ $minimumDate }}" max="{{ $maximumDate }}" wire:model="activityDate">
+                            @if($panel)
+                                <input id="activityDate" type="date" class="form-control mb-3" placeholder="{{ __('study.placeholder_date') }}" min="{{ $minimumDate }}" max="{{ $maximumDate }}" wire:model="activityDate">
+                            @else
+                                <div class="mb-3" wire:ignore x-data="{
+                                    date: $wire.entangle('activityDate'),
+                                    picker: null,
+                                    init() {
+                                        this.picker = flatpickr(this.$refs.date, {
+                                            locale: @js(app()->getLocale()),
+                                            disableMobile: true,
+                                            allowInput: false,
+                                            clickOpens: false,
+                                            static: true,
+                                            dateFormat: 'j F Y',
+                                            ariaDateFormat: 'j F Y',
+                                            defaultDate: flatpickr.parseDate(this.date, 'Y-m-d'),
+                                            minDate: flatpickr.parseDate(@js($minimumDate), 'Y-m-d'),
+                                            maxDate: flatpickr.parseDate(@js($maximumDate), 'Y-m-d'),
+                                            onChange: dates => this.date = dates.length ? flatpickr.formatDate(dates[0], 'Y-m-d') : ''
+                                        });
+                                        this.$watch('date', value => this.picker.setDate(value, false, 'Y-m-d'));
+                                    },
+                                    destroy() { this.picker?.destroy(); }
+                                }">
+                                    <input x-ref="date" id="activityDate" type="text" class="form-control" placeholder="{{ __('study.placeholder_date') }}" autocomplete="off" inputmode="none" @click="picker.open()" @keydown.enter.prevent="picker.open()" @keydown.arrow-down.prevent="picker.open()">
+                                </div>
+                            @endif
                             <x-badge.error field="activityDate" />
                             <div class="row g-3">
                                 @foreach(['activityQuestions' => 'questions', 'activityPages' => 'pages', 'activityHours' => 'hours'] as $field => $label)

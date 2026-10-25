@@ -196,6 +196,19 @@ class StudyTrackingFormTest extends TestCase
         $this->assertSame(0, StudyActivityEntry::where('user_id', $this->owner->id)->count());
     }
 
+    public function test_localized_date_display_never_changes_the_saved_iso_calendar_day(): void
+    {
+        foreach (['tr', 'nl', 'fr', 'en'] as $locale) {
+            app()->setLocale($locale);
+            $form = $this->form()->set('activityQuestions', 10);
+            $form->set('activityDate', '13/10/2026')->call('saveActivity')->assertHasErrors('activityDate');
+            $form->set('activityDate', '2026-10-13')->call('saveActivity')->assertHasNoErrors();
+        }
+        $entries = StudyActivityEntry::where('user_id', $this->owner->id)->get();
+        $this->assertCount(4, $entries);
+        $this->assertSame(['2026-10-13'], $entries->map(fn ($entry) => $entry->activity_date->toDateString())->unique()->values()->all());
+    }
+
     public function test_closed_week_fields_are_locked_until_allowed_and_target_remains_closed(): void
     {
         $form = Livewire::test(StudyForm::class, ['weekStart' => '2026-10-03']);
