@@ -4,22 +4,28 @@ namespace App\Models;
 
 use App\Traits\DefaultOrderBy;
 use App\Traits\Loggable;
-use App\Traits\Scope\StatusScope;
+use Database\Factories\FaqFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class League extends Model
 {
-    /** @use HasFactory<\Database\Factories\FaqFactory> */
-    use HasFactory, DefaultOrderBy, Loggable;
+    /** @use HasFactory<FaqFactory> */
+    use DefaultOrderBy, HasFactory, Loggable;
 
-    protected $fillable = ['code', 'label', 'calculated_at', 'start_at', 'end_at'];
+    protected $fillable = ['code', 'label', 'calculated_at', 'start_at', 'end_at', 'is_live', 'calculation_settings', 'calculated_through_at', 'closed_at'];
 
     protected static string $orderByColumn = 'id';
 
     protected function casts(): array
     {
         return [
+            'is_live' => 'boolean',
+            'calculation_settings' => 'array',
+            'calculated_at' => 'datetime',
+            'calculated_through_at' => 'datetime',
+            'closed_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'start_at' => 'datetime',
@@ -27,7 +33,7 @@ class League extends Model
         ];
     }
 
-    public function results(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function results(): HasMany
     {
         return $this->hasMany(LeagueResult::class);
     }

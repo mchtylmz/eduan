@@ -108,3 +108,7 @@ Faz 7 gerçek kabul devamı: [76 bölüm12](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-V
 ### Çalışma Takibi — geliştirme tamamlandı
 
 [Son kullanıcı kabulü ve yayın sınırı —76 bölüm13](Codex/76-CALISMA-TAKIBI-FAZ7-KABUL-VE-BILDIRIM-TASARIMI.md): yedi geliştirme fazı ve planlanan ekranlar tamamlandı. Bildirim testi kullanıcı talimatıyla başarılı kabul edildi; ajan gerçek cihaz teslim testi yapmadı. APP_URL ve bildirim origin'i https://hypotenuse.be ile eşleşir. Önceki localhost/gerçek test bekleme notları tarihsel; sıradaki aşama canlı hazırlığı/aktarımı ve canlı kontrolüdür. Yeni genel test veya deploy yapılmadı.
+
+### Canlı lig — Faz 1 kod hazırlığı
+
+[78 — veri/hesaplama ve bekleyen DB kapısı](Codex/78-CANLI-LIG-FAZ1-VERI-VE-HESAPLAMA.md): sabit lig ayarları, ortak hesaplama ve transaction/kilit hazır. Yeni migration uygulanmadı. Kullanıcı servis değişimini reddetti; DB/browser testleri bekliyor. Saf31 test/71 doğrulama geçti; yeni14 DB senaryosu ve mevcut lig regresyonları henüz çalışmadı. Scheduler/kapanış Faz2, form/ön yüz/cache Faz3; canlı özellik veya tam Faz1 kabulü değildir.

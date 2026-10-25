@@ -456,3 +456,12 @@ Kanıt: [65-SORGU-CACHE-VE-YAYIN-KONTROL-KAPISI.md](65-SORGU-CACHE-VE-YAYIN-KONT
 - **T32 — Dar kabul.** 34 PHP/236 assertion ve 15 Node testi; testing rollback Chrome1440/390 geçmiş, arama/filtre/sayfa, farklı sayfalardan seçim, üç adım, geri dönüş, kişisel ön izleme ve kayıt yenileme. Gerçek SMTP/push yok; genel suite tekrarı yok. TR/NL/EN/FR94 anahtar, APP_VERSION/root worker1.1.28.
 
 Kanıt: [77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md](77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md).
+
+## 37. Canlı lig —78 Faz1 hazırlığı
+
+- **D16 — Sabit lig kuralları.** Canlı kaynak/puan/kapasite oluşturulurken saklanır; aynı kaydın hesaplaması bu değerleri kullanır. Mevcut updated_at/SUM/RANK sözleşmesi korunur.
+- **D17 — Tarih sınırı.** Yeni varsayılan Cumartesi00–Cuma23:59; serbest tarih-saat ve eski kayıtların aralıkları korunur. Canlı veri üst sınırı dönem sonunu aşmaz; gerçek işlem zamanı ayrı tutulur. Gecikmiş sorgu geçmiş anın fotoğrafı değildir.
+- **D18 — Yeniden hesaplama.** Eski haftalık görev eşleşen canlı kaydı atlamaz; aynı kimlikle hesaplar. DB+aralık kilidi ve transaction aynı ligde çakışmayı önler. Canlı sonuç eşitlemesi kaynak cevapları silmez.
+- **T33 — Hazırlık sınırı.** Host saf31/71 başarılı; yeni14DB ve mevcut5lig/izin regresyonları kullanıcı servis kararı nedeniyle bekler. Migration hazır fakat uygulanmamış/onaysız; tam Faz1 veya yayın kabulü yok. Faz2scheduler/kapanış, Faz3UI/cache/çeviri.
+
+Kanıt ve dosyalar: [78](78-CANLI-LIG-FAZ1-VERI-VE-HESAPLAMA.md).
