@@ -281,17 +281,24 @@ class LiveLeaguePresentationTest extends TestCase
             ->assertNoRedirect()->assertSet('alertOptions.text', __('leagues.busy'));
     }
 
-    public function test_frontend_has_current_state_and_two_separate_clocks_in_four_languages(): void
+    public function test_frontend_shows_only_last_calculation_under_history_in_four_languages(): void
     {
         $league = $this->live();
         foreach (['tr', 'nl', 'en', 'fr'] as $locale) {
             app()->setLocale($locale);
-            Livewire::test(PublicLeagues::class, ['selectedLeague' => $league])->assertSee(__('leagues.status_live'))
-                ->assertSee(__('leagues.calculated'))->assertSee(__('leagues.through'))->assertSee(__('leagues.refresh_help'))
+            Livewire::test(PublicLeagues::class, ['selectedLeague' => $league])
+                ->assertSeeInOrder(['league-history-toggle', 'league-calculated-at', __('leagues.calculated'), dateFormat($league->calculated_at, 'd M Y H:i')], false)
+                ->assertDontSee(__('leagues.status_live'))->assertDontSee(__('leagues.through'))->assertDontSee(__('leagues.refresh_help'))
                 ->assertDontSee('wire:poll', false)->assertDontSee('leagues.status_', false);
         }
         $this->travelTo($league->end_at->copy()->addSecond());
-        Livewire::test(PublicLeagues::class, ['selectedLeague' => $league])->assertSee(__('leagues.status_finalizing'));
+        Livewire::test(PublicLeagues::class, ['selectedLeague' => $league])
+            ->assertSee(__('leagues.calculated'))->assertDontSee(__('leagues.status_finalizing'));
+
+        $league->is_live = false;
+        $league->calculated_at = null;
+        Livewire::test(PublicLeagues::class, ['selectedLeague' => $league])
+            ->assertSee(__('leagues.calculated').': —')->assertDontSee(__('leagues.status_single'));
     }
 
     public function test_panel_uses_shared_table_and_translated_create_control(): void

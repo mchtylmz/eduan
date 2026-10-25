@@ -95,3 +95,9 @@ Yeni migration/izin/ayar aktivasyonu, ana DB gerçek lig hesabı, üretim cron/w
 ### Güncel kapanış —25 Ekim 2026
 
 Bu raporda tarihsel olarak ayrı bırakılan ortak Fransızca hesap/panel/lig çeviri bulguları kullanıcı onayıyla [81 — genel test ve FR düzeltmeleri](81-GENEL-TEST-KABULU-VE-FRANSIZCA-DUZELTMELER.md) kapsamında kaynak dosyalarında giderildi. Eski özel değerler ve DB dil/aktivasyonları korundu; son genel816/5130 ve Chrome54ziyaret kabulü81'de. Yukarıdaki faza ait test/sınır kayıtları tarihsel kanıttır.
+
+### Ön yüz başlık sadeleştirmesi —25 Ekim 2026
+
+Kullanıcının yeni sunum kararıyla yalnız üst tarih alanındaki kupa/“Lig Sonuçları”, hesaplama türü/durumu, veri kesim zamanı ve canlı yenileme açıklaması kaldırıldı. Tarih aralığı korunur; “Son hesaplama” geçmiş lig seçicisinin altında küçük metindir, hesaplanmamış kayıtta “—” gösterilir. Alt üç lig kartının başlıkları ve hesaplama/panel/scheduler davranışı değişmedi. Yeni CSS/JS veya asset sürümü yok.
+
+`league-table.blade.php` ve mevcut `LiveLeaguePresentationTest` güncellendi. İlgili6 PHP test/111 doğrulama ve değişen test dosyası Pint kontrolü geçti. Browser plugin mevcut olmadığından geçici Playwright/Chrome ile localhost üzerinde testing DB transaction fixture'ları kullanıldı: NL canlı/tek hesaplama ve FR henüz başlamamış kayıt,1440/390px; küçük tarihin seçici altında kalması, üst başlık/durum yokluğu, seçicide arama ve gerçek detay geçişi başarılı. JS hatası0, HTTP5xx0, yatay taşma0; dış servisler engellendi, fixture'lar geri alındı. Bu küçük revizyonda genel test paketi yeniden çalıştırılmadı. Görsel kanıtlar `/tmp/eduan-league-header-1440.png` ve `/tmp/eduan-league-header-390.png`.
