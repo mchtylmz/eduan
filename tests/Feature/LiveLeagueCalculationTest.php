@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Actions\Leagues\CalculateLeague;
 use App\Enums\YesNoEnum;
 use App\Helpers\LeaguePeriod;
+use App\Jobs\CalculateLeagueResult;
 use App\Models\ExamResult;
 use App\Models\ExamResultDetail;
 use App\Models\League;
@@ -61,7 +62,9 @@ class LiveLeagueCalculationTest extends TestCase
         $again = $this->live();
         $this->assertSame($league->id, $again->id);
         $this->assertSame($league->code, $again->code);
-        $this->assertSame(['correct_point' => 3, 'incorrect_point' => -1, 'user_count' => 1], $again->calculation_settings);
+        $snapshot = $again->calculation_settings;
+        ksort($snapshot);
+        $this->assertSame(['correct_point' => 3, 'incorrect_point' => -1, 'user_count' => 1], $snapshot);
         $this->assertSame(3, $again->results()->firstOrFail()->total_score);
         $this->assertSame('2026-10-30 23:59:59', $again->end_at->format('Y-m-d H:i:s'));
         $this->assertNull($again->closed_at);
@@ -75,7 +78,8 @@ class LiveLeagueCalculationTest extends TestCase
         $this->answer($user, 2);
         settings()->set('leagueCorrectPoint', 8);
         settings()->save();
-        $again = CalculateLeague::run('2026-10-24 00:00', '2026-10-30 23:59');
+        (new CalculateLeagueResult('2026-10-24 00:00', '2026-10-30 23:59'))->handle();
+        $again = $league->fresh();
         $this->assertSame($league->id, $again->id);
         $this->assertSame(6, $again->results()->firstOrFail()->total_score);
         $this->assertSame(1, League::where('code', $league->code)->count());
@@ -241,6 +245,43 @@ class LiveLeagueCalculationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('League dates are missing.');
         CalculateLeague::run('', '', leagueId: $league->id);
+    }
+
+    public function test_signed_wrong_points_and_league_capacity_stay_frozen_after_settings_change(): void
+    {
+        $first = User::factory()->create(['league_approval' => 1]);
+        $second = User::factory()->create(['league_approval' => 1]);
+        $this->answer($first);
+        $this->answer($second)->update(['correct' => YesNoEnum::NO]);
+        $league = $this->live();
+        settings()->set(['leagueCorrectPoint' => 9, 'leagueIncorrectPoint' => 7, 'leagueUserCount' => 20]);
+        settings()->save();
+        $again = $this->live();
+        $winner = $again->results()->where('user_id', $first->id)->firstOrFail();
+        $runner = $again->results()->where('user_id', $second->id)->firstOrFail();
+        $this->assertSame($league->id, $again->id);
+        $this->assertSame(3, $winner->total_score);
+        $this->assertSame(-1, $runner->total_score);
+        $this->assertSame(2, $runner->rank_position);
+        $this->assertSame(2, $runner->league_number);
+        $this->assertSame(1, $runner->position);
+    }
+
+    public function test_database_interval_includes_both_boundary_seconds_and_excludes_adjacent_seconds(): void
+    {
+        $ids = [];
+        foreach (['2026-10-23 23:59:59', '2026-10-24 00:00:00', '2026-10-30 23:59:59', '2026-10-31 00:00:00'] as $time) {
+            $user = User::factory()->create(['league_approval' => 1]);
+            $this->answer($user)->forceFill(['updated_at' => $time])->save();
+            $ids[] = $user->id;
+        }
+        $league = $this->live();
+        $this->assertSame([$ids[1]], $league->results()->pluck('user_id')->all());
+        $this->travelTo(now()->setDate(2026, 11, 2)->setTime(4, 0));
+        $again = $this->live();
+        $this->assertSame([$ids[1], $ids[2]], $again->results()->orderBy('user_id')->pluck('user_id')->all());
+        $this->assertSame(6, (int) $again->results()->sum('total_score'));
+        $this->assertSame('2026-10-30 23:59:59', $again->calculated_through_at->format('Y-m-d H:i:s'));
     }
 
     public function test_passive_system_does_not_change_existing_live_results(): void

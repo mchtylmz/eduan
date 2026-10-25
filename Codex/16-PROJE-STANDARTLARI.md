@@ -457,11 +457,11 @@ Kanıt: [65-SORGU-CACHE-VE-YAYIN-KONTROL-KAPISI.md](65-SORGU-CACHE-VE-YAYIN-KONT
 
 Kanıt: [77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md](77-TOPLU-ILETISIM-UC-ADIM-VE-TABLO-STANDARDI.md).
 
-## 37. Canlı lig —78 Faz1 hazırlığı
+## 37. Canlı lig —78 Faz1 yerel kabulü
 
 - **D16 — Sabit lig kuralları.** Canlı kaynak/puan/kapasite oluşturulurken saklanır; aynı kaydın hesaplaması bu değerleri kullanır. Mevcut updated_at/SUM/RANK sözleşmesi korunur.
 - **D17 — Tarih sınırı.** Yeni varsayılan Cumartesi00–Cuma23:59; serbest tarih-saat ve eski kayıtların aralıkları korunur. Canlı veri üst sınırı dönem sonunu aşmaz; gerçek işlem zamanı ayrı tutulur. Gecikmiş sorgu geçmiş anın fotoğrafı değildir.
 - **D18 — Yeniden hesaplama.** Eski haftalık görev eşleşen canlı kaydı atlamaz; aynı kimlikle hesaplar. DB+aralık kilidi ve transaction aynı ligde çakışmayı önler. Canlı sonuç eşitlemesi kaynak cevapları silmez.
-- **T33 — Hazırlık sınırı.** Host saf31/71 başarılı; yeni14DB ve mevcut5lig/izin regresyonları kullanıcı servis kararı nedeniyle bekler. Migration hazır fakat uygulanmamış/onaysız; tam Faz1 veya yayın kabulü yok. Faz2scheduler/kapanış, Faz3UI/cache/çeviri.
+- **T33 — Faz1 kabul sınırı.** Onaylı tek migration ana16/testing10 uygulandı; eski veri özetleri korundu. Container saf/DB toplam60farklıilgili senaryo başarıkanıtı; ilk JSON-key-order beklentisi düzeltilip dar tekrar10/115 ve ek sınır2/10 geçti. Tektemizgenelkoşu değil. Faz1 veri/hesaplama kapısı tamam; Faz2scheduler/kapanış ve Faz3UI/cache/çeviri/tarayıcı ayrı kabul. Canlı yayın veya ana DB gerçek hesaplama yok.
 
 Kanıt ve dosyalar: [78](78-CANLI-LIG-FAZ1-VERI-VE-HESAPLAMA.md).

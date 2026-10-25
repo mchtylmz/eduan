@@ -1,6 +1,6 @@
 # 78 — Canlı lig Faz 1: veri ve hesaplama hazırlığı
 
-25 Ekim 2026. Kullanıcı geliştirmeyi üç fazda, her faz sonunda ilgili kapsamlı test ve ayrı commit ile istedi. Bu kayıt **kod hazırlığıdır; Faz 1 DB kabulü değildir**.
+25 Ekim 2026. Kullanıcı geliştirmeyi üç fazda, her faz sonunda ilgili kapsamlı test ve ayrı commit ile istedi. **Güncel durum: Faz 1 yerel veri/hesaplama kabulü bölüm 9 ile tamamlandı.** Aşağıdaki 1–8 bölümleri ilk hazırlığın ve o sıradaki bekleme sınırının tarihsel kaydıdır.
 
 ## 1. Kesin kurallar ve faz sırası
 
@@ -73,3 +73,44 @@ Ortam ve migration onayı hazır olduğunda yeni14 + mevcut `LeagueCalculationTe
 - bu rapor, AGENTS, README, standartlar16 ve Codex/index.html.
 
 Hazırlık commit'i yalnız bu dosyalardır. Önceden var olan `.DS_Store`, Doge.html→docs.html yeniden adlandırması ve yüklenmiş OneSignal klasörü dışarıda bırakılır. Yeni CSS/JS/asset sürümü, ana DB, ücretli API, push/mail veya canlı deploy yok.
+
+## 9. Yerel migration ve Faz 1 kabulü — 25 Ekim 2026
+
+### Ortam ve açık onay
+
+Kullanıcı Eduan'ı standart portlarda açtı. Salt okunur kontrol: `eduan-web-laravel.test-1` 80/5173 ve `eduan-web-mysql-1` 3306 üzerinde çalışıyor; container PHP **8.5.8**. Ajan servis başlatmadı/durdurmadı, port/volume değiştirmedi.
+
+Kullanıcı yalnız bu migration'ın yerel ana ve ayrı testing DB'de uygulanmasını açıkça onayladı. İki ayrı `migrate --path=database/migrations/2026_10_25_000001_add_live_calculation_fields_to_leagues.php --force --no-interaction` çağrısı yapıldı. Ana `hypotenuse` **batch16**, `testing` **batch10**. Diğer migration/seed veya rollback çalıştırılmadı. Dört kolon ve `leagues_live_open_index` doğrulandı.
+
+### Verilerin korunması
+
+Migration öncesi ve testler sonrası yalnız eski lig kolonları ile tüm mevcut sonuç satırlarının SHA-256 özeti karşılaştırıldı; iki DB'de de aynı. Eski lig tarihleri, puanları, kodları ve zamanları korunur.
+
+Ana DB sayıları önce/sonra: **35 lig, 1.238 lig sonucu, 149.914 test cevap detayı, 10.695 sınav cevap detayı, 3 dil, 2.557 çeviri**. Testing başlangıç satırları da aynı kaldı (1 lig/1 sonuç/2 test cevap detayı/9 sınav cevap detayı/2 dil/1.308 çeviri). Bütün DB testleri DatabaseTransactions ile geri alındı; yeni kalıcı canlı lig/snapshot/cutoff/closed metadata sayısı iki DB'de de0. Özel karşılaştırma özeti yalnız container `/tmp/eduan-live-league-before.json` içinde; sır veya öğrenci içeriği rapora alınmadı.
+
+### Test sonucu ve bulunan tek beklenti hatası
+
+İlk birleşik koşu yalnız ilgili dört test dosyasıydı: saf31 + mevcut lig5 + yeni DB14 = **50 senaryo**; **49 başarılı, 1 test beklentisi hatası**, 134 assertion. MySQL JSON nesne anahtarlarını farklı sırada döndürdüğü için sabit ayarlar testindeki `assertSame` sıra farkını hata saydı. Değer veya ürün hesaplaması hatası değildi. Snapshot anahtarları karşılaştırmadan önce sıralandı; anahtar/değer/tür kontrolü gevşetilmedi.
+
+Eski giriş noktası testi ayrıca doğrudan gerçek `CalculateLeagueResult::handle` çağrısıyla güçlendirildi. Aynı canlı kayıt, sabit puan ve kimlik ile yeniden hesaplama doğrulandı.
+
+Son dar koşu **10 test /115 assertion başarılı**:
+
+- Düzeltilen snapshot ve gerçek eski job girişi2;
+- `StabilityReleaseTest` lig/ilgili dönem işlem izinlerinin yeniden doğrulanması ve yetkili/hatalı tarih2;
+- `NextMenuTableTest` lig paneli sıra ve öğretmen öğrenci kapsamı1;
+- `FrontendLeaguePresentationTest` mevcut ön yüz link/dil/null tarih/başlık/puan/ilk HTML/cache5.
+
+İki ek somut DB sınırı **2 test/10 assertion** geçti: global ayarlar değişse de negatif yanlış puanı ve ikinci lig kapasitesinin sabit kalması; başlangıç00:00:00 ve bitiş23:59:59 dahil, bitişik dış saniyeler hariç ve gecikmiş hesaplamada dönem sonunun korunması.
+
+Böylece **60 farklı ilgili senaryo için başarı kanıtı** vardır (31 saf +5 eski hesaplama +16 yeni DB +2 izin/validation +1 panel +5 ön yüz). Hepsi tek son temiz koşuymuş gibi sunulmaz; başarısız beklenti düzeltildikten sonra yalnız ilgili senaryolar tekrarlandı. Tüm proje suite/build çalıştırılmadı. Değişen test dosyasında PHP syntax/Pint ve git diff whitespace kontrolü başarılı.
+
+Kilit kabulü iki gerçek MySQL bağlantısında aynı dönem kilidinin ikinci hesaplamayı reddetmesi ve bırakıldıktan sonra devam etmesini kapsar. Süreç öldürme/sunucu arızası veya production yük testi değildir. Transaction kabulü upsert sonrası sentetik hata ile önceki sonuçların korunmasını kapsar.
+
+### Kapanış ve sonraki faz
+
+**Faz 1'in yerel veri/hesaplama kapısı tamamlandı.** Yeni kaynak kod değişikliği bu devamda yalnız test dosyasıdır; ilk hazırlık `383270fb` üzerindedir. Bu devam test/rapor kapanış commit'idir. Testlerde ürün hesaplama kodunu değiştirme ihtiyacı bulunmadı.
+
+Formun yeni varsayılan tarihlere bağlanması, canlı seçenek/durumlar ve ön yüz cache yenilemesi Faz3; dört saatlik görev, eski görev ile beraber yönetim ve kapanış Faz2'dir. Bu nedenle canlı lig henüz panelden başlatılan tamamlanmış bir kullanıcı özelliği veya yayın kabulü değildir. Bu faz görünür UI değiştirmedi; tarayıcı etkileşim/mobil kabulü Faz3'te yapılır. Gerçek ana DB lig hesabı, canlı deploy, API/AI, push/mail, asset veya .env değişimi yok.
+
+Bu devamda değişen dosyalar: `tests/Feature/LiveLeagueCalculationTest.php`, AGENTS.md, README.md, standartlar16, bu78 raporu ve Codex/index.html. Önceki wiki yeniden adlandırması, .DS_Store ve OneSignal klasörü korunur; commit'e dahil edilmez.
