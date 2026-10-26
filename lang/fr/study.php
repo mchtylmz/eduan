@@ -151,4 +151,13 @@ return [
     'manual_entries' => 'Saisies manuelles uniquement',
     'evaluation_chart_title' => 'Ma progression de la semaine',
     'evaluation_ring_help' => 'Chaque anneau représente un objectif et se remplit jusqu’à 100 %. Si tu le dépasses, ton pourcentage réel reste affiché ci-dessous.',
+    'panel_action_error' => 'Impossible d’ouvrir cette action. Actualisez la page et réessayez.',
+    'history_title_panel' => 'Historique du travail',
+    'edit_target_panel' => 'Modifier l’objectif',
+    'note_body_panel' => 'Note',
+    'note_placeholder_panel' => 'Écrivez votre observation ou votre retour sur l’élève.',
+    'note_author_panel' => 'Auteur',
+    'note_visibility_panel' => 'Visibilité',
+    'lesson_panel' => 'Matière',
+    'panel_summary_help' => 'Les objectifs, le travail et la répartition quotidienne de cet élève pour cette semaine.',
 ];

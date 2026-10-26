@@ -151,4 +151,13 @@ return [
     'manual_entries' => 'Alleen handmatige invoer',
     'evaluation_chart_title' => 'Mijn weekvoortgang',
     'evaluation_ring_help' => 'Elke ring toont één doel en vult tot 100%. Als je meer hebt gedaan, blijft je werkelijke percentage hieronder zichtbaar.',
+    'panel_action_error' => 'De actie kon niet worden geopend. Vernieuw de pagina en probeer opnieuw.',
+    'history_title_panel' => 'Studiegeschiedenis',
+    'edit_target_panel' => 'Doel bewerken',
+    'note_body_panel' => 'Notitie',
+    'note_placeholder_panel' => 'Schrijf uw observatie of feedback over de leerling.',
+    'note_author_panel' => 'Auteur',
+    'note_visibility_panel' => 'Zichtbaarheid',
+    'lesson_panel' => 'Vak',
+    'panel_summary_help' => 'De doelen, het studiewerk en de dagelijkse verdeling van deze leerling deze week.',
 ];

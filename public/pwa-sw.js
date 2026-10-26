@@ -1,3 +1,3 @@
 // Bump with APP_VERSION when publishing changed assets; keep the worker URL stable.
-self.PWA_CACHE_VERSION = '1.1.35';
+self.PWA_CACHE_VERSION = '1.1.36';
 importScripts('/assets/pwa-sw.js');

@@ -36,4 +36,14 @@ class StudyEditor extends StudyForm
     {
         return StudentReport::class;
     }
+
+    protected function includesActivityLists(): bool
+    {
+        return false;
+    }
+
+    public function render()
+    {
+        return view('livewire.backend.study.study-editor', parent::render()->getData());
+    }
 }

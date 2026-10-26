@@ -1,0 +1,103 @@
+/* Study detail uses the existing OneUI palette and shared panel table components. */
+.study-panel {min-width:0;}
+.study-panel .block-title {overflow-wrap:anywhere;}
+.study-panel-week {display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;padding:8px 0 24px;}
+.study-panel-week > div {text-align:center;}
+.study-panel-week strong {display:block;font-size:20px;}
+.study-panel-week small {display:block;margin-top:6px;color:var(--bs-secondary-color,#6c757d);}
+.study-panel-tabs,.study-panel-actions {display:flex;flex-wrap:wrap;gap:8px;}
+.study-panel-tabs {padding-top:16px;border-top:1px solid var(--bs-border-color,#ddd);}
+.study-panel-tabs a {flex:1 1 auto;text-decoration:none;}
+.study-panel-actions {justify-content:flex-end;padding-top:20px;}
+.study-panel-totals {display:flex;flex-wrap:wrap;gap:12px 24px;padding:14px;background:var(--bs-body-bg);border-radius:5px;}
+.study-panel .member-form-card {background:var(--bs-body-bg);border-radius:6px;margin-bottom:24px;}
+.study-panel .member-form-heading {padding:18px 24px;border-bottom:1px solid var(--bs-border-color,#ddd);}
+.study-panel .member-form-heading h2 {font-size:18px;margin-bottom:6px;}
+.study-panel .member-form-heading p {font-size:14px;color:var(--bs-secondary-color,#6c757d);margin:0;}
+.study-panel .member-form-body {padding:24px;}
+.study-panel .offcanvas.offcanvas-end {width:100%!important;max-width:640px;}
+.study-panel .offcanvas-header {padding:20px 24px;background:var(--bs-body-bg);border-bottom:1px solid var(--bs-border-color,#ddd);}
+.study-panel .offcanvas-body {padding:24px;}
+.study-panel .study-editor-form .form-control {min-height:44px;}
+.study-panel .study-editor-form .flatpickr-wrapper {width:100%;}
+.study-panel .study-editor-intro {font-size:14px;color:var(--bs-secondary-color,#6c757d);}
+.study-panel-note {white-space:pre-wrap;overflow-wrap:anywhere;max-width:560px;min-width:180px;}
+.study-panel-note p {margin-top:12px;}
+@media(max-width:767.98px) {
+ .study-panel-week {grid-template-columns:1fr 1fr;gap:12px;}
+ .study-panel-week > div {grid-column:1/-1;grid-row:1;}
+ .study-panel-week strong {font-size:18px;}
+ .study-panel-tabs {display:grid;grid-template-columns:1fr 1fr;}
+ .study-panel-tabs a,.study-panel-actions .btn {font-size:13px;}
+ .study-panel-actions {justify-content:stretch;}
+ .study-panel-actions .btn {flex:1 1 auto;}
+ .study-panel .member-form-body,.study-panel .member-form-heading {padding:16px;}
+}
+.study-panel .study-matrix {margin:0 auto;max-width:880px;}
+.study-panel .study-matrix-legend {display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-bottom:12px;color:var(--bs-secondary-color, #6c757d);font-size:12px;}
+.study-panel .study-matrix-legend i {width:15px;height:15px;border-radius:3px;background:var(--bs-primary);opacity:.15;}
+.study-panel .study-matrix-legend i:nth-of-type(2) {opacity:.45;}
+.study-panel .study-matrix-legend i:nth-of-type(3) {opacity:.8;}
+.study-panel .study-matrix-legend span:first-child {margin-right:4px;}
+.study-panel .study-matrix-legend span:last-child {margin-left:4px;}
+.study-panel .study-matrix-table {width:100%;table-layout:fixed;border-collapse:separate;border-spacing:8px 6px;font-size:14px;}
+.study-panel .study-matrix-table th,.study-panel .study-matrix-table td {padding:0;text-align:center;vertical-align:middle;overflow-wrap:anywhere;}
+.study-panel .study-matrix-table th:first-child {width:25%;text-align:left;}
+.study-panel .study-matrix-table thead th {padding-bottom:10px;font-size:13px;font-weight:600;line-height:1.4;}
+.study-panel .study-matrix-table tbody th {font-weight:600;font-size:13px;}
+.study-panel .study-matrix-table time small {display:block;font-weight:400;color:var(--bs-secondary-color, #6c757d);font-size:11px;}
+.study-panel .study-matrix-cell {position:relative;display:flex;align-items:center;justify-content:center;min-height:40px;border-radius:6px;color:var(--bs-body-color);font-weight:600;font-variant-numeric:tabular-nums;}
+.study-panel .study-matrix-cell::before {content:"";position:absolute;inset:0;border-radius:inherit;background:var(--bs-primary);opacity:var(--intensity);}
+.study-panel .study-matrix-cell > span {position:relative;}
+.study-panel .study-matrix-cell.is-strong {color:#fff;}
+.study-panel .study-matrix-cell.is-future {outline:1px dashed #dce0eb;outline-offset:-1px;color:#969caf;}
+.study-panel .study-matrix-cell.is-future::before {opacity:0;}
+.study-panel .study-matrix-table tfoot th,.study-panel .study-matrix-table tfoot td {padding:10px 0;font-size:13px;}
+.study-panel .study-matrix-table tfoot tr:first-child > * {border-top:1px solid #dce0eb;}
+.study-panel .study-matrix-table tfoot tr:last-child > * {color:var(--bs-primary);font-weight:600;background:var(--bs-body-bg);border-radius:5px;}
+.study-panel .study-matrix figcaption {margin-top:14px;font-size:12px;line-height:1.7;color:var(--bs-secondary-color, #6c757d);}
+.study-panel .study-evaluation-overall {display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;max-width:880px;margin:20px auto 0;padding-top:16px;border-top:1px solid #e1e4ee;}
+.study-panel .study-evaluation-overall strong {color:var(--bs-primary);}
+@media(max-width:767.98px) {
+.study-panel .study-matrix-table {border-spacing:5px 5px;font-size:13px;}
+.study-panel .study-matrix-table thead th,.study-panel .study-matrix-table tbody th,.study-panel .study-matrix-table tfoot th,.study-panel .study-matrix-table tfoot td {font-size:12px;}
+}
+
+/* Weekly review: progress rings first on phones, daily matrix beside them on desktop. */
+.study-panel .study-evaluation-layout {display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start;}
+.study-panel .study-evaluation-layout > * {min-width:0;width:100%;}
+.study-panel .study-evaluation-visual {padding:22px;border-radius:12px;background:var(--bs-body-bg);border-top:3px solid var(--bs-primary);}
+.study-panel .study-evaluation-visual h3 {margin:0;font-size:17px;font-weight:600;line-height:1.5;}
+.study-panel .study-evaluation-rings {position:relative;max-width:280px;margin:8px auto;}
+.study-panel .study-evaluation-rings svg {display:block;width:100%;height:auto;overflow:visible;}
+.study-panel .study-metric-questions {--study-metric:var(--bs-primary);}
+.study-panel .study-metric-pages {--study-metric:#087d87;}
+.study-panel .study-metric-minutes {--study-metric:#b86b0a;}
+.study-panel .study-ring-track,.study-panel .study-ring-amount {fill:none;stroke:var(--study-metric);stroke-width:14;}
+.study-panel .study-ring-track {opacity:.12;}
+.study-panel .study-ring-amount {stroke-linecap:round;}
+.study-panel .study-evaluation-rings .study-ring-score {position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;justify-content:center;gap:3px;width:104px;max-width:none;margin:0;padding:0;border:0;text-align:center;line-height:1.4;}
+.study-panel .study-ring-score span {font-size:11px;color:var(--bs-secondary-color, #6c757d);}
+.study-panel .study-ring-score strong {font-size:25px;letter-spacing:-.7px;font-variant-numeric:tabular-nums;max-width:100%;overflow-wrap:anywhere;}
+.study-panel .study-ring-legend {margin:8px 0 0;}
+.study-panel .study-ring-legend > div {padding:13px 0;border-bottom:1px solid #e5e8f1;}
+.study-panel .study-ring-legend dt {display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
+.study-panel .study-ring-legend dt i {flex:0 0 10px;height:10px;border-radius:50%;background:var(--study-metric);}
+.study-panel .study-ring-legend dt strong {margin-left:auto;color:var(--study-metric);white-space:nowrap;}
+.study-panel .study-ring-legend dd {display:flex;flex-wrap:wrap;gap:4px 14px;margin:5px 0 0 18px;color:var(--bs-secondary-color, #6c757d);font-size:12px;line-height:1.6;}
+.study-panel .study-ring-legend dd b {color:var(--bs-body-color);font-weight:600;}
+.study-panel .study-ring-help {margin:14px 0 0;color:var(--bs-secondary-color, #6c757d);font-size:12px;line-height:1.7;}
+@media(min-width:992px) {
+.study-panel .study-evaluation-layout {grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:32px;}
+}
+@media(max-width:575.98px) {
+.study-panel .study-evaluation-visual {padding:18px;}
+.study-panel .study-evaluation-rings {max-width:260px;}
+}
+
+/* OneUI dark mode uses class overrides rather than Bootstrap's data-bs-theme variables. */
+.dark-mode .study-panel {--bs-body-bg:#1f2937;--bs-body-color:#dfe4f1;--bs-secondary-color:#99a8bd;--bs-border-color:#2a384b;--bs-primary:#91abeb;color:var(--bs-body-color);}
+.dark-mode .study-panel .study-metric-pages {--study-metric:#65c8cf;}
+.dark-mode .study-panel .study-metric-minutes {--study-metric:#edb866;}
+.dark-mode .study-panel .study-matrix-cell.is-strong {color:#18232f;}
+.dark-mode .study-panel .study-ring-legend > div,.dark-mode .study-panel .study-matrix-table tfoot tr:first-child > * {border-color:var(--bs-border-color);}

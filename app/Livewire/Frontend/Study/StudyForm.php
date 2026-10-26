@@ -246,6 +246,11 @@ class StudyForm extends Component
         }
     }
 
+    protected function includesActivityLists(): bool
+    {
+        return true;
+    }
+
     public function render()
     {
         AuthorizeStudyAccess::run($this->owner());
@@ -258,7 +263,7 @@ class StudyForm extends Component
         $activityDenial = $this->denial('activity', $maximumDate);
         $entries = null;
         $days = collect();
-        if ($enabled) {
+        if ($enabled && $this->includesActivityLists()) {
             $query = StudyActivityEntry::query()->where('user_id', $this->owner()->id)
                 ->where('activity_date', '>=', $this->weekStart)->where('activity_date', '<', $bounds['end']->toDateString());
             $days = (clone $query)->selectRaw('activity_date, COUNT(*) AS fragments, SUM(questions) AS questions, SUM(pages) AS pages, SUM(minutes) AS minutes')

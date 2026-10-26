@@ -3,16 +3,19 @@
     $evaluationFields = ['questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours'];
     $evaluationStart = \App\Helpers\StudyCalendar::day($report['current']['start']);
     $evaluationToday = \App\Helpers\StudyCalendar::day(now())->toDateString();
+    $evaluationTitle = $evaluationTitle ?? __('study.evaluation_title');
+    $evaluationChartTitle = $evaluationChartTitle ?? __('study.evaluation_chart_title');
+    $evaluationHelp = $evaluationHelp ?? __('study.evaluation_help');
 @endphp
 <section id="study-evaluation-content" class="member-form-card mb-4" x-show="studySection === 'evaluation'" x-cloak>
-    <header class="member-form-heading"><div><h2 id="study-evaluation-title">{{ __('study.evaluation_title') }}</h2><p>{{ __('study.evaluation_help') }}</p></div></header>
+    <header class="member-form-heading"><div><h2 id="study-evaluation-title">{{ $evaluationTitle }}</h2><p>{{ $evaluationHelp }}</p></div></header>
     <div class="member-form-body">
         <div class="study-evaluation-layout">
             <section class="study-evaluation-visual" aria-labelledby="study-evaluation-chart-title">
-                <h3 id="study-evaluation-chart-title">{{ __('study.evaluation_chart_title') }}</h3>
+                <h3 id="study-evaluation-chart-title">{{ $evaluationChartTitle }}</h3>
                 <div class="study-evaluation-rings">
                     <svg viewBox="0 0 280 280" role="img" aria-labelledby="study-rings-title study-rings-description">
-                        <title id="study-rings-title">{{ __('study.evaluation_chart_title') }}</title>
+                        <title id="study-rings-title">{{ $evaluationChartTitle }}</title>
                         <desc id="study-rings-description">{{ __('study.evaluation_ring_help') }}</desc>
                         @foreach($evaluationFields as $field => $label)
                             @php
@@ -47,7 +50,7 @@
             <figure class="study-matrix" aria-labelledby="study-evaluation-title">
                 <div class="study-matrix-legend" aria-hidden="true"><span>{{ __('study.less_work') }}</span><i></i><i></i><i></i><span>{{ __('study.more_work') }}</span></div>
                 <table class="study-matrix-table">
-                    <caption class="visually-hidden">{{ __('study.evaluation_title') }} · {{ \App\Helpers\StudyCalendar::label($evaluationStart) }} — {{ \App\Helpers\StudyCalendar::label($evaluationStart->addDays(6)) }}</caption>
+                    <caption class="visually-hidden">{{ $evaluationTitle }} · {{ \App\Helpers\StudyCalendar::label($evaluationStart) }} — {{ \App\Helpers\StudyCalendar::label($evaluationStart->addDays(6)) }}</caption>
                     <thead><tr><th scope="col">{{ __('study.date') }}</th>@foreach($evaluationFields as $label)<th scope="col">{{ __('study.'.$label) }}</th>@endforeach</tr></thead>
                     <tbody>
                         @for($offset = 0; $offset < 7; $offset++)

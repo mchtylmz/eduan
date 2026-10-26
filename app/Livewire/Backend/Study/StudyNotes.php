@@ -10,15 +10,10 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StudyNotes extends Component
 {
-    use WithPagination;
-
-    protected string $paginationTheme = 'bootstrap';
-
     #[Locked]
     public int $studentId;
 
@@ -70,6 +65,7 @@ class StudyNotes extends Component
         $this->studentVisible = $note->student_visible;
         $this->notice = '';
         $this->resetErrorBag();
+        $this->dispatch('study-note-opened');
     }
 
     public function cancel(): void
@@ -105,8 +101,8 @@ class StudyNotes extends Component
             }
             SaveStudyNote::run($student, $remove ? $this->before : ['body' => $this->body, 'student_visible' => $this->studentVisible], $this->submissionKey, $this->editingId, $this->before, $remove);
             $this->cancel();
-            $this->resetPage('studyNotesPage');
             $this->notice = __('study.note_saved');
+            $this->dispatch('study-note-saved');
         } catch (HttpException $exception) {
             if (! in_array($exception->getStatusCode(), [403, 409], true) || $exception->getMessage() === '') {
                 throw $exception;
@@ -119,8 +115,7 @@ class StudyNotes extends Component
     {
         $this->student();
         $enabled = StudyTrackingSettings::enabled() && StudyTrackingSettings::startedOn();
-        $notes = $enabled ? StudyNote::where('user_id', $this->studentId)->with('author:id,name,surname')->orderByDesc('id')->paginate(10, ['*'], 'studyNotesPage') : null;
 
-        return view('livewire.backend.study.study-notes', compact('notes', 'enabled'));
+        return view('livewire.backend.study.study-notes', compact('enabled'));
     }
 }

@@ -1,38 +1,23 @@
-<section class="block block-rounded border">
-    <div class="block-header block-header-default"><h2 class="block-title">{{ __('study.notes') }}</h2></div>
-    <div class="block-content pb-3">
-        @if($notice)<p role="status" class="alert alert-success">{{ $notice }}</p>@endif
-        @error('note')<p role="alert" class="alert alert-warning">{{ $message }}</p>@enderror
-        @unless($enabled)<p class="alert alert-info">{{ __('study.disabled') }}</p>@else
-            @can('study:update')
-                <form wire:submit="save" class="mb-4">
-                    <label for="study-note-body" class="form-label">{{ $editingId ? __('study.edit_note') : __('study.add_note') }}</label>
-                    <textarea id="study-note-body" class="form-control" rows="4" maxlength="10000" wire:model="body"></textarea>
+<div data-study-component="notes">
+    @unless($enabled)<div class="alert alert-info">{{ __('study.disabled') }}</div>@else
+        <div class="offcanvas offcanvas-end study-editor" tabindex="-1" id="study-panel-note" aria-labelledby="study-panel-note-title" wire:ignore.self>
+            <div class="offcanvas-header"><h2 id="study-panel-note-title" class="offcanvas-title h5"><i class="fa fa-comment me-1"></i>{{ $editingId ? __('study.edit_note') : __('study.add_note') }}</h2><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ __('study.close') }}" wire:loading.attr="disabled"></button></div>
+            <div class="offcanvas-body">
+                @error('note')<p role="alert" class="alert alert-warning">{{ $message }}</p>@enderror
+                <form wire:submit="save">
+                    <label for="study-note-body" class="form-label">{{ __('study.note_body_panel') }}</label>
+                    <textarea id="study-note-body" class="form-control" rows="7" maxlength="10000" placeholder="{{ __('study.note_placeholder_panel') }}" wire:model="body"></textarea>
                     <x-badge.error field="body" />
                     <label class="form-check mt-3"><input type="checkbox" class="form-check-input" wire:model="studentVisible"><span class="form-check-label">{{ __('study.visible_to_student') }}</span></label>
                     <p class="small text-muted">{{ __('study.notes_help') }}</p>
                     <div class="d-flex flex-wrap gap-2">
-                        <button class="btn btn-primary" type="submit" wire:loading.attr="disabled">{{ __('study.save') }}</button>
-                        @if($editingId)
-                            <button class="btn btn-alt-danger" type="button" wire:click="remove" wire:confirm="{{ __('study.remove_note_confirm') }}" wire:loading.attr="disabled">{{ __('study.remove') }}</button>
-                            <button class="btn btn-alt-secondary" type="button" wire:click="cancel" wire:loading.attr="disabled">{{ __('study.cancel') }}</button>
-                        @endif
+                        <button class="btn btn-primary" type="submit" wire:loading.attr="disabled"><i class="fa fa-check me-1"></i>{{ __('study.save') }}</button>
+                        @if($editingId)<button class="btn btn-alt-danger" type="button" wire:click="remove" wire:confirm="{{ __('study.remove_note_confirm') }}" wire:loading.attr="disabled"><i class="fa fa-trash me-1"></i>{{ __('study.remove') }}</button>@endif
+                        <button class="btn btn-alt-secondary" type="button" data-bs-dismiss="offcanvas" wire:loading.attr="disabled"><i class="fa fa-times me-1"></i>{{ __('study.cancel') }}</button>
                     </div>
                 </form>
-            @endcan
-            @forelse($notes as $note)
-                <article class="border rounded p-3 mb-3" wire:key="study-note-{{ $note->id }}">
-                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
-                        <strong>{{ trim(($note->author?->name ?? '').' '.($note->author?->surname ?? '')) ?: __('study.unknown_author') }}</strong>
-                        <span class="small text-muted">{{ dateFormat($note->created_at) }} · {{ $note->student_visible ? __('study.visible_to_student') : __('study.staff_only') }}</span>
-                    </div>
-                    <p class="mb-2 text-break" style="white-space: pre-wrap">{{ $note->body }}</p>
-                    @if(auth()->user()->can('study:update') && (auth()->user()->can('user-type:admin') || $note->author_id === auth()->id()))
-                        <button class="btn btn-sm btn-alt-secondary" type="button" wire:click="edit({{ $note->id }})" wire:loading.attr="disabled">{{ __('study.edit') }}</button>
-                    @endif
-                </article>
-            @empty<p class="text-muted">{{ __('study.no_notes') }}</p>@endforelse
-            {{ $notes->links() }}
-        @endunless
-    </div>
-</section>
+            </div>
+        </div>
+    @endunless
+    @if($notice)<p role="status" class="alert alert-success">{{ $notice }}</p>@endif
+</div>

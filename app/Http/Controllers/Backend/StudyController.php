@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Actions\Study\AuthorizeStudyPanel;
 use App\Helpers\ServerTable;
 use App\Helpers\StudyCalendar;
+use App\Helpers\StudyDetailTable;
 use App\Helpers\StudyInput;
 use App\Helpers\StudyPanelQuery;
 use App\Helpers\StudyTrackingSettings;
@@ -36,9 +37,18 @@ class StudyController extends Controller
     {
         AuthorizeStudyPanel::run($user);
         $week = $this->week($request);
+        $request->validate(['tab' => 'sometimes|required|in:overview,history,activity,analysis,notes', 'season' => 'nullable|integer|exists:seasons,id']);
+        $tab = $request->query('tab', 'overview');
         $title = __('study.title').' — '.trim($user->name.' '.$user->surname);
 
-        return response()->view('backend.study.show', compact('title', 'week', 'user'))->header('Cache-Control', 'private, no-store');
+        return response()->view('backend.study.show', compact('title', 'week', 'user', 'tab'))->header('Cache-Control', 'private, no-store');
+    }
+
+    public function detailData(Request $request, User $user)
+    {
+        AuthorizeStudyPanel::run($user);
+
+        return response()->json(StudyDetailTable::data($request, $user, $this->week($request)))->header('Cache-Control', 'private, no-store');
     }
 
     public function data(Request $request)
@@ -52,7 +62,7 @@ class StudyController extends Controller
         }
         $query = StudyPanelQuery::summary($week);
         if ($p['search'] !== '') {
-            $query->where(fn ($q) => $q->where('name', 'like', '%'.$p['search'].'%')->orWhere('surname', 'like', '%'.$p['search'].'%')->orWhere('username', 'like', '%'.$p['search'].'%'));
+            $query->where(fn ($q) => $q->where('name', 'like', '%'.$p['search'].'%')->orWhere('surname', 'like', '%'.$p['search'].'%')->orWhere('email', 'like', '%'.$p['search'].'%')->orWhere('username', 'like', '%'.$p['search'].'%'));
         }
         if (! empty($p['status'])) {
             $query->where('status', $p['status']);
@@ -70,6 +80,7 @@ class StudyController extends Controller
         $total = (clone $query)->count();
         $rows = $query->orderBy($sorts[$p['sort']], $p['order'])->orderBy('id')->offset($p['offset'])->limit($p['limit'])->get()->map(fn ($student) => [
             'id' => $student->id, 'table' => 'study', 'name' => trim($student->name.' '.$student->surname),
+            'email' => $student->email,
             'questions' => (int) $student->questions, 'pages' => (int) $student->pages, 'minutes' => StudyInput::hours((int) $student->minutes),
             'goal' => implode(' / ', [$student->target_questions ?? '—', $student->target_pages ?? '—', StudyInput::hours($student->target_minutes) ?: '—']),
             'achievement' => $student->achievement === null ? '—' : $student->achievement.'%',

@@ -12,10 +12,15 @@ class StudentReport extends StudyReport
     #[Locked]
     public int $studentId;
 
-    public function mount(string $weekStart, ?int $studentId = null): void
+    #[Locked]
+    public string $activeTab = 'overview';
+
+    public function mount(string $weekStart, ?int $studentId = null, string $activeTab = 'overview'): void
     {
         abort_unless($studentId, 422);
         $this->studentId = $studentId;
+        abort_unless(in_array($activeTab, ['overview', 'history', 'activity', 'analysis', 'notes'], true), 422);
+        $this->activeTab = $activeTab;
         parent::mount($weekStart);
     }
 
@@ -30,5 +35,10 @@ class StudentReport extends StudyReport
         }
 
         return $this->subject;
+    }
+
+    public function render()
+    {
+        return view('livewire.backend.study.student-report', parent::render()->getData());
     }
 }

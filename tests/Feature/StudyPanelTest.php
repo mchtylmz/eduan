@@ -92,7 +92,7 @@ class StudyPanelTest extends TestCase
     public function test_teacher_list_detail_and_private_response_are_scoped(): void
     {
         $this->get(route('admin.study.index'))->assertOk()->assertSee('study-table', false)->assertSee(route('admin.study.data'), false);
-        $response = $this->getJson($this->url())->assertOk()->assertJsonPath('total', 1)->assertJsonPath('rows.0.id', $this->student->id);
+        $response = $this->getJson($this->url())->assertOk()->assertJsonPath('total', 1)->assertJsonPath('rows.0.id', $this->student->id)->assertJsonPath('rows.0.email', $this->student->email);
         $this->assertTrue($response->baseResponse->headers->hasCacheControlDirective('no-store'));
         $this->get(route('admin.study.show', $this->student))->assertOk()->assertSee('wire:submit="saveTarget"', false);
         $this->get(route('admin.study.show', $this->other))->assertForbidden();
@@ -221,9 +221,10 @@ class StudyPanelTest extends TestCase
 
     public function test_panel_history_links_remain_in_student_detail_context(): void
     {
-        Season::create(['name' => 'Study semester', 'start_date' => '2026-10-01', 'end_date' => '2026-10-31', 'status' => StatusEnum::ACTIVE]);
-        Livewire::test(StudentReport::class, ['weekStart' => '2026-10-10', 'studentId' => $this->student->id])
-            ->assertSee(route('admin.study.show', ['user' => $this->student->id, 'week' => '2026-10-03']), false)->assertDontSee('href="'.route('frontend.study'), false);
+        $season = Season::create(['name' => 'Study semester', 'start_date' => '2026-10-01', 'end_date' => '2026-10-31', 'status' => StatusEnum::ACTIVE]);
+        Livewire::test(StudentReport::class, ['weekStart' => '2026-10-10', 'studentId' => $this->student->id, 'activeTab' => 'history'])->assertSee('data-server-table-page="study-history"', false);
+        $rows = $this->getJson($this->detailUrl('history'))->assertOk()->json('rows');
+        $this->assertContains(route('admin.study.show', ['user' => $this->student->id, 'week' => '2026-10-03', 'season' => $season->id, 'lang' => app()->getLocale()]), array_column($rows, 'view_url'));
     }
 
     public function test_notes_default_hidden_and_marked_visible_notes_only_reach_own_student(): void
@@ -244,7 +245,8 @@ class StudyPanelTest extends TestCase
         $otherTeacher = $this->staff();
         $otherTeacher->students()->attach($this->student);
         $this->actingAs($otherTeacher);
-        $component = Livewire::test(StudyNotes::class, ['studentId' => $this->student->id])->assertSee('Teacher feedback');
+        $this->getJson($this->detailUrl('notes'))->assertOk()->assertJsonPath('rows.0.body', 'Teacher feedback')->assertJsonPath('rows.0.can_edit', false);
+        $component = Livewire::test(StudyNotes::class, ['studentId' => $this->student->id]);
         $component->call('edit', $note->id)->assertForbidden();
         $this->assertDatabaseHas('study_notes', ['id' => $note->id, 'deleted_at' => null]);
     }
@@ -288,8 +290,8 @@ class StudyPanelTest extends TestCase
             $this->note($this->teacher, '<script>alert("x")</script> '.$i);
         }
         $form = Livewire::test(StudyNotes::class, ['studentId' => $this->student->id]);
-        $form->assertSee('&lt;script&gt;', false)->assertDontSee('<script>alert("x")</script>', false);
-        $form->call('gotoPage', 2, 'studyNotesPage')->assertSee(' 0');
+        $form->assertDontSee('<script>alert("x")</script>', false);
+        $this->getJson($this->detailUrl('notes', ['limit' => 5, 'offset' => 10]))->assertOk()->assertJsonPath('total', 11)->assertJsonCount(1, 'rows')->assertJsonPath('rows.0.body', '<script>alert("x")</script> 10');
         $form->set('body', 'Cancel')->set('studentVisible', true)->call('cancel')->assertSet('body', '')->assertSet('studentVisible', false);
     }
 
@@ -344,5 +346,74 @@ class StudyPanelTest extends TestCase
         $this->getJson($this->url())->assertJsonPath('rows', []);
         Livewire::test(StudyNotes::class, ['studentId' => $this->student->id])->assertSee(__('study.disabled'))->set('body', 'No write')->call('save')->assertHasErrors('note');
         $this->assertDatabaseMissing('study_notes', ['body' => 'No write']);
+    }
+
+    private function detailUrl(string $table, array $params = [], ?User $student = null): string
+    {
+        return route('admin.study.detail-data', ['user' => ($student ?? $this->student)->id, 'week' => '2026-10-10', 'table' => $table] + $params);
+    }
+
+    public function test_all_detail_tables_are_private_and_recheck_student_scope(): void
+    {
+        foreach (['history', 'topics', 'days', 'entries', 'notes'] as $table) {
+            $response = $this->getJson($this->detailUrl($table))->assertOk()->assertJsonStructure(['total', 'rows']);
+            $this->assertTrue($response->baseResponse->headers->hasCacheControlDirective('no-store'));
+            $this->getJson($this->detailUrl($table, [], $this->other))->assertForbidden();
+        }
+        $this->teacher->students()->detach($this->student);
+        $this->getJson($this->detailUrl('notes'))->assertForbidden();
+    }
+
+    public function test_detail_tables_validate_parameters_and_student_cannot_read_them(): void
+    {
+        foreach ([['table' => 'invalid'], ['limit' => 101], ['offset' => -1], ['sort' => 'password'], ['order' => 'bad'], ['search' => str_repeat('x', 251)], ['season' => 999999999]] as $parameters) {
+            $this->getJson(route('admin.study.detail-data', $parameters + ['user' => $this->student->id, 'table' => 'notes']))->assertUnprocessable();
+        }
+        $this->getJson(route('admin.study.show', ['user' => $this->student->id, 'tab' => 'invalid']))->assertUnprocessable();
+        $this->actingAs($this->student);
+        $this->getJson($this->detailUrl('notes'))->assertForbidden();
+    }
+
+    public function test_detail_tabs_are_get_links_and_only_show_relevant_standard_tables(): void
+    {
+        foreach (['overview' => null, 'history' => 'history', 'activity' => 'entries', 'analysis' => 'topics', 'notes' => 'notes'] as $tab => $table) {
+            $response = $this->get(route('admin.study.show', ['user' => $this->student->id, 'week' => '2026-10-10', 'tab' => $tab]))->assertOk()->assertSee($this->student->email);
+            $response->assertSee('data-study-panel-tab="'.$tab.'"', false)->assertSee('data-study-panel-open="note"', false)->assertDontSee('wire:click="gotoPage', false);
+            if ($table) {
+                $response->assertSee('data-server-table-page="study-'.$table.'"', false);
+            }
+        }
+        $this->getJson($this->url(['search' => $this->student->email]))->assertOk()->assertJsonPath('total', 1);
+    }
+
+    public function test_entry_tables_paginate_sort_search_and_read_only_permissions(): void
+    {
+        $week = EnsureStudyWeek::run('2026-10-10');
+        for ($i = 1; $i <= 17; $i++) {
+            StudyActivityEntry::create(['user_id' => $this->student->id, 'study_week_id' => $week->id, 'recorded_by_id' => $this->teacher->id, 'activity_date' => $i <= 8 ? '2026-10-12' : '2026-10-13', 'questions' => $i, 'pages' => 2, 'minutes' => 30, 'submission_key' => (string) Str::uuid()]);
+        }
+        $this->getJson($this->detailUrl('entries', ['sort' => 'questions', 'order' => 'desc']))->assertOk()->assertJsonPath('total', 17)->assertJsonCount(15, 'rows')->assertJsonPath('rows.0.questions', 17)->assertJsonPath('rows.0.can_edit', true);
+        $this->getJson($this->detailUrl('entries', ['sort' => 'questions', 'order' => 'desc', 'offset' => 15]))->assertOk()->assertJsonCount(2, 'rows')->assertJsonPath('rows.0.questions', 2);
+        $this->getJson($this->detailUrl('entries', ['search' => '2026-10-12']))->assertOk()->assertJsonPath('total', 8);
+        $this->getJson($this->detailUrl('days'))->assertOk()->assertJsonPath('total', 2)->assertJsonPath('rows.0.questions', 117);
+        $this->teacher->revokePermissionTo('study:update');
+        $this->getJson($this->detailUrl('entries'))->assertOk()->assertJsonPath('rows.0.can_edit', false);
+        $this->get(route('admin.study.show', ['user' => $this->student->id]))->assertOk()->assertDontSee('data-study-panel-open=', false);
+    }
+
+    public function test_notes_table_search_sort_and_disabled_module(): void
+    {
+        $first = $this->note($this->teacher, 'First feedback');
+        $second = $this->note($this->teacher, 'Latest feedback', true);
+        $second->forceFill(['created_at' => now()->addMinute()])->save();
+        $this->getJson($this->detailUrl('notes'))->assertOk()->assertJsonPath('rows.0.id', $second->id)->assertJsonPath('rows.0.can_edit', true);
+        $this->getJson($this->detailUrl('notes', ['search' => 'First']))->assertOk()->assertJsonPath('total', 1)->assertJsonPath('rows.0.id', $first->id);
+        $first->delete();
+        $this->getJson($this->detailUrl('notes'))->assertOk()->assertJsonPath('total', 1);
+        settings()->set('studyTrackingEnabled', '0');
+        settings()->save();
+        foreach (['history', 'topics', 'days', 'entries', 'notes'] as $table) {
+            $this->getJson($this->detailUrl($table))->assertOk()->assertJsonPath('rows', []);
+        }
     }
 }

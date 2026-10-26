@@ -151,4 +151,13 @@ return [
     'manual_entries' => 'Yalnız manuel kayıtlar',
     'evaluation_chart_title' => 'Haftalık ilerlemem',
     'evaluation_ring_help' => 'Her halka bir hedefi gösterir ve en fazla %100 dolar. Daha fazlasını yaptıysan gerçek oranın aşağıda yazmaya devam eder.',
+    'panel_action_error' => 'İşlem açılamadı. Sayfayı yenileyip yeniden deneyin.',
+    'history_title_panel' => 'Çalışma geçmişi',
+    'edit_target_panel' => 'Hedefi düzenle',
+    'note_body_panel' => 'Not',
+    'note_placeholder_panel' => 'Öğrenciyle ilgili gözleminizi veya geri bildiriminizi yazın.',
+    'note_author_panel' => 'Yazan',
+    'note_visibility_panel' => 'Görünürlük',
+    'lesson_panel' => 'Ders',
+    'panel_summary_help' => 'Öğrencinin bu haftaki hedefleri, çalışmaları ve günlük dağılımı.',
 ];

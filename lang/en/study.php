@@ -151,4 +151,13 @@ return [
     'manual_entries' => 'Manual entries only',
     'evaluation_chart_title' => 'My weekly progress',
     'evaluation_ring_help' => 'Each ring shows one goal and fills up to 100%. If you exceed it, your actual percentage is still shown below.',
+    'panel_action_error' => 'The action could not be opened. Refresh the page and try again.',
+    'history_title_panel' => 'Study history',
+    'edit_target_panel' => 'Edit target',
+    'note_body_panel' => 'Note',
+    'note_placeholder_panel' => 'Write your observation or feedback about the student.',
+    'note_author_panel' => 'Author',
+    'note_visibility_panel' => 'Visibility',
+    'lesson_panel' => 'Subject',
+    'panel_summary_help' => 'The student’s targets, study activity and daily breakdown for this week.',
 ];
