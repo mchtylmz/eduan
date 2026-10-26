@@ -190,7 +190,7 @@ class WebNotificationsTest extends TestCase
         $before = $page->getRawOriginal('content');
         foreach (['tr', 'nl', 'en', 'fr'] as $locale) {
             $this->get(route('frontend.notifications', ['lang' => $locale]))->assertOk()
-                ->assertSee('notifications-setup', false)->assertSee('data-push-badge', false)->assertDontSee('OneSignal');
+                ->assertSee('notifications-preferences', false)->assertSee('data-push-badge', false)->assertDontSee('OneSignal');
         }
         $this->assertSame($before, $page->fresh()->getRawOriginal('content'));
         Http::assertNothingSent();
@@ -204,6 +204,26 @@ class WebNotificationsTest extends TestCase
         $this->get(route('frontend.notifications', ['lang' => 'nl']))->assertOk()
             ->assertSee('<strong>Custom explanation</strong>', false)->assertSee('de meldingsdienst')->assertDontSee('oneSIGNAL');
         $this->assertStringContainsString('oneSIGNAL', $page->fresh()->getTranslation('content', 'nl'));
+    }
+
+    public function test_personal_history_precedes_devices_and_settings_are_a_compact_disclosure_in_each_language(): void
+    {
+        $this->actingAs($this->student);
+        $own = $this->fixtureSubscription($this->student);
+        $foreign = $this->fixtureSubscription($this->outsider, (string) Str::uuid());
+        foreach (['tr', 'nl', 'en', 'fr'] as $locale) {
+            $response = $this->get(route('frontend.notifications', ['lang' => $locale]))->assertOk()
+                ->assertSee('<details class="notifications-settings" data-push-setup>', false)
+                ->assertSee('data-push-onboarding', false)->assertSee('data-push-active-help hidden', false)
+                ->assertSee('data-push-consent', false)->assertSee('data-push-check', false)
+                ->assertSee(__('notifications.manage_settings', [], $locale))
+                ->assertSee(__('study.back_account', [], $locale))
+                ->assertSee('data-push-device="'.$own->subscription_id.'"', false)
+                ->assertDontSee($foreign->subscription_id);
+            $this->assertLessThan(strpos($response->getContent(), 'aria-labelledby="notifications-devices-title"'), strpos($response->getContent(), 'aria-labelledby="notifications-history-title"'));
+            $this->assertTrue($response->baseResponse->headers->hasCacheControlDirective('no-store'));
+        }
+        Http::assertNothingSent();
     }
 
     public function test_not_configured_page_disables_consent_and_permission_without_sdk_request(): void
