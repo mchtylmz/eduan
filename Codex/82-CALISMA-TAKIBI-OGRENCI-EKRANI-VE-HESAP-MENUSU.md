@@ -196,3 +196,20 @@ Matristeki sorular manuel+otomatik test+sınav toplamıdır; okuma ve süre manu
 Değişenler: `app/Helpers/StudyAnalytics.php`; `resources/views/frontend/study/index.blade.php`; `resources/views/livewire/frontend/study/{study-form,study-report}.blade.php`; yeni `weekly-evaluation.blade.php`; `public/assets/app.css`, `public/pwa-sw.js`; dört `lang/*/study.php`; `tests/Feature/{StudyAnalyticsTest,StudyTrackingFormTest}.php`; bu rehber, AGENTS.md, README.md ve Codex/index.html. Yerel `.env` sürümü ignored'dır.
 
 Hesabım → Çalışma Takibim → Günlük çalışma toplamları / Çalışma kayıtları'nı aç: toplam ilk satırda ve son gün üstte olmalı. Bir manuel kaydı Düzenle ile seçili haftanın24/26gününe taşı: toplam sabitken gün satırları değişmeli. Öğretmen notları'nın sağındaki **Değerlendir** sekmesinde yeni gün/miktarı ve hedeflerle gerçekleşenleri birlikte incele; hedef veya çalışma kaydettiğinde sekmeyi değiştirmen gerekmeden matris yenilenir.
+
+## 8. Değerlendirmem — yan grafik ve canlı renkler,26 Ekim 2026
+
+- Kullanıcı isteğiyle sekme adı **Değerlendirmem** oldu; NL “Mijn evaluatie”, FR “Mon bilan”, EN “My review”. Mevcut çeviri anahtarı ve sekme kimliği korunur. Giriş açıklaması grafik/liste düzenine uyarlandı.
+-992px ve üzerinde solda haftalık ilerleme grafiği, sağda mevcut yedi günlük matris; daha dar ekranlarda önce grafik, altında matris vardır. Mevcut matris, tarih sıralamaları, düzenleme ve haftalık hesap kuralları değişmedi.
+- Grafik soru/okunan sayfa/çalışma saati için üç ayrı SVG halka kullanır: proje ana rengi, petrol yeşili ve amber. Ortada mevcut genel gerçekleşme, altında her kategori için gerçek miktar/hedef/oran bulunur. Halkalar görselde en fazla100% dolar;109,3%/150% gibi gerçek oranlar yazıyla kesilmeden gösterilir. Sıfır gerçekleşmede ve olmayan/sıfır hedefte yanıltıcı nokta/yay çizilmez; hedef yoksa oran `—` ve açıklama gösterilir.
+- Yeni JS/chart bağımlılığı, sorgu veya iş kuralı yoktur. Grafik mevcut rapor verisinden ilk HTML'de oluşur ve aynı hedef/çalışma yenilemesiyle güncellenir. Renkler metin/rakamlarla desteklenir; SVG başlık/açıklaması, klavye sekme etkileşimi korunur.
+
+### Dar kanıt
+
+İlk ilgili koşuda inline `@php(...)` ile sonraki blok `@php` birleşiminin Blade derlemesini bozduğu yakalandı. Yeni atama tam `@php … @endphp` bloğuna çevrildi. Son aynı iki sınıf koşusu (**StudyAnalyticsTest + PwaReleaseTest**) **19 test /139 doğrulama başarılı**. Yeni regresyon sıfır gerçekleşme, eksik/sıfır hedef,150% gerçek oran ve100% çizim üst sınırını ayrı doğrular. Değişen test+dört dil dosyası **5Pint başarılı**; TR/NL/FR/EN **148eşit, boşsuz ve tekrarsız anahtar**. Genel suite/build tekrarı yok.
+
+Browser plugin olmadığından kurulu Chrome/Playwright/testing transaction/rollback kullanıldı.1440TR: grafik solda/matris sağda;768NL ve390TR/NL/FR/EN: grafik matristen önce. Klavyeyle Değerlendirmem açılışı, boş hedefte üç boş halka, hedef/çalışma kaydından sonra yerinde yenileme başarılı.150% soru→tam halka/150% metin,50% sayfa→yarım halka,0saat→yay yok ve66,7% genel değer doğrulandı. Son koşuda JS0/HTTP5xx0/yatay taşma0. Ana yerel admin ayrı GET-only/rollback ile yalnız okundu; mevcut164soru/36sayfa/3,5saat ve85,6% genel raporu aynı veri üzerinden grafiğe yansıdı. Kullanıcının verileri değiştirilmedi.
+
+Görseller: `/tmp/eduan-study-review-1440-tr.png`, `/tmp/eduan-study-review-390-{tr,nl,fr,en}.png`, `/tmp/eduan-study-review-mobile-matrix.png`, `/tmp/eduan-study-review-local-{desktop,mobile}.png`. Mobil ekran görüntüsündeki mevcut sabit bildirim/WhatsApp düğmeleri ve sticky kısayollar bu geliştirmede değiştirilmedi. Fiziksel Safari/telefon testi değildir.
+
+**Dosyalar:** `resources/views/livewire/frontend/study/weekly-evaluation.blade.php`, `public/assets/app.css`, `public/pwa-sw.js`, `lang/{tr,nl,fr,en}/study.php`, `tests/Feature/StudyAnalyticsTest.php`; bu rehber, AGENTS.md, README.md ve Codex/index.html. APP_VERSION/root worker birlikte **1.1.34**; yerel `.env` ignored. Migration/kalıcıDB/API/AI/mail/push/deploy yok. Elle kontrol: Hesabım → Çalışma Takibim → Değerlendirmem; masaüstünde grafik ile listeyi yan yana, telefonda grafik önce görmelisiniz.

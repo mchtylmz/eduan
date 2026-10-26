@@ -119,6 +119,23 @@ class StudyAnalyticsTest extends TestCase
         $this->assertSame(7, substr_count($form->html(), 'data-activity-date="'));
     }
 
+    public function test_review_rings_keep_zero_missing_goals_and_real_overachievement_distinct(): void
+    {
+        $this->target($this->owner, ['questions' => 100, 'pages' => 0, 'minutes' => 60]);
+        $this->work($this->owner, 0, 20, 90);
+        $html = Livewire::test(StudyReport::class, ['weekStart' => '2026-10-10'])->html();
+        foreach (['questions' => '0', 'pages' => '', 'minutes' => '150'] as $field => $rate) {
+            $this->assertMatchesRegularExpression('/data-ring="'.$field.'" data-rate="'.$rate.'"/', $html);
+            preg_match('/data-ring="'.$field.'".*?<\/g>/s', $html, $group);
+            if ($field === 'minutes') {
+                $this->assertStringContainsString('stroke-dasharray="100 100"', $group[0]);
+            } else {
+                $this->assertStringNotContainsString('study-ring-amount', $group[0]);
+            }
+        }
+        $this->assertStringContainsString('150%', $html);
+    }
+
     public function test_comparison_excludes_passive_no_goal_and_staff_and_deduplicates_teacher_students(): void
     {
         $a = $this->student();

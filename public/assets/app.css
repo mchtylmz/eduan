@@ -908,3 +908,35 @@
     .study-matrix-table {border-spacing:5px 5px;font-size:13px;}
     .study-matrix-table thead th,.study-matrix-table tbody th,.study-matrix-table tfoot th,.study-matrix-table tfoot td {font-size:12px;}
 }
+
+/* Weekly review: progress rings first on phones, daily matrix beside them on desktop. */
+.study-evaluation-layout {display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start;}
+.study-evaluation-layout > * {min-width:0;width:100%;}
+.study-evaluation-visual {padding:22px;border-radius:12px;background:#f8f9fd;border-top:3px solid var(--clr-theme-primary);}
+.study-evaluation-visual h3 {margin:0;font-size:17px;font-weight:600;line-height:1.5;}
+.study-evaluation-rings {position:relative;max-width:280px;margin:8px auto;}
+.study-evaluation-rings svg {display:block;width:100%;height:auto;overflow:visible;}
+.study-metric-questions {--study-metric:var(--clr-theme-primary);}
+.study-metric-pages {--study-metric:#087d87;}
+.study-metric-minutes {--study-metric:#b86b0a;}
+.study-ring-track,.study-ring-amount {fill:none;stroke:var(--study-metric);stroke-width:14;}
+.study-ring-track {opacity:.12;}
+.study-ring-amount {stroke-linecap:round;}
+.study-evaluation-rings .study-ring-score {position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;justify-content:center;gap:3px;width:104px;max-width:none;margin:0;padding:0;border:0;text-align:center;line-height:1.4;}
+.study-ring-score span {font-size:11px;color:#697187;}
+.study-ring-score strong {font-size:25px;letter-spacing:-.7px;font-variant-numeric:tabular-nums;max-width:100%;overflow-wrap:anywhere;}
+.study-ring-legend {margin:8px 0 0;}
+.study-ring-legend > div {padding:13px 0;border-bottom:1px solid #e5e8f1;}
+.study-ring-legend dt {display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
+.study-ring-legend dt i {flex:0 0 10px;height:10px;border-radius:50%;background:var(--study-metric);}
+.study-ring-legend dt strong {margin-left:auto;color:var(--study-metric);white-space:nowrap;}
+.study-ring-legend dd {display:flex;flex-wrap:wrap;gap:4px 14px;margin:5px 0 0 18px;color:#697187;font-size:12px;line-height:1.6;}
+.study-ring-legend dd b {color:#30354b;font-weight:600;}
+.study-ring-help {margin:14px 0 0;color:#697187;font-size:12px;line-height:1.7;}
+@media(min-width:992px) {
+    .study-evaluation-layout {grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:32px;}
+}
+@media(max-width:575.98px) {
+    .study-evaluation-visual {padding:18px;}
+    .study-evaluation-rings {max-width:260px;}
+}
