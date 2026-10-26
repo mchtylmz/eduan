@@ -112,3 +112,11 @@ Browser plugin bulunmadığından kurulu Chrome/Playwright ve geçici gerçek La
 3. Filtrelenenlere e-posta veya bildirim: alıcı sayısı/filtre özeti → mesaj → ön izleme. Gerçek işlem istenmiyorsa son Gönder yerine dönüş/iptal kullanın.
 4. Öğrenci detayı: iki iletişim düğmesinin yalnız bu öğrenciyi hazırladığını kontrol edin.
 5. Her detay tablosunda arama/filtre ardından Excel’i açın. Öğretmen hesabında dışa aktarma açık, yeni gönderim izni verilmemişse iletişim düğmeleri kapalıdır.
+
+## 10. Ana liste başlığı — 26 Ekim 2026
+
+Kullanıcı isteğiyle ana Çalışma Takibi listesindeki `study.panel_help` açıklaması kaldırıldı. Excel, filtrelenenlere e-posta ve bildirim düğmeleri mevcut OneUI `block-header` / `block-options` alanında sağ üste taşındı. Dar ekranda düğmeler sağa hizalı olarak sarılır.
+
+`data-server-table-page` kapsamı dış block’a taşındı: başlıktaki düğmeler ve filtre/tablo aynı kapsamda kaldığı için uygulanmış hafta/durum/öğrenci durumu/arama parametreleri korunur. Görünürlük izinleri, route/JSON/sorgu ve gönderim kuralları değişmedi. Uygulamada yalnız `resources/views/backend/study/index.blade.php` değişti; yeni CSS/JS veya sürüm artışı yok,1.1.39 korunur. Bu kayıt, AGENTS/README/index güncellendi.
+
+Dar test: `StudyActionsTest` içindeki öğretmen export/yetki, filtre eşliği ve yönetici iletişim hazırlama senaryoları **3 test / 39 doğrulama başarılı**. Kurulu Chrome/Playwright (Browser plugin not available) ile testing transaction’ında1440/TR,768/NL,390/TR-FR kontrol edildi: başlık sağ hizası, açıklamanın kalkması, düğmelerin taşmaması, filtreli üç URL ve gerçek XLSX indirme başarılı; sayfaJS0/5xx0/taşma0. `/tmp/eduan-study-header-1440-tr.png` ve `/tmp/eduan-study-header-390-fr.png` görsel kanıttır. Fixture rollback edildi; ana DB/migration/gerçek gönderim/canlı işlem yok. Genel suite veya build tekrarlanmadı.
