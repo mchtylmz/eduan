@@ -210,6 +210,7 @@ class StudyTrackingFoundationTest extends TestCase
         $api = Role::create(['name' => 'study-fixture-api', 'guard_name' => 'api']);
         $teacher->givePermissionTo('user-type:teacher');
         $admin->givePermissionTo('user-type:admin');
+        $existingPermissions = Permission::where('name', 'like', 'study:%')->where('guard_name', 'web')->pluck('name')->all();
         $migration = require database_path('migrations/2026_10_14_100100_grant_study_tracking_permissions.php');
         $migration->up();
         $count = DB::table('role_has_permissions')->count();
@@ -222,7 +223,11 @@ class StudyTrackingFoundationTest extends TestCase
         $this->assertTrue($teacher->hasPermissionTo('study:update'));
         $this->assertTrue($admin->hasPermissionTo('study:view'));
         $this->assertSame(0, $api->permissions()->count());
-        $this->assertSame(3, Permission::where('name', 'like', 'study:%')->where('guard_name', 'web')->count());
+        // Later permissions, such as study:communicate, belong to separate migrations.
+        $this->assertEqualsCanonicalizing(
+            array_unique([...$existingPermissions, 'study:access', 'study:view', 'study:update']),
+            Permission::where('name', 'like', 'study:%')->where('guard_name', 'web')->pluck('name')->all(),
+        );
         $migration->down();
         $this->assertTrue($admin->refresh()->hasPermissionTo('study:view'));
     }

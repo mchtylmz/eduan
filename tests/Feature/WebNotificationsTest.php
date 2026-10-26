@@ -78,6 +78,19 @@ class WebNotificationsTest extends TestCase
         $this->assertSame($a, session('webPushSubscriptionRecordId'));
     }
 
+    public function test_repeated_subscription_sync_is_rate_limited_before_another_provider_request(): void
+    {
+        $this->actingAs($this->student);
+        $this->fakeProvider($this->student, [$this->pushId]);
+        $input = ['subscription_id' => $this->pushId, 'label' => 'Chrome', 'consent' => true, 'explicit_consent' => true];
+        foreach (range(1, 30) as $attempt) {
+            $this->postJson(route('frontend.notifications.register'), $input)->assertOk();
+        }
+        $this->postJson(route('frontend.notifications.register'), $input)->assertTooManyRequests()->assertHeader('Retry-After');
+        $this->assertSame(1, WebPushSubscription::where('user_id', $this->student->id)->count());
+        Http::assertSentCount(30);
+    }
+
     public function test_foreign_provider_subscription_cannot_be_bound(): void
     {
         $this->actingAs($this->student);
