@@ -4,11 +4,12 @@ namespace App\Livewire\Frontend\Auth;
 
 use App\Actions\Auth\LoginAction;
 use App\Traits\CustomLivewireAlert;
+use App\Traits\VerifiesTurnstile;
 use Livewire\Component;
 
 class Login extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, VerifiesTurnstile;
 
     public string $username;
 
@@ -41,6 +42,7 @@ class Login extends Component
 
     public function login()
     {
+        $this->verifyTurnstile('login');
         $this->validate();
 
         $isLogin = LoginAction::run(

@@ -154,3 +154,5 @@ Güncel [82 bölüm6](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md)
 [84 bölüm10 — Liste başlığı](Codex/84-CALISMA-TAKIBI-EXCEL-VE-ILETISIM.md): çalışma takibi açıklaması kaldırıldı, Excel/e-posta/bildirim sağ üst başlığa taşındı. Filtre/izin bağlamı korunur;3test/39doğrulama ve responsive Chrome/Excel geçti. Asset1.1.39; veri/gönderim/deploy yok.
 
 [87 — Güvenlik incelemesi ve beş düzeltme](Codex/87-GUVENLIK-INCELEMESI-VE-YETKI-DUZELTMELERI.md): panel yetkileri, dinamik açıcı sınırı, bülten gönderimi, güvenli XLSX ve parola/oturum iptali. Yerel dar testler geçti; eski kanıtsız oturum yeniden giriş ister. Tarama partial, üretim güvenliği sertifikası değildir.
+
+[88 — Turnstile ve bülten sınırı](Codex/88-TURNSTILE-VE-BULTEN-HIZ-SINIRI.md): beş misafir formunda sunucu doğrulaması, admin ayarları/şifreli anahtar ve bültende IP başına dakikada bir deneme. 181 farklı PHP/1254 doğrulama ayrı koşular,6Node ve Chrome kabulü geçti. Gerçek Managed anahtar kabulü bekler; asset1.1.40, anaDB/migration/deploy yok.

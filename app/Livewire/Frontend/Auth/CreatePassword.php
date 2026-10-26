@@ -5,9 +5,9 @@ namespace App\Livewire\Frontend\Auth;
 use App\Actions\Users\GetUserFromPasswordTokenAction;
 use App\Actions\Users\UpdatePasswordAction;
 use App\Mail\CreatePasswordMail;
-use App\Mail\RecoverPasswordMail;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
+use App\Traits\VerifiesTurnstile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Lazy;
@@ -17,7 +17,7 @@ use Livewire\Component;
 #[Lazy(isolate: true)]
 class CreatePassword extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, VerifiesTurnstile;
 
     #[Locked]
     public User $user;
@@ -36,6 +36,7 @@ class CreatePassword extends Component
     public string $password;
 
     public string $password_confirmation;
+
     public string $passwordInputType = 'password';
 
     public function changeType(): void
@@ -61,6 +62,7 @@ class CreatePassword extends Component
 
     public function update()
     {
+        $this->verifyTurnstile('password_reset');
         $this->validate();
 
         DB::transaction(function () {
@@ -75,8 +77,8 @@ class CreatePassword extends Component
         $this->sendCreatePasswordMail();
 
         return redirect()->route('login')->with([
-           'status' => 'success',
-           'message' => __('Yeni parolanız başarıyla güncellendi')
+            'status' => 'success',
+            'message' => __('Yeni parolanız başarıyla güncellendi'),
         ]);
     }
 

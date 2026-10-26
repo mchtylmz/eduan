@@ -9,6 +9,7 @@ use App\Actions\Users\UpdateRoleAction;
 use App\Enums\StatusEnum;
 use App\Mail\EmailVerificationMail;
 use App\Traits\CustomLivewireAlert;
+use App\Traits\VerifiesTurnstile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -16,7 +17,7 @@ use Livewire\Component;
 
 class Register extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, VerifiesTurnstile;
 
     public bool $afterRegister = false;
 
@@ -73,6 +74,7 @@ class Register extends Component
     public function save()
     {
         LimitAuthRequests::run('register');
+        $this->verifyTurnstile('register');
         $this->validate();
         if (settings()->registerStatus != StatusEnum::ACTIVE->value) {
             $this->message(__('Kayıt işlemi yapılamadı, daha sonra tekrar deneyiniz!'))->error();

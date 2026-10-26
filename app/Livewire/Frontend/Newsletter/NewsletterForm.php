@@ -3,6 +3,7 @@
 namespace App\Livewire\Frontend\Newsletter;
 
 use App\Actions\Contacts\CreateNewsLetterAction;
+use App\Actions\Contacts\LimitNewsletterRequests;
 use App\Traits\CustomLivewireAlert;
 use Livewire\Component;
 
@@ -32,6 +33,7 @@ class NewsletterForm extends Component
 
     public function submit()
     {
+        LimitNewsletterRequests::run();
         $this->validate();
 
         CreateNewsLetterAction::run(data: [

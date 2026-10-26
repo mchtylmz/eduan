@@ -22,6 +22,7 @@
                 @error('username')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
             </div>
 
+            <x-frontend.turnstile action="recover" />
             <div class="account-form-button">
                 <button type="submit" class="account-btn" wire:loading.attr="disabled">
                     <div wire:loading.remove>

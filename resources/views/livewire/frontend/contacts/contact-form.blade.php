@@ -38,6 +38,7 @@
                 </div>
                 @error('message')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
             </div>
+            <x-frontend.turnstile action="contact" />
             <div class="col-12">
                 <div class="contact-form-submit mb-20">
                     <div class="contact-form-btn">

@@ -59,6 +59,7 @@
                 <span class="check_mark"></span>
             </label>
         </div>
+        <x-frontend.turnstile action="login" />
         <div class="account-form-button">
             <button type="submit" class="account-btn" wire:loading.attr="disabled">
                 <div wire:loading.remove>

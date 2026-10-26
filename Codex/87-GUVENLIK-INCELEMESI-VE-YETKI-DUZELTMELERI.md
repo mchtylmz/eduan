@@ -33,7 +33,7 @@ Parolayı kendi açık oturumundan değiştiren kullanıcının guard nesnesi ve
 - Başlangıçtaki mevcut güvenlik paketi: **49 PHP /199 doğrulama**.
 - Yeni güvenlik regresyon dosyası: **18 PHP /130 doğrulama**, ardından eklenen ayrı hatırla/parola değişikliği senaryosu **1/9** geçti. Son durumda 19 farklı güvenlik senaryosu vardır.
 - İlgili 15 dosyalık birleşik paket: **174 PHP /1194 doğrulama** geçti. Giriş/kurtarma, hesap, kaynak izinleri, upload, test çözümü, mail, panel CRUD, Excel, öğrenme tabloları, ayarlar ve PWA sürümü kapsanır. Aynı çalışma ağacındaki Turnstile testleri de bu toplamın içindedir.
-- Sonradan eklenen altı Turnstile/bülten senaryosu **6/41**, hatırla senaryosu **1/9** geçti. Böylece **181 farklı PHP senaryosu /1244 doğrulama** ayrı koşularla başarılıdır; tek temiz 181’li koşu iddiası değildir.
+- Sonradan eklenen altı Turnstile/bülten senaryosu **6/41**, hatırla senaryosu **1/9** geçti. Turnstile ayar senaryosunun son dar genişletmesi ayrıca +10 doğrulama sağladı. Böylece **181 farklı PHP senaryosu /1254 doğrulama** ayrı koşularla başarılıdır; tek temiz 181’li koşu iddiası değildir.
 - Dört gerçek XLSX üretildi, yeniden açıldı: formül benzeri metin string, miktar hücreleri numeric.
 - 21 güvenlik PHP dosyasının Pint kontrolü başarılı. Bağımsız son yama incelemesinde somut kalan bypass/regresyon bulunmadı.
 - İlk dört Excel testinde formatlanmış `toArray` çıktısını integer sanan fixture beklentisi düzeltildi; ürünün sayısal hesaplaması değiştirilmedi.

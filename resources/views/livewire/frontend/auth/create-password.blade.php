@@ -48,6 +48,7 @@
                 @error('password_confirmation')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
             </div>
         </div>
+        <x-frontend.turnstile action="password_reset" />
         <div class="account-form-button mt-3">
             <button type="submit" class="account-btn" wire:loading.attr="disabled">
                 <div wire:loading.remove>

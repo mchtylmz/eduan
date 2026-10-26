@@ -95,6 +95,7 @@
                 @error('acceptTerms')<small class="text-danger fw-bold">{{ $message }}</small>@enderror
             </div>
 
+            <x-frontend.turnstile action="register" />
             <div class="account-form-button offset-md-3 col-lg-6">
                 <button type="submit" class="account-btn" wire:loading.attr="disabled">
                     <div wire:loading.remove>

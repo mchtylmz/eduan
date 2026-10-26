@@ -177,6 +177,7 @@
 
 @includeIf('frontend.layouts.section.footer-popup')
 
+<script src="{{ asset('assets/turnstile.js') }}?v={{ config('app.version') }}"></script>
 @livewireScripts
 @include('frontend.layouts.section.notification-script')
 @stack('script')

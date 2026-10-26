@@ -4,10 +4,10 @@ namespace App\Livewire\Frontend\Auth;
 
 use App\Actions\Auth\LimitAuthRequests;
 use App\Actions\Auth\RecoverPasswordAction;
-use App\Mail\EmailVerificationMail;
 use App\Mail\RecoverPasswordMail;
 use App\Models\User;
 use App\Traits\CustomLivewireAlert;
+use App\Traits\VerifiesTurnstile;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
@@ -15,39 +15,43 @@ use Livewire\Component;
 #[Lazy(isolate: true)]
 class RecoverPassword extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, VerifiesTurnstile;
 
     public string $username;
+
     public string $message;
 
     public function rules(): array
     {
         return [
-            'username' => 'required|string|min:3'
+            'username' => 'required|string|min:3',
         ];
     }
 
     public function validationAttributes(): array
     {
         return [
-            'username' => __('E-posta Adresiniz')
+            'username' => __('E-posta Adresiniz'),
         ];
     }
 
     public function submit()
     {
         LimitAuthRequests::run('recover');
+        $this->verifyTurnstile('recover');
         $this->validate();
 
         $user = RecoverPasswordAction::run(username: $this->username);
-        if (!$user) {
+        if (! $user) {
             $this->message(__('E-posta adresi için kullanıcı bulunamadı!'))->error();
+
             return false;
         }
 
         $this->sendRecoverPasswordMail($user);
 
         $this->message = __('E-posta adresi için parola sıfırlama bağlantısı ve talimatları e-posta olarak gönderildi.');
+
         return false;
     }
 

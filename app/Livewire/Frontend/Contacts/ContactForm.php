@@ -4,17 +4,23 @@ namespace App\Livewire\Frontend\Contacts;
 
 use App\Actions\Contacts\CreateMessageAction;
 use App\Traits\CustomLivewireAlert;
+use App\Traits\VerifiesTurnstile;
 use Livewire\Component;
 
 class ContactForm extends Component
 {
-    use CustomLivewireAlert;
+    use CustomLivewireAlert, VerifiesTurnstile;
 
     public string $name;
+
     public string $email;
+
     public string $phone;
+
     public string $schoolName;
+
     public string $message;
+
     public bool $acceptTerms = true;
 
     public function rules(): array
@@ -43,6 +49,7 @@ class ContactForm extends Component
 
     public function submit()
     {
+        $this->verifyTurnstile('contact');
         $this->validate();
 
         try {
