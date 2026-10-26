@@ -35,16 +35,21 @@ class CommunicationForm extends Component
     #[Locked]
     public string $submissionKey;
 
+    protected function authorizeComposition(bool $write = false): void
+    {
+        AuthorizeCommunication::run(write: $write);
+    }
+
     public function mount(): void
     {
-        AuthorizeCommunication::run();
+        $this->authorizeComposition();
         $this->submissionKey = (string) Str::uuid();
         $this->locale = in_array(app()->getLocale(), ['tr', 'nl', 'en', 'fr'], true) ? app()->getLocale() : 'nl';
     }
 
     public function start(): void
     {
-        AuthorizeCommunication::run(write: true);
+        $this->authorizeComposition(write: true);
         $this->resetErrorBag();
         $this->reset('recipients', 'title', 'body', 'preview', 'previewHash', 'notice');
         $this->submissionKey = (string) Str::uuid();
@@ -70,7 +75,7 @@ class CommunicationForm extends Component
 
     public function next(): void
     {
-        AuthorizeCommunication::run(write: true);
+        $this->authorizeComposition(write: true);
         abort_unless(in_array($this->step, [1, 2], true), 409);
         $this->resetErrorBag();
         if ($this->step === 1) {
@@ -104,7 +109,7 @@ class CommunicationForm extends Component
 
     public function previous(): void
     {
-        AuthorizeCommunication::run(write: true);
+        $this->authorizeComposition(write: true);
         abort_unless(in_array($this->step, [2, 3], true), 409);
         $this->resetErrorBag();
         $this->preview = [];
@@ -115,7 +120,7 @@ class CommunicationForm extends Component
 
     public function cancel(): void
     {
-        AuthorizeCommunication::run();
+        $this->authorizeComposition();
         $this->resetErrorBag();
         $this->reset('step', 'recipients', 'title', 'body', 'preview', 'previewHash');
         $this->dispatch('communication-created');
@@ -123,7 +128,7 @@ class CommunicationForm extends Component
 
     public function enqueue(): void
     {
-        AuthorizeCommunication::run(write: true);
+        $this->authorizeComposition(write: true);
         abort_unless($this->step === 3 && $this->previewHash !== '', 409);
         $this->notice = '';
         $this->resetErrorBag();
@@ -155,7 +160,7 @@ class CommunicationForm extends Component
 
     public function render()
     {
-        AuthorizeCommunication::run();
+        $this->authorizeComposition();
 
         return view('livewire.backend.communications.communication-form');
     }

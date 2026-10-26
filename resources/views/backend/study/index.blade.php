@@ -1,5 +1,6 @@
 @extends('backend.layouts.app')
 @push('script')<script src="{{ asset('backend/assets/study-panel.js') }}?v={{ config('app.version') }}"></script>@endpush
+@push('style')<link rel="stylesheet" href="{{ asset('backend/assets/study-panel.css') }}?v={{ config('app.version') }}">@endpush
 @section('content')
     <div class="block block-rounded">
         <div class="block-header block-header-default"><h1 class="block-title">{{ $title }}</h1></div>
@@ -9,9 +10,18 @@
                 <div class="alert alert-info">{{ __('study.disabled') }}</div>
             @endunless
             <div data-server-table-page="study" @include('components.admin.table-messages', ['confirm' => ''])>
+                <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+                    <a class="btn btn-success" data-table-export href="{{ route('admin.study.export') }}"><i class="fa fa-file-excel me-1"></i>{{ __('study.export_excel') }}</a>
+                    @if(auth()->user()->can(['study:communicate', 'communications:view', 'communications:send']))
+                        <a class="btn btn-alt-primary" data-table-query-link href="{{ route('admin.study.compose', ['channel' => 'email']) }}"><i class="fa fa-envelope me-1"></i>{{ __('study.email_filtered') }}</a>
+                        <a class="btn btn-alt-primary" data-table-query-link href="{{ route('admin.study.compose', ['channel' => 'push']) }}"><i class="fa fa-bell me-1"></i>{{ __('study.push_filtered') }}</a>
+                    @endif
+                </div>
                 <x-admin.filter-bar>
+                    <input type="hidden" data-table-filter name="lang" value="{{ app()->getLocale() }}">
                     <x-admin.filter-date id="study-week" name="week" :label="__('study.week')" :value="$week" />
                     <x-admin.filter-select id="study-state" name="state" :label="__('study.state')" :options="collect(['no_target', 'no_activity', 'zero_activity', 'low', 'on_track'])->mapWithKeys(fn($key) => [$key => __('study.state_'.$key)])->all()" />
+                    <x-admin.filter-select id="study-status" name="status" :label="__('study.student_status')" :options="['active' => __('study.student_active'), 'passive' => __('study.student_passive')]" />
                 </x-admin.filter-bar>
                 <x-admin.server-table id="study-table" :url="route('admin.study.data')" sort-name="name" min-width="920px">
                     <thead><tr>

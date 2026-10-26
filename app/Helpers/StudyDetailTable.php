@@ -8,12 +8,13 @@ use App\Models\Season;
 use App\Models\StudyActivityEntry;
 use App\Models\StudyNote;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StudyDetailTable
 {
-    public static function data(Request $request, User $user, string $week): array
+    public static function data(Request $request, User $user, string $week, bool $paginate = true): array
     {
         AuthorizeStudyPanel::run($user);
         $request->validate(['table' => 'required|in:history,topics,days,entries,notes']);
@@ -39,10 +40,10 @@ class StudyDetailTable
                 $query->where('activity_date', 'like', '%'.$p['search'].'%');
             }
 
-            return ServerTable::page($table, $query, $p, $sorts, fn ($entry) => [
+            return self::records($table, $query, $p, $sorts, fn ($entry) => [
                 'id' => $entry->id, 'date' => StudyCalendar::label($entry->activity_date), 'questions' => $entry->questions,
-                'pages' => $entry->pages, 'minutes' => StudyInput::hours($entry->minutes), 'can_edit' => self::editable($user, $entry->activity_date->toDateString()),
-            ], cache: false);
+                'pages' => $entry->pages, 'minutes' => StudyInput::hours($entry->minutes), 'can_edit' => $paginate && self::editable($user, $entry->activity_date->toDateString()),
+            ], $paginate);
         }
         if ($type === 'notes') {
             $query = StudyNote::where('user_id', $user->id)->with('author:id,name,surname');
@@ -50,12 +51,12 @@ class StudyDetailTable
                 $query->where(fn ($q) => $q->where('body', 'like', '%'.$p['search'].'%')->orWhereHas('author', fn ($a) => $a->where('name', 'like', '%'.$p['search'].'%')->orWhere('surname', 'like', '%'.$p['search'].'%')));
             }
 
-            return ServerTable::page($table, $query, $p, $sorts, fn ($note) => [
+            return self::records($table, $query, $p, $sorts, fn ($note) => [
                 'id' => $note->id, 'author' => $note->author?->display_name ?? __('study.unknown_author'), 'body' => $note->body,
                 'visibility' => __($note->student_visible ? 'study.visible_to_student' : 'study.staff_only'),
                 'created_at' => $note->created_at->format('d/m/Y H:i'),
                 'can_edit' => auth()->user()->can('study:update') && (auth()->user()->can('user-type:admin') || $note->author_id === auth()->id()),
-            ], cache: false);
+            ], $paginate);
         }
         $season = isset($p['season']) ? Season::find($p['season']) : (activeSeason() ?? Season::orderByDesc('start_date')->first());
         $report = StudyAnalytics::report($user, $week, $type === 'history' ? $season : null);
@@ -79,7 +80,7 @@ class StudyDetailTable
         }
         $rows = $rows->sortBy($sorts[$p['sort']], SORT_REGULAR, $p['order'] === 'desc')->values();
         $total = $rows->count();
-        $rows = $rows->slice($p['offset'], $p['limit'])->map(function ($row) use ($type) {
+        $rows = ($paginate ? $rows->slice($p['offset'], $p['limit']) : $rows)->map(function ($row) use ($type) {
             if ($type === 'days') {
                 $row['date'] = $row['date_label'];
                 $row['minutes'] = StudyInput::hours($row['minutes']);
@@ -95,6 +96,17 @@ class StudyDetailTable
         })->values()->all();
 
         return compact('total', 'rows');
+    }
+
+    private static function records(string $table, Builder $query, array $p, array $sorts, callable $row, bool $paginate): array
+    {
+        if ($paginate) {
+            return ServerTable::page($table, $query, $p, $sorts, $row, cache: false);
+        }
+        $rows = $query->reorder()->orderBy($sorts[$p['sort']], $p['order'])->orderBy($query->getModel()->getQualifiedKeyName())
+            ->get()->map(fn ($record) => ['table' => $table, ...$row($record)])->all();
+
+        return ['total' => count($rows), 'rows' => $rows];
     }
 
     private static function editable(User $user, string $date): bool

@@ -101,3 +101,19 @@
 .dark-mode .study-panel .study-metric-minutes {--study-metric:#edb866;}
 .dark-mode .study-panel .study-matrix-cell.is-strong {color:#18232f;}
 .dark-mode .study-panel .study-ring-legend > div,.dark-mode .study-panel .study-matrix-table tfoot tr:first-child > * {border-color:var(--bs-border-color);}
+
+/* Filtered study communication keeps the established wizard usable on narrow screens. */
+.study-communication .block-header {flex-wrap:wrap;gap:12px;}
+.study-communication .block-title {flex:1 1 220px;overflow-wrap:anywhere;}
+.study-communication .block-options {display:flex;flex-wrap:wrap;gap:6px;max-width:100%;}
+.study-communication .nav-pills {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.study-communication p {overflow-wrap:anywhere;}
+@media(max-width:575.98px) {
+    .study-communication .block-options {width:100%;margin-left:0;}
+    .study-communication .block-options .btn {white-space:normal;}
+    .study-communication .nav-link {padding:10px 6px;font-size:13px;}
+}
+
+/* Keep the student identity readable beside the wider goal heading. */
+#study-table th[data-field="name"],#study-table td:first-child {min-width:220px;}
+#study-table th[data-field="goal"] .th-inner {min-width:200px;max-width:270px;white-space:normal;}

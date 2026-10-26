@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Actions\Study\AuthorizeStudyCommunication;
 use App\Actions\Study\AuthorizeStudyPanel;
-use App\Helpers\ServerTable;
+use App\Exports\StudyTableExport;
 use App\Helpers\StudyCalendar;
 use App\Helpers\StudyDetailTable;
 use App\Helpers\StudyInput;
@@ -12,6 +13,7 @@ use App\Helpers\StudyTrackingSettings;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudyController extends Controller
 {
@@ -51,34 +53,76 @@ class StudyController extends Controller
         return response()->json(StudyDetailTable::data($request, $user, $this->week($request)))->header('Cache-Control', 'private, no-store');
     }
 
+    public function export(Request $request)
+    {
+        AuthorizeStudyPanel::run();
+        $week = $this->week($request);
+        $p = StudyPanelQuery::parameters($request);
+        $students = StudyTrackingSettings::enabled() && StudyTrackingSettings::startedOn() ? StudyPanelQuery::filtered($week, $p)->get() : collect();
+        $columns = [__('study.student'), __('E-posta Adresi'), __('study.week')];
+        foreach (['goal', 'actual'] as $source) {
+            foreach (['questions', 'pages', 'hours'] as $metric) {
+                $columns[] = __('study.'.$source).' · '.__('study.'.$metric);
+            }
+        }
+        $columns = [...$columns, __('study.overall').' (%)', __('study.state')];
+        $rows = $students->map(fn ($student) => [trim($student->name.' '.$student->surname), $student->email, $week,
+            $student->target_questions, $student->target_pages, $student->target_minutes === null ? null : (float) StudyInput::hours($student->target_minutes),
+            (int) $student->questions, (int) $student->pages, (float) StudyInput::hours((int) $student->minutes),
+            $student->achievement === null ? null : (float) $student->achievement, __('study.state_'.$student->study_state)])->all();
+
+        $response = Excel::download(new StudyTableExport($columns, $rows), 'study-'.$week.'.xlsx');
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
+    }
+
+    public function detailExport(Request $request, User $user)
+    {
+        AuthorizeStudyPanel::run($user);
+        $data = StudyDetailTable::data($request, $user, $this->week($request), paginate: false);
+        $columns = match ($request->query('table')) {
+            'history' => ['week' => 'week', 'questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours', 'achievement' => 'overall', 'state' => 'state'],
+            'days' => ['date' => 'date', 'manual_questions' => 'manual_questions', 'automatic_tests' => 'automatic_tests', 'automatic_exams' => 'automatic_exams', 'questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours', 'fragments' => 'fragments'],
+            'entries' => ['date' => 'date', 'questions' => 'questions', 'pages' => 'pages', 'minutes' => 'hours'],
+            'topics' => ['name' => 'topic', 'lesson' => 'lesson_panel', 'correct' => 'correct', 'incorrect' => 'incorrect', 'rate' => 'accuracy', 'state' => 'state'],
+            'notes' => ['author' => 'note_author_panel', 'body' => 'note_body_panel', 'visibility' => 'note_visibility_panel', 'created_at' => 'date'],
+        };
+        $headings = array_map(fn ($field, $label) => __('study.'.$label).($request->query('table') === 'history' && in_array($field, ['questions', 'pages', 'minutes'], true) ? ' ('.__('study.goal_actual').')' : ''), array_keys($columns), array_values($columns));
+        $numericHours = in_array($request->query('table'), ['entries', 'days'], true);
+        $rows = array_map(fn ($row) => array_map(fn ($field) => $numericHours && $field === 'minutes' ? (float) $row[$field] : ($row[$field] ?? null), array_keys($columns)), $data['rows']);
+
+        $response = Excel::download(new StudyTableExport($headings, $rows), 'study-'.$request->query('table').'-'.$user->id.'.xlsx');
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
+    }
+
+    public function compose(Request $request, string $channel)
+    {
+        AuthorizeStudyCommunication::run();
+        $request->validate(['student_id' => 'nullable|integer|exists:users,id']);
+        abort_unless(in_array($channel, ['email', 'push'], true), 422);
+        $student = $request->filled('student_id') ? User::findOrFail($request->integer('student_id')) : null;
+        AuthorizeStudyCommunication::run($student);
+        $week = $this->week($request);
+        $filters = StudyPanelQuery::parameters($request);
+        $title = __('study.communicate_title');
+
+        return response()->view('backend.study.compose', compact('title', 'student', 'week', 'filters', 'channel'))->header('Cache-Control', 'private, no-store');
+    }
+
     public function data(Request $request)
     {
         AuthorizeStudyPanel::run();
         $week = $this->week($request);
-        $sorts = ['name' => 'name', 'surname' => 'surname', 'questions' => 'questions', 'pages' => 'pages', 'minutes' => 'minutes', 'achievement' => 'achievement'];
-        $p = ServerTable::parameters($request, $sorts, 'name', ['week' => 'nullable|date_format:Y-m-d', 'state' => 'nullable|in:no_target,no_activity,zero_activity,low,on_track']);
+        $p = StudyPanelQuery::parameters($request);
         if (! StudyTrackingSettings::enabled() || ! StudyTrackingSettings::startedOn()) {
             return response()->json(['total' => 0, 'rows' => []])->header('Cache-Control', 'private, no-store');
         }
-        $query = StudyPanelQuery::summary($week);
-        if ($p['search'] !== '') {
-            $query->where(fn ($q) => $q->where('name', 'like', '%'.$p['search'].'%')->orWhere('surname', 'like', '%'.$p['search'].'%')->orWhere('email', 'like', '%'.$p['search'].'%')->orWhere('username', 'like', '%'.$p['search'].'%'));
-        }
-        if (! empty($p['status'])) {
-            $query->where('status', $p['status']);
-        }
-        match ($p['state'] ?? '') {
-            'no_target' => $query->whereNull('achievement'),
-            'no_activity' => $query->where('fragments', 0)->where('questions', 0),
-            'zero_activity' => $query->where('fragments', '>', 0)->whereRaw('questions + pages + minutes = 0'),
-            'low' => $query->where('achievement', '<', 50),
-            default => null,
-        };
-        if (($p['state'] ?? '') === 'on_track') {
-            $query->where('achievement', '>=', 50)->whereRaw('questions + pages + minutes > 0');
-        }
+        $query = StudyPanelQuery::filtered($week, $p);
         $total = (clone $query)->count();
-        $rows = $query->orderBy($sorts[$p['sort']], $p['order'])->orderBy('id')->offset($p['offset'])->limit($p['limit'])->get()->map(fn ($student) => [
+        $rows = $query->offset($p['offset'])->limit($p['limit'])->get()->map(fn ($student) => [
             'id' => $student->id, 'table' => 'study', 'name' => trim($student->name.' '.$student->surname),
             'email' => $student->email,
             'questions' => (int) $student->questions, 'pages' => (int) $student->pages, 'minutes' => StudyInput::hours((int) $student->minutes),

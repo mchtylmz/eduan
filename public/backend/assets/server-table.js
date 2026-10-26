@@ -165,7 +165,7 @@
                     params[field.name] = field.multiple ? [...field.selectedOptions].map(option => option.value) : field.value;
                 });
                 currentParameters = {...params};
-                root.querySelectorAll('[data-table-export]').forEach(link => {
+                root.querySelectorAll('[data-table-export], [data-table-query-link]').forEach(link => {
                     const target = new URL(link.href);
                     target.search = '';
                     Object.entries(params).forEach(([key,value]) => {

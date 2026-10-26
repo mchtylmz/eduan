@@ -1,10 +1,11 @@
-<div class="block block-rounded" data-communication-form data-selected-recipients="{{ json_encode($recipients) }}">
+<div class="block block-rounded{{ ($studyCompose ?? false) ? ' study-communication' : '' }}" data-communication-form data-selected-recipients="{{ json_encode($recipients) }}">
     <div class="block-header block-header-default">
-        <h1 class="block-title">{{ __('notifications.communications') }}</h1>
+        <h1 class="block-title">{{ ($studyCompose ?? false) ? __('study.communicate_title') : __('notifications.communications') }}</h1>
         <div class="block-options">
-            @if($step === 0)
+            @if($studyCompose ?? false)<a class="btn btn-alt-secondary" href="{{ $studyReturnUrl }}"><i class="fa fa-arrow-left me-1"></i>{{ __('study.return_to_study') }}</a>@endif
+            @if($step === 0 && ! ($studyCompose ?? false))
                 @can('communications:send')<button class="btn btn-alt-primary" type="button" wire:click="start" wire:loading.attr="disabled"><i class="fa fa-plus me-1" aria-hidden="true"></i>{{ __('notifications.new_message') }}</button>@endcan
-            @else
+            @elseif($step !== 0)
                 <button class="btn btn-alt-secondary" type="button" wire:click="cancel" wire:loading.attr="disabled">{{ __('notifications.cancel') }}</button>
             @endif
         </div>
@@ -12,6 +13,7 @@
     <div class="block-content pb-4">
         @if($notice)<p class="alert alert-success" role="status">{{ $notice }}</p>@endif
         @error('communication')<p class="alert alert-warning" role="alert">{{ $message }}</p>@enderror
+        @unless($studyCompose ?? false)
         <div wire:key="communication-history-panel" @class(['d-none' => $step !== 0])>
             <div data-server-table-page="communication-history" @include('components.admin.table-messages', ['confirm' => ''])>
                 <x-admin.filter-bar>
@@ -29,6 +31,7 @@
                 </x-admin.server-table>
             </div>
         </div>
+        @endunless
         @if($step !== 0)
             <ol class="nav nav-pills nav-fill mb-4" aria-label="{{ __('notifications.compose_steps') }}">
                 @foreach([1=>'recipients',2=>'message_step',3=>'preview_step'] as $number=>$label)
@@ -41,12 +44,23 @@
                     <button class="btn btn-alt-primary" type="button" wire:click="next" wire:loading.attr="disabled">{{ __('notifications.continue') }}<i class="fa fa-arrow-right ms-1" aria-hidden="true"></i></button>
                 </div>
                 <x-badge.error field="recipients" />
+                @if($studyCompose ?? false)
+                    <div class="border rounded p-3">
+                        <p>{{ __('study.communication_selection_help') }}</p>
+                        <strong>{{ \App\Helpers\StudyCalendar::label($weekStart) }} — {{ \App\Helpers\StudyCalendar::label(\App\Helpers\StudyCalendar::day($weekStart)->addDays(6)) }}</strong>
+                        <p class="text-muted mt-2 mb-0">{{ implode(', ', $studyNames) }}{{ count($recipients) > 5 ? ' …' : '' }}</p>
+                        @if(($filters['state'] ?? '') !== '')<p class="small mb-0 mt-2">{{ __('study.state') }}: {{ __('study.state_'.$filters['state']) }}</p>@endif
+                        @if(($filters['status'] ?? '') !== '')<p class="small mb-0 mt-2">{{ __('study.student_status') }}: {{ __('study.student_'.$filters['status']) }}</p>@endif
+                        @if(($filters['search'] ?? '') !== '')<p class="small mb-0 mt-2">{{ __('Ara') }}: {{ $filters['search'] }}</p>@endif
+                    </div>
+                @else
                 <div data-server-table-page="communication-recipients" data-table-url-state="false" @include('components.admin.table-messages', ['confirm' => ''])>
                     <p class="text-muted">{{ __('notifications.selection_help') }}</p>
                     <x-admin.server-table id="communication-recipients-table" :url="route('admin.communications.recipients')" sort-name="name" min-width="560px">
                         <thead><tr><th data-field="selected" data-checkbox="true"></th><th data-field="name" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('İsim') }}</th><th data-field="surname" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('Soyisim') }}</th><th data-field="username" data-formatter="eduanTableTextFormatter">{{ __('Kullanıcı Adı') }}</th></tr></thead>
                     </x-admin.server-table>
                 </div>
+                @endif
             @elseif($step === 2)
                 <form wire:submit="next">
                     <p class="text-muted">{{ __('notifications.selected_count', ['count'=>count($recipients)]) }}</p>

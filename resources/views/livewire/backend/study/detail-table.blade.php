@@ -1,6 +1,9 @@
 <div data-server-table-page="study-{{ $type }}" data-table-url-state="false" @include('components.admin.table-messages', ['confirm' => ''])>
+    @if($type !== 'history')<form data-table-filters class="d-none"><input type="hidden" name="lang" value="{{ app()->getLocale() }}" data-table-filter><input type="hidden" name="table" value="{{ $type }}" data-table-filter><input type="hidden" name="week" value="{{ $weekStart }}" data-table-filter></form>@endif
     @if($type === 'history')
         <x-admin.filter-bar>
+            <input type="hidden" name="lang" value="{{ app()->getLocale() }}" data-table-filter>
+            <input type="hidden" name="table" value="history" data-table-filter><input type="hidden" name="week" value="{{ $weekStart }}" data-table-filter>
             <div class="col-12 col-md-8">
                 <label for="study-panel-season" class="form-label">{{ __('study.period_with_dates') }}</label>
                 <select id="study-panel-season" name="season" class="form-select" data-table-filter>
@@ -10,6 +13,7 @@
             </div>
         </x-admin.filter-bar>
     @endif
+    <div class="d-flex justify-content-end mb-3"><a class="btn btn-success" data-table-export href="{{ route('admin.study.detail-export', ['user' => $studentId]) }}" data-study-detail-export="{{ $type }}"><i class="fa fa-file-excel me-1"></i>{{ __('study.export_excel') }}</a></div>
     <x-admin.server-table :id="'study-'.$type.'-table'" :url="route('admin.study.detail-data', ['user' => $studentId, 'week' => $weekStart, 'table' => $type])" :sort-name="$type === 'history' ? 'week' : ($type === 'notes' ? 'created_at' : ($type === 'topics' ? 'name' : 'date'))" :sort-order="$type === 'topics' ? 'asc' : 'desc'" min-width="760px">
         <thead><tr>
 @if($type === 'history')

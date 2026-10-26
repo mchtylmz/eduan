@@ -7,10 +7,42 @@ use App\Models\StudyActivityEntry;
 use App\Models\StudyWeeklyTarget;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StudyPanelQuery
 {
+    public static function sorts(): array
+    {
+        return ['name' => 'name', 'surname' => 'surname', 'questions' => 'questions', 'pages' => 'pages', 'minutes' => 'minutes', 'achievement' => 'achievement'];
+    }
+
+    public static function parameters(Request $request): array
+    {
+        return ServerTable::parameters($request, self::sorts(), 'name', ['week' => 'nullable|date_format:Y-m-d', 'state' => 'nullable|in:no_target,no_activity,zero_activity,low,on_track']);
+    }
+
+    public static function filtered(string $week, array $p): Builder
+    {
+        $query = self::summary($week);
+        if ($p['search'] !== '') {
+            $query->where(fn ($q) => $q->where('name', 'like', '%'.$p['search'].'%')->orWhere('surname', 'like', '%'.$p['search'].'%')->orWhere('email', 'like', '%'.$p['search'].'%')->orWhere('username', 'like', '%'.$p['search'].'%'));
+        }
+        if (! empty($p['status'])) {
+            $query->where('status', $p['status']);
+        }
+        match ($p['state'] ?? '') {
+            'no_target' => $query->whereNull('achievement'),
+            'no_activity' => $query->where('fragments', 0)->where('questions', 0),
+            'zero_activity' => $query->where('fragments', '>', 0)->whereRaw('questions + pages + minutes = 0'),
+            'low' => $query->where('achievement', '<', 50),
+            'on_track' => $query->where('achievement', '>=', 50)->whereRaw('questions + pages + minutes > 0'),
+            default => null,
+        };
+
+        return $query->orderBy(self::sorts()[$p['sort']], $p['order'])->orderBy('id');
+    }
+
     public static function students(): Builder
     {
         AuthorizeStudyPanel::run();

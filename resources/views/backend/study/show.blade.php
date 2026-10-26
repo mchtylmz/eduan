@@ -35,6 +35,12 @@
                 @endif
             </div>
         </div>
+        @if(auth()->user()->can(['study:communicate', 'communications:view', 'communications:send']))
+            <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+                <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'email', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-envelope me-1"></i>{{ __('study.email_student') }}</a>
+                <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'push', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-bell me-1"></i>{{ __('study.push_student') }}</a>
+            </div>
+        @endif
         <div class="alert alert-danger d-none" role="alert" data-study-action-error></div>
         <livewire:backend.study.student-report :student-id="$user->id" :week-start="$week" :active-tab="$tab" />
         @can('study:update')

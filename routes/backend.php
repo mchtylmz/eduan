@@ -84,8 +84,11 @@ Route::get('logout', [\App\Http\Controllers\Backend\Auth\LogoutController::class
 
 
 Route::get('study', [\App\Http\Controllers\Backend\StudyController::class, 'index'])->name('study.index');
+Route::get('study/export', [\App\Http\Controllers\Backend\StudyController::class, 'export'])->name('study.export');
+Route::get('study/compose/{channel}', [\App\Http\Controllers\Backend\StudyController::class, 'compose'])->name('study.compose');
 Route::get('study/data', [\App\Http\Controllers\Backend\StudyController::class, 'data'])->name('study.data');
 Route::get('study/students/{user}', [\App\Http\Controllers\Backend\StudyController::class, 'show'])->name('study.show');
+Route::get('study/students/{user}/export', [\App\Http\Controllers\Backend\StudyController::class, 'detailExport'])->name('study.detail-export');
 Route::get('study/students/{user}/data', [\App\Http\Controllers\Backend\StudyController::class, 'detailData'])->name('study.detail-data');
 
 Route::get('communications', [\App\Http\Controllers\Backend\CommunicationController::class, 'index'])->name('communications.index');
