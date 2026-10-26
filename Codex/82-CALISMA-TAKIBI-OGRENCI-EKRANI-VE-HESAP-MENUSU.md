@@ -169,3 +169,30 @@ Yerel dönemler Temmuz2026'da sona erdiği için eski dönem geçmiş tablosu bu
 ### Değişen dosyalar
 
 `public/assets/app.css` (panel/takvim stili), `resources/views/frontend/study/index.blade.php` (mevcut picker CSS'i), `resources/views/livewire/frontend/study/study-form.blade.php` (yerelleştirilmiş picker ve ISO model), `tests/Feature/StudyTrackingFormTest.php` (tarih regresyonu), `public/pwa-sw.js` (asset sürümü); bu82 rehberi, AGENTS.md, README.md ve Codex/index.html. Yerel `.env` sürümü ignored'dır; commit'e girmez.
+
+## 7. Üst toplamlar ve Değerlendir matrisi —26 Ekim 2026
+
+### Kullanıcı kararı ve görünüm
+
+Sıralamadaki iki farklı ifade kullanıcıya soruldu; **“Toplam ilk satırda; altında en yeni gün önce (26 →25 →24)”** seçildi. Ön yüzde Günlük çalışma toplamları'nın hafta toplamı ilk veri satırıdır, günler tarihe göre azalan sıralanır. Çalışma kayıtları'nın mevcut tarih/id azalan sıralaması korunur; ilk satırına haftanın manuel toplamı eklendi. Bu toplam bütün seçili haftaya aittir,15kayıtlık sayfanın ara toplamı değildir. Soru hücresi yalnız manuel girişleri içerir; otomatik test/sınav soruları günlük toplam tablosunda ayrı sütunlarında kalır. Ortak view'ın yönetim panelindeki mevcut toplam/sıralama sunumu değiştirilmedi.
+
+Öğretmen notları'nın hemen sağına **Değerlendir** sekmesi eklendi. Tek matris grafikte yedi gün satırlarda; soru, okunan sayfa ve çalışma saati sütunlarda gösterilir. Her sütunun kendi günlük en yüksek miktarına göre renk koyulaşır; soru/sayfa/saat birimleri birbirine eklenmez veya yapay ortak puana çevrilmez. Miktarlar kutularda okunur; renk tek bilgi kaynağı değildir. Altta aynı matriste haftalık **Hedef / Gerçekleşen / Oran**, altında genel gerçekleşme vardır. Hedef aşımı yüzdeleri kesilmez; boş/sıfır hedef oranı `—` kalır. Gelecek günler kesik çerçeve/`—` ile, geçmişte çalışma olmayan günler0 ile görünür. Matrisin günleri doğal hafta akışında cumartesiden cumaya ilerler; azalan sıralama isteği iki kayıt tablosuna uygulandı.
+
+Matristeki sorular manuel+otomatik test+sınav toplamıdır; okuma ve süre manuel kayıtlardan gelir. Veri `StudyAnalytics` içinde zaten hesaplanan günlük satırlardan seçili haftaya süzülür; **ek DB sorgusu, yeni chart paketi veya AI/API isteği eklenmedi**. Yalnız rapora kişiye/haftaya ait `days` alanı eklendi. Mevcut hedef/çalışma sonrası `study-changed` yenilemesi matrisi de günceller. Hedef/çalışma tarih ve yetki kuralları aynı;24→26 veya26→24 aynı hafta düzenlemeleri mevcut editörle yapılır. Önceki turdaki yerel admin örneklerine ve kullanıcının sonradan girdiği kayıtlara yazılmadı.
+
+### Dar doğrulama
+
+- Tek ilgili koşu: StudyAnalyticsTest + StudyTrackingFormTest + StudyPanelTest + PwaReleaseTest **65 test /484 doğrulama başarılı**. Yeni üç senaryo; günlerin sahiplik/hafta kapsamı ve toplamlarla eşitliği, boş matriste yedi gün/olmayan hedef yüzdesi, üst toplam ve sayfalamadan bağımsız manuel toplamdır. Mevcut testler yetki, tarih, otomatik sayım ve ortak panel regresyonlarını kapsar; genel suite tekrar edilmedi.
+- Değişen7PHP dosyası Pint kontrolünde test dosyasındaki mevcut virgül boşlukları bildirildi; yalnız o dosyaya Pint uygulandı. Diğer6dosya kontrolü geçti; formatter sonrası test mantığı değişmedi. TR/NL/FR/EN kaynaklarında146anahtar aynı, boş ve yinelenen anahtar yok; `git diff --check` temiz.
+- Browser plugin mevcut olmadığından kurulu Chrome/Playwright kullanıldı. Testing köprüsü geçici fixture/transaction/rollback, dış origin engeli ve fake servislerle çalıştı.1440TR/768NL ve390TR/NL/FR/EN: beşinci sekme, yedi günlük matris, gelecek günler, yerelleştirme, yüzdeler ve taşmasız görünüm başarılı.
+- Boş matris → hedef kaydı →24/25Ekim çalışma kaydı → matrisin bulunduğu sekmede otomatik yenilenmesi başarılı. Örnek hedef100/40sayfa/2saat; gerçekleşen120/30sayfa/2,5saat:120%/75%/125%, genel106,7% doğru.
+- İki tablonun üst toplamı/25→24 sırası, kaydı25→26 düzenleyince26→24 sırası, ardından26→24 düzenleyince günlük satırların birleşmesi ve haftalık toplamın korunması gerçek Livewire/Flatpickr akışında geçti. Manuel parçalar ayrı kaldı.
+- Son ayrı **ana yerel admin GET-only/rollback** kontrolünde mevcut miktarlar yalnız okundu; matris mobil390 ve masaüstü1440 görseli alındı. JS hatası/HTTP5xx yok; responsive akışlarda yatay taşma yok. Fiziksel Safari/telefon testi veya bütün proje kabulü iddiası değildir.
+- Kanıtlar: `/tmp/eduan-study-evaluation-desktop.png`, `/tmp/eduan-study-evaluation-390-{tr,nl,fr,en}.png`, `/tmp/eduan-study-evaluation-local-mobile.png`, `/tmp/eduan-study-evaluation-local-desktop.png`. Geçici test script'i `/tmp/eduan-study-evaluation.cjs`; ürünle yayınlanmaz.
+- Asset sürümü yerel `.env` APP_VERSION ve root worker birlikte **1.1.33**. Migration, kalıcı DB/ayar değişikliği, AI/ücretli API, mail/push veya deploy yapılmadı.
+
+### Dosyalar ve elle kontrol
+
+Değişenler: `app/Helpers/StudyAnalytics.php`; `resources/views/frontend/study/index.blade.php`; `resources/views/livewire/frontend/study/{study-form,study-report}.blade.php`; yeni `weekly-evaluation.blade.php`; `public/assets/app.css`, `public/pwa-sw.js`; dört `lang/*/study.php`; `tests/Feature/{StudyAnalyticsTest,StudyTrackingFormTest}.php`; bu rehber, AGENTS.md, README.md ve Codex/index.html. Yerel `.env` sürümü ignored'dır.
+
+Hesabım → Çalışma Takibim → Günlük çalışma toplamları / Çalışma kayıtları'nı aç: toplam ilk satırda ve son gün üstte olmalı. Bir manuel kaydı Düzenle ile seçili haftanın24/26gününe taşı: toplam sabitken gün satırları değişmeli. Öğretmen notları'nın sağındaki **Değerlendir** sekmesinde yeni gün/miktarı ve hedeflerle gerçekleşenleri birlikte incele; hedef veya çalışma kaydettiğinde sekmeyi değiştirmen gerekmeden matris yenilenir.

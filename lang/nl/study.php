@@ -140,4 +140,13 @@ return [
     'placeholder_pages' => 'Bijv. 30',
     'placeholder_hours' => 'Bijv. 1,5',
     'placeholder_date' => 'Kies de studiedatum',
+    'evaluate' => 'Evalueer',
+    'evaluation_title' => 'Mijn weekevaluatie',
+    'evaluation_help' => 'Je hele week in één grafiek. Donkerdere vakjes binnen elke kolom betekenen dat je die dag meer hebt gewerkt.',
+    'evaluation_sources' => 'Het aantal vragen omvat je handmatige invoer, toetsen en examens. Pagina’s en uren komen uit je ingevoerde studiewerk.',
+    'less_work' => 'Minder',
+    'more_work' => 'Meer',
+    'upcoming_day' => 'Nog niet aangebroken',
+    'completion' => 'Behaald',
+    'manual_entries' => 'Alleen handmatige invoer',
 ];

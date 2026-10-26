@@ -140,4 +140,13 @@ return [
     'placeholder_pages' => 'e.g. 30',
     'placeholder_hours' => 'e.g. 1.5',
     'placeholder_date' => 'Choose the study date',
+    'evaluate' => 'Evaluate',
+    'evaluation_title' => 'My weekly review',
+    'evaluation_help' => 'Your whole week in one chart. Darker cells within each column mean more work on that day.',
+    'evaluation_sources' => 'Question counts include your manual entries, tests and exams. Pages and hours come from the work you entered.',
+    'less_work' => 'Less',
+    'more_work' => 'More',
+    'upcoming_day' => 'Upcoming',
+    'completion' => 'Completed',
+    'manual_entries' => 'Manual entries only',
 ];

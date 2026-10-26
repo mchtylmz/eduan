@@ -92,6 +92,33 @@ class StudyAnalyticsTest extends TestCase
         $this->assertSame('low', StudyAnalytics::report($this->owner, '2026-10-10', null)['current']['state']);
     }
 
+    public function test_evaluation_days_are_scoped_to_owner_and_selected_week_and_match_weekly_amounts(): void
+    {
+        $this->target($this->owner, ['questions' => 100, 'pages' => 0, 'minutes' => 60]);
+        $this->work($this->owner, 40, 20, 60, '2026-10-13');
+        $this->work($this->owner, 70, 10, 30);
+        $this->work($this->owner, 999, 999, 999, '2026-10-09');
+        $this->work($this->student(), 777);
+        $report = StudyAnalytics::report($this->owner, '2026-10-10', $this->season);
+        $this->assertSame(['2026-10-13', '2026-10-14'], array_column($report['days'], 'activity_date'));
+        foreach (['questions', 'pages', 'minutes', 'fragments'] as $field) {
+            $this->assertSame($report['current']['actual'][$field], array_sum(array_column($report['days'], $field)));
+        }
+        Livewire::test(StudyReport::class, ['weekStart' => '2026-10-10'])
+            ->assertSee('study-evaluation-content', false)->assertSee('110%')->assertSee('150%')
+            ->assertDontSee('>INF<', false)->assertDontSee('>NAN<', false);
+    }
+
+    public function test_empty_evaluation_keeps_seven_days_and_does_not_invent_zero_target_rates(): void
+    {
+        $report = StudyAnalytics::report($this->owner, '2026-10-10', null);
+        $this->assertSame([], $report['days']);
+        $form = Livewire::test(StudyReport::class, ['weekStart' => '2026-10-10']);
+        $form->assertSee('data-activity-date="2026-10-10"', false)->assertSee('data-activity-date="2026-10-16"', false)
+            ->assertSee(__('study.no_target'))->assertDontSee('>INF<', false)->assertDontSee('>NAN<', false);
+        $this->assertSame(7, substr_count($form->html(), 'data-activity-date="'));
+    }
+
     public function test_comparison_excludes_passive_no_goal_and_staff_and_deduplicates_teacher_students(): void
     {
         $a = $this->student();
@@ -211,10 +238,10 @@ class StudyAnalyticsTest extends TestCase
         $this->work($this->owner, 10);
         DB::enableQueryLog();
         try {
-            $report = StudyAnalytics::report($this->owner,'2026-10-10',$this->season);
+            $report = StudyAnalytics::report($this->owner, '2026-10-10', $this->season);
             $queries = count(DB::getQueryLog());
-            $this->assertLessThan(15,$queries);
-            $this->assertSame(10,$report['current']['actual']['questions']);
+            $this->assertLessThan(15, $queries);
+            $this->assertSame(10, $report['current']['actual']['questions']);
         } finally {
             DB::disableQueryLog();
             DB::flushQueryLog();

@@ -140,4 +140,13 @@ return [
     'placeholder_pages' => 'Ex. 30',
     'placeholder_hours' => 'Ex. 1,5',
     'placeholder_date' => 'Choisis la date du travail',
+    'evaluate' => 'Évaluer',
+    'evaluation_title' => 'Mon bilan de la semaine',
+    'evaluation_help' => 'Toute ta semaine dans un seul graphique. Dans chaque colonne, les cases plus foncées indiquent davantage de travail ce jour-là.',
+    'evaluation_sources' => 'Le nombre de questions comprend tes saisies manuelles, tes tests et tes examens. Les pages et les heures proviennent du travail que tu as saisi.',
+    'less_work' => 'Moins',
+    'more_work' => 'Plus',
+    'upcoming_day' => 'À venir',
+    'completion' => 'Réalisation',
+    'manual_entries' => 'Saisies manuelles uniquement',
 ];

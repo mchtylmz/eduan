@@ -30,7 +30,7 @@
                 @endif
             </nav>
             <nav class="study-section-nav" aria-label="{{ __('study.sections') }}">
-                @foreach(['week' => ['week_overview', 'fa-chart-bar'], 'history' => ['my_history', 'fa-history'], 'analysis' => ['topic_analysis', 'fa-book-open'], 'notes' => ['notes', 'fa-comment']] as $section => [$label, $icon])
+                @foreach(['week' => ['week_overview', 'fa-chart-bar'], 'history' => ['my_history', 'fa-history'], 'analysis' => ['topic_analysis', 'fa-book-open'], 'notes' => ['notes', 'fa-comment'], 'evaluation' => ['evaluate', 'fa-th']] as $section => [$label, $icon])
                     <button type="button" @click="studySection = '{{ $section }}'" :class="{ 'is-active': studySection === '{{ $section }}' }" :aria-pressed="(studySection === '{{ $section }}').toString()" aria-controls="study-{{ $section }}-content"><i class="fa {{ $icon }}" aria-hidden="true"></i><span>{{ __('study.'.$label) }}</span></button>
                 @endforeach
             </nav>

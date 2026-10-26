@@ -51,7 +51,9 @@ class StudyAnalytics
         $topics = self::topics($user, $selected);
         $comparisons = self::comparisons($user, $selected, $current);
 
-        return ['current' => $current, 'trend' => array_map($assemble, $trendWeeks), 'history' => array_map($assemble, $yearWeeks),
+        $selectedDays = array_values(array_filter($daily, fn ($day) => $day['activity_date'] >= $current['start'] && $day['activity_date'] <= $current['end']));
+
+        return ['current' => $current, 'days' => $selectedDays, 'trend' => array_map($assemble, $trendWeeks), 'history' => array_map($assemble, $yearWeeks),
             'topics' => $topics, 'comparisons' => $comparisons];
     }
 

@@ -250,6 +250,22 @@ class StudyTrackingFormTest extends TestCase
             ->assertDontSee('study-entry-'.$entries[15]->id.'"', false);
     }
 
+    public function test_weekly_total_precedes_newest_days_and_entry_total_is_not_the_paginated_subtotal(): void
+    {
+        SaveStudyActivity::run($this->owner, '2026-10-13', ['questions' => 50], (string) Str::uuid());
+        for ($i = 0; $i < 16; $i++) {
+            SaveStudyActivity::run($this->owner, '2026-10-14', ['questions' => 10], (string) Str::uuid());
+        }
+        $form = $this->form();
+        $form->assertSeeInOrder(['id="study-daily_totals"', __('study.week_total'), '14', '13']);
+        foreach ([1, 2] as $page) {
+            $form->call('gotoPage', $page);
+            $html = $form->html();
+            preg_match('/id="study-entries".*?<tbody>(.*?)<\/tbody>/s', $html, $matches);
+            $this->assertMatchesRegularExpression('/study-table-total.*?>210<\/td>/s', $matches[1]);
+        }
+    }
+
     public static function lockedProperties(): array
     {
         return [['weekStart', '2026-10-03'], ['editingEntryId', 999], ['editingBefore', ['questions' => 1]],

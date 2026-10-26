@@ -140,4 +140,13 @@ return [
     'placeholder_pages' => 'Örn. 30',
     'placeholder_hours' => 'Örn. 1,5',
     'placeholder_date' => 'Çalışma tarihini seçin',
+    'evaluate' => 'Değerlendir',
+    'evaluation_title' => 'Haftalık değerlendirmem',
+    'evaluation_help' => 'Haftanın tamamı tek grafikte. Her sütunda daha koyu kutular, o gün daha fazla çalıştığını gösterir.',
+    'evaluation_sources' => 'Sitede ve site dışında çözdüğün sorular birlikte sayılır. Okunan sayfa ve çalışma saati eklediğin kayıtlardan gelir.',
+    'less_work' => 'Daha az',
+    'more_work' => 'Daha çok',
+    'upcoming_day' => 'Henüz gelmedi',
+    'completion' => 'Oran',
+    'manual_entries' => 'Yalnız manuel kayıtlar',
 ];

@@ -118,13 +118,16 @@
                 <table id="study-daily_totals" class="table align-middle">
                     <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.manual_questions') }}</th><th scope="col">{{ __('study.automatic_tests') }}</th><th scope="col">{{ __('study.automatic_exams') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.fragments') }}</th></tr></thead>
                     <tbody>
-                        @forelse($days as $day)
+                        @if(! $panel && $days->isNotEmpty())
+                            <tr class="study-table-total"><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('manual_questions') }}</td><td>{{ $days->sum('automatic_tests') }}</td><td>{{ $days->sum('automatic_exams') }}</td><td>{{ $days->sum('questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td>{{ $days->sum('fragments') }}</td></tr>
+                        @endif
+                        @forelse($panel ? $days : $days->sortByDesc('activity_date') as $day)
                             <tr><th scope="row">{{ $panel ? \App\Helpers\StudyCalendar::day($day['activity_date'])->format('d/m/Y') : \App\Helpers\StudyCalendar::label($day['activity_date'], 'j F Y') }}</th><td>{{ $day['manual_questions'] }}</td><td>{{ $day['automatic_tests'] }}</td><td>{{ $day['automatic_exams'] }}</td><td>{{ $day['questions'] }}</td><td>{{ $day['pages'] }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $day['minutes']) }}</td><td>{{ $day['fragments'] }}</td></tr>
                         @empty
                             <tr><td colspan="8" class="text-muted">{{ __('study.no_work') }}</td></tr>
                         @endforelse
                     </tbody>
-                    @if($days->isNotEmpty())
+                    @if($panel && $days->isNotEmpty())
                         <tfoot><tr><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('manual_questions') }}</td><td>{{ $days->sum('automatic_tests') }}</td><td>{{ $days->sum('automatic_exams') }}</td><td>{{ $days->sum('questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td>{{ $days->sum('fragments') }}</td></tr></tfoot>
                     @endif
                 </table>
@@ -145,6 +148,9 @@
                     <table id="study-entries" class="table align-middle">
                         <thead><tr><th scope="col">{{ __('study.date') }}</th><th scope="col">{{ __('study.questions') }}</th><th scope="col">{{ __('study.pages') }}</th><th scope="col">{{ __('study.hours') }}</th><th scope="col">{{ __('study.actions') }}</th></tr></thead>
                         <tbody>
+                            @if(! $panel && $days->isNotEmpty())
+                                <tr class="study-table-total"><th scope="row">{{ __('study.week_total') }}</th><td>{{ $days->sum('manual_questions') }}</td><td>{{ $days->sum('pages') }}</td><td>{{ \App\Helpers\StudyInput::hours((int) $days->sum('minutes')) }}</td><td><span class="small text-muted">{{ __('study.manual_entries') }}</span></td></tr>
+                            @endif
                             @forelse($entries as $entry)
                                 <tr wire:key="study-entry-{{ $entry->id }}"><th scope="row">{{ $panel ? $entry->activity_date->format('d/m/Y') : \App\Helpers\StudyCalendar::label($entry->activity_date, 'j F Y') }}</th><td>{{ $entry->questions }}</td><td>{{ $entry->pages }}</td><td>{{ \App\Helpers\StudyInput::hours($entry->minutes) }}</td><td><button type="button" class="btn btn-sm btn-outline-secondary" wire:click="editActivity({{ $entry->id }})" wire:loading.attr="disabled" @disabled($activityDenial || $entry->activity_date->toDateString() < $minimumDate)><i class="fa fa-pen" aria-hidden="true"></i> {{ __('study.edit') }}</button></td></tr>
                             @empty
