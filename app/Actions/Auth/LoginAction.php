@@ -20,22 +20,23 @@ class LoginAction
         $credentials = [
             'username' => $username,
             'password' => $password,
-            'status' => StatusEnum::ACTIVE
+            'status' => StatusEnum::ACTIVE,
         ];
 
-        if (!Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($credentials, $remember)) {
             return false;
         }
 
         $this->updateAtLastLogin();
 
         $this->customLog(
-            table: (new User())->getTable(),
+            table: (new User)->getTable(),
             logType: 'login',
             data: user()->toArray()
         );
 
         request()->session()->regenerate(true);
+        request()->session()->put('password_hash_'.Auth::getDefaultDriver(), Auth::guard()->hashPasswordForCookie(auth()->user()->getAuthPassword()));
         RateLimiter::clear($rateLimitKey);
 
         return true;

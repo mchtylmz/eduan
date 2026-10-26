@@ -3,14 +3,20 @@
 namespace App\Livewire;
 
 use App\Actions\Users\AuthorizeUserMail;
+use App\Traits\AuthorizesPanelOverlay;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Modal extends Component
 {
+    use AuthorizesPanelOverlay;
+
+    #[Locked]
     public string|array $component;
 
     public string $title;
 
+    #[Locked]
     public array $data;
 
     public bool $show = false;
@@ -32,6 +38,7 @@ class Modal extends Component
 
     public function showModal(string|array $component, array $data = []): void
     {
+        $this->authorizeOverlay($component, 'modal');
         $this->component = $component;
 
         $this->data = $data;
@@ -57,6 +64,10 @@ class Modal extends Component
 
     public function render()
     {
+        if ($this->show) {
+            $this->authorizeOverlay($this->component, 'modal');
+        }
+
         return view('livewire.modal');
     }
 }

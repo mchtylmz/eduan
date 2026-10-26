@@ -5,14 +5,20 @@ namespace App\Livewire;
 use App\Helpers\LearningTable;
 use App\Models\Exam;
 use App\Models\League;
+use App\Traits\AuthorizesPanelOverlay;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Offcanvas extends Component
 {
+    use AuthorizesPanelOverlay;
+
+    #[Locked]
     public string|array $component;
 
     public string $title;
 
+    #[Locked]
     public array $data;
 
     public bool $show = false;
@@ -27,6 +33,7 @@ class Offcanvas extends Component
 
     public function showOffcanvas(string|array $component, array $data = []): void
     {
+        $this->authorizeOverlay($component, 'offcanvas');
         $this->component = $component;
 
         $this->data = $data;
@@ -72,6 +79,10 @@ class Offcanvas extends Component
 
     public function render()
     {
+        if ($this->show) {
+            $this->authorizeOverlay($this->component, 'offcanvas');
+        }
+
         return view('livewire.offcanvas');
     }
 }

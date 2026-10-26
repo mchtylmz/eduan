@@ -2,14 +2,14 @@
 
 namespace App\Exports;
 
-use App\Models\ExamResult;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class FilterStatsQuestionsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping
+class FilterStatsQuestionsExport extends TextValueBinder implements FromCollection, ShouldAutoSize, WithCustomValueBinder, WithHeadings, WithMapping
 {
     public Collection $collection;
 
@@ -33,7 +33,7 @@ class FilterStatsQuestionsExport implements FromCollection, ShouldAutoSize, With
             __('Doğru Yanıt'),
             __('Yanlış Yanıt'),
             __('Başarı Yüzdesi'),
-            __('Son Güncelleme')
+            __('Son Güncelleme'),
         ];
     }
 

@@ -2,26 +2,35 @@
 
 namespace App\Livewire\Faqs;
 
+use App\Actions\Auth\AuthorizePanelForm;
 use App\Actions\Faqs\CreateOrUpdateFaqAction;
 use App\Enums\StatusEnum;
 use App\Models\Faq;
 use Illuminate\Validation\Rules\Enum;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class FaqForm extends Component
 {
+    #[Locked]
     public Faq $faq;
 
     public string $locale;
+
     public string $title = '';
+
     public string $content = '';
+
     public int $sort = 1;
+
     public StatusEnum $status = StatusEnum::ACTIVE;
 
+    #[Locked]
     public string $permission = 'pages:add';
 
     public function mount(int $faqId = 0): void
     {
+        AuthorizePanelForm::run('pages', $faqId ? 'update' : 'add');
         $this->locale = settings()->examlanguageCode ?? app()->getLocale();
 
         if ($faqId && $this->faq = Faq::find($faqId)) {
@@ -43,8 +52,8 @@ class FaqForm extends Component
             'title' => 'required|string|min:1',
             'status' => [
                 'required',
-                new Enum(StatusEnum::class)
-            ]
+                new Enum(StatusEnum::class),
+            ],
         ];
     }
 
@@ -60,6 +69,7 @@ class FaqForm extends Component
 
     public function save()
     {
+        $this->authorizeForm();
         $this->validate();
 
         CreateOrUpdateFaqAction::run(
@@ -70,17 +80,24 @@ class FaqForm extends Component
                 'title' => $this->title,
                 'content' => htmlentities($this->content),
             ],
-            faq: !empty($this->faq) && $this->faq->exists ? $this->faq : null
+            faq: ! empty($this->faq) && $this->faq->exists ? $this->faq : null
         );
 
         return redirect()->route('admin.pages.faqs.index')->with([
             'status' => 'success',
-            'message' => __('Sıkça sorulan soru kayıt edildi!')
+            'message' => __('Sıkça sorulan soru kayıt edildi!'),
         ]);
     }
 
     public function render()
     {
+        $this->authorizeForm();
+
         return view('livewire.backend.faqs.faq-form');
+    }
+
+    private function authorizeForm(): void
+    {
+        AuthorizePanelForm::run('pages', isset($this->faq) && $this->faq->exists ? 'update' : 'add');
     }
 }

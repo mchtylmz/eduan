@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Ai;
 
+use App\Actions\Auth\AuthorizePanelForm;
 use App\Enums\YesNoEnum;
 use App\Models\AnswerAI;
 use Illuminate\Validation\Rules\Enum;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AnswerAiForm extends Component
 {
+    #[Locked]
     public AnswerAI $answerAI;
 
     public string $content = '';
@@ -17,6 +20,7 @@ class AnswerAiForm extends Component
 
     public YesNoEnum $report = YesNoEnum::NO;
 
+    #[Locked]
     public string $permission = 'ai:update';
 
     public function mount(AnswerAI $answerAI): void
@@ -28,6 +32,7 @@ class AnswerAiForm extends Component
 
     public function initializeForm(): void
     {
+        AuthorizePanelForm::run('ai', 'update');
         $this->locale = $this->answerAI->locale;
         $this->report = $this->answerAI->report;
 
@@ -76,6 +81,7 @@ class AnswerAiForm extends Component
 
     public function save()
     {
+        AuthorizePanelForm::run('ai', 'update');
         $this->validate();
 
         $explodeContent = explode(__('Final Answer:'), $this->content);
@@ -101,6 +107,8 @@ class AnswerAiForm extends Component
 
     public function render()
     {
+        AuthorizePanelForm::run('ai', 'update');
+
         return view('livewire.backend.ai.answer-ai-form');
     }
 }

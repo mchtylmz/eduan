@@ -2,27 +2,31 @@
 
 namespace App\Livewire\Contacts;
 
+use App\Actions\Auth\AuthorizePanelForm;
 use App\Enums\YesNoEnum;
-use App\Jobs\PrepareNewsletterMails;
 use App\Mail\ContactReplyMail;
-use App\Mail\NewsletterMail;
 use App\Models\Contact;
 use App\Traits\CustomLivewireAlert;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ContactReplyForm extends Component
 {
     use CustomLivewireAlert;
 
+    #[Locked]
     public Contact $contact;
 
     public string $email;
+
     public string $subject;
+
     public string $content;
 
     public function mount(Contact $contact): void
     {
+        AuthorizePanelForm::run('contacts', 'view');
         $this->contact = $contact;
         $this->email = $contact->email ?? '';
 
@@ -49,10 +53,12 @@ class ContactReplyForm extends Component
 
     public function send()
     {
+        AuthorizePanelForm::run('contacts', 'view');
         $this->validate();
 
-        if (!settings()->mailHost || !settings()->mailUsername || !settings()->mailPassword) {
+        if (! settings()->mailHost || ! settings()->mailUsername || ! settings()->mailPassword) {
             $this->message(__('Mail gönderim ayarları yapılmamış, mail gönderimi yapılamaz!!'))->error();
+
             return false;
         }
 
@@ -67,17 +73,19 @@ class ContactReplyForm extends Component
         );
 
         $this->contact->update([
-            'reply' => htmlentities($this->subject . '<br>' . $this->content)
+            'reply' => htmlentities($this->subject.'<br>'.$this->content),
         ]);
 
         return redirect()->route('admin.contacts.detail', $this->contact->id)->with([
             'status' => 'success',
-            'message' => __('Yanıt gönderildi!')
+            'message' => __('Yanıt gönderildi!'),
         ]);
     }
 
     public function render()
     {
+        AuthorizePanelForm::run('contacts', 'view');
+
         return view('livewire.backend.contacts.contact-reply-form');
     }
 }
