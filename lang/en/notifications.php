@@ -107,4 +107,11 @@ return [
     'last_connected' => 'Last connected:',
     'devices_refresh_error' => 'The device list could not be refreshed. Try again with Check status.',
     'page_sections' => 'Notification sections',
+    'start_title' => 'Turn on notifications and stay up to date.',
+    'active_title' => 'Your notifications are on.',
+    'step_consent' => 'Choose notifications on this device',
+    'step_permission' => 'Turn on notifications and allow access',
+    'permission_step_help' => 'When ready, continue with the same button. If your browser asks for permission, choose Allow.',
+    'privacy_short' => 'Optional. No advertising. You can turn notifications off at any time.',
+    'permission_help' => 'No permission window appearing?',
 ];

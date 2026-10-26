@@ -107,4 +107,11 @@ return [
     'last_connected' => 'Dernière connexion :',
     'devices_refresh_error' => 'La liste des appareils n’a pas pu être actualisée. Réessaie avec Vérifier le statut.',
     'page_sections' => 'Sections des notifications',
+    'start_title' => 'Active tes notifications et reste au courant.',
+    'active_title' => 'Tes notifications sont activées.',
+    'step_consent' => 'Choisis les notifications sur cet appareil',
+    'step_permission' => 'Active les notifications et autorise-les',
+    'permission_step_help' => 'Quand tout est prêt, continue avec le même bouton. Si ton navigateur demande une autorisation, choisis Autoriser.',
+    'privacy_short' => 'C’est facultatif. Pas de publicité. Tu peux les désactiver à tout moment.',
+    'permission_help' => 'La fenêtre d’autorisation ne s’ouvre pas ?',
 ];

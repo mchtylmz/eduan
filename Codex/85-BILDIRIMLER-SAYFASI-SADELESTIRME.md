@@ -1,6 +1,6 @@
 # 85 — Bildirimler sayfasını sadeleştirme
 
-## İstenen ve uygulanan düzen
+## İlk revizyon — 1.1.38
 
 26 Ekim 2026. Kullanıcı, uzun izin alanının tekrar tekrar gösterilmesini, karmaşık anlatımı ve ön yüz standartlarıyla uyuşmayan görünümü düzeltmemizi istedi.
 
@@ -50,3 +50,31 @@ Giriş yaptıktan sonra `/account/notifications` adresini açın. Ayarlar kapal�
 ## Sınırlar
 
 Ana yerel DB’ye kalıcı veri/ayar yazılmadı; migration, gerçek SMTP/push/API çağrısı veya canlı aktarım yapılmadı. Safari/telefon üzerinde gerçek işletim sistemi teslim testi bu değişikliğin kanıtı değildir. Önceden kullanıcı kabulüyle kapanmış gerçek push testi yeniden açılmadı. Başlangıçtaki `.DS_Store`, `Codex/Doge.html` silinmesi, `Codex/docs.html` ve yüklenmiş worker klasörü kapsam dışı bırakılır.
+
+
+## İkinci revizyon — belirgin açma çağrısı / 1.1.39
+
+Kullanıcının yeni ekran görüntüsünde açma işlemi ayarlar başlığı içinde kayboluyordu. Bu revizyonda kapalı bildirimler ve açık bildirimler için iki belirgin sunum vardır:
+
+- Kapalıyken büyük **Bildirimlerini aç, haberdar kal** başlığı, kısa fayda listesi ve sağda **Bildirimleri aç** işlem alanı görünür.
+- İşlem alanı varsayılan açık; **1. Bu cihazda bildirim almayı seç**, **2. Bildirimleri aç ve izin ver** adımlarıyla açık onay ve tarayıcı izni ayrılır.
+- Ana düğme işlem alanının tamamını kaplar; numara ve ikonlarla ikincil bağlantılardan ayrılır. Dört dilde kontrol edilen ilk ekran içinde görünür.
+- İzin penceresi sorunları ve ayrıntılı açıklama ikinci düzeydedir. İsteğe bağlılık/reklam gönderilmemesi/kapatabilme kısa metinle düğmenin yanında kalır.
+- Masaüstünde fayda/açıklama solda, izin adımları sağdadır. Tablet ve mobilde başlık, işlem alanı, ardından fayda listesi gelir.
+- İzin sunucudan doğrulanınca **Bildirimlerin açık** başlığına geçilir; başlangıç faydaları ve onay formu gizlenir, ayarlar kapanır. Tekrar ziyaret/yenileme bunu korur.
+- İzin engelli veya hizmet hatalıysa işlem alanı geri açılır; önceki açık onay, iki tıklamalı hazırlama/izin akışı, iOS rehberi ve cihaz yönetimi kuralları korunur.
+- Sayfalar içeriği, controller/Action, veri şeması ve gerçek bildirim ayarları değiştirilmedi.
+
+### Değişen dosyalar ve doğrulama
+
+Bu revizyonda `resources/views/frontend/notifications/index.blade.php`, `resources/views/frontend/layouts/section/notification-script.blade.php`, `public/assets/app.css`, `public/assets/web-push.js`, dört `lang/*/notifications.php`, iki ilgili test ve `public/pwa-sw.js` değişti. `.env` yalnız yerel APP_VERSION=1.1.39; root worker aynı sürümde. Bu belge, README, AGENTS ve rehber index kaydı güncellendi.
+
+- İlgili `WebNotificationsTest` + `PwaReleaseTest`: **25 test / 236 doğrulama**, tek temiz koşu başarılı.
+- `node --test tests/Frontend/WebPushTest.cjs`: **14 test başarılı**; açık/kapalı/hata durumlarında yeni başlık/işlem/fayda görünürlüğü dahil.
+- Değişen beş PHP dosyasında Pint ve JS syntax başarılı. Dört dilde **111 eş kaynak anahtarı**; yinelenen anahtar yok. `git diff --check` temiz.
+- Browser plugin not available; kurulu Playwright/Chrome ve önceki ayrı testing HTTP-kernel köprüsü kullanıldı. Dış transaction rollback; SDK ve servis HTTP yanıtları sahte, gerçek gönderim yok.
+- TR1440/NL768/TR-FR-EN390: ana düğmenin ilk ekranda görünmesi, iki adım, onaysız SDK yüklenmemesi, hazırlama sonrası ayrı izin tıklaması, cihaz eklenmesi, açık görünüme geçiş ve yenilemeyle açık kalma doğrulandı.
+- Ek olarak engelli izin/isteğe bağlı sorun açıklaması, context hata halinde tekrar işlem yapabilme ve iOS tarayıcı rehberi kontrol edildi. Sayfa JS istisnası0, beklenmeyen5xx0, kontrol edilen genişliklerde taşma0.
+- Geçici kanıt: `/tmp/eduan-notifications-v2-browser-results.json`; masaüstü `/tmp/eduan-notifications-v2-1440-tr-off.png`, mobil `/tmp/eduan-notifications-v2-390-tr-off.png`; `-on.png` dosyaları izin sonrası görünümü gösterir.
+
+Ana yerel DB/migration/gerçek API-push/SMTP/canlı aktarım yok. Fiziksel Safari/telefon izin veya teslim kabulü yapılmadı. Önceki konsol ağ/PWA test kısıtları geçerlidir; ortak PWA/asset akışı değişmedi.

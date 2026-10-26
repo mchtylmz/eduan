@@ -107,4 +107,11 @@ return [
     'last_connected' => 'Son bağlantı:',
     'devices_refresh_error' => 'Cihaz listesi yenilenemedi. Durumu kontrol et düğmesiyle tekrar deneyebilirsin.',
     'page_sections' => 'Bildirim bölümleri',
+    'start_title' => 'Bildirimlerini aç, haberdar kal.',
+    'active_title' => 'Bildirimlerin açık.',
+    'step_consent' => 'Bu cihazda bildirim almayı seç',
+    'step_permission' => 'Bildirimleri aç ve izin ver',
+    'permission_step_help' => 'Hazır olduğunda aynı düğmeyle devam et. Tarayıcı izin sorarsa İzin ver’i seç.',
+    'privacy_short' => 'İsteğe bağlıdır. Reklam gönderilmez. İstediğin zaman kapatabilirsin.',
+    'permission_help' => 'İzin penceresi açılmıyor mu?',
 ];

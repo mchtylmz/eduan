@@ -16,6 +16,10 @@
     const setup = page?.querySelector('[data-push-setup]');
     const onboarding = page?.querySelector('[data-push-onboarding]');
     const activeHelp = page?.querySelector('[data-push-active-help]');
+    const layout = page?.querySelector('[data-push-layout]');
+    const title = page?.querySelector('[data-push-title]');
+    const setupTitle = page?.querySelector('[data-push-setup-title]');
+    const benefits = page?.querySelector('[data-push-benefits]');
     const buttonLabel = page?.querySelector('[data-push-enable-label]') || button;
     const key = 'eduan-web-push-consent:' + data.accountKey;
     let sdk, loading, currentRecord, saving = false, explicitConsent = false, registered = false;
@@ -23,6 +27,10 @@
         if(status)status.textContent = data.messages[name] || data.messages.service_error;
         const states={allowed:['active','enabled_state'],denied:['inactive','disabled_state'],loading:['loading','loading_state'],prepare:['pending','ready_state'],service_error:['error','unavailable_state'],unsupported:['unavailable','unavailable_state']};
         if(badge && states[name]){badge.dataset.state=states[name][0];badge.textContent=data.messages[states[name][1]];}
+        if(states[name] && layout)layout.dataset.state=name==='loading'&&explicitConsent?'pending':states[name][0];
+        if(title)title.textContent=data.messages[name==='allowed'?'active_title':(name==='loading'&&!explicitConsent?'device_title':'start_title')];
+        if(setupTitle)setupTitle.textContent=data.messages[name==='allowed'?'manage_settings':'enable'];
+        if(benefits)benefits.hidden=name==='allowed'||(name==='loading'&&!explicitConsent);
         if(name === 'allowed') {
             if(onboarding)onboarding.hidden=true;
             if(activeHelp)activeHelp.hidden=false;

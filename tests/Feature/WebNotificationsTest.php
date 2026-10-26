@@ -216,7 +216,10 @@ class WebNotificationsTest extends TestCase
                 ->assertSee('<details class="notifications-settings" data-push-setup>', false)
                 ->assertSee('data-push-onboarding', false)->assertSee('data-push-active-help hidden', false)
                 ->assertSee('data-push-consent', false)->assertSee('data-push-check', false)
-                ->assertSee(__('notifications.manage_settings', [], $locale))
+                ->assertSee(__('notifications.start_title', [], $locale))
+                ->assertSee(__('notifications.step_consent', [], $locale))
+                ->assertSee(__('notifications.step_permission', [], $locale))
+                ->assertSee('notifications-enable-steps', false)
                 ->assertSee(__('study.back_account', [], $locale))
                 ->assertSee('data-push-device="'.$own->subscription_id.'"', false)
                 ->assertDontSee($foreign->subscription_id);

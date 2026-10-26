@@ -107,4 +107,11 @@ return [
     'last_connected' => 'Laatst verbonden:',
     'devices_refresh_error' => 'De apparatenlijst kon niet worden vernieuwd. Probeer het opnieuw met Status controleren.',
     'page_sections' => 'Onderdelen van je meldingen',
+    'start_title' => 'Zet meldingen aan en blijf op de hoogte.',
+    'active_title' => 'Je meldingen staan aan.',
+    'step_consent' => 'Kies voor meldingen op dit apparaat',
+    'step_permission' => 'Zet meldingen aan en geef toestemming',
+    'permission_step_help' => 'Ga verder met dezelfde knop zodra alles klaarstaat. Vraagt je browser om toestemming? Kies Toestaan.',
+    'privacy_short' => 'Vrijwillig. Geen reclame. Je kunt meldingen op elk moment uitzetten.',
+    'permission_help' => 'Verschijnt er geen toestemmingsvenster?',
 ];
