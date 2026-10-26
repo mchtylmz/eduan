@@ -213,3 +213,27 @@ Browser plugin olmadığından kurulu Chrome/Playwright/testing transaction/roll
 Görseller: `/tmp/eduan-study-review-1440-tr.png`, `/tmp/eduan-study-review-390-{tr,nl,fr,en}.png`, `/tmp/eduan-study-review-mobile-matrix.png`, `/tmp/eduan-study-review-local-{desktop,mobile}.png`. Mobil ekran görüntüsündeki mevcut sabit bildirim/WhatsApp düğmeleri ve sticky kısayollar bu geliştirmede değiştirilmedi. Fiziksel Safari/telefon testi değildir.
 
 **Dosyalar:** `resources/views/livewire/frontend/study/weekly-evaluation.blade.php`, `public/assets/app.css`, `public/pwa-sw.js`, `lang/{tr,nl,fr,en}/study.php`, `tests/Feature/StudyAnalyticsTest.php`; bu rehber, AGENTS.md, README.md ve Codex/index.html. APP_VERSION/root worker birlikte **1.1.34**; yerel `.env` ignored. Migration/kalıcıDB/API/AI/mail/push/deploy yok. Elle kontrol: Hesabım → Çalışma Takibim → Değerlendirmem; masaüstünde grafik ile listeyi yan yana, telefonda grafik önce görmelisiniz.
+
+## 9. GET ile sekme bağlantıları —26 Ekim 2026
+
+Kullanıcı isteğiyle sekmeler artık yerel Alpine değişkenini değiştiren düğmeler değildir; her biri **gerçek `<a href>` /HTTP GET** bağlantısıdır. Sekme geçişine `wire:navigate`, AJAX veya geçmişi elle değiştiren JS eklenmedi. `tab` verilmezse haftalık özet açılır; dolu `tab` sunucuda beş izinli değerle doğrulanır. Boş, dizi veya bilinmeyen değer mevcut Laravel doğrulamasına girer. Oturum, çalışma erişimi, kişisel sahiplik ve private/no-store/noindex sözleşmeleri korunur.
+
+| Bölüm | Doğrudan bağlantı |
+| --- | --- |
+| Haftalık özet | `/account/study?tab=week` |
+| Geçmişim | `/account/study?tab=history` |
+| Konu analizi | `/account/study?tab=analysis` |
+| Öğretmen notları | `/account/study?tab=notes` |
+| Değerlendirmem | `/account/study?tab=evaluation` |
+
+Belirli haftaya doğrudan örnek: `/account/study?week=2026-10-17&tab=evaluation`. İstenirse `lang` ve `season` URL parametreleri de eklenebilir. Sekme bağlantıları URL'deki hafta/dönem/dili; önceki/sonraki/bu hafta bağlantıları seçili sekmeyi ve URL bağlamını korur. Bu haftaya dönüşte yalnız açık `week` kaldırılır. Sekme değiştirirken alt liste sayfa numaraları taşınmaz. Seçili sekme server HTML'de tek `aria-current="page"` ve aktif sınıfla gösterilir; alt içerik için mevcut Alpine görünüm değişkeni sunucuda doğrulanan GET değerinden başlatılır. Hafta özeti/ayrıntılara `x-cloak` eklenerek başka sekmeye doğrudan açılışta kısa yanlış bölüm parlaması önlenir. Menü CSS'i düğmeden linke uyarlandı; görünüm/hover/klavye odağı aynı kaldı.
+
+### Dar test ve dosyalar
+
+- **StudyTrackingFormTest + PwaReleaseTest:28 test /441 doğrulama başarılı.** Yeni iki test; varsayılan ve beş GET sekmesi, tek aktif link, href parametreleri/hafta geçişleri ile geçersiz tab türleridir. Mevcut testler giriş/erişim ve form kurallarını da doğrular. Controller Pint başarılı; test dosyasındaki yeni DOM/Season sınıfları Pint import düzenine alındı. `git diff --check` temiz.
+- Browser plugin olmadığı için kurulu Chrome/Playwright/testing transaction/rollback kullanıldı. Beş sekmeye tıklama, Değerlendirmem yenileme/kopyalanan URL, geri–ileri ve önceki/sonraki/bu hafta kontrolü başarılı. Tarayıcıda izlenen **37sayfa navigasyonunun tamamı GET**; form/sayfalama için mevcut Livewire POST akışı ayrı ve korunur.
+- Geçmişim2.sayfasında URL `tab=history` korunur; yenileme aynı sekmede/2.sayfada kalır. Değerlendirmem'den hedef kaydı sonrası da aynı GET-seçili bölüm görünür kalır.1440TR/768NL/390TR-NL-FR-EN: linkler, Enter, aktiflik/hover ve taşmasız görünüm başarılı. JS0/HTTP5xx0/yatay taşma0. Fiziksel Safari/cihaz testi değildir.
+- Kanıt: `/tmp/eduan-study-tabs-{1440-tr,768-nl,390-tr,390-nl,390-fr,390-en}.png`; geçici script `/tmp/eduan-study-tabs.cjs`. Testing verileri geri alındı; anaDB veya dış servise yazma yapılmadı. Genel suite/build/migration/AI/API/mail/push/deploy yok.
+- Değişen ürün dosyaları: `app/Http/Controllers/Frontend/AccountController.php`, `resources/views/frontend/study/index.blade.php`, `resources/views/livewire/frontend/study/{study-form,study-report}.blade.php`, `public/assets/app.css`, `public/pwa-sw.js`, `tests/Feature/StudyTrackingFormTest.php`. Bu rehber, AGENTS.md, README.md ve Codex/index.html güncellendi. Yerel APP_VERSION/root worker **1.1.35**; `.env` ignored.
+
+Elle kontrol: `/account/study?tab=evaluation` aç → yenile → Değerlendirmem seçili kalmalı; Geçmişim'e tıkla → adres `tab=history` olmalı; geri tuşu → Değerlendirmem'e dönmeli. Önceki hafta/bu hafta bağlantıları aynı sekmeyi korumalı.

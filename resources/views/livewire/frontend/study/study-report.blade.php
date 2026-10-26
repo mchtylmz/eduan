@@ -4,7 +4,7 @@
         @unless($panel)
             @include('livewire.frontend.study.weekly-evaluation')
         @endunless
-        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}" @unless($panel) id="study-week-content" x-show="studySection === 'week'" @endunless>
+        <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}" @unless($panel) id="study-week-content" x-show="studySection === 'week'" x-cloak @endunless>
             <header class="{{ $panel ? 'block-header block-header-default' : 'member-form-heading' }}"><div><h2 @class(['fs-5' => $panel])>{{ __($panel ? 'study.weekly_report_panel' : 'study.weekly_report') }}</h2><p>{{ __($panel ? 'study.rates_help' : 'study.week_summary_help') }}</p></div></header>
             <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                 <div class="row g-4">

@@ -24,12 +24,15 @@ class AccountController extends Controller
     {
         AuthorizeStudyAccess::run($request->user());
         $currentWeek = StudyCalendar::bounds(now())['start'];
-        $request->validate(['week' => 'sometimes|required|date_format:Y-m-d', 'season' => 'sometimes|required|integer|exists:seasons,id']);
+        $request->validate(['week' => 'sometimes|required|date_format:Y-m-d', 'season' => 'sometimes|required|integer|exists:seasons,id',
+            'tab' => 'sometimes|required|string|in:week,history,analysis,notes,evaluation']);
         $bounds = StudyCalendar::bounds($request->query('week', $currentWeek->toDateString()));
         abort_unless(! $bounds['start']->greaterThan($currentWeek), 422);
 
         return response()->view('frontend.study.index', [
             'title' => __('study.my_study'), 'bounds' => $bounds, 'currentWeek' => $currentWeek,
+            'studyTab' => $request->query('tab', 'week'),
+            'studyQuery' => $request->only(['week', 'season', 'lang']) + ['tab' => $request->query('tab', 'week')],
         ])->header('Cache-Control', 'private, no-store');
     }
 

@@ -9,6 +9,7 @@ use App\Enums\StatusEnum;
 use App\Helpers\StudyCalendar;
 use App\Livewire\Frontend\Study\StudyForm;
 use App\Models\Language;
+use App\Models\Season;
 use App\Models\StudyActivityEntry;
 use App\Models\StudyWeeklyTarget;
 use App\Models\User;
@@ -96,6 +97,42 @@ class StudyTrackingFormTest extends TestCase
                 ->assertViewHas('bounds', fn ($bounds) => $bounds['start']->toDateString() === '2026-10-03')
                 ->assertSee(route('frontend.study', ['week' => '2026-10-10']), false)
                 ->assertSee(__('study.current_week'));
+        }
+    }
+
+    public function test_study_tabs_are_get_links_with_one_current_tab_and_preserved_week_context(): void
+    {
+        $season = Season::create(['name' => 'Tab period', 'start_date' => '2026-01-01', 'end_date' => '2026-12-31', 'status' => StatusEnum::ACTIVE]);
+        $this->get(route('frontend.study'))->assertOk()->assertViewHas('studyTab', 'week');
+        foreach (['week', 'history', 'analysis', 'notes', 'evaluation'] as $tab) {
+            $query = ['week' => '2026-10-03', 'season' => $season->id, 'lang' => 'tr', 'tab' => $tab];
+            $response = $this->get(route('frontend.study', $query))->assertOk()->assertViewHas('studyTab', $tab);
+            $document = new \DOMDocument;
+            @$document->loadHTML($response->getContent());
+            $navigation = (new \DOMXPath($document))->query('//a[@data-study-tab]');
+            $this->assertCount(5, $navigation);
+            $current = [];
+            foreach ($navigation as $link) {
+                parse_str(parse_url($link->getAttribute('href'), PHP_URL_QUERY), $parameters);
+                $this->assertSame($link->getAttribute('data-study-tab'), $parameters['tab']);
+                $this->assertSame('2026-10-03', $parameters['week']);
+                $this->assertSame((string) $season->id, $parameters['season']);
+                $this->assertSame('tr', $parameters['lang']);
+                if ($link->getAttribute('aria-current') === 'page') {
+                    $current[] = $parameters['tab'];
+                }
+            }
+            $this->assertSame([$tab], $current);
+            $response->assertSee(route('frontend.study', ['week' => '2026-09-26'] + $query))
+                ->assertSee(route('frontend.study', ['week' => '2026-10-10'] + $query))
+                ->assertSee(route('frontend.study', ['season' => $season->id, 'lang' => 'tr', 'tab' => $tab]));
+        }
+    }
+
+    public function test_unknown_empty_and_array_tab_values_are_rejected(): void
+    {
+        foreach (['unknown', '', ['evaluation']] as $tab) {
+            $this->getJson(route('frontend.study', ['tab' => $tab]))->assertUnprocessable()->assertJsonValidationErrors('tab');
         }
     }
 

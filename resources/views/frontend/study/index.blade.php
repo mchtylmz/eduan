@@ -5,24 +5,24 @@
         $previousStart = $bounds['start']->subWeek();
         $nextStart = $bounds['end'];
     @endphp
-    <section class="study-page pt-30 pb-50" x-data="{ studySection: 'week' }">
+    <section class="study-page pt-30 pb-50" x-data="{ studySection: @js($studyTab) }">
         <div class="container">
             <header class="study-page-heading">
                 <div><h1 class="member-page-title mb-1">{{ __('study.my_study') }}</h1><p class="mb-0 text-muted">{{ __('study.student_intro') }}</p></div>
                 <a href="{{ route('frontend.profile') }}" class="study-outline-button"><i class="fa fa-arrow-left" aria-hidden="true"></i> {{ __('study.back_account') }}</a>
             </header>
             <nav class="study-week-picker" aria-label="{{ __('study.week') }}">
-                <a class="study-week-link study-week-previous study-outline-button" href="{{ route('frontend.study', ['week' => $previousStart->toDateString()]) }}">
+                <a class="study-week-link study-week-previous study-outline-button" href="{{ route('frontend.study', ['week' => $previousStart->toDateString()] + $studyQuery) }}">
                     <i class="fa fa-angle-left" aria-hidden="true"></i><span>{{ __('study.previous_week') }}<small>{{ \App\Helpers\StudyCalendar::label($previousStart, 'j F') }} — {{ \App\Helpers\StudyCalendar::label($previousStart->addDays(6), 'j F Y') }}</small></span>
                 </a>
                 <div class="study-selected-week">
                     <span class="study-week-label">{{ __($isCurrentWeek ? 'study.this_week' : 'study.selected_week') }}</span>
                     <h2>{{ \App\Helpers\StudyCalendar::label($bounds['start'], 'j F') }} — {{ \App\Helpers\StudyCalendar::label($bounds['end']->subDay(), 'j F Y') }}</h2>
                     <p>{{ __('study.week_simple') }}</p>
-                    @unless($isCurrentWeek)<a class="study-outline-button study-current-week" href="{{ route('frontend.study') }}"><i class="fa fa-calendar-check" aria-hidden="true"></i> {{ __('study.current_week') }}</a>@endunless
+                    @unless($isCurrentWeek)<a class="study-outline-button study-current-week" href="{{ route('frontend.study', \Illuminate\Support\Arr::except($studyQuery, ['week'])) }}"><i class="fa fa-calendar-check" aria-hidden="true"></i> {{ __('study.current_week') }}</a>@endunless
                 </div>
                 @if($nextStart->lessThanOrEqualTo($currentWeek))
-                    <a class="study-week-link study-week-next study-outline-button" href="{{ route('frontend.study', ['week' => $nextStart->toDateString()]) }}">
+                    <a class="study-week-link study-week-next study-outline-button" href="{{ route('frontend.study', ['week' => $nextStart->toDateString()] + $studyQuery) }}">
                         <span>{{ __($nextStart->equalTo($currentWeek) ? 'study.current_week' : 'study.next_week') }}<small>{{ \App\Helpers\StudyCalendar::label($nextStart, 'j F') }} — {{ \App\Helpers\StudyCalendar::label($nextStart->addDays(6), 'j F Y') }}</small></span><i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
                 @else
@@ -31,7 +31,7 @@
             </nav>
             <nav class="study-section-nav" aria-label="{{ __('study.sections') }}">
                 @foreach(['week' => ['week_overview', 'fa-chart-bar'], 'history' => ['my_history', 'fa-history'], 'analysis' => ['topic_analysis', 'fa-book-open'], 'notes' => ['notes', 'fa-comment'], 'evaluation' => ['evaluate', 'fa-th']] as $section => [$label, $icon])
-                    <button type="button" @click="studySection = '{{ $section }}'" :class="{ 'is-active': studySection === '{{ $section }}' }" :aria-pressed="(studySection === '{{ $section }}').toString()" aria-controls="study-{{ $section }}-content"><i class="fa {{ $icon }}" aria-hidden="true"></i><span>{{ __('study.'.$label) }}</span></button>
+                    <a href="{{ route('frontend.study', array_replace($studyQuery, ['tab' => $section])) }}" @class(['is-active' => $studyTab === $section]) @if($studyTab === $section) aria-current="page" @endif data-study-tab="{{ $section }}" aria-controls="study-{{ $section }}-content"><i class="fa {{ $icon }}" aria-hidden="true"></i><span>{{ __('study.'.$label) }}</span></a>
                 @endforeach
             </nav>
             <div class="study-quick-actions">

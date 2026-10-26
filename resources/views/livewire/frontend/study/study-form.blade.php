@@ -106,7 +106,7 @@
             </div>
         </div>
         @unless($panel)
-            <details class="study-details" x-show="studySection === 'week'" wire:ignore.self>
+            <details class="study-details" x-show="studySection === 'week'" x-cloak wire:ignore.self>
                 <summary><span><i class="fa fa-calendar" aria-hidden="true"></i> {{ __('study.daily_totals') }}</span> <i class="fa fa-angle-down" aria-hidden="true"></i></summary>
         @endunless
         <section class="{{ $panel ? 'block block-rounded border mb-4' : 'member-form-card mb-4' }}">
@@ -136,7 +136,7 @@
         </section>
         @unless($panel)</details>@endunless
         @unless($panel)
-            <details class="study-details" x-show="studySection === 'week'" wire:ignore.self>
+            <details class="study-details" x-show="studySection === 'week'" x-cloak wire:ignore.self>
                 <summary><span><i class="fa fa-list" aria-hidden="true"></i> {{ __('study.entries') }}</span> <i class="fa fa-angle-down" aria-hidden="true"></i></summary>
         @endunless
         <section class="{{ $panel ? 'block block-rounded border' : 'member-form-card' }}">
