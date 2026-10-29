@@ -173,4 +173,11 @@ return [
     'student_active' => 'Élèves actifs',
     'student_passive' => 'Élèves inactifs',
     'communicate_permission' => 'Envoyer des e-mails et notifications',
+    'target_locked' => 'Ton objectif de la semaine est enregistré. Demande à ton enseignant ou administrateur de le modifier.',
+    'target_once_help' => 'Tu peux enregistrer ton objectif hebdomadaire une seule fois. Ton enseignant ou administrateur peut ensuite le modifier.',
+    'choose_week' => 'Semaine de travail',
+    'choose_week_help' => 'Choisis un jour pour afficher sa semaine du samedi au vendredi.',
+    'quick_access' => 'Accès rapide',
+    'weekly_progress' => 'Progrès de la semaine',
+    'student_identity' => 'Informations de l’élève',
 ];

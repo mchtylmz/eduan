@@ -202,7 +202,7 @@ class StudyTrackingFormTest extends TestCase
         $form->set('activityQuestions', 50)->call('saveActivity')->assertHasNoErrors()->assertSee(__('study.activity_saved'));
         $form->set('activityQuestions', 20)->call('saveActivity')->assertHasNoErrors();
         $this->assertEquals(70, StudyActivityEntry::where('user_id', $this->owner->id)->sum('questions'));
-        $form->set('targetPages', '-1')->call('saveTarget')->assertHasErrors('targetPages');
+        $form->set('targetPages', '-1')->call('saveTarget')->assertHasErrors('study')->assertSee(__('study.target_locked'));
         $this->assertNull($target->fresh()->pages);
         $form->set('activityHours', [1])->call('saveActivity')->assertHasErrors('activityHours');
         $this->assertSame(2, StudyActivityEntry::where('user_id', $this->owner->id)->count());
@@ -261,6 +261,7 @@ class StudyTrackingFormTest extends TestCase
 
     public function test_stale_form_has_explicit_conflict_and_revocation_is_not_a_business_warning(): void
     {
+        $this->owner->givePermissionTo('user-type:admin');
         $target = SaveStudyTarget::run($this->owner, '2026-10-10', ['questions' => 100]);
         $form = $this->form();
         SaveStudyTarget::run($this->owner, '2026-10-10', ['questions' => 150], StudyWrite::snapshot($target));
@@ -324,5 +325,22 @@ class StudyTrackingFormTest extends TestCase
             $this->assertSame(array_keys($reference), array_keys($values));
             $this->assertNotContains('', $values);
         }
+    }
+
+    public function test_student_can_save_each_week_once_and_two_open_forms_cannot_bypass_the_lock(): void
+    {
+        $first = $this->form();
+        $stale = $this->form();
+        $first->set('targetQuestions', 150)->call('saveTarget')->assertHasNoErrors()
+            ->assertSee(__('study.target_locked'));
+        $stale->set('targetQuestions', 300)->call('saveTarget')->assertHasErrors('study');
+        $this->form()->set('targetQuestions', 400)->call('saveTarget')->assertHasErrors('study');
+        $target = StudyWeeklyTarget::where('user_id', $this->owner->id)->firstOrFail();
+        $this->assertSame(150, $target->questions);
+        $this->assertSame(1, $target->revisions()->count());
+        $this->travelTo(now()->addWeek());
+        Livewire::test(StudyForm::class, ['weekStart' => '2026-10-17'])
+            ->set('targetQuestions', 200)->call('saveTarget')->assertHasNoErrors();
+        $this->assertSame(2, StudyWeeklyTarget::where('user_id', $this->owner->id)->count());
     }
 }

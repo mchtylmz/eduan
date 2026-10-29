@@ -59,6 +59,7 @@ class StudyTrackingEntriesTest extends TestCase
 
     public function test_target_is_unique_per_week_and_changes_are_audited_with_no_op_reuse(): void
     {
+        $this->actor->givePermissionTo('user-type:admin');
         $target = SaveStudyTarget::run($this->actor, '2026-10-10', ['questions' => 150, 'hours' => '2.5']);
         $this->assertSame(150, $target->minutes);
         $this->assertNull($target->pages);
@@ -79,6 +80,8 @@ class StudyTrackingEntriesTest extends TestCase
     {
         $target = SaveStudyTarget::run($this->actor, '2026-10-10', []);
         $this->assertNull($target->questions);
+        $this->denied(fn () => SaveStudyTarget::run($this->actor, '2026-10-10', ['questions' => 0], StudyWrite::snapshot($target)), 403);
+        $this->actor->givePermissionTo('user-type:admin');
         $target = SaveStudyTarget::run($this->actor, '2026-10-10', ['questions' => 0], StudyWrite::snapshot($target));
         $this->assertSame(0, $target->questions);
         $this->assertNull($target->pages);
@@ -86,6 +89,7 @@ class StudyTrackingEntriesTest extends TestCase
 
     public function test_stale_target_cannot_overwrite_another_change(): void
     {
+        $this->actor->givePermissionTo('user-type:admin');
         $target = SaveStudyTarget::run($this->actor, '2026-10-10', ['questions' => 100]);
         $old = StudyWrite::snapshot($target);
         SaveStudyTarget::run($this->actor, '2026-10-10', ['questions' => 150], $old);
@@ -212,6 +216,10 @@ class StudyTrackingEntriesTest extends TestCase
         $other = User::factory()->create();
         $this->actor->givePermissionTo(['user-type:teacher', 'dashboard:access', 'users:view', 'study:view', 'study:update']);
         $this->actor->students()->attach($student->id);
+        $target = SaveStudyTarget::run($student, '2026-10-10', ['questions' => 100]);
+        $target = SaveStudyTarget::run($student, '2026-10-10', ['questions' => 150], StudyWrite::snapshot($target));
+        $this->assertSame(150, $target->questions);
+        $this->assertSame(2, $target->revisions()->count());
         $entry = SaveStudyActivity::run($student, '2026-10-14', ['questions' => 5], (string) Str::uuid());
         $this->assertSame($this->actor->id, $entry->recorded_by_id);
         $this->assertSame($this->actor->id, $entry->revisions()->first()->actor_id);

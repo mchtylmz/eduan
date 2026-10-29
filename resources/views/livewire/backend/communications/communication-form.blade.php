@@ -1,4 +1,4 @@
-<div class="block block-rounded{{ ($studyCompose ?? false) ? ' study-communication' : '' }}" data-communication-form data-selected-recipients="{{ json_encode($recipients) }}">
+<div class="block block-rounded{{ ($studyCompose ?? false) ? ' study-communication' : '' }}" data-communication-form data-selected-recipients="{{ json_encode($recipients) }}" data-selection-error="{{ __('study.panel_action_error') }}">
     <div class="block-header block-header-default">
         <h1 class="block-title">{{ ($studyCompose ?? false) ? __('study.communicate_title') : __('notifications.communications') }}</h1>
         <div class="block-options">
@@ -43,7 +43,7 @@
                     <span data-selection-count data-template="{{ __('notifications.selected_count', ['count'=>':count']) }}">{{ __('notifications.selected_count', ['count'=>count($recipients)]) }}</span>
                     <button class="btn btn-alt-primary" type="button" wire:click="next" wire:loading.attr="disabled">{{ __('notifications.continue') }}<i class="fa fa-arrow-right ms-1" aria-hidden="true"></i></button>
                 </div>
-                <x-badge.error field="recipients" />
+                <x-badge.error field="recipients" /><div class="alert alert-warning d-none" role="alert" data-selection-error-box></div>
                 @if($studyCompose ?? false)
                     <div class="border rounded p-3">
                         <p>{{ __('study.communication_selection_help') }}</p>
@@ -56,8 +56,17 @@
                 @else
                 <div data-server-table-page="communication-recipients" data-table-url-state="false" @include('components.admin.table-messages', ['confirm' => ''])>
                     <p class="text-muted">{{ __('notifications.selection_help') }}</p>
+                    <x-admin.filter-bar>
+                        <x-admin.filter-select id="recipient-type" name="recipient_type" :label="__('notifications.recipient_type')" :options="['user' => __('notifications.type_user'), 'teacher' => __('notifications.type_teacher'), 'admin' => __('notifications.type_admin')]" />
+                        <x-admin.filter-select id="recipient-push" name="push_permission" :label="__('notifications.push_permission')" :options="['yes' => __('notifications.permission_yes'), 'no' => __('notifications.permission_no')]" />
+                    </x-admin.filter-bar>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button type="button" class="btn btn-alt-primary" data-select-filtered wire:loading.attr="disabled"><i class="fa fa-check-double me-1" aria-hidden="true"></i>{{ __('notifications.select_filtered') }}</button>
+                        <button type="button" class="btn btn-alt-secondary" data-clear-selection wire:loading.attr="disabled"><i class="fa fa-times me-1" aria-hidden="true"></i>{{ __('notifications.clear_selection') }}</button>
+                        <span class="small text-muted align-self-center">{{ __('notifications.active_selection_help') }}</span>
+                    </div>
                     <x-admin.server-table id="communication-recipients-table" :url="route('admin.communications.recipients')" sort-name="name" min-width="560px">
-                        <thead><tr><th data-field="selected" data-checkbox="true"></th><th data-field="name" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('İsim') }}</th><th data-field="surname" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('Soyisim') }}</th><th data-field="username" data-formatter="eduanTableTextFormatter">{{ __('Kullanıcı Adı') }}</th></tr></thead>
+                        <thead><tr><th data-field="selected" data-checkbox="true"></th><th data-field="name" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('İsim') }}</th><th data-field="surname" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('Soyisim') }}</th><th data-field="email" data-formatter="eduanTableTextFormatter">{{ __('E-posta Adresi') }}</th><th data-field="username" data-formatter="eduanTableTextFormatter">{{ __('Kullanıcı Adı') }}</th></tr></thead>
                     </x-admin.server-table>
                 </div>
                 @endif

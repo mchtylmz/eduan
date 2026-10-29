@@ -18,6 +18,7 @@
                     <form id="study-target-form" wire:submit="saveTarget" class="{{ $panel ? 'block-content pb-3' : 'study-editor-form' }}">
                         @unless($panel)
                             <p class="study-editor-intro">{{ __('study.target_simple') }}</p>
+                            @unless(auth()->user()->canany(['user-type:admin', 'user-type:teacher']))<p class="small text-muted">{{ __('study.target_once_help') }}</p>@endunless
                             @error('study')<div role="alert" class="alert alert-warning">{{ $message }}</div>@enderror
                         @endunless
                         @if(! $targetBefore || ! collect($targetBefore)->contains(fn ($value) => $value !== null && $value > 0))<p class="text-muted">{{ __('study.no_target') }}</p>@endif

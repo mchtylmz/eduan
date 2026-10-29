@@ -173,4 +173,11 @@ return [
     'student_active' => 'Active students',
     'student_passive' => 'Inactive students',
     'communicate_permission' => 'Send email and notifications',
+    'target_locked' => 'This week’s goal is saved. Ask your teacher or administrator to change it.',
+    'target_once_help' => 'You can save your weekly goal only once. Your teacher or administrator can change it afterwards.',
+    'choose_week' => 'Study week',
+    'choose_week_help' => 'Choose a day to see its Saturday–Friday week.',
+    'quick_access' => 'Quick access',
+    'weekly_progress' => 'This week’s progress',
+    'student_identity' => 'Student details',
 ];

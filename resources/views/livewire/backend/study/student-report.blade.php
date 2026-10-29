@@ -1,5 +1,20 @@
 <div>
     @if($report)
+        <section class="study-panel-summary row g-3 mb-4" aria-label="{{ __('study.weekly_progress') }}">
+            @foreach(['questions' => ['questions', 'fa-pen'], 'pages' => ['pages', 'fa-book-open'], 'minutes' => ['hours', 'fa-clock']] as $field => [$label, $icon])
+                @php
+                    $actual = $report['current']['actual'][$field];
+                    $goal = $report['current']['target'][$field] ?? null;
+                    $rate = $report['current']['rates'][$field];
+                @endphp
+                <div class="col-md-4"><div class="block block-rounded h-100 mb-0"><div class="block-content pb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h6 mb-0">{{ __('study.'.$label) }}</h2><i class="fa {{ $icon }} text-primary" aria-hidden="true"></i></div>
+                    <div class="study-panel-metric">{{ $field === 'minutes' ? \App\Helpers\StudyInput::hours($actual) : $actual }} <small class="text-muted">/ {{ $goal === null ? '—' : ($field === 'minutes' ? \App\Helpers\StudyInput::hours($goal) : $goal) }}</small></div>
+                    <div class="small text-muted mb-2">{{ __('study.actual') }} / {{ __('study.goal') }}</div>
+                    @if($rate !== null)<div class="progress mb-2" style="height:6px" role="progressbar" aria-label="{{ __('study.'.$label) }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ min(100, $rate) }}" aria-valuetext="{{ $rate }}%"><div class="progress-bar bg-primary" style="width:{{ min(100, $rate) }}%"></div></div><strong class="small text-primary">{{ $rate }}%</strong>@else<span class="small text-muted">{{ __('study.no_target') }}</span>@endif
+                </div></div></div>
+            @endforeach
+        </section>
         @if($activeTab === 'overview')
             @include('livewire.frontend.study.weekly-evaluation', ['evaluationTitle' => __('study.weekly_report_panel'), 'evaluationChartTitle' => __('study.goal_actual'), 'evaluationHelp' => __('study.panel_summary_help')])
         @elseif($activeTab === 'history')

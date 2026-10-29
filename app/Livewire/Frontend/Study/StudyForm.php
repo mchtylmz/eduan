@@ -134,6 +134,9 @@ class StudyForm extends Component
         if ($kind === 'activity' && $this->editingEntryId) {
             $this->clearEditor();
         }
+        if ($kind === 'target') {
+            $this->loadTarget();
+        }
         $this->resetErrorBag();
         $this->notice = '';
         $this->dispatch('study-editor-opened', kind: $kind);

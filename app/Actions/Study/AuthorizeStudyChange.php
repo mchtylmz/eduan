@@ -4,6 +4,7 @@ namespace App\Actions\Study;
 
 use App\Helpers\StudyCalendar;
 use App\Helpers\StudyTrackingSettings;
+use App\Models\StudyWeeklyTarget;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -30,6 +31,11 @@ class AuthorizeStudyChange
             // A midweek activation does not shorten the first target week.
             abort_if($week['end']->lessThanOrEqualTo(StudyCalendar::day(StudyTrackingSettings::startedOn())), 422, __('study.before_start'));
             abort_if($past && ! $admin, 403, __('study.closed_target'));
+            if (auth()->id() === $user->id && ! auth()->user()->canany(['user-type:admin', 'user-type:teacher'])) {
+                abort_if(StudyWeeklyTarget::query()->where('user_id', $user->id)
+                    ->whereHas('week', fn ($query) => $query->where('starts_on', $week['start']->toDateString()))->exists(),
+                    403, __('study.target_locked'));
+            }
         } else {
             abort_if($day->greaterThan($today), 422, __('study.future_date'));
             abort_if($day->lessThan(StudyCalendar::day(StudyTrackingSettings::startedOn())), 422, __('study.before_start'));

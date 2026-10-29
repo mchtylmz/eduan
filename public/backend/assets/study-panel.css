@@ -117,3 +117,13 @@
 /* Keep the student identity readable beside the wider goal heading. */
 #study-table th[data-field="name"],#study-table td:first-child {min-width:220px;}
 #study-table th[data-field="goal"] .th-inner {min-width:200px;max-width:270px;white-space:normal;}
+
+/* Compact identity, weekly totals and persistent actions use OneUI surfaces. */
+.study-panel-identity {display:flex;align-items:center;gap:16px;min-width:0;}
+.study-panel-avatar {display:grid;place-items:center;flex:0 0 56px;height:56px;border-radius:8px;background:var(--bs-body-bg);color:var(--bs-primary);font-size:24px;}
+.study-panel-summary .study-panel-metric {font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;}
+.study-panel-metric small {font-size:17px;font-weight:400;}
+.study-panel-week {background:var(--bs-body-bg);border-radius:6px;padding:20px;margin-bottom:16px;}
+.study-panel-tabs .btn {padding:14px 12px;}
+#study-week + input {font-size:13px;}
+@media(max-width:575.98px) {.study-panel-week {padding:14px;}.study-panel-actions > span {flex-basis:100%;}.study-panel-summary {--bs-gutter-y:10px;}.study-panel-summary .block-content {padding-top:14px;}.study-panel-metric {font-size:24px;}}

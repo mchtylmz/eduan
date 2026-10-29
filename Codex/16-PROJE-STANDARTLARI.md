@@ -488,3 +488,11 @@ Kanıt ve değişen dosyalar: [79](79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md).
 - **F29 — Ortak FR kaynakları.** Kayıtlı lig/hesap/panel fallback bulguları; FRaccount63/tables30/menus3,JSON84eksik ve ortak Bootstrapfr-FR ile giderildi. Mevcut dolu metin ve DBdil/çeviri/aktivasyon kararları korunur; bütün authored içeriğin FR olduğu iddia edilmez.
 - **T36 — Genel kabul.** İlkgenel815/816 tek503 fixture şemasıydı; iletişim HTTP localhost fixture'ı forceSchemehttp ile sabitlendi, origin reddi gevşetilmedi. Sontektemiz816/5130,31Node/16backup;574PHPsyntax ve16JSsyntax/Composer/Pint başarılı. Chrome54ziyaret22panel gerçeklogin/test/examreloadfinish/hesap/panel NL1440FR390, JS0/5xx0/overflow0; fake servis/testingrollback.
 - **Y01 — Yayın sınırı.** 25Ekim saltokunur sunucu PHP8.5.12/Imagick3.7.0/WebP/PNG başarılı; CLI varsayılanImagick0,-d gerekir. Yerel kod/test kabulü kontrollü yayına uygundur; production migration/izin/ayar/cronworker/assetcache/geri dönüş ve canlısmoke yayın sırasında yapılır. Bu tur canlı yazma/API yok;1.1.29 korunur. Ayrıntı81.
+
+## 41. Çalışma hedefi ve toplu alıcı seçimi —89
+
+- **F30 — Tek hedef kaydı.** Personel olmayan kullanıcı kendi haftalık hedefini yalnız ilk kez kaydeder. Kayıt varsa miktarları değiştiremez; aynı haftayı farklı günle veya eski formdan göndererek aşamaz. Yetkili öğretmen/yönetici panel düzenlemesi ve geçmiş hedefin mevcut yönetici sınırı korunur.
+- **P151 — Hafta gösterimi.** Panel filtre input'u ISO hafta başlangıcını taşır, kullanıcıya yerelleştirilmiş cumartesi–cuma aralığını gösterir. Ortak tablo yeniden yüklemesi bu biçimi bozmaz.
+- **P152 — Bütün filtre sonucunu seçme.** Alıcı listesi ve toplu seçim aynı SQL/izin/aktiflik/öğretmen kapsamını kullanır. En son uygulanmış filtre kullanılır; sayfa limiti toplu seçime uygulanmaz. Önceki seçim korunur/tekilleştirilir; 500 aşımında sessiz kırpma yapılmaz. Kilitli çalışma composer'ının kaynak seçimi genişletilemez.
+
+Kanıt, değişen dosyalar ve elle kontrol: [89](89-CALISMA-PANELI-HEDEF-KILIDI-VE-TOPLU-SECIM.md).

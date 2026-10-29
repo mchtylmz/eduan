@@ -126,6 +126,8 @@ class StudyController extends Controller
             'id' => $student->id, 'table' => 'study', 'name' => trim($student->name.' '.$student->surname),
             'email' => $student->email,
             'questions' => (int) $student->questions, 'pages' => (int) $student->pages, 'minutes' => StudyInput::hours((int) $student->minutes),
+            'goals' => [__('study.questions') => $student->target_questions, __('study.pages') => $student->target_pages, __('study.hours') => StudyInput::hours($student->target_minutes) ?: null],
+            'state_key' => $student->study_state,
             'goal' => implode(' / ', [$student->target_questions ?? '—', $student->target_pages ?? '—', StudyInput::hours($student->target_minutes) ?: '—']),
             'achievement' => $student->achievement === null ? '—' : $student->achievement.'%',
             'state' => __('study.state_'.$student->study_state), 'view_url' => route('admin.study.show', ['user' => $student->id, 'week' => $week]),

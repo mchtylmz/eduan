@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Enums\StatusEnum;
 use App\Livewire\Backend\Communications\CommunicationForm;
+use App\Livewire\Backend\Study\StudyCommunication;
 use App\Models\CommunicationBatch;
 use App\Models\CommunicationDelivery;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -132,5 +135,66 @@ class CommunicationWizardTest extends TestCase
         $component->set('title', '<script>unsafe</script>')->set('body', '<img src=x onerror=alert(1)>')->call('next')
             ->assertSet('step', 3)->assertSee('&lt;script&gt;', false)->assertDontSee('<script>unsafe</script>', false);
         $this->assertSame(0, CommunicationBatch::where('actor_id', $this->staff->id)->count());
+    }
+
+    public function test_select_filtered_includes_all_pages_preserves_selection_and_excludes_passive_and_foreign_users(): void
+    {
+        $users = User::factory()->count(100)->create(['surname' => 'Filtered cohort']);
+        $this->staff->students()->attach($users->modelKeys());
+        foreach ($users as $user) {
+            $user->givePermissionTo('user-type:user');
+        }
+        $passive = User::factory()->create(['surname' => 'Filtered cohort', 'status' => StatusEnum::PASSIVE]);
+        $this->staff->students()->attach($passive);
+        $this->outsider->update(['surname' => 'Filtered cohort']);
+        $filters = ['search' => 'Filtered cohort', 'recipient_type' => 'user', 'limit' => 15, 'offset' => 90];
+        $this->getJson(route('admin.communications.recipients', $filters))->assertOk()->assertJsonPath('total', 100)->assertJsonCount(10, 'rows');
+        $form = Livewire::test(CommunicationForm::class)->call('start')->set('recipients', [$this->student->id])
+            ->call('selectFilteredRecipients', $filters)->assertHasNoErrors();
+        $this->assertCount(101, $form->get('recipients'));
+        $this->assertNotContains($passive->id, $form->get('recipients'));
+        $this->assertNotContains($this->outsider->id, $form->get('recipients'));
+        $form->call('selectFilteredRecipients', $filters)->assertHasNoErrors()->call('next')->assertSet('step', 2);
+        $this->assertSame(0, CommunicationBatch::count());
+        Http::assertNothingSent();
+    }
+
+    public function test_recipient_filters_and_email_search_match_bulk_selection_and_validate_inputs(): void
+    {
+        $this->student->update(['email' => 'specific-filter@example.test']);
+        $this->fixtureSubscription($this->student);
+        foreach (['yes' => 1, 'no' => 0] as $permission => $count) {
+            $filters = ['search' => 'specific-filter@example.test', 'recipient_type' => 'user', 'push_permission' => $permission];
+            $this->getJson(route('admin.communications.recipients', $filters))->assertOk()->assertJsonPath('total', $count);
+            $form = Livewire::test(CommunicationForm::class)->call('start')->call('selectFilteredRecipients', $filters)->assertHasNoErrors();
+            $this->assertCount($count, $form->get('recipients'));
+        }
+        foreach ([['recipient_type' => 'owner'], ['push_permission' => 'unknown'], ['search' => ['bad']]] as $filters) {
+            $this->getJson(route('admin.communications.recipients', $filters))->assertUnprocessable();
+        }
+        $this->getJson(route('admin.communications.recipients', ['recipient_type' => 'teacher']))->assertJsonPath('total', 0);
+        $this->staff->givePermissionTo('user-type:admin');
+        $this->getJson(route('admin.communications.recipients', ['recipient_type' => 'teacher']))->assertJsonPath('total', 1);
+    }
+
+    public function test_bulk_selection_never_silently_truncates_over_500_or_changes_study_scope(): void
+    {
+        $users = User::factory()->count(501)->create(['surname' => 'Too many recipients']);
+        $this->staff->students()->attach($users->modelKeys());
+        Livewire::test(CommunicationForm::class)->call('start')->set('recipients', [$this->student->id])
+            ->call('selectFilteredRecipients', ['search' => 'Too many recipients'])
+            ->assertHasErrors('recipients')->assertSet('recipients', [$this->student->id]);
+        User::whereIn('id', array_slice($users->modelKeys(), 0, 500))->update(['surname' => 'Exactly 500 recipients']);
+        $exact = Livewire::test(CommunicationForm::class)->call('start')
+            ->call('selectFilteredRecipients', ['search' => 'Exactly 500 recipients'])->assertHasNoErrors();
+        $this->assertCount(500, $exact->get('recipients'));
+        $this->staff->givePermissionTo('study:communicate');
+        Livewire::test(StudyCommunication::class, ['weekStart' => '2026-10-10', 'studentId' => $this->student->id])
+            ->call('selectFilteredRecipients', [])->assertForbidden();
+        $form = Livewire::test(CommunicationForm::class)->call('start');
+        $this->staff->students()->detach();
+        $form->call('selectFilteredRecipients', [])->assertSet('recipients', []);
+        $this->staff->revokePermissionTo('communications:send');
+        $form->call('selectFilteredRecipients', [])->assertForbidden();
     }
 }

@@ -173,4 +173,11 @@ return [
     'student_active' => 'Actieve leerlingen',
     'student_passive' => 'Inactieve leerlingen',
     'communicate_permission' => 'E-mail en meldingen verzenden',
+    'target_locked' => 'Je weekdoel is opgeslagen. Vraag je leerkracht of beheerder om het te wijzigen.',
+    'target_once_help' => 'Je kunt je weekdoel maar één keer opslaan. Je leerkracht of beheerder kan het daarna wijzigen.',
+    'choose_week' => 'Studieweek',
+    'choose_week_help' => 'Kies een dag om de bijbehorende week van zaterdag tot vrijdag te zien.',
+    'quick_access' => 'Snelle toegang',
+    'weekly_progress' => 'Voortgang deze week',
+    'student_identity' => 'Leerlinggegevens',
 ];

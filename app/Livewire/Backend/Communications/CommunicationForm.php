@@ -4,6 +4,9 @@ namespace App\Livewire\Backend\Communications;
 
 use App\Actions\Communications\AuthorizeCommunication;
 use App\Actions\Communications\CreateCommunicationBatch;
+use App\Helpers\CommunicationRecipients;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -60,6 +63,29 @@ class CommunicationForm extends Component
     public function validationAttributes(): array
     {
         return ['recipients' => __('notifications.recipients'), 'title' => __('notifications.subject'), 'body' => __('notifications.body')];
+    }
+
+    public function selectFilteredRecipients(array $filters): void
+    {
+        $this->authorizeComposition(write: true);
+        abort_unless($this->step === 1, 409);
+        $this->resetErrorBag();
+        Validator::make(['recipients' => $this->recipients], [
+            'recipients' => 'array|max:500', 'recipients.*' => CreateCommunicationBatch::rules()['recipients.*'],
+        ])->validate();
+        if ($this->recipients !== []) {
+            CreateCommunicationBatch::recipients(array_map('intval', $this->recipients));
+        }
+        $parameters = CommunicationRecipients::parameters(Request::create('/', 'GET', $filters));
+        $ids = CommunicationRecipients::query($parameters)->limit(501)->pluck('users.id')->map(fn ($id) => (int) $id)->all();
+        $selected = array_values(array_unique([...array_map('intval', $this->recipients), ...$ids]));
+        if (count($selected) > 500) {
+            $this->addError('recipients', __('notifications.selection_limit'));
+
+            return;
+        }
+        $this->recipients = $selected;
+        $this->dispatch('communication-selection-updated', ids: $selected);
     }
 
     private function input(): array

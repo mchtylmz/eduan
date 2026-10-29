@@ -20,19 +20,23 @@
             <div>
                 <x-admin.filter-bar>
                     <input type="hidden" data-table-filter name="lang" value="{{ app()->getLocale() }}">
-                    <x-admin.filter-date id="study-week" name="week" :label="__('study.week')" :value="$week" />
+                    <div class="col-12 col-md-5 col-xl-4">
+                        <label class="form-label" for="study-week">{{ __('study.choose_week') }}</label>
+                        <input type="text" id="study-week" name="week" value="{{ $week }}" class="form-control" data-table-filter data-study-week data-locale="{{ app()->getLocale() }}" aria-describedby="study-week-help" autocomplete="off">
+                        <div id="study-week-help" class="visually-hidden">{{ __('study.choose_week_help') }}</div>
+                    </div>
                     <x-admin.filter-select id="study-state" name="state" :label="__('study.state')" :options="collect(['no_target', 'no_activity', 'zero_activity', 'low', 'on_track'])->mapWithKeys(fn($key) => [$key => __('study.state_'.$key)])->all()" />
                     <x-admin.filter-select id="study-status" name="status" :label="__('study.student_status')" :options="['active' => __('study.student_active'), 'passive' => __('study.student_passive')]" />
                 </x-admin.filter-bar>
-                <x-admin.server-table id="study-table" :url="route('admin.study.data')" sort-name="name" min-width="920px">
+                <x-admin.server-table id="study-table" :url="route('admin.study.data')" sort-name="name" min-width="1000px">
                     <thead><tr>
                         <th data-field="name" data-sortable="true" data-formatter="eduanStudyStudentFormatter">{{ __('study.student') }}</th>
-                        <th data-field="goal" data-formatter="eduanTableTextFormatter">{{ __('study.goal') }} ({{ __('study.questions') }} / {{ __('study.pages') }} / {{ __('study.hours') }})</th>
+                        <th data-field="goal" data-formatter="eduanStudyGoalFormatter">{{ __('study.goal') }}</th>
                         <th data-field="questions" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('study.questions') }}</th>
                         <th data-field="pages" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('study.pages') }}</th>
                         <th data-field="minutes" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('study.hours') }}</th>
                         <th data-field="achievement" data-sortable="true" data-formatter="eduanTableTextFormatter">{{ __('study.overall') }}</th>
-                        <th data-field="state" data-formatter="eduanTableTextFormatter">{{ __('study.state') }}</th>
+                        <th data-field="state" data-formatter="eduanStudyStateFormatter">{{ __('study.state') }}</th>
                         <th data-field="actions" data-formatter="eduanTableActionsFormatter">{{ __('study.actions') }}</th>
                     </tr></thead>
                 </x-admin.server-table>

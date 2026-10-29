@@ -10,7 +10,7 @@
     <div class="study-panel" data-study-panel data-edit-label="{{ __('study.edit') }}" data-action-error="{{ __('study.panel_action_error') }}" x-data="{ studySection: 'evaluation' }">
         <div class="block block-rounded">
             <div class="block-header block-header-default flex-wrap gap-2">
-                <div><h1 class="block-title">{{ $user->display_name }}</h1><div class="small text-muted text-break mt-1">{{ $user->email }}</div></div>
+                <div class="study-panel-identity"><span class="study-panel-avatar" aria-hidden="true"><i class="fa fa-user-graduate"></i></span><div><div class="small text-muted mb-1">{{ __('study.student_identity') }}</div><h1 class="block-title">{{ $user->display_name }}</h1><div class="small text-muted text-break mt-1">{{ $user->email }}</div><span class="badge bg-body text-muted mt-2">{{ $user->status->name() }}</span></div></div>
                 <a href="{{ route('admin.study.index', ['week' => $week]) }}" class="btn btn-alt-secondary"><i class="fa fa-arrow-left me-1"></i>{{ __('study.student_list') }}</a>
             </div>
             <div class="block-content pb-3">
@@ -26,21 +26,21 @@
                 </nav>
                 @if(\App\Helpers\StudyTrackingSettings::enabled() && \App\Helpers\StudyTrackingSettings::startedOn())
                     @can('study:update')
-                        <div class="study-panel-actions">
+                        <div class="study-panel-actions" aria-label="{{ __('study.quick_access') }}"><span class="small text-muted align-self-center me-auto">{{ __('study.quick_access') }}</span>
                             <button type="button" class="btn btn-alt-primary" data-study-panel-open="target"><i class="fa fa-bullseye me-1"></i>{{ __('study.edit_target_panel') }}</button>
                             <button type="button" class="btn btn-alt-primary" data-study-panel-open="activity"><i class="fa fa-plus me-1"></i>{{ __('study.add_activity') }}</button>
                             <button type="button" class="btn btn-primary" data-study-panel-open="note"><i class="fa fa-comment-medical me-1"></i>{{ __('study.add_note') }}</button>
                         </div>
                     @endcan
                 @endif
+                @if(auth()->user()->can(['study:communicate', 'communications:view', 'communications:send']))
+                    <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                        <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'email', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-envelope me-1"></i>{{ __('study.email_student') }}</a>
+                        <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'push', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-bell me-1"></i>{{ __('study.push_student') }}</a>
+                    </div>
+                @endif
             </div>
         </div>
-        @if(auth()->user()->can(['study:communicate', 'communications:view', 'communications:send']))
-            <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
-                <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'email', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-envelope me-1"></i>{{ __('study.email_student') }}</a>
-                <a class="btn btn-alt-primary" href="{{ route('admin.study.compose', ['channel' => 'push', 'student_id' => $user->id, 'week' => $week, 'lang' => app()->getLocale()]) }}"><i class="fa fa-bell me-1"></i>{{ __('study.push_student') }}</a>
-            </div>
-        @endif
         <div class="alert alert-danger d-none" role="alert" data-study-action-error></div>
         <livewire:backend.study.student-report :student-id="$user->id" :week-start="$week" :active-tab="$tab" />
         @can('study:update')

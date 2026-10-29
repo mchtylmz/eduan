@@ -2,6 +2,54 @@
     'use strict';
     const escape = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
     window.eduanStudyStudentFormatter = (value, row) => `<strong>${escape(value)}</strong><div class="small text-muted text-break">${escape(row.email)}</div>`;
+    window.eduanStudyGoalFormatter = (value, row) => Object.entries(row.goals || {}).map(([label, amount]) => `<div class="small d-flex justify-content-between gap-3"><span class="text-muted">${escape(label)}</span><strong>${escape(amount ?? '—')}</strong></div>`).join('');
+    window.eduanStudyStateFormatter = (value, row) => {
+        const tone = {no_target:'secondary', no_activity:'secondary', zero_activity:'warning', low:'warning', on_track:'success'}[row.state_key] || 'secondary';
+        return `<span class="badge bg-${tone}-light text-${tone} text-wrap">${escape(value)}</span>`;
+    };
+    const weekPicker = () => document.querySelectorAll('[data-study-week]').forEach(input => {
+        if (input._flatpickr || !window.flatpickr) return;
+        const startOfWeek = date => {
+            const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            start.setDate(start.getDate() - (start.getDay() + 1) % 7);
+            return start;
+        };
+        const initial = new URL(window.location.href).searchParams.get('week') || input.value;
+        const update = picker => {
+            const date = picker.selectedDates[0];
+            if (!date) return;
+            const start = startOfWeek(date), end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            picker.setDate(start, false);
+            picker.altInput.value = picker.formatDate(start, 'j F Y') + ' — ' + picker.formatDate(end, 'j F Y');
+        };
+        flatpickr(input, {
+            locale: input.dataset.locale, disableMobile: true, allowInput: false,
+            dateFormat: 'Y-m-d', altInput: true, altFormat: 'study-week-range', maxDate: 'today',
+            formatDate: (date, format, locale) => {
+                if (format !== 'study-week-range') return flatpickr.formatDate(date, format, locale);
+                const start = startOfWeek(date), end = new Date(start); end.setDate(end.getDate() + 6);
+                return flatpickr.formatDate(start, 'j F Y', locale) + ' — ' + flatpickr.formatDate(end, 'j F Y', locale);
+            },
+            defaultDate: startOfWeek(flatpickr.parseDate(initial, 'Y-m-d') || new Date()),
+            onReady: (_, __, picker) => {
+                picker.altInput.id = input.id + '-display';
+                picker.altInput.setAttribute('aria-describedby', input.getAttribute('aria-describedby') || '');
+                document.querySelector(`label[for="${input.id}"]`)?.setAttribute('for', picker.altInput.id);
+                update(picker);
+            },
+            onChange: (_, __, picker) => {
+                if (!picker.selectedDates.length) picker.setDate(startOfWeek(new Date()), false);
+                update(picker);
+            }
+        });
+        // Keep direct links and the shared table's initial filter state on the same week.
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('week')) {url.searchParams.set('week', input.value); window.history.replaceState(null, '', url);}
+        input.closest('form')?.addEventListener('reset', () => setTimeout(() => update(input._flatpickr), 0));
+    });
+    document.addEventListener('DOMContentLoaded', weekPicker, {once:true});
+    if (document.readyState !== 'loading') weekPicker();
     window.eduanStudyNoteFormatter = value => {
         const text = String(value ?? '');
         return text.length > 180 ? `<details class="study-panel-note"><summary>${escape(text.slice(0, 180))}…</summary><p>${escape(text)}</p></details>` : `<div class="study-panel-note">${escape(text)}</div>`;

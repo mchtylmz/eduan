@@ -173,4 +173,11 @@ return [
     'student_active' => 'Aktif öğrenciler',
     'student_passive' => 'Pasif öğrenciler',
     'communicate_permission' => 'E-posta ve bildirim gönderebilir',
+    'target_locked' => 'Bu haftanın hedefi kaydedildi. Değişiklik için öğretmenine veya yöneticine başvur.',
+    'target_once_help' => 'Haftalık hedefini yalnız bir kez kaydedebilirsin. Sonradan öğretmenin veya yönetici değiştirebilir.',
+    'choose_week' => 'Çalışma haftası',
+    'choose_week_help' => 'Bir gün seç; o günün cumartesi–cuma haftası gösterilir.',
+    'quick_access' => 'Hızlı erişim',
+    'weekly_progress' => 'Bu haftanın ilerlemesi',
+    'student_identity' => 'Öğrenci bilgileri',
 ];

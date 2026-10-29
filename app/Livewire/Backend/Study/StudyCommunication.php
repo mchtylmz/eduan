@@ -56,6 +56,11 @@ class StudyCommunication extends CommunicationForm
         abort(403);
     }
 
+    public function selectFilteredRecipients(array $filters): void
+    {
+        abort(403);
+    }
+
     public function next(): void
     {
         try {

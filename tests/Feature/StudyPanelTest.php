@@ -416,4 +416,18 @@ class StudyPanelTest extends TestCase
             $this->getJson($this->detailUrl($table))->assertOk()->assertJsonPath('rows', []);
         }
     }
+
+    public function test_week_filter_normalizes_any_day_to_one_week_and_exposes_labeled_goals(): void
+    {
+        $baseline = null;
+        foreach (['2026-10-10', '2026-10-12', '2026-10-14', '2026-10-16'] as $day) {
+            $response = $this->getJson(route('admin.study.data', ['week' => $day]))->assertOk();
+            $baseline ??= $response->json();
+            $this->assertSame($baseline, $response->json());
+        }
+        $this->get(route('admin.study.index', ['week' => '2026-10-14']))->assertOk()
+            ->assertSee('data-study-week', false)->assertViewHas('week', '2026-10-10');
+        $this->assertArrayHasKey('goals', $baseline['rows'][0]);
+        $this->assertArrayHasKey('state_key', $baseline['rows'][0]);
+    }
 }
