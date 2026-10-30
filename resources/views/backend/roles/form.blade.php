@@ -7,6 +7,7 @@
         'update' => __('Düzenle'),
         'delete' => __('Sil / Kaldır'),
         'send' => __('Gönder'),
+        'impersonate' => __('impersonation.enter'),
         'communicate' => __('study.communicate_permission'),
         'translate' => __('Çevir'),
         'solve' => __('Çözüm Yapabilir'),

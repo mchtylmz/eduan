@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\EnsureUserImpersonation;
 use App\Models\Answer;
 use App\Models\AnswerAI;
 use App\Models\AnswerAIVote;
@@ -39,6 +40,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
+use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 
 class AppServiceProvider extends ServiceProvider
@@ -57,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bindings();
+        Livewire::addPersistentMiddleware([EnsureUserImpersonation::class]);
 
         RedirectIfAuthenticated::redirectUsing(function () {
             if (request()->user()->can('dashboard:access')) {

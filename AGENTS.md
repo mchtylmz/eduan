@@ -1,5 +1,7 @@
 # Eduan Web — yapay zekâ çalışma talimatı
 
+**Kullanıcı hesabına geçiş90:** [90-KULLANICI-HESABINA-GECIS.md](Codex/90-KULLANICI-HESABINA-GECIS.md). Kullanıcılar başlığı; detay solunda onaylı POST geçiş, aktif öğrenci/öğretmen hedef, aynı oturum/ön yüz ve turuncu geri dönüş. Yeni users:impersonate yalnız Yönetici; onaylı tek migration ana/testing uygulandı (testing Yönetici rolü yok, yalnız izin). Kaynak izin/parola/aktiflik, CSRF/session yenileme, panel+eskiLivewire ve push cihaz bağlama engeli.98PHP956assert; son18/111 altküme+3Node, Chrome1440TR/390NLENFR/iptal-onay-reload-dönüş geçti, JS0/5xx0/taşma0. Asset/rootworker1.1.42; anaDB gerçekgeçiş/servis/deploy yok.
+
 ## Zorunlu başlangıç kuralı
 
 Her yeni geliştirme veya düzeltme talebinde kod değişikliğinden ve geliştirme komutlarından önce bu dosya, README.md, `Codex/16-PROJE-STANDARTLARI.md`, `Codex/03-KOD-YAZIM-REHBERI.md` ve ilgili özellik rehberi okunur. Yakın ekranın gerçek bileşenleri incelenir. Bu okuma yapılmadan sonuç doğru olsa bile geliştirme kabul edilmez. Yeni panel listelerinin tamamı ortak Blade + Bootstrap Table + server JSON standardını kullanır; standart dışı geçici liste kalıcı çözüm diye bırakılmaz. Kullanıcının bu açık kuralı her geliştirmede uygulanır ve kaldırılmaz.

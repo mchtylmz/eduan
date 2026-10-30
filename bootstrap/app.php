@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\EnsurePasswordSession;
+use App\Http\Middleware\EnsureUserImpersonation;
 use App\Http\Middleware\SetLocale;
 use App\Jobs\UpdateGptLimitForUsers;
 use App\Jobs\UpdateSeasonIdForResults;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web([
+            EnsureUserImpersonation::class,
             CheckUserStatus::class,
             EnsurePasswordSession::class,
         ]);

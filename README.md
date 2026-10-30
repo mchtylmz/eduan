@@ -160,3 +160,8 @@ Güncel [82 bölüm6](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md)
 ### Çalışma paneli ve toplu alıcı seçimi — 30 Ekim
 
 [89 — Kullanım, değişen dosyalar ve test sınırları](Codex/89-CALISMA-PANELI-HEDEF-KILIDI-VE-TOPLU-SECIM.md): hafta aralığı seçimi, hızlı panel detayı, öğrencide tek seferlik hedef, aktif alıcılar için tür/izin/e-posta filtreleri ve bütün filtre sonucunu seçme. 500 sınırı ve mevcut yetkiler korunur; asset1.1.41. Testler yalnız testing DB/rollback ve sahte servislerle; canlı işlem yok.
+
+
+### Kullanıcı hesabına geçiş
+
+[90 — Kullanım, dosyalar ve dar test sonucu](Codex/90-KULLANICI-HESABINA-GECIS.md): Kullanıcılar → Görüntüle → Hesabına giriş yap; onay sonrası aktif öğrenci/öğretmen oturumuyla ön yüz açılır. Hesabım yanındaki turuncu düğme yöneticiye ve kullanıcı listesine döner. İzin başlangıçta yalnız Yönetici rolünde; tek izin migration'ı yerel ana/testing DB'de uygulandı. 98ilgiliPHP/956doğrulama, son18/111altküme ve3Node/Chrome masaüstü-mobil geçti. Asset1.1.42; gerçek servis veya deploy yok.

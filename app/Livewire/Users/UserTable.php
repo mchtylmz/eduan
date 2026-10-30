@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Actions\Auth\ImpersonateUser;
 use App\Actions\Users\AuthorizeStudentAccess;
 use App\Enums\RoleTypeEnum;
 use App\Enums\YesNoEnum;
@@ -39,6 +40,7 @@ class UserTable extends Component
         }
 
         return view('livewire.backend.users.server-table', [
+            'canImpersonate' => $record && ! session()->has(ImpersonateUser::SESSION_KEY) && ImpersonateUser::permitted(auth()->user(), $record),
             'roles' => TableCache::options('roles', fn () => Role::orderBy('name')
                 ->when(auth()->user()->can(RoleTypeEnum::TEACHER->value),
                     fn ($query) => $query->permission(RoleTypeEnum::USER->value))

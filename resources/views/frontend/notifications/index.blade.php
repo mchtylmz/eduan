@@ -1,5 +1,9 @@
 @extends('frontend.layouts.app')
 @section('content')
+@php
+    $impersonating = session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY);
+    $ready = $ready && ! $impersonating;
+@endphp
 <section class="member-page notifications-page" data-web-push-page>
     <div class="container">
         <header class="notifications-page-heading">
@@ -16,7 +20,7 @@
                 </div>
                 <div class="notifications-status-copy">
                     <h2 id="notifications-device-title" data-push-title>{{ __('notifications.start_title') }}</h2>
-                    <p data-push-status role="status" aria-live="polite">{{ __($ready ? 'notifications.status_intro' : 'notifications.not_configured') }}</p>
+                    <p data-push-status role="status" aria-live="polite">{{ __($ready ? 'notifications.status_intro' : ($impersonating ? 'impersonation.device_preview' : 'notifications.not_configured')) }}</p>
                 </div>
             </div>
             <ul class="notifications-benefits" data-push-benefits>
@@ -43,7 +47,7 @@
                             <ol><li>{{ __('notifications.ios_share') }}</li><li>{{ __('notifications.ios_add') }}</li><li>{{ __('notifications.ios_open') }}</li><li>{{ __('notifications.ios_allow') }}</li></ol>
                         </div>
                         <details class="notifications-about" data-browser-guide><summary>{{ __('notifications.permission_help') }}</summary><p class="notifications-guide">{{ __('notifications.browser_help') }}</p></details>
-                        @unless($ready)<p class="notifications-unavailable"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>{{ __('notifications.not_configured') }}</span></p>@endunless
+                        @unless($ready)<p class="notifications-unavailable"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>{{ __(($impersonating ? 'impersonation.device_preview' : 'notifications.not_configured')) }}</span></p>@endunless
                     </div>
                     <p data-push-active-help hidden>{{ __('notifications.active_help') }}</p>
                     <details class="notifications-about">
@@ -83,7 +87,7 @@
                         <article class="notifications-device" data-push-device="{{ $device->subscription_id }}" data-push-revoked="{{ $device->revoked_at ? '1' : '0' }}">
                             <span class="notifications-device-symbol" aria-hidden="true"><i class="fa-solid {{ str_contains($device->label, 'iPhone') ? 'fa-mobile-screen-button' : 'fa-desktop' }}"></i></span>
                             <div class="notifications-device-copy"><h3>{{ $device->label }}</h3><span class="notifications-current-device" data-push-current hidden>{{ __('notifications.current_device') }}</span><p>{{ __('notifications.last_connected') }} {{ dateFormat($device->verified_at, 'j F Y, H:i') }}</p>@if($device->revoked_at)<p class="notifications-device-pending">{{ __('notifications.revoke_pending') }}</p>@endif</div>
-                            <form method="POST" action="{{ route('frontend.notifications.revoke', $device->id) }}" data-push-revoke data-subscription="{{ $device->subscription_id }}">@csrf<button class="notifications-remove" type="submit"><i class="fa-solid fa-bell-slash" aria-hidden="true"></i> {{ __($device->revoked_at ? 'notifications.retry_revoke' : 'notifications.disable_device') }}</button></form>
+                            <form method="POST" action="{{ route('frontend.notifications.revoke', $device->id) }}" data-push-revoke data-subscription="{{ $device->subscription_id }}">@csrf<button class="notifications-remove" type="submit" @disabled($impersonating)><i class="fa-solid fa-bell-slash" aria-hidden="true"></i> {{ __($device->revoked_at ? 'notifications.retry_revoke' : 'notifications.disable_device') }}</button></form>
                         </article>
                     @empty
                         <div class="notifications-empty"><i class="fa-solid fa-desktop" aria-hidden="true"></i><h3>{{ __('notifications.no_devices') }}</h3><p>{{ __('notifications.devices_empty_help') }}</p></div>

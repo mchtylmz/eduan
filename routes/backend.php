@@ -1,8 +1,12 @@
 <?php
 
 
+use App\Http\Controllers\Frontend\ImpersonationController;
 use Buki\AutoRoute\Facades\Route as AutoRoute;
 use Illuminate\Support\Facades\Route;
+
+Route::post('users/{user}/impersonate', [ImpersonationController::class, 'store'])
+    ->middleware('can:users:impersonate')->name('users.impersonate');
 
 AutoRoute::auto('', \App\Http\Controllers\Backend\HomeController::class, ['name' => 'home']);
 

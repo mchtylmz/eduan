@@ -27,5 +27,16 @@
     <x-admin.table-detail id="users-detail" :title="__('tables.user_detail')" :details="$details"
         icon="fa-user" :record-name="$detailId ? trim(($details[__('İsim')] ?? '').' '.($details[__('Soyisim')] ?? '')) : null" :record-code="$details[__('Kullanıcı Adı')] ?? null"
         :metrics="$metrics"
-        :edit-url="$detailId && auth()->user()->can('users:update') ? route('admin.users.edit', $detailId) : null" />
+        :edit-url="$detailId && auth()->user()->can('users:update') ? route('admin.users.edit', $detailId) : null">
+        <x-slot:footer>
+            @if($canImpersonate)
+                <form action="{{ route('admin.users.impersonate', $detailId) }}" method="post" class="me-auto" data-account-switch data-confirm="{{ __('impersonation.confirm', ['name' => trim(($details[__('İsim')] ?? '').' '.($details[__('Soyisim')] ?? ''))]) }}" data-ok="{{ __('impersonation.enter') }}" data-cancel="{{ __('Vazgeç') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-alt-warning"><i class="fa fa-sign-in-alt me-1" aria-hidden="true"></i>{{ __('impersonation.enter') }}</button>
+                </form>
+            @endif
+            @if($detailId && auth()->user()->can('users:update'))<a href="{{ route('admin.users.edit', $detailId) }}" class="btn btn-warning"><i class="fa fa-pen me-1"></i>{{ __('Düzenle') }}</a>@endif
+        </x-slot:footer>
+    </x-admin.table-detail>
+    @once @push('script')<script src="{{ asset('backend/assets/user-impersonation.js') }}?v={{ config('app.version') }}"></script>@endpush @endonce
 </div>

@@ -496,3 +496,8 @@ Kanıt ve değişen dosyalar: [79](79-CANLI-LIG-FAZ2-ZAMANLAMA-VE-KAPANIS.md).
 - **P152 — Bütün filtre sonucunu seçme.** Alıcı listesi ve toplu seçim aynı SQL/izin/aktiflik/öğretmen kapsamını kullanır. En son uygulanmış filtre kullanılır; sayfa limiti toplu seçime uygulanmaz. Önceki seçim korunur/tekilleştirilir; 500 aşımında sessiz kırpma yapılmaz. Kilitli çalışma composer'ının kaynak seçimi genişletilemez.
 
 Kanıt, değişen dosyalar ve elle kontrol: [89](89-CALISMA-PANELI-HEDEF-KILIDI-VE-TOPLU-SECIM.md).
+
+## Kullanıcı hesabına geçiş — 90
+
+- `users:impersonate` başlangıçta yalnız mevcut Yönetici rolüne atanır; aktif öğrenci/öğretmen hedefi, öğretmene ileride izin verilirse kendi öğrenci kapsamı korunur.
+- Başlatma/dönüş CSRF korumalı POST, sunucu token'ı ve güncel kaynak izin/parola kontrolüyle yapılır; iki yönde oturum/CSRF yenilenir. Geçici oturumda panel/Livewire panel erişimi ve tarayıcı push cihazını yeniden bağlama engellenir. Ön yüzde açıklamalı turuncu dönüş düğmesi bulunur. Ayrıntı90.

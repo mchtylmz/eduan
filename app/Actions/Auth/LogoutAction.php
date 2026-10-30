@@ -20,7 +20,7 @@ class LogoutAction
             data: user()->toArray()
         );
 
-        if ($id = request()->session()->get('webPushSubscriptionRecordId')) {
+        if (! session()->has(ImpersonateUser::SESSION_KEY) && ($id = request()->session()->get('webPushSubscriptionRecordId'))) {
             try {
                 RevokeWebSubscription::run((int) $id);
             } catch (\Throwable) {
@@ -28,6 +28,8 @@ class LogoutAction
             }
         }
         Auth::logout();
+
+        request()->session()->forget([ImpersonateUser::SESSION_KEY, 'webPushSubscriptionRecordId']);
 
         request()->session()->regenerate(true);
     }

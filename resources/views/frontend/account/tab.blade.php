@@ -44,12 +44,12 @@
                 <span class="member-nav-copy">{{ $item['label'] ?? __('account.'.$item['key']) }}</span>
             </a>
         @endforeach
-        @can('dashboard:access')
+        @if(auth()->user()->can('dashboard:access') && ! session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY))
             <a href="{{ route('admin.home.index') }}" class="member-nav-link member-admin-link" @click="menuOpen = false">
                 <span class="member-nav-icon"><i class="fa-light fa-cogs" aria-hidden="true"></i></span>
                 <span class="member-nav-copy">{{ __('account.admin') }}</span>
             </a>
-        @endcan
+        @endif
         <a href="{{ route('frontend.logout') }}" class="member-nav-link member-logout" @click="menuOpen = false">
             <span class="member-nav-icon"><i class="fa-light fa-sign-out" aria-hidden="true"></i></span>
             <span class="member-nav-copy">{{ __('account.logout') }}</span>

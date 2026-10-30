@@ -1,9 +1,13 @@
 <?php
 
 use App\Mail\RecoverPasswordMail;
+use App\Http\Controllers\Frontend\ImpersonationController;
 use Buki\AutoRoute\Facades\Route as AutoRoute;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+
+Route::post('account/impersonation/return', [ImpersonationController::class, 'destroy'])
+    ->name('impersonation.return');
 
 use App\Models\User;
 use App\Models\Blog;

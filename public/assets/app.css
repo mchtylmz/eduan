@@ -962,3 +962,10 @@
     .study-evaluation-visual {padding:18px;}
     .study-evaluation-rings {max-width:260px;}
 }
+
+/* Account switching keeps the return action beside the existing account menu. */
+.header-account-controls {display:inline-flex;align-items:center;gap:8px;vertical-align:middle;}
+.header-account-return-form {display:inline-flex;margin:0;}
+.header-account-return {display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid #d46b14;border-radius:8px;background:#fff4e8;color:#a74800;font-size:16px;}
+.header-account-return:hover {background:#ffe5c8;color:#873a00;}
+.header-account-return:focus-visible {outline:2px solid #d46b14;outline-offset:3px;}

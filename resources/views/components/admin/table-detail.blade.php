@@ -36,7 +36,9 @@
         </section>
         @endif
         {{ $slot }}
-        @if($editUrl)
+        @isset($footer)
+            <div class="admin-detail-footer d-flex flex-wrap gap-2">{{ $footer }}</div>
+        @elseif($editUrl)
             <div class="admin-detail-footer"><a href="{{ $editUrl }}" class="btn btn-warning"><i class="fa fa-pen me-1"></i>{{ __('Düzenle') }}</a></div>
         @endif
     </div>

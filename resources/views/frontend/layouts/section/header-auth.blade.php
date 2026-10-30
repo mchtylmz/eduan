@@ -16,10 +16,18 @@
         $headerLinks[] = ['frontend.my.leagues', __('account.leagues'), 'fa-trophy'];
     }
     $headerLinks[] = ['frontend.stats', __('account.stats'), 'fa-chart-line'];
-    if ($headerUser->can('dashboard:access')) {
+    if ($headerUser->can('dashboard:access') && ! session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY)) {
         $headerLinks[] = ['admin.home.index', __('account.admin'), 'fa-cogs'];
     }
 @endphp
+<div class="header-account-controls">
+@if(session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY))
+<form action="{{ route('frontend.impersonation.return') }}" method="post" class="header-account-return-form">
+    @csrf
+    <input type="hidden" name="return_token" value="{{ session(\App\Actions\Auth\ImpersonateUser::SESSION_KEY.'.token') }}">
+    <button type="submit" class="header-account-return" title="{{ __('impersonation.return') }}" aria-label="{{ __('impersonation.return') }}"><i class="fa fa-undo" aria-hidden="true"></i></button>
+</form>
+@endif
 <div class="dropdown account-dropdown">
     <button class="header-account-toggle" type="button" id="header-account-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="header-account-menu" aria-label="{{ __('account.title') }}">
         <i class="fa fa-user" aria-hidden="true"></i>
@@ -42,5 +50,6 @@
             <a class="dropdown-item" href="{{ route('frontend.logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i><span>{{ __('account.logout') }}</span></a>
         </li>
     </ul>
+</div>
 </div>
 @endauth
