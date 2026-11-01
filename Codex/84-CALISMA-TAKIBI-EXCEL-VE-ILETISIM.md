@@ -80,6 +80,8 @@ Browser plugin bulunmadığından kurulu Chrome/Playwright ve geçici gerçek La
 
 ## 7. Önceki dönem filtresi kontrolüne yanıt
 
+**1 Kasım güncellemesi:** Sonuç tablolarının varsayılanı Tümü yapıldı; Tümü seçiminin yenilemede Dönem yok varsayılanına dönmesi giderildi. Ayrıntı [91](91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md). Aşağıdaki kayıt tarihsel; NULL kapsamı bulgusu açık kalır.
+
 Önceki 48 filtre/durum karşılaştırmasında seçilen dönem ID’sine göre sorgular tutarlıydı. İki ayrı bulgu vardı: “Dönem yok” NULL kayıtları kapsamıyor; “Tümü” seçimi yenilemede varsayılana dönüyor. Yerel mevcut dönem tarihi bitmiş olduğundan yeni sonuç mevcut fallback ile Dönem2’ye atanıyordu. Bu geliştirmede sonuç controller’ları, dönem verileri veya bu iş kuralları değiştirilmedi.
 
 ## 8. Değişen dosyalar ve sürüm

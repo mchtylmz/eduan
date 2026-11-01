@@ -1,6 +1,6 @@
 <div data-server-table-page="exam-results" @include('components.admin.table-messages', ['confirm' => ''])>
 <x-admin.filter-bar>
-    <x-admin.filter-select id="result-season" name="season_id" :label="__('Dönem')" :options="$seasons" :value="activeSeason()->id ?? 0" />
+    <x-admin.filter-select id="result-season" name="season_id" :label="__('Dönem')" :options="$seasons" />
     @unless($user?->exists)<x-admin.filter-select id="result-users" name="users" :label="__('Kullanıcılar')" :options="$users" multiple dropdown-size="10" />@endunless
     @if(!$exam?->exists && !$incorrectCount)<x-admin.filter-select id="result-exams" name="exams" :label="__('Testler')" :options="$exams" multiple dropdown-size="10" />@endif
     <x-admin.filter-select id="result-completed" name="completed" :label="__('Durum')" :options="[1 => __('Tamamlandı'), 0 => __('Tamamlanmadı')]" value="1" />

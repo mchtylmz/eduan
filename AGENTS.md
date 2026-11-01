@@ -1,5 +1,7 @@
 # Eduan Web — yapay zekâ çalışma talimatı
 
+**Sonuç dönem varsayılanı91:** [91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md). Test/sınav ortak sonuç filtreleri varsayılan Tümü; açık URL dönemi korunur, temizle/yenileme Tümü. İki Blade değişikliği;24 gerçek render ve56 sahteJSON/gerçekChrome etkileşimi geçti, JS0. Study geçmişine yeni Tümü için kullanıcı sorusu; NULL kapsamı ayrı açık. DB/Livewire bu tur servisler durmuşken çalışmadı; veri/servis/migration/asset değişmez,1.1.42.
+
 **Kullanıcı hesabına geçiş90:** [90-KULLANICI-HESABINA-GECIS.md](Codex/90-KULLANICI-HESABINA-GECIS.md). Kullanıcılar başlığı; detay solunda onaylı POST geçiş, aktif öğrenci/öğretmen hedef, aynı oturum/ön yüz ve turuncu geri dönüş. Yeni users:impersonate yalnız Yönetici; onaylı tek migration ana/testing uygulandı (testing Yönetici rolü yok, yalnız izin). Kaynak izin/parola/aktiflik, CSRF/session yenileme, panel+eskiLivewire ve push cihaz bağlama engeli.98PHP956assert; son18/111 altküme+3Node, Chrome1440TR/390NLENFR/iptal-onay-reload-dönüş geçti, JS0/5xx0/taşma0. Asset/rootworker1.1.42; anaDB gerçekgeçiş/servis/deploy yok.
 
 ## Zorunlu başlangıç kuralı

@@ -165,3 +165,8 @@ Güncel [82 bölüm6](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md)
 ### Kullanıcı hesabına geçiş
 
 [90 — Kullanım, dosyalar ve dar test sonucu](Codex/90-KULLANICI-HESABINA-GECIS.md): Kullanıcılar → Görüntüle → Hesabına giriş yap; onay sonrası aktif öğrenci/öğretmen oturumuyla ön yüz açılır. Hesabım yanındaki turuncu düğme yöneticiye ve kullanıcı listesine döner. İzin başlangıçta yalnız Yönetici rolünde; tek izin migration'ı yerel ana/testing DB'de uygulandı. 98ilgiliPHP/956doğrulama, son18/111altküme ve3Node/Chrome masaüstü-mobil geçti. Asset1.1.42; gerçek servis veya deploy yok.
+
+
+### Sonuç tablolarında dönem varsayılanı
+
+[91 — Kapsam ve dar kontroller](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md): Test/Sınav Sonuçları ve aynı tabloların kullanıcı/tek test-sınav bağlamları Tümü ile açılır. Açık URL dönemi korunur; Tümü yenilemede ve Temizle'de korunur. İki Blade,24 gerçek render/56 Chrome kontrolü; DB testi servisler durmuşken çalıştırılmadı.
