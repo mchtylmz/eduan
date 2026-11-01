@@ -7,7 +7,7 @@
             <div class="col-12 col-md-8">
                 <label for="study-panel-season" class="form-label">{{ __('study.period_with_dates') }}</label>
                 <select id="study-panel-season" name="season" class="form-select" data-table-filter>
-                    @if($seasons->isEmpty())<option value="">{{ __('study.no_period') }}</option>@endif
+                    <option value="" @selected((string) $seasonId === '')>{{ __('Tümü') }}</option>
                     @foreach($seasons as $season)<option value="{{ $season->id }}" @selected((string) $seasonId === (string) $season->id)>{{ $season->name }} · {{ \App\Helpers\StudyCalendar::label($season->start_date) }} — {{ \App\Helpers\StudyCalendar::label($season->end_date) }}</option>@endforeach
                 </select>
             </div>

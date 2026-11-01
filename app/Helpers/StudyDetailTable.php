@@ -58,8 +58,9 @@ class StudyDetailTable
                 'can_edit' => auth()->user()->can('study:update') && (auth()->user()->can('user-type:admin') || $note->author_id === auth()->id()),
             ], $paginate);
         }
-        $season = isset($p['season']) ? Season::find($p['season']) : (activeSeason() ?? Season::orderByDesc('start_date')->first());
-        $report = StudyAnalytics::report($user, $week, $type === 'history' ? $season : null);
+        $season = isset($p['season']) ? Season::find($p['season']) : null;
+        $historyPeriods = $type === 'history' && ! $season ? Season::select('start_date', 'end_date')->get() : [];
+        $report = StudyAnalytics::report($user, $week, $type === 'history' ? $season : null, $historyPeriods);
         // Days and calendar weeks are bounded derived rows; answer/topic totals already aggregate in SQL.
         $rows = match ($type) {
             'history' => collect($report['history'])->map(fn ($row) => [
@@ -69,7 +70,7 @@ class StudyDetailTable
                 'pages' => ($row['target']['pages'] ?? '—').' / '.$row['actual']['pages'],
                 'minutes' => (StudyInput::hours($row['target']['minutes'] ?? null) ?: '—').' / '.StudyInput::hours($row['actual']['minutes']),
                 'achievement' => $row['rates']['overall'], 'state' => __('study.state_'.$row['state']),
-                'view_url' => $row['state'] === 'future' ? null : route('admin.study.show', ['user' => $user->id, 'week' => $row['start'], 'season' => $season?->id, 'lang' => app()->getLocale()]), 'hide_detail' => $row['state'] === 'future',
+                'view_url' => $row['state'] === 'future' ? null : route('admin.study.show', ['user' => $user->id, 'week' => $row['start'], 'season' => $season?->id ?? '', 'lang' => app()->getLocale()]), 'hide_detail' => $row['state'] === 'future',
             ]),
             'topics' => collect($report['topics'])->map(fn ($row, $id) => ['id' => $id, 'table' => $table] + $row + ['state' => __('study.'.$row['label'])]),
             'days' => collect($report['days'])->map(fn ($row) => ['id' => $row['activity_date'], 'table' => $table, 'date' => $row['activity_date'], 'date_label' => StudyCalendar::label($row['activity_date'])] + $row),

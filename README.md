@@ -170,3 +170,5 @@ Güncel [82 bölüm6](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md)
 ### Sonuç tablolarında dönem varsayılanı
 
 [91 — Kapsam ve dar kontroller](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md): Test/Sınav Sonuçları ve aynı tabloların kullanıcı/tek test-sınav bağlamları Tümü ile açılır. Açık URL dönemi korunur; Tümü yenilemede ve Temizle'de korunur. İki Blade,24 gerçek render/56 Chrome kontrolü; DB testi servisler durmuşken çalıştırılmadı.
+
+[91 devam — Çalışma geçmişi Tümü](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md): kullanıcı onayıyla öğrenci/panel geçmişine Tümü eklendi. Tanımlı dönemlerin haftaları birleştirilir; çakışan haftalar tekilleşir, aralık boşlukları doldurulmaz. Panel JSON/Excel ve hafta bağlantıları aynı kapsamı kullanır.23Unit/49assert,24Blade render/20ChromeDOM geçti; DB/Livewire regresyonları servisler kapalıyken bekler.

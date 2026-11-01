@@ -223,8 +223,11 @@ class StudyPanelTest extends TestCase
     {
         $season = Season::create(['name' => 'Study semester', 'start_date' => '2026-10-01', 'end_date' => '2026-10-31', 'status' => StatusEnum::ACTIVE]);
         Livewire::test(StudentReport::class, ['weekStart' => '2026-10-10', 'studentId' => $this->student->id, 'activeTab' => 'history'])->assertSee('data-server-table-page="study-history"', false);
-        $rows = $this->getJson($this->detailUrl('history'))->assertOk()->json('rows');
+        $rows = $this->getJson($this->detailUrl('history', ['season' => $season->id]))->assertOk()->json('rows');
         $this->assertContains(route('admin.study.show', ['user' => $this->student->id, 'week' => '2026-10-03', 'season' => $season->id, 'lang' => app()->getLocale()]), array_column($rows, 'view_url'));
+        Season::create(['name' => 'Overlapping semester', 'start_date' => '2026-10-10', 'end_date' => '2026-10-20', 'status' => StatusEnum::PASSIVE]);
+        $all = $this->getJson($this->detailUrl('history', ['search' => '10-10']))->assertOk()->assertJsonPath('total', 1);
+        $this->assertSame(route('admin.study.show', ['user' => $this->student->id, 'week' => '2026-10-10', 'season' => '', 'lang' => app()->getLocale()]), $all->json('rows.0.view_url'));
     }
 
     public function test_notes_default_hidden_and_marked_visible_notes_only_reach_own_student(): void

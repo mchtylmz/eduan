@@ -10,6 +10,45 @@ use PHPUnit\Framework\TestCase;
 
 class StudyCalendarTest extends TestCase
 {
+    public function test_all_periods_merge_overlapping_and_adjacent_weeks_once_in_date_order(): void
+    {
+        $periods = [
+            (object) ['start_date' => '2026-10-15', 'end_date' => '2026-10-31'],
+            (object) ['start_date' => '2026-10-01', 'end_date' => '2026-10-14'],
+            (object) ['start_date' => '2026-10-10', 'end_date' => '2026-10-20'],
+        ];
+        $weeks = StudyCalendar::weeksForPeriods($periods, 'Europe/Brussels');
+        $this->assertSame(['2026-09-26', '2026-10-03', '2026-10-10', '2026-10-17', '2026-10-24', '2026-10-31'],
+            array_map(fn ($week) => $week['start']->toDateString(), $weeks));
+        $this->assertSame('2026-11-07', end($weeks)['end']->toDateString());
+        $this->assertEquals(169, $weeks[4]['start']->diffInHours($weeks[4]['end']));
+    }
+
+    public function test_all_periods_do_not_fill_gaps_or_create_an_academic_year_when_empty(): void
+    {
+        $this->assertSame([], StudyCalendar::weeksForPeriods([], 'UTC'));
+        $weeks = StudyCalendar::weeksForPeriods([
+            (object) ['start_date' => '2026-01-03', 'end_date' => '2026-01-09'],
+            (object) ['start_date' => '2026-10-10', 'end_date' => '2026-10-16'],
+        ], 'UTC');
+        $this->assertSame(['2026-01-03', '2026-10-10'], array_map(fn ($week) => $week['start']->toDateString(), $weeks));
+    }
+
+    public function test_combined_periods_accept_model_date_values_without_converting_calendar_days(): void
+    {
+        $weeks = StudyCalendar::weeksForPeriods([(object) [
+            'start_date' => CarbonImmutable::parse('2026-12-31', 'Europe/Brussels'),
+            'end_date' => CarbonImmutable::parse('2027-01-02', 'Europe/Brussels'),
+        ]], 'Europe/Brussels');
+        $this->assertSame(['2026-12-26', '2027-01-02'], array_map(fn ($week) => $week['start']->toDateString(), $weeks));
+    }
+
+    public function test_combined_periods_keep_invalid_date_ranges_rejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        StudyCalendar::weeksForPeriods([(object) ['start_date' => '2026-10-17', 'end_date' => '2026-10-01']], 'UTC');
+    }
+
     public static function weekdays(): array
     {
         return array_map(fn ($day) => [$day], range(10, 16));

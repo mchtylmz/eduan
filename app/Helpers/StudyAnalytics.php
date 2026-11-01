@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\DB;
 
 class StudyAnalytics
 {
-    public static function report(User $user, string $week, ?Season $season): array
+    public static function report(User $user, string $week, ?Season $season, iterable $historyPeriods = []): array
     {
         AuthorizeStudyAccess::run($user);
         $selected = StudyCalendar::bounds($week);
         $trendWeeks = StudyCalendar::weeksBetween($selected['start']->subWeeks(3), $selected['start']);
-        $yearWeeks = $season ? StudyCalendar::weeksBetween($season->start_date, $season->end_date) : [];
+        $yearWeeks = StudyCalendar::weeksForPeriods($season ? [$season] : $historyPeriods);
         $all = [...$yearWeeks, ...$trendWeeks];
         $from = min(array_map(fn ($row) => $row['start']->toDateString(), $all));
         $to = max(array_map(fn ($row) => $row['end']->toDateString(), $all));

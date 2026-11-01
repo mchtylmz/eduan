@@ -501,3 +501,7 @@ Kanıt, değişen dosyalar ve elle kontrol: [89](89-CALISMA-PANELI-HEDEF-KILIDI-
 
 - `users:impersonate` başlangıçta yalnız mevcut Yönetici rolüne atanır; aktif öğrenci/öğretmen hedefi, öğretmene ileride izin verilirse kendi öğrenci kapsamı korunur.
 - Başlatma/dönüş CSRF korumalı POST, sunucu token'ı ve güncel kaynak izin/parola kontrolüyle yapılır; iki yönde oturum/CSRF yenilenir. Geçici oturumda panel/Livewire panel erişimi ve tarayıcı push cihazını yeniden bağlama engellenir. Ön yüzde açıklamalı turuncu dönüş düğmesi bulunur. Ayrıntı90.
+
+## Dönem filtreleri ve bütün çalışma geçmişi — 91
+
+- Test/sınav sonuç tablolarında başlangıç dönemi Tümü'dür; açık URL seçimi korunur. Çalışma geçmişinde Tümü tanımlı dönemlerin tam haftalarını birleştirir, aynı haftayı tekrar göstermez ve dönem arası boşlukları doldurmaz. Tek dönem seçimi ve panel JSON/Excel kullanıcı kapsamı korunur; boş dönem URL değeri Tümü anlamındadır. Ayrıntı91.

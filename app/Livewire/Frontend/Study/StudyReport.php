@@ -36,16 +36,15 @@ class StudyReport extends Component
         $bounds = StudyCalendar::bounds($weekStart);
         abort_unless($weekStart === $bounds['start']->toDateString() && ! $bounds['start']->isFuture(), 422);
         $this->weekStart = $weekStart;
-        $candidate = request()->query('season', session('studySeasonId'));
+        $candidate = request()->query('season', session('studyHistorySeasonId', ''));
         $valid = (is_int($candidate) || (is_string($candidate) && ctype_digit($candidate))) && Season::whereKey((int) $candidate)->exists();
-        $this->seasonId = $valid ? (int) $candidate : (activeSeason()?->id ?? Season::orderByDesc('start_date')->value('id') ?? '');
-        session()->put('studySeasonId', $this->seasonId);
+        $this->seasonId = $valid ? (int) $candidate : '';
     }
 
     public function updatedSeasonId(): void
     {
         $this->validate(['seasonId' => 'nullable|integer|exists:seasons,id']);
-        session()->put('studySeasonId', $this->seasonId);
+        session()->put('studyHistorySeasonId', $this->seasonId);
         $this->resetPage('studyHistoryPage');
     }
 
@@ -70,7 +69,7 @@ class StudyReport extends Component
         $seasons = $enabled ? Season::select('id', 'name', 'start_date', 'end_date')->orderByDesc('start_date')->get() : collect();
         $valid = is_int($this->seasonId) || (is_string($this->seasonId) && ctype_digit($this->seasonId));
         $season = $valid ? $seasons->firstWhere('id', (int) $this->seasonId) : null;
-        $report = $enabled ? StudyAnalytics::report($this->owner(), $this->weekStart, $season) : null;
+        $report = $enabled ? StudyAnalytics::report($this->owner(), $this->weekStart, $season, $seasons) : null;
         $history = $this->pages($report['history'] ?? [], 'studyHistoryPage');
         $topics = $this->pages($report['topics'] ?? [], 'studyTopicsPage');
 

@@ -79,7 +79,7 @@
             <div class="{{ $panel ? 'block-content pb-3' : 'member-form-body' }}">
                 <label id="study-history-content" for="study-season" class="form-label">{{ __($panel ? 'study.period' : 'study.period_with_dates') }}</label>
                 <select id="study-season" class="form-select mb-3" wire:model.live="seasonId">
-                    @if($seasons->isEmpty())<option value="">{{ __('study.no_period') }}</option>@endif
+                    <option value="">{{ __('Tümü') }}</option>
                     @foreach($seasons as $season)<option value="{{ $season->id }}">{{ $season->name }}@unless($panel) · {{ \App\Helpers\StudyCalendar::label($season->start_date, 'j F Y') }} — {{ \App\Helpers\StudyCalendar::label($season->end_date, 'j F Y') }}@endunless</option>@endforeach
                 </select>
                 <x-badge.error field="seasonId" />

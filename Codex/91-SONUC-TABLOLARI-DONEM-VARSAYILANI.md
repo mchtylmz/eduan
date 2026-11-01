@@ -25,3 +25,35 @@ Her iki görünümde `activeSeason()->id ?? 0` varsayılanı kaldırıldı. Orta
 - Eduan Docker servisleri durmuş olduğundan DB/Livewire entegrasyon testleri çalıştırılmadı. Servis/port/DB/ayar/migration/dış servis değişikliği yapılmadı. Yeni kalıcı test veya genel suite/build çalıştırılmadı.
 
 Ürün dosyaları yalnız yukarıdaki iki Blade görünümüdür. Bu rapor, 84 bölüm7, AGENTS.md, README ve Codex/index.html güncel karar/test kaydını taşır.
+
+## Devam — Çalışma geçmişinde Tümü (kullanıcı onaylı)
+
+Kullanıcı, ayrı soruya “Çalışma geçmişine de Tümü ekle” yanıtını verdi. Öğrenci Çalışma Takibim → Geçmişim ve panel öğrenci detayı → Çalışma geçmişi seçimlerine **Tümü** eklendi. Boş dönem değeri bütün tanımlı dönemleri temsil eder. Başlangıçta aktif/son dönemi otomatik seçme kaldırıldı. Önceki otomatik `studySeasonId` oturum değeri yeni varsayılanı ezmez; kullanıcı artık bilinçli bir seçim yaptığında `studyHistorySeasonId` ile mevcut tercih hatırlama davranışı sürer. URL'deki açık dönem/boş Tümü değeri önceliklidir.
+
+### Hesap ve bağlantı kapsamı
+
+- Bütün dönemlerin tam cumartesi–cuma haftaları birleştirilir; aynı başlangıç tarihli hafta tek satır olur. Dönemler arasındaki boşluklara uydurma haftalar eklenmez. Dönem yoksa geçmiş boş kalır; haftalık rapor çalışır.
+- `StudyCalendar::weeksForPeriods` sıralı ve tekil takvimi üretir. `StudyAnalytics::report` isteğe bağlı dönem listesini alır; var olan tek-dönem ve `null` ile geçmiş istemeyen diğer çağrılar korunur.
+- Ön yüzde mevcut dönem koleksiyonu yeniden kullanılır. Panelin Tümü geçmişinde dönem tarihleri tek sorguyla alınır. Hedef ve çalışma toplamları mevcut toplu sorgulardan gelir; hafta başına sorgu eklenmez.
+- Panel JSON listesi ve Excel dışa aktarma aynı `StudyDetailTable` yolunu kullanır. Arama/sıralama/sayfalama/kullanıcı yetki kapsamı korunur.
+- Tek dönem seçildiğinde o dönem korunur; Tümü satırından hafta açarken `season=` taşınır. Öğrenci route doğrulaması boş Tümü değerini kabul eder; geçersiz sayısal dönem kontrolü devam eder.
+- Haftalık hedef, çalışma düzenleme, karşılaştırma, doğruluk, öğretmen ilişkisi veya dönem verileri değiştirilmedi. Yeni CSS/JS/migration/ayar yazma yok; APP_VERSION/rootworker1.1.42 aynı.
+
+### Bu devamın dar testleri
+
+- PHP8.5.12 `php vendor/bin/phpunit tests/Unit/StudyCalendarTest.php`: **23 test /49 doğrulama geçti**. Yeni dört senaryo: çakışan/bitişik dönemleri tekilleştirme, boş dönemler ve aralık boşlukları, model tarih değerleri/yıl sınırı, ters tarih aralığının reddi. Mevcut DST sınırı da korunur.
+- Gerçek iki Blade görünümüyle **24 render kontrolü**: 2 yüz × 3 durum (boş/Tümü/tek dönem) × 4 dil. Ortak filtre seçenekleri ve tekilleşmiş örnek geçmiş satırları doğrulandı. Geçici render yardımcısında Livewire `$this` bağlamı sağlandı; asıl şablon değiştirilmedi.
+- Gerçek Chrome ve kurulu Playwright (Browser plugin yok): **20 DOM kontrolü**, dört dil/iki yüz; mevcut Tümü seçeneği, tek dönemden Tümü'ne native select geçişi, boş dönem ve altı tekil örnek hafta. Mobil390/masaüstü1440 seçim ekranları `/private/tmp/eduan-study-all-{frontend,panel}-{390,1440}.png`. JS istisnası0. Bunlar fixture çıktılarıdır; gerçek Livewire güncellemesi veya DB toplamı kabulü değildir.
+- Değişen **8 PHP dosyası Pint ve syntax**, `git diff --check` başarılı. Genel suite/build tekrarlanmadı.
+- `StudyAnalyticsTest` içinde toplamların ortak haftada iki kez sayılmaması, varsayılan Tümü/eski oturum/paginator/boş dönem URL; `StudyPanelTest` içinde tek dönem ve Tümü bağlantı/tekil JSON satırı regresyonları güncellendi. **Eduan servisleri durmuş olduğundan bu DB/Livewire testleri henüz çalıştırılmadı.** Mevcut servis/portlar değiştirilmedi; ana/testing DB'ye yazılmadı, dış servis/deploy yok.
+
+### Bu devamın ürün dosyaları
+
+- `app/Helpers/StudyCalendar.php`: dönem haftalarını tekilleştirme.
+- `app/Helpers/StudyAnalytics.php`: tek veya bütün dönemlerden geçmiş üretimi.
+- `app/Helpers/StudyDetailTable.php`: panel Tümü/Excel ve hafta bağlantısı.
+- `app/Livewire/Frontend/Study/StudyReport.php`: varsayılan/seçim/ortak rapor verisi.
+- `app/Http/Controllers/Frontend/AccountController.php`: boş dönem URL kabulü.
+- `resources/views/livewire/frontend/study/study-report.blade.php`, `resources/views/livewire/backend/study/detail-table.blade.php`: iki Tümü seçeneği.
+- `tests/Unit/StudyCalendarTest.php`, `tests/Feature/StudyAnalyticsTest.php`, `tests/Feature/StudyPanelTest.php`: dar regresyonlar.
+- Bu rapor ve AGENTS/README/index/16: güncel karar ve kanıt sınırı.

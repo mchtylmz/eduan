@@ -221,11 +221,17 @@ class StudyAnalyticsTest extends TestCase
         $two = collect(StudyAnalytics::report($this->owner, '2026-10-10', $b)['history'])->firstWhere('start', '2026-10-10');
         $this->assertSame($one, $two);
         $this->assertSame(20, $one['actual']['questions']);
+        $all = collect(StudyAnalytics::report($this->owner, '2026-10-10', null, [$b, $a])['history']);
+        $this->assertCount(6, $all);
+        $this->assertSame($one, $all->firstWhere('start', '2026-10-10'));
+        $this->assertSame(['2026-09-26', '2026-10-03', '2026-10-10', '2026-10-17', '2026-10-24', '2026-10-31'], $all->pluck('start')->all());
     }
 
     public function test_report_has_initial_html_pagination_period_change_and_refresh_event(): void
     {
-        $form = Livewire::test(StudyReport::class, ['weekStart' => '2026-10-10'])->set('seasonId', $this->season->id)->assertHasNoErrors();
+        session()->put('studySeasonId', $this->season->id);
+        $form = Livewire::test(StudyReport::class, ['weekStart' => '2026-10-10'])->assertSet('seasonId', '')
+            ->set('seasonId', $this->season->id)->assertHasNoErrors();
         $this->assertSame(20, $form->viewData('history')->count());
         $form->call('gotoPage', 2, 'studyHistoryPage');
         $this->assertSame(2, $form->viewData('history')->currentPage());
@@ -235,6 +241,11 @@ class StudyAnalyticsTest extends TestCase
         $this->work($this->owner, 30);
         $form->dispatch('study-changed');
         $this->assertSame(30, $form->viewData('report')['current']['actual']['questions']);
+        $form->set('seasonId', '')->assertHasNoErrors();
+        $this->assertSame(1, $form->viewData('history')->currentPage());
+        $this->assertGreaterThan(5, $form->viewData('history')->total());
+        $this->assertSame('', session('studyHistorySeasonId'));
+        $this->get(route('frontend.study', ['week' => '2026-10-10', 'season' => '', 'tab' => 'history']))->assertOk();
         $form->set('seasonId', -1)->assertHasErrors('seasonId');
     }
 

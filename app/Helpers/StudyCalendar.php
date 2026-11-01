@@ -57,4 +57,18 @@ class StudyCalendar
 
         return $weeks;
     }
+
+    /** Overlapping periods share full calendar weeks; gaps do not create extra weeks. */
+    public static function weeksForPeriods(iterable $periods, ?string $timezone = null): array
+    {
+        $weeks = [];
+        foreach ($periods as $period) {
+            foreach (self::weeksBetween($period->start_date, $period->end_date, $timezone) as $bounds) {
+                $weeks[$bounds['start']->toDateString()] = $bounds;
+            }
+        }
+        ksort($weeks);
+
+        return array_values($weeks);
+    }
 }
