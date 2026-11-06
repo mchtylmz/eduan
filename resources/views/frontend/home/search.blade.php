@@ -83,7 +83,7 @@
                                     @livewire('frontend.lessons.list-lessons', [
                                         'visibilityLite' => true,
                                         'search' => true,
-                                        'word' => request('search')
+                                        'word' => request('search') ?? ''
                                     ])
                                     @break
 
@@ -91,7 +91,7 @@
                                     @livewire('frontend.lessons.list-topics', [
                                         'visibilityLite' => true,
                                         'search' => true,
-                                        'word' => request('search')
+                                        'word' => request('search') ?? ''
                                     ])
                                     @break
 
@@ -103,12 +103,12 @@
                                         'showSearch' => false,
                                         'search' => true,
                                         'topic_id' => $topic->id ?? 0,
-                                        'word' => request('search')
+                                        'word' => request('search') ?? ''
                                     ])
                                     @break
 
                                 @case('newspaper')
-                                    @livewire('frontend.blogs.list-blogs', ['search' => request('search')])
+                                    @livewire('frontend.blogs.list-blogs', ['search' => request('search') ?? ''])
                                     @break
                             @endswitch
 
