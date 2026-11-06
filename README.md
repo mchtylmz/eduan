@@ -172,3 +172,15 @@ Güncel [82 bölüm6](Codex/82-CALISMA-TAKIBI-OGRENCI-EKRANI-VE-HESAP-MENUSU.md)
 [91 — Kapsam ve dar kontroller](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md): Test/Sınav Sonuçları ve aynı tabloların kullanıcı/tek test-sınav bağlamları Tümü ile açılır. Açık URL dönemi korunur; Tümü yenilemede ve Temizle'de korunur. İki Blade,24 gerçek render/56 Chrome kontrolü; DB testi servisler durmuşken çalıştırılmadı.
 
 [91 devam — Çalışma geçmişi Tümü](Codex/91-SONUC-TABLOLARI-DONEM-VARSAYILANI.md): kullanıcı onayıyla öğrenci/panel geçmişine Tümü eklendi. Tanımlı dönemlerin haftaları birleştirilir; çakışan haftalar tekilleşir, aralık boşlukları doldurulmaz. Panel JSON/Excel ve hafta bağlantıları aynı kapsamı kullanır.23Unit/49assert,24Blade render/20ChromeDOM geçti; DB/Livewire regresyonları servisler kapalıyken bekler.
+
+### Dosyalar ve kaynak görüntüleyici
+
+Panelde Dosyalar, isteğe bağlı R2/yerel depolama ve herkese açık `/sources` görüntüleyici: [kurulum, izinler ve dar test kaydı](Codex/96-DOSYALAR-VE-KAYNAK-GORUNTULEME.md). Onaylı tek migration ana/testing DB’de uygulandı; beş yerel örnek panelde hazır. 5 Kasım Docker/Chrome kabulü ve onaylı upload128M/429/popup/KB revizyonları aynı rehberde. Gerçek R2 ve canlı kabulü ayrıca yapılacak.
+
+### Symfony güvenlik yamaları — 5 Kasım
+
+[97 — Yama kapsamı, işlev testleri ve yayın sınırı](Codex/97-SYMFONY-GUVENLIK-YAMALARI-VE-YAYIN-KABULU.md): yalnız HTTP Foundation/Kernel/Routing8.1.11; altı üretim bildirimi kapandı, üretim audit temiz.555farklıPHP/2778doğrulama ilgili ayrı koşularda,42Node ve9Chrome kontrolü geçti. Gerçek izole --no-dev kurulumunda PHPUnit bulunmuyor. Ana veriler/iş kuralları/sürüm korunur; incelenen yerel kapsam kontrollü yayına uygun. İki dev bildiriminin dar yaması için ayrıca onay soruldu; canlı R2/PHP/public_html/route-cache/migration/smoke kabulü bu tur yapılmadı.
+
+### 6 Kasım log düzeltmesi ve güncel yayın hazırlığı
+
+[98 — İki canlı log hatası](Codex/98-CANLI-LOG-SITEMAP-VE-BOS-ARAMA-DUZELTMESI.md): sitemap kısa PHP etiketi uyumu ve dört sekmede boş arama string'i;18darPHP/58assert/Pint geçti. Eduan kapalı olduğu için bu tur gerçek DB/HTTP kabulü yok. [99 — Tam komutlu v3 yayın sırası](Codex/99-20261106-YAYIN-PAKETI-VE-UYGULAMA-SIRASI.md): anahtarlı bakım, tam DB+dosya yedeği, committed kaynak ZIP/hash, public_html/no-dev, yalnız kaynak migration'ı, korunan runtime dosyaları, cache/OPcache, eski hataları silmeden log kabulü ve up. Canlı .env korunur, yalnız APP_VERSION1.1.43 değişir; R2 medya ayarları paneldedir.

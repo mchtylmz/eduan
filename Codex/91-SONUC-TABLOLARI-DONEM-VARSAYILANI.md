@@ -1,5 +1,7 @@
 # 91 — Sonuç tablolarında varsayılan dönem: Tümü
 
+**3 Kasım 2026 güncel karar:** Dönem yok artık `season_id=0` **veya NULL** sonuçları kapsar; varsayılan Tümü korunur. Aşağıdaki önceki NULL/bekleyen test notları tarihseldir; son doğrulama bu belgenin sonundadır.
+
 1 Kasım 2026. Kullanıcı, dönem filtresi bulunan test/sınav sonuç tablolarının başlangıçta “Dönem yok” yerine **Tümü** açılmasını istedi. AGENTS.md, README, 03/16 standartları, 38 tablo standardı ve 84 bölüm7 incelendi. Mevcut ortak filtre bileşeni ve URL/Bootstrap Table akışı kullanıldı.
 
 ## Kapsam ve yapılan değişiklik
@@ -57,3 +59,14 @@ Kullanıcı, ayrı soruya “Çalışma geçmişine de Tümü ekle” yanıtın�
 - `resources/views/livewire/frontend/study/study-report.blade.php`, `resources/views/livewire/backend/study/detail-table.blade.php`: iki Tümü seçeneği.
 - `tests/Unit/StudyCalendarTest.php`, `tests/Feature/StudyAnalyticsTest.php`, `tests/Feature/StudyPanelTest.php`: dar regresyonlar.
 - Bu rapor ve AGENTS/README/index/16: güncel karar ve kanıt sınırı.
+
+## 3 Kasım 2026 — Dönem yok filtresine NULL kayıtların dahil edilmesi
+
+Kullanıcı onayıyla `ExamController::getResultsData` ve `TestsController::getResultsData` içindeki `season_id=0` filtresi `(season_id=0 OR season_id IS NULL)` olarak güncellendi. OR koşulu parantezli sorgu grubudur; öğretmenin bağlı öğrencileri, kullanıcı, test/sınav, tamamlanma ve arama kapsamı dışına kayıt çıkarmaz. Pozitif dönem değeri yalnız o dönemi getirir; boş/gönderilmemiş değer Tümü anlamını korur. Ortak Blade filtrelerinin mevcut Tümü varsayılanına dokunulmadı.
+
+Yeni `tests/Feature/ResultSeasonFilterTest.php` iki sonuç türü × yönetici/öğretmen olmak üzere4 senaryoda gerçek JSON endpointlerini doğrular: NULL/0/atanmış dönem, Tümü eksik-boş değer, tamamlanma/öğrenci/tek içerik sınırları, NULL üzerinden yetki sızıntısı olmaması, sayfalama/toplam, bozuk dönem reddi, varsayılan select ve yetki kaldırıldıktan sonra403.
+
+- Docker PHP8.5.8 üzerinde yeni testler ve mevcut `LearningMenuTableTest`: **17 test /216 doğrulama başarılı**, tek dar koşu.
+- Değişen iki controller ve test dosyasında Pint; kapsamlı whitespace kontrolü başarılı.
+- Yalnız testing DB transaction fixture’ları kullanıldı. Ana veri düzeltme, migration, asset/paket/sürüm değişikliği veya deploy yok. Genel suite tekrar çalıştırılmadı; önceki1.127/6.583 genel kabul bu dar düzeltmeden önceki koşudur.
+- `Codex/69-SON-TESTLER-VE-CANLI-AKTARIM-LISTESI.md` yayın checklist’ine kullanıcı kararıyla `composer install --no-dev --optimize-autoloader`, üretim platform/audit ve geliştirme bağımlılıklarının kurulu olmadığını kontrol etme maddesi eklendi. Şimdi Composer kurulumu yapılmadı, PHPUnit güncellenmedi.

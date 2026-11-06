@@ -58,3 +58,28 @@ Yerel Livewire geçici upload dizini public disk altında çözülüyor; imzalı
 Ana DB, gerçek mail/push/AI/Cloudflare gönderimi, migration, kullanıcı verisi silme ve canlı deploy yapılmadı. Yeni güvenlik politikası dosyası veya paket eklenmedi. Kullanıcının eski `.DS_Store`, Doge/docs ve service worker dosyaları pakete alınmaz.
 
 Tarama kullanım ölçümü kısmi ve eski rollout bağlamı içerir; host’un toplamı 16.496.961 token (16.004.224 cached input dahil), eksik 14 thread/rollout uyarısıdır. Bu rakam değişikliğe özgü fatura veya tam ölçüm olarak yorumlanmaz.
+
+
+## 7. Hızlı SQL injection / XSS taraması ve kişiselleştirme düzeltmesi —4 Kasım 2026
+
+Kullanıcı API/panel/site/giriş dahil hızlı SQL injection ve XSS kontrolünü, bu sınıflardaki bulguların düzeltilmesini istedi. Mevcut çalışma ağacında Codex Security Standard taraması `83e48f97-be44-4b48-9e29-f631700ff273` tamamlandı. Kaynak incelemesine bağımsız mimari/baseline değerlendirmesi eklendi. Kapsam **partial**: ham SQL ifadeleri ve dinamik kolon/sıralama kaynakları, giriş/kurtarma, ortak panel JSON/arama, kişi/yorum/study tabloları ve şablon HTML sınırları incelendi. Bütün repository/vendor satırları veya tüm rol kombinasyonları incelenmiş değildir; üretim penetrasyon testi değildir. Ayrı `routes/api.php`/bootstrap API rotası bulunmadı; uygulamanın API benzeri JSON/Livewire/bildirim uçları değerlendirmeye dahildir.
+
+**SQL injection:** İncelenen yollarda doğrulanmış SQL injection, SQL üzerinden login bypass veya komut çalıştırma bulgusu yok. Giriş/kurtarma kriterleri bağlanmış değer; ServerTable sort/order allowlist; StatisticsTable raw order çağrıları sabit ya da doğrulanmış seçim; kişisel StatsTable kolonları allowlist; LeagueRules kaynak/puanlar sabit tip ve izinli değerlerle sınırlı. Bu sonuç bütün projenin veya canlı altyapının kesin güvenli olduğu iddiası değildir.
+
+**Doğrulanan orta önem bulgusu:** Ziyaretçinin iletişim ad/telefon/okul alanındaki HTML, `replaceEmailVariables` ile yanıt şablonuna kaçışsız ekleniyordu. `ContactReplyMail::build()` kişiselleştirilmiş yanıtı kaydediyor; panelde entity decode + raw render, personel tarayıcısında saklanan XSS yolu oluşturuyordu. Personelin ilgili parametreyi kullanması, mail build ve detayın tekrar açılması gerekir. Turnstile bunu önlemez. Gerçek helper/Mailable ve kayıt/decode dönüşümleriyle ağ/DB olmadan PoC panelde1, e-postada2 olay işleyicili HTML düğümü üretti. Canlı saldırı veya betik yürütme denemesi yapılmadı.
+
+Düzeltme:
+
+- Ortak helper yalnız güvenilen şablonu önce decode eder; bütün kullanıcı değerlerini double-encode açık şekilde escape eder.
+- `strtr` tek geçişli parametre değişimiyle kullanıcı metnindeki başka parametrelerin yeniden yorumlanmasını önler; tam `<pre>` sarmalayıcı kaldırma korunur.
+- Altı mail görünümünde kişiselleştirmeden sonraki decode kaldırıldı: iletişim, tek/toplu kullanıcı maili, bülten, doğrulama, kurtarma, yeni parola.
+- Daha önce kaydedilmiş yanıtlar da panel ana belgesinde raw HTML değildir: kaçışlanmış `srcdoc`, boş `sandbox`, `no-referrer` ile300px yüksekliğinde kaydırılabilir HTML önizlemesinde gösterilir. Script/same-origin/top-navigation izinleri verilmez; kayıtlar değiştirilmez. Mailin zengin HTML biçimi korunur.
+- Kaynak şablonların yetkili HTML yazarlığı sözleşmesi değişmez. Kullanıcı parametreleri metin/normal tırnaklı HTML niteliklerinde kullanılmalıdır; şablona bilerek JS/CSS veya kullanıcı değerini URL protokolü yapan ifade yazma yetkisi ayrı güven sınırıdır.
+
+Değişen uygulama dosyaları: `app/Helpers/Functions.php`, `resources/views/email/{contact-reply,user-email,newsletter,verify,recover-password,create-password}.blade.php`, `resources/views/livewire/backend/contacts/contact-reply-form.blade.php`. Yeni test `tests/Unit/MailPersonalizationSecurityTest.php`.
+
+Dar kabul: **10 PHP test/112 assertion**;8 saldırı girdisi ×6 gerçek Blade mail görünümü, ham/script/SVG/decimal/hex/çift entity girdileri, token içeren isimler, aksan/apostrof/ampersand, ham/kodlanmış şablon biçimi, gerçek Mailable build ve sahte model update ile kayıt dönüşü, geçmiş kayıt iframe sandbox sözleşmesi. Tüm fixture'lar bellekte ve geçici derleme dizinindedir; ana/testing DB açılmaz. Ortak tablo formatter'ları2 Node testi/25 assertion geçti. Helper syntax, helper+yeni test Pint ve dar diff whitespace başarılı. İlk testte User mass-assignment fixture'ının şema çözümlemesi gerektirmesi `forceFill` ile DB'siz fixture olacak şekilde düzeltildi; ürün davranışı değiştirilmedi. Bağımsız son yama incelemesi somut bypass/regresyon bulmadı.
+
+Üretim DB/SMTP/push/AI/Cloudflare isteği, migration veya deploy yok. Eski veriler silinmedi/düzenlenmedi. Gerçek tarayıcı/CSP/hosting ve DB/HTTP bütünleşik testleri bu hızlı turda yapılmadı. CSS/JS ve APP_VERSION1.1.42 korunur. Kaynak taramasının token kullanım ölçümü mevcut değil. Mühürlü tarama raporu düzeltme **öncesi** durumu kaydeder:
+
+[Tarama raporu](/Users/mucahit/.codex/state/plugins/codex-security/scans/eduan-web/48b6d9e6c45a72d7871a00a6db8acfe2c5818264_20261104T131915Z_wqfs6cwg/report.md).

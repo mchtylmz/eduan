@@ -61,7 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Schedule::command('leagues:refresh-live')
             ->name('refresh_live_leagues')
             ->timezone(config('app.timezone'))
-            ->everyFourHours()
+            ->everyThreeHours()
             ->withoutOverlapping(240);
     })
     ->withExceptions()

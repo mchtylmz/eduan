@@ -16,6 +16,7 @@
             <!-- Side Navigation -->
             <div class="content-side">
                 @includeIf('backend.layouts.sidebar-menu')
+                @include('backend.layouts.sidebar-guide')
             </div>
             <!-- END Side Navigation -->
         </div>

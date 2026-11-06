@@ -73,7 +73,11 @@ class TestsController extends Controller
         $query = LearningTable::timedResultsQuery($students)->with(['test:id,name', 'user:id,name,surname,email']);
         foreach (['test_id', 'user_id', 'season_id', 'completed'] as $field) {
             if (($parameters[$field] ?? '') !== '') {
-                $query->where($field, $parameters[$field]);
+                if ($field === 'season_id' && (int) $parameters[$field] === 0) {
+                    $query->where(fn ($query) => $query->where('season_id', 0)->orWhereNull('season_id'));
+                } else {
+                    $query->where($field, $parameters[$field]);
+                }
             }
         }
         foreach (['users' => 'user_id', 'tests' => 'test_id'] as $filter => $column) {

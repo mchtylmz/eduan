@@ -2,7 +2,7 @@
 @section('subject', $subject ?? '')
 @section('content')
     <div>
-        {!! html_entity_decode(replaceEmailVariables($content, $user->toArray() ?? [])) !!}
+        {!! replaceEmailVariables($content, $user->toArray() ?? []) !!}
     </div>
 
     <a href="{{ route('frontend.create.password', $token) }}" class="email-button">

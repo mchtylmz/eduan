@@ -425,19 +425,18 @@ if (! function_exists('replaceEmailVariables')) {
         ];
         $fields = collect($fields)->mapWithKeys(function ($fieldValue, $fieldKey) use ($values) {
             if ($fieldValue == 'display_name' && ! data_get($values, $fieldValue)) {
-                return [$fieldKey => sprintf(
+                return [$fieldKey => e(sprintf(
                     '%s %s',
                     data_get($values, 'name') ?? '', data_get($values, 'surname') ?? ''
-                )];
+                ), true)];
             }
 
-            return [$fieldKey => data_get($values, $fieldValue) ?? ''];
+            return [$fieldKey => e((string) (data_get($values, $fieldValue) ?? ''), true)];
         })->toArray();
 
-        return Str::replace(
-            [...array_keys($fields), '<pre>', '</pre>'],
-            array_values($fields),
-            $content
-        );
+        // Decode only the authored template, never the interpolated user values.
+        $content = str_replace(['<pre>', '</pre>'], '', html_entity_decode($content));
+
+        return strtr($content, $fields);
     }
 }

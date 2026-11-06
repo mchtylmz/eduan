@@ -104,3 +104,9 @@ Route::middleware(['auth'])->prefix('account/notifications')->controller(\App\Ht
     Route::post('/register', 'register')->middleware('throttle:30,1')->name('notifications.register');
     Route::post('/devices/{id}/revoke', 'revoke')->middleware('throttle:30,1')->name('notifications.revoke');
 });
+
+
+Route::get('sources/{code}/content/html', [\App\Http\Controllers\Frontend\SourceController::class, 'html'])
+    ->whereUuid('code')->name('sources.html');
+Route::get('sources/{code}/{slug}', [\App\Http\Controllers\Frontend\SourceController::class, 'show'])
+    ->whereUuid('code')->name('sources.show');

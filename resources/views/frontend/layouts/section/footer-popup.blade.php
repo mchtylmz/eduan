@@ -1,4 +1,4 @@
-@if(settings()->{'popupStatus_'.app()->getLocale()} == \App\Enums\StatusEnum::ACTIVE->value)
+@if(!request()->routeIs('frontend.sources.*') && settings()->{'popupStatus_'.app()->getLocale()} == \App\Enums\StatusEnum::ACTIVE->value)
     <!-- Modal -->
     <div class="modal fade" id="PromoModal" tabindex="-1" aria-labelledby="PromoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

@@ -7,6 +7,7 @@ use App\Actions\Notifications\PrepareNotificationSettings;
 use App\Actions\Study\PrepareStudyTrackingSettings;
 use App\Helpers\AiSolutionRequest;
 use App\Helpers\FrontendCache;
+use App\Helpers\PanelGuide;
 use App\Helpers\PwaIcons;
 use App\Helpers\StudyTrackingSettings;
 use App\Models\User;
@@ -29,6 +30,9 @@ class SettingSaveAction
     public function handle(Request $request)
     {
         abort_unless($request->user()?->can('settings:update') && $request->user()?->can('dashboard:access'), 403);
+        if ($request->has('settings.panelGuideUrl')) {
+            abort_unless(PanelGuide::visibleTo($request->user()), 403);
+        }
         $requestedModel = $request->input('settings.gptModel');
         $modelForEfforts = is_string($requestedModel) && $requestedModel !== '' ? $requestedModel : (settings()->gptModel ?: 'gpt-6-luna');
         $request->validate([
@@ -37,13 +41,17 @@ class SettingSaveAction
             'files' => 'prohibited',
             'settings' => 'sometimes|array',
             'settings.*' => 'nullable|string',
+            'settings.panelGuideUrl' => ['nullable', 'url:http,https', 'max:2048'],
             'settings.gptModel' => ['sometimes', 'required', Rule::in(array_keys(aiHelper()->gptLists()))],
             'settings.gptEffect' => ['sometimes', 'required', Rule::in(AiSolutionRequest::efforts($modelForEfforts))],
         ]);
         if ($request->has('settings.gptModel') && ! in_array($request->input('settings.gptEffect') ?: (settings()->gptEffect ?: 'low'), AiSolutionRequest::efforts($request->input('settings.gptModel')), true)) {
             throw ValidationException::withMessages(['settings.gptEffect' => __('validation.in', ['attribute' => __('Yapa Zeka Reasoning effort')])]);
         }
-        $values = PrepareTurnstileSettings::run(PrepareNotificationSettings::run(PrepareStudyTrackingSettings::run($request->input('settings', []))));
+        $values = PrepareSourceSettings::run(PrepareTurnstileSettings::run(PrepareNotificationSettings::run(PrepareStudyTrackingSettings::run($request->input('settings', [])))));
+        if (array_key_exists('panelGuideUrl', $values)) {
+            $values['panelGuideUrl'] = PanelGuide::url($values['panelGuideUrl']) ?? '';
+        }
         if ($request->hasFile('images')) {
             $this->images($request->file('images'));
         }

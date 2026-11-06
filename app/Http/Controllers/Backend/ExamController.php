@@ -124,7 +124,11 @@ class ExamController extends Controller
         $query = LearningTable::resultsQuery($students)->with(['exam:id,name', 'user:id,name,surname,email']);
         foreach (['exam_id', 'user_id', 'season_id', 'completed'] as $field) {
             if (($parameters[$field] ?? '') !== '') {
-                $query->where($field, $parameters[$field]);
+                if ($field === 'season_id' && (int) $parameters[$field] === 0) {
+                    $query->where(fn ($query) => $query->where('season_id', 0)->orWhereNull('season_id'));
+                } else {
+                    $query->where($field, $parameters[$field]);
+                }
             }
         }
         foreach (['users' => 'user_id', 'exams' => 'exam_id'] as $filter => $column) {

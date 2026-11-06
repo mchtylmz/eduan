@@ -21,7 +21,7 @@ class LeagueRunForm extends Component
 
     public string $end_at;
 
-    public bool $is_live = false;
+    public string $is_live = '';
 
     public function mount(): void
     {
@@ -47,7 +47,7 @@ class LeagueRunForm extends Component
         }
 
         try {
-            $league = CalculateLeague::run($this->start_at, $this->end_at, live: $this->is_live);
+            $league = CalculateLeague::run($this->start_at, $this->end_at, live: (bool) $this->is_live);
         } catch (LeagueCalculationInProgress) {
             $this->message(__('leagues.busy'))->error();
 

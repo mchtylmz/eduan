@@ -18,6 +18,8 @@ class NotificationController extends Controller
 {
     public function index(Request $request)
     {
+        abort_unless(WebPushSettings::enabled(), 404);
+
         $title = __('notifications.title');
         $explanation = Page::where('menu', PageMenuEnum::NOTIFICATIONS)->where('status', StatusEnum::ACTIVE)->orderBy('id')->first();
         $devices = WebPushSubscription::where('user_id', $request->user()->id)

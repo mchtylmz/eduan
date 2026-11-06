@@ -59,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bindings();
+        Livewire::setUpdateRoute(function ($handle) {
+            return Facades\Route::post('livewire/update', $handle);
+        });
         Livewire::addPersistentMiddleware([EnsureUserImpersonation::class]);
 
         RedirectIfAuthenticated::redirectUsing(function () {

@@ -26,6 +26,7 @@ enum SettingsTabsEnum: string
     case NOTIFICATIONS = 'notifications';
     case STUDY = 'study';
     case TURNSTILE = 'turnstile';
+    case FILES = 'sources';
 
     public static function options(): array
     {
@@ -46,6 +47,7 @@ enum SettingsTabsEnum: string
             self::NOTIFICATIONS->value => __('notifications.settings'),
             self::STUDY->value => __('study.title'),
             self::TURNSTILE->value => __('turnstile.settings'),
+            self::FILES->value => __('sources.settings'),
         ];
     }
 
@@ -73,6 +75,7 @@ enum SettingsTabsEnum: string
             self::NOTIFICATIONS->value => 'fa-bell',
             self::STUDY->value => 'fa-calendar-check',
             self::TURNSTILE->value => 'fa-shield-halved',
+            self::FILES->value => 'fa-folder-open',
         };
     }
 }

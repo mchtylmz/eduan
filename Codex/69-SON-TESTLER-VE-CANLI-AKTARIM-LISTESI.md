@@ -1,5 +1,7 @@
 # 69 — Son testler ve canlı aktarım listesi
 
+**Güncel uygulama sırası — 3 Kasım 2026:** [94 canlı yayın planı](94-CANLI-YAYIN-UYGULAMA-PLANI.md) ve [94 migration envanteri](94-CANLI-YAYIN-MIGRATION-ENVANTERI.md) esas alınır. Anahtarlı bakım, tam yedek, canlı .env farkları, public_html paketi, no-dev kurulum, tekil migration, iki Laravel+iki bağımsız R2 cron ve gerçek yedek kabulü aşamalara ayrılmıştır. Aşağıdaki eski sürüm/test sayıları kendi tarihlerinin kaydıdır; güncel APP_VERSION1.1.42 ve son yerel test özeti94'tedir. Canlı işlem yapılmadı.
+
 7 Ekim 2026. Kullanıcı AI cevaplarının şimdilik başarılı olduğunu bildirdi; mevcut ayarlarla devam edilmesini ve canlı AI ayarlarının aktarım listesine alınmasını istedi. Son talimatla tek başarısız lig başlığı beklentisi düzeltildi ve ilgili senaryo geçti. Mevcut test aşaması tamamlandı; yeni özelliklere geçilebilir. Sunucu/migration ve yayın/geri dönüş hazırlığı kullanıcı kararıyla yayın aşamasına bırakıldı. Yeni özellik geliştirmesi bu test turuna eklenmedi.
 
 ## 1. Genel test sonucu
@@ -35,6 +37,7 @@ Yayın planında mevcut dört ayarın özel yedeği alınır; yalnız bu satırl
 2. Canlıya geçişte web+CLI PHP8.5/module/Imagick kontrolü. Mevcut scheduler ve queue çağrıları `/usr/bin/php85 -d extension=imagick.so` ile çalışacak; `scripts/siteground-cli-cron.example` hatırlatılacak. Mevcut saat/worker seçenekleri korunur, görev çoğaltılmaz. Şimdi canlı değiştirilmez.
 3. Canlı migration ve izin envanteri salt okunur karşılaştırılır. İndeks (`2026_10_05_150000`), translation_sources (`2026_10_07_110000`), öğretmen sonuç izinleri (`2026_10_07_160000`), eksik NL çevirileri (`2026_10_07_160100`) ve users:send-email gibi izinlerin eksikleri somut yayın planında listelenir. Dolu çeviri/değerler korunur; toplu seed/migrate varsayılmaz.
 4. Yayın dosyaları/bağımlılıklar/yerel KaTeX fontları, public manifest/ikonlar, APP_VERSION ve root worker eşleşmesi (**1.1.25**; son sınav ekranı revizyonu), config/route/view cache ve geri dönüş planı hazırlanır.
+   - **3 Kasım 2026 kullanıcı kararı:** canlı bağımlılık kurulumu `composer.lock` üzerinden `composer install --no-dev --optimize-autoloader` ile yapılır; `composer update` çalıştırılmaz. Composer doğrulanmış PHP8.5 ile çalıştırılır. Kurulumdan sonra `composer check-platform-reqs --no-dev` ve `composer audit --locked --no-dev` kontrol edilir; PHPUnit ve diğer geliştirme bağımlılıklarının kurulu olmadığı doğrulanır. Bu madde plan kaydıdır; şimdi kurulum yapılmaz.
 5. Kullanıcı yayın onayından sonra dağıtım, dört AI ayarı ve CLI cron düzenlemesi uygulanır. Kritik HTTP/izin/cache/queue ve süre dolan sınav işi canlıda doğrulanır.
 
 2–5 numaralı adımlar kullanıcı kararıyla yayın aşamasında yapılacak kabul kontrolleridir; şimdi uygulanmaz. Geri dönüş planı yalnız migration uygulamak değildir: önceki kod/bağımlılıklar ve ayarlar, veritabanı yedeği ve gerekirse geri yükleme adımları birlikte hazırlanır. Veri koruma ve geri dönüş etkileri yayın planında belirlenir.

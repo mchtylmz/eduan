@@ -64,19 +64,19 @@ class LiveLeaguePresentationTest extends TestCase
             'lesson_id' => 1, 'topic_id' => 1, 'correct' => YesNoEnum::YES, 'time' => 10]);
     }
 
-    public function test_form_defaults_to_exact_current_saturday_friday_and_single_mode(): void
+    public function test_form_defaults_to_exact_current_saturday_friday_and_requires_a_mode(): void
     {
         $this->staff();
         Livewire::test(LeagueRunForm::class)->assertSet('start_at', '2026-10-24 00:00')
-            ->assertSet('end_at', '2026-10-30 23:59')->assertSet('is_live', false)
-            ->assertSee(__('leagues.period_help'))->assertSee('league-mode');
+            ->assertSet('end_at', '2026-10-30 23:59')->assertSet('is_live', '')
+            ->assertSee(__('leagues.period_help'))->assertSee(__('leagues.mode_placeholder'))->assertSee('league-mode');
     }
 
     public function test_live_form_saves_empty_future_and_custom_period_without_changing_history(): void
     {
         $this->staff();
         $old = League::create(['code' => 'untouched-dates', 'start_at' => '2025-01-01', 'end_at' => '2025-01-10']);
-        Livewire::test(LeagueRunForm::class)->set('is_live', true)->set('start_at', '2026-11-02 14:10')
+        Livewire::test(LeagueRunForm::class)->set('is_live', '1')->set('start_at', '2026-11-02 14:10')
             ->set('end_at', '2026-11-03 15:20')->call('run')->assertRedirect(route('admin.leagues.index'));
         $league = League::where('is_live', true)->firstOrFail();
         $this->assertSame('2026-11-03 15:20:59', $league->end_at->format('Y-m-d H:i:s'));
@@ -90,7 +90,7 @@ class LiveLeaguePresentationTest extends TestCase
     {
         $this->staff();
         $count = League::count();
-        Livewire::test(LeagueRunForm::class)->set('start_at', '2099-01-01 00:00')->set('end_at', '2099-01-02 00:00')
+        Livewire::test(LeagueRunForm::class)->set('is_live', '0')->set('start_at', '2099-01-01 00:00')->set('end_at', '2099-01-02 00:00')
             ->call('run')->assertNoRedirect()->assertSet('alertOptions.text', __('leagues.no_data'));
         $this->assertSame($count, League::count());
     }
@@ -99,7 +99,7 @@ class LiveLeaguePresentationTest extends TestCase
     {
         $this->staff();
         $count = League::count();
-        Livewire::test(LeagueRunForm::class)->set('is_live', true)
+        Livewire::test(LeagueRunForm::class)->set('is_live', '1')
             ->set('start_at', '2099-01-02 10:00')->set('end_at', '2099-01-03 11:00')
             ->call('run')->assertNoRedirect()->assertSet('alertOptions.text', __('leagues.invalid_configuration'));
         $this->assertSame($count, League::count());
@@ -109,7 +109,7 @@ class LiveLeaguePresentationTest extends TestCase
     {
         $this->staff();
         $this->answer(User::factory()->create(['league_approval' => 1]));
-        Livewire::test(LeagueRunForm::class)->call('run')->assertRedirect(route('admin.leagues.index'));
+        Livewire::test(LeagueRunForm::class)->set('is_live', '0')->call('run')->assertRedirect(route('admin.leagues.index'));
         $league = League::where('start_at', '2026-10-24')->firstOrFail();
         $this->assertFalse($league->is_live);
         $this->assertSame(3, $league->results()->firstOrFail()->total_score);
@@ -119,7 +119,7 @@ class LiveLeaguePresentationTest extends TestCase
     {
         $this->staff();
         foreach ([['bad', '2026-10-30 23:59', 'start_at'], ['', '', 'start_at'], ['2026-10-25 12:00', '2026-10-24 12:00', 'end_at']] as [$start, $end, $field]) {
-            Livewire::test(LeagueRunForm::class)->set('start_at', $start)->set('end_at', $end)->call('run')->assertHasErrors($field);
+            Livewire::test(LeagueRunForm::class)->set('is_live', '0')->set('start_at', $start)->set('end_at', $end)->call('run')->assertHasErrors($field);
         }
     }
 
@@ -137,7 +137,7 @@ class LiveLeaguePresentationTest extends TestCase
         $this->staff();
         $league = League::create(['code' => 'single-conflict', 'label' => 'exam_result_details',
             'start_at' => '2026-10-24 00:00', 'end_at' => '2026-10-30 23:59:59']);
-        Livewire::test(LeagueRunForm::class)->set('is_live', true)->call('run')->assertNoRedirect()
+        Livewire::test(LeagueRunForm::class)->set('is_live', '1')->call('run')->assertNoRedirect()
             ->assertSet('alertOptions.text', __('leagues.invalid_configuration'));
         $this->assertFalse($league->fresh()->is_live);
     }
@@ -149,7 +149,7 @@ class LiveLeaguePresentationTest extends TestCase
         $league->forceFill(['closed_at' => now()])->saveQuietly();
         settings()->set('leagueStatus', 'passive');
         settings()->save();
-        Livewire::test(LeagueRunForm::class)->set('is_live', true)->call('run')->assertNoRedirect();
+        Livewire::test(LeagueRunForm::class)->set('is_live', '1')->call('run')->assertNoRedirect();
         Livewire::test(LeagueTable::class)->call('recalculate', $league->id)
             ->assertNotDispatched('refresh-server-table');
         $this->assertEquals($league->calculated_at, $league->fresh()->calculated_at);
@@ -277,7 +277,7 @@ class LiveLeaguePresentationTest extends TestCase
         $this->staff();
         CalculateLeague::mock()->shouldReceive('handle')->once()
             ->andThrow(new LeagueCalculationInProgress('busy'));
-        Livewire::test(LeagueRunForm::class)->set('is_live', true)->call('run')
+        Livewire::test(LeagueRunForm::class)->set('is_live', '1')->call('run')
             ->assertNoRedirect()->assertSet('alertOptions.text', __('leagues.busy'));
     }
 

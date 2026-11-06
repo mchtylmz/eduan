@@ -37,7 +37,3 @@ Route::name('admin.')
     ->middleware(['auth', 'set_locale', 'can:dashboard:access'])
     ->prefix(config('backend.prefix'))
     ->group(base_path('routes/backend.php'));
-
-\Livewire\Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('livewire/update', $handle);
-});

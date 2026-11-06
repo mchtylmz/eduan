@@ -205,7 +205,7 @@
         </li>
     @endcanany
 
-    @canany(['users:view', 'roles:view', 'settings:view', 'seasons:view'])
+    @canany(['users:view', 'roles:view', 'settings:view', 'seasons:view', 'files:view'])
         <li class="nav-main-heading" data-menu-group="management">{{ __('menus.management') }}</li>
         @if(auth()->user()->can('users:view') && auth()->user()->can('communications:view') && auth()->user()->canany(['user-type:admin','user-type:teacher']))
             <li class="nav-main-item"><a @class(['nav-main-link','active'=>request()->routeIs('admin.communications.*')]) href="{{ route('admin.communications.index') }}"><i class="nav-main-link-icon fa fa-paper-plane"></i><span class="nav-main-link-name">{{ __('notifications.communications') }}</span></a></li>
@@ -218,6 +218,10 @@
                     <span class="nav-main-link-name">{{ __('Kullanıcılar') }}</span>
                 </a>
             </li>
+        @endcan
+
+        @can('files:view')
+            <li class="nav-main-item"><a @class(['nav-main-link', 'active' => request()->routeIs('admin.files.*')]) href="{{ route('admin.files.index') }}"><i class="nav-main-link-icon fa fa-folder-open"></i><span class="nav-main-link-name">{{ __('sources.title') }}</span></a></li>
         @endcan
 
         @canany(['roles:view', 'settings:view', 'seasons:view'])

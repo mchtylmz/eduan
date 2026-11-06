@@ -2,7 +2,7 @@
 @section('subject', $subject ?? '')
 @section('content')
     <div>
-        {!! html_entity_decode(replaceEmailVariables($content, $user->toArray() ?? [])) !!}
+        {!! replaceEmailVariables($content, $user->toArray() ?? []) !!}
     </div>
 
     <a href="{{ route('frontend.verify', $user->email_verified_token ?? 0) }}" class="email-button">

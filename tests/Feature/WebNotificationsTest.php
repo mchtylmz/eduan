@@ -244,10 +244,27 @@ class WebNotificationsTest extends TestCase
 
     public function test_not_configured_page_disables_consent_and_permission_without_sdk_request(): void
     {
-        settings()->set('notificationsEnabled', '0');
+        settings()->set('oneSignalLocalAppId', '');
         settings()->save();
         $this->get(route('frontend.notifications'))->assertOk()->assertSee('data-push-consent disabled', false)
             ->assertSee('data-push-enable disabled', false)->assertSee('data-state="unavailable"', false);
+        Http::assertNothingSent();
+    }
+
+    public function test_disabled_notifications_hide_entry_points_and_block_the_page_with_existing_devices(): void
+    {
+        $this->actingAs($this->student);
+        $record = $this->fixtureSubscription($this->student);
+        settings()->set('notificationsEnabled', '0');
+        settings()->save();
+
+        $this->get(route('frontend.profile'))->assertOk()
+            ->assertDontSee('float-notifications', false)
+            ->assertDontSee('member-nav-copy">Meldingen', false)
+            ->assertDontSee('eduan-web-push-config', false)
+            ->assertDontSee('assets/web-push.js', false);
+        $this->get(route('frontend.notifications'))->assertNotFound();
+        $this->assertNotNull($record->fresh());
         Http::assertNothingSent();
     }
 }

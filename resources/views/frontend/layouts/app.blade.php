@@ -160,6 +160,7 @@
 @endif
 
 <script src="{{ asset('assets/js/main.js') }}"></script>
+<script defer src="{{ asset('assets/source-links.js') }}?v={{ config('app.version') }}"></script>
 <script src="{{ asset('assets/app.js') }}?v={{ config('app.version') }}"></script>
 @if(request()->routeIs('frontend.ai.solution'))
     <script defer src="{{ asset('assets/vendor/katex/katex.min.js') }}"></script>

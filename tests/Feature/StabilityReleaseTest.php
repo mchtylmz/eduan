@@ -204,12 +204,12 @@ class StabilityReleaseTest extends TestCase
         $this->actor->givePermissionTo(['dashboard:access', 'leagues:view', 'leagues:run']);
         settings()->set('leagueStatus', 'active');
         settings()->save();
-        Livewire::test(LeagueRunForm::class)->set('start_at', 'not-a-date')->call('run')->assertHasErrors('start_at');
-        Livewire::test(LeagueRunForm::class)->set('start_at', '2026-10-07 00:00')->set('end_at', '2026-10-06 23:59')->call('run')->assertHasErrors('end_at');
+        Livewire::test(LeagueRunForm::class)->set('is_live', '0')->set('start_at', 'not-a-date')->call('run')->assertHasErrors('start_at');
+        Livewire::test(LeagueRunForm::class)->set('is_live', '0')->set('start_at', '2026-10-07 00:00')->set('end_at', '2026-10-06 23:59')->call('run')->assertHasErrors('end_at');
         Bus::assertNothingDispatched();
         CalculateLeague::mock()->shouldReceive('handle')->once()
             ->with('2026-10-01 00:00', '2026-10-07 23:59', false)->andReturn(new League);
-        Livewire::test(LeagueRunForm::class)->set('start_at', '2026-10-01 00:00')->set('end_at', '2026-10-07 23:59')->call('run')->assertRedirect(route('admin.leagues.index'));
+        Livewire::test(LeagueRunForm::class)->set('is_live', '0')->set('start_at', '2026-10-01 00:00')->set('end_at', '2026-10-07 23:59')->call('run')->assertRedirect(route('admin.leagues.index'));
         Bus::assertNothingDispatched();
     }
 

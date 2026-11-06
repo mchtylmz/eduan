@@ -683,9 +683,21 @@
 <li>Bağımsız kaynak taraması, beş doğrulanmış bulgu; kapsam partial.</li><li>Events sabit olay listesi, settings:update ve dar kaldırma anahtarları.</li><li>Modal/offcanvas hedef allowlist, Locked durum ve güncel izin.</li><li>FAQ/dil/AI/iletişim formlarının bağımsız sunucu yetkisi.</li><li>Bülten gönderiminde sabit newsletter:send; seçili alıcılar korunur.</li><li>Dört istatistik XLSX çıktısında açık string bağlama ve numeric değerler.</li><li>Parola kanıtı/remember dönüşü; eski kanıtsız oturum yeniden giriş ister.</li><li>Self-password ve geçerli hatırla girişi çalışır; eski çerez reddedilir.</li><li>181 farklı PHP/1254 doğrulama ayrı koşular; gerçek XLSX/son inceleme başarılı.</li><li>E-posta onay politikası, üretim/proxy/upload/dependency sınırları raporda.</li><li>Ana DB/migration/gerçek servis/deploy yok.</li></ul></section>
 <section id="rehber-turnstile-88"><h2><a href="88-TURNSTILE-VE-BULTEN-HIZ-SINIRI.md">88 — Turnstile ve bülten hız sınırı</a></h2><ul>
 <li>Yalnız misafir giriş, kayıt, kurtarma, yeni parola ve iletişim.</li><li>Üye işlemleri ve bülten CAPTCHA kapsamı dışında.</li><li>Bülten IP başına60saniyede1deneme; güvenlik store ve kilit.</li><li>Admin ayar bölümü, kapalı varsayılan, iki anahtar kontrolü.</li><li>Gizli anahtar Crypt ile saklanır, boş alan mevcut değeri korur.</li><li>Siteverify sabitHTTPS, strict başarı/hostname/action kontrolü.</li><li>Explicit widget, tekSDK, defer token ve reset/retry/destroy.</li><li>TR/NL/EN/FR; dar alanda compact widget.</li><li>181 farklı PHP/1254doğrulama ayrı koşular,6Node başarılı.</li><li>Chrome beş form masaüstü/mobil, hata, login/üyehariç ve gizli anahtar kontrolleri geçti.</li><li>Asset/rootworker1.1.40; gerçek Managed kabulü anahtar girişinden sonra.</li><li>AnaDB/migration/gerçek servis/deploy yok.</li></ul></section>
+<section id="rehber-yayin-94"><h2><a href="94-CANLI-YAYIN-UYGULAMA-PLANI.md">94 — Canlı yayın uygulama planı</a></h2><ul>
+<li>Hazırlık: ilk komut anahtarlı bakım; görev ve sunucu ekran görüntüsü envanteri.</li>
+<li>Kod aktarımından önce tam DB ve kalıcı dosya yedeği; APP_KEY korunur.</li>
+<li>Canlı .env korunur; public_html, sürüm, cache/queue ve R2 farkları açıklanır.</li>
+<li>R2 yedek ayarı panelde değil .env; private bucket ve iki modda check/gerçek kabul.</li>
+<li>Yeni paket public_html yapısında; üretim Composer --no-dev ve dosya manifesti.</li>
+<li><a href="94-CANLI-YAYIN-MIGRATION-ENVANTERI.md">Migration envanteri:</a> 48 uygulama+2 paket kaynağı; 14 aday için tekil komutlar.</li>
+<li>Scheduler/worker her dakika, DB02:00UTC/proje03:00UTC; kurulu cron çoğaltılmaz.</li>
+<li>Cache/PWA/izin/canlı smoke, açılış ve veri etkisini gözeten geri dönüş kapıları.</li>
+<li>Yerel kabul ve canlıda bekleyen işler ayrı; bu plan gerçek deploy/R2/migration değildir.</li>
+</ul></section>
 </main>
 <footer><p>Bu rehber güncel kaynak kodun yerine geçmez. SQL import ve bulgular 26, migration/model 27, kolon/indeks envanteri 28, performans ve karar planı 29 içindedir. İlk browser kanıtı 23, onaylı dil düzeltmeleri ve Lara Football doğrulaması 25, genel paket uyumluluğu 24, otomatik test koşusu 22, standartlar 16 ve hedef tablo 19 içindedir. Sayfa matrisi 20, cache/detay/izin düzeltmeleri 21 bölüm 10, lig/mail 15, istatistik kararı 17 ve yükseltme planı 14 ayrıca okunur.</p></footer>
 <section id="rehber-63"><h2><a href="62-LARAVEL-BAGIMSIZ-BASH-YEDEK-VE-R2.md">62-LARAVEL-BAGIMSIZ-BASH-YEDEK-VE-R2.md</a></h2><ul>
+<li>Güncel yol uyumu: dotenv APP_PUBLIC_PATH; eksik/boş public, canlı public_html; 19 fixture test ve Bash syntax geçti, canlı işlem yok.</li>
 <li>Kullanıcının yeni Bash ve yalnız Laravel referansı kararı; canlı proje kökü.</li>
 <li>DB SQL.gz ve tam proje ZIP modları; PHP/Artisan/scheduler bağımsızlık.</li>
 <li>Dotenv allowlist, açık backup bucket/prefix/private dizin ve destek sınırları.</li>
@@ -1029,8 +1041,80 @@
 <li>Kullanıcı onaylı çalışma geçmişi Tümü: öğrenci/panel ve aynı Excel kapsamı.</li>
 <li>Dönem haftaları tekilleştirilir; boşluklar doldurulmaz, tek dönem seçimi korunur.</li>
 <li>Çalışma devamı23Unit/49assert,24render/20ChromeDOM geçti; DB/Livewire bekler.</li>
-<li>Sonuç tablolarının NULL kapsamı bulgusu ayrı açık kalır.</li>
+<li>3 Kasım düzeltmesi: Dönem yok,0 veNULL kayıtlarını birlikte getirir; Tümü varsayılanı korunur.</li>
+<li>Son dar kabul17test/216assert vePint başarılı; canlı kurulum için --no-dev69checklist’ine eklendi.</li>
 <li>DB/Livewire çalışmadı; servis/veri/asset/migration değişikliği yok.</li>
+</ul></section>
+<section id="panel-rehberi-92"><h2><a href="92-PANEL-REHBERI-BAGLANTISI.md">92-PANEL-REHBERI-BAGLANTISI.md</a></h2><ul>
+<li>Genel ayarların sonunda boş varsayılanlı doküman bağlantısı.</li>
+<li>Yalnız web Yönetici rolü; Gent ve öğretmen kapsam dışında.</li>
+<li>Kaydetme ve boşaltmada sunucu tarafında aynı rol kontrolü.</li>
+<li>HTTP/HTTPS URL doğrulaması ve bozuk adresi göstermeme.</li>
+<li>Sidebar menüsü altında gri kitap ikonlu Panel rehberi.</li>
+<li>Yeni sekme, noopener ve noreferrer davranışı.</li>
+<li>Dört dil, dar PHP ve 48 Chrome parça görünümü kontrolü.</li>
+<li>DB/oturumlu HTTP ve gerçek bucket kontrolünün yapılmadığı sınır.</li>
+</ul></section>
+<section id="yayin-kontrolu-93"><h2><a href="93-YAYIN-ONCESI-KONTROL-VE-BAGIMLILIK-YAMALARI.md">93 — Yayın öncesi kontrol ve bağımlılık yamaları</a></h2><ul>
+<li>Onaylı yalnız Livewire4.4.8 ve Symfony Mime8.1.10; üretim güvenlik taraması temiz.</li>
+<li>55 dar güvenlik doğrulaması ve yama sonrası155Unit/552assert başarılı.</li>
+<li>Bu tur53Node,16backup ve68 gerçekBlade/Chrome fixture hücresi geçti.</li>
+<li>Yeni Livewire standard/CSP masaüstü-mobil dört açılış/etkileşim kontrolü geçti.</li>
+<li>DB/HTTP/Livewire kabulü kullanıcı kararıyla bekler; tam canlı onayı ve deploy yok.</li>
+<li>Dosyalar geliştirmesi kapsam dışında; diğer servisler ve veriler korunur.</li>
+</ul></section>
+<section id="dosyalar-96"><h2><a href="96-DOSYALAR-VE-KAYNAK-GORUNTULEME.md">96 — Dosyalar ve kaynak görüntüleme</a></h2><ul>
+<li>Dosyalar menüsü: ortak Bootstrap Table, arama, tür filtresi ve sunucu sayfalaması.</li>
+<li>Yükle, görüntüle, bağlantıyı kopyala ve onaylı silme; düzenleme yok.</li>
+<li>Üç işlem izni başlangıçta yalnız web Yönetici rolüne verilir.</li>
+<li>Varsayılan yerel uploads; isteğe bağlı ayrı R2 medya bucket ve şifreli secret.</li>
+<li>100 MB sınırı, desteklenen dosya türleri ve gerçek içerik doğrulaması.</li>
+<li>Bulut hatasında kullanıcı seçimiyle site depolamasına yükleme.</li>
+<li>Herkese açık sources adresi, güvenli kaynak sayfaya dönüş ve yeni sekme.</li>
+<li>IP ve dosya başına üç açılış/dakika; özgün dosya adresi sınırsız.</li>
+<li>HTML sandbox/JavaScript kapalı, özgün HTML bağlantısı indirme.</li>
+<li>18 izole PHP/93 assertion,14 Node ve Chrome masaüstü/mobil akışları başarılı.</li>
+<li>5 Kasım: onaylı tek migration iki DB’ye uygulandı; beş kalıcı yerel demo panelde hazır.</li>
+<li>Docker kabulü472PHP/2673assert ve29Node; gerçek panel/guest PDF-HTML-görsel ve mobil/dönüş doğrulandı.</li>
+<li>Onaylı yerel HTML özgün indirme düzeltmesi root server.php ile; gerçek indirme ve scriptsiz davranış doğrulandı.</li>
+<li>Onaylı dört revizyon tamam:post128M/100MiB kabulü,tek429 şablonu,dört dil,kaynak popup gizleme veKB/MB gösterimi.</li>
+<li>Son dar kabul22PHP/256assert ve12Chrome kontrolü başarılı;JS0/5xx0/taşma0,beş örnek korunur.</li>
+<li>Canlıda mevcut public_html/php.ini korunuyorsa upload100M/post128M ayrıca birleştirilip web PHP’den doğrulanır.</li>
+<li>Gerçek R2 ve canlı kabulü yapılmadı; diğer projelerin servisleri korundu.</li>
+<li>Symfony üretim bildirimleri sonraki97çalışmasında kapandı; güncel yayın sınırı orada kayıtlı.</li>
+</ul></section>
+<section id="symfony-guvenlik-97"><h2><a href="97-SYMFONY-GUVENLIK-YAMALARI-VE-YAYIN-KABULU.md">97 — Symfony güvenlik yamaları ve yayın kabulü</a></h2><ul>
+<li>HTTP Foundation, HTTP Kernel ve Routing8.1.8→8.1.11; yalnız üç üretim paketi.</li>
+<li>Altı üretim bildirimi kapandı; composer.json ve uygulama iş kuralları korundu.</li>
+<li>Gerçek paket sınırlarında önce zararlı tetik, sonra ret ve geçerli kullanım kontrolleri.</li>
+<li>555farklıPHP/2778assert ilgili ayrı koşular;42Node ve44upstream syntax başarılı.</li>
+<li>Dokuz yerel Chrome kontrolü: panel, çalışma, giriş, HTML/indirme/429;JS0/5xx0.</li>
+<li>Gerçek ayrı no-dev kurulumunda üretim HTTP/R2 autoload ve PHPUnit yokluğu doğrulandı.</li>
+<li>Ana381kullanıcı,5kaynak ve ayar/kaynak hashleri aynı; test oturumu kapatıldı.</li>
+<li>DevPHPUnit/YAML için ek kapsam onayı soruldu; bu dev paketler değiştirilmedi.</li>
+<li>Kontrollü yayın uygundur; gerçek canlı/R2 kabulü ayrı, route cache yeniden üretilir.</li>
+</ul></section>
+<section id="canli-log-98"><h2><a href="98-CANLI-LOG-SITEMAP-VE-BOS-ARAMA-DUZELTMESI.md">98 — Sitemap ve boş arama canlı log düzeltmesi</a></h2><ul>
+<li>4–6Kasım ekteki9hata iki kök nedene ayrıldı.</li>
+<li>Altı sitemap XML/short_open_tag parse hatası.</li>
+<li>Üç boş arama null/string atama hatası.</li>
+<li>XML bildirimi çıktısı değişmeden kaynak PHP açılışı ayrıldı.</li>
+<li>Dört arama bileşenine eksik sorguda boş string aktarılır.</li>
+<li>Short tags0/1 ve dört sekme×dört sorgu durumu.</li>
+<li>18izolePHP58assert/Pint başarılı; DB/HTTP bu tur yok.</li>
+<li>Eski loglar silinmez; yayından sonraki yeni kayıtlar kontrol edilir.</li>
+</ul></section>
+<section id="yayin-paketi-99"><h2><a href="99-20261106-YAYIN-PAKETI-VE-UYGULAMA-SIRASI.md">99 — 6 Kasım v3 yayın paketi ve tam komutlar</a></h2><ul>
+<li>İlk adım PHP8.5 ile rastgele anahtarlı bakım.</li>
+<li>Cron kaydı/duraklatma ve tam DB+proje yedeği.</li>
+<li>Commit kaynağı, public→public_html, runtime/env/demo hariç ZIP.</li>
+<li>Dış teslim hash'i, iç payload/per-file manifesti ve ayrı staging.</li>
+<li>Canlı env korunur; yalnız APP_VERSION1.1.43 güncellenir.</li>
+<li>Temiz Composer no-dev kurulumu, platform/audit ve package discovery.</li>
+<li>Pending/şema kontrolü, yalnız source_files migration'ı için somut onay.</li>
+<li>Önizlemeli korumalı aktarım; yalnız vendor silme kapsamı onaylanır.</li>
+<li>Positional cache:clear, yeni route/view cache ve gerçek web/log kabulü.</li>
+<li>Beş mevcut cron korunur; R2 medya ve yedek yapılandırmaları ayrıdır.</li>
 </ul></section>
 </body>
 </html>

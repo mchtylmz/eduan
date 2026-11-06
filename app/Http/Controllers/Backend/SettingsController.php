@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Actions\Settings\SettingSaveAction;
 use App\Enums\SettingsTabsEnum;
+use App\Helpers\PanelGuide;
 use App\Helpers\ServerTable;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
@@ -16,13 +17,14 @@ class SettingsController extends Controller
     public function index()
     {
         $activeTab = SettingsTabsEnum::tryFrom(request('activeTab')) ?? SettingsTabsEnum::GENERAL;
+        abort_if($activeTab === SettingsTabsEnum::FILES && ! PanelGuide::visibleTo(auth()->user()), 403);
         $canStudySettings = auth()->user()?->can('user-type:admin');
         abort_if(in_array($activeTab, [SettingsTabsEnum::STUDY, SettingsTabsEnum::NOTIFICATIONS, SettingsTabsEnum::TURNSTILE], true) && ! $canStudySettings, 403);
 
         return view('backend.settings.index', [
             'title' => __('Site Ayarları'),
             'activeTab' => $activeTab,
-            'tabs' => array_filter(SettingsTabsEnum::cases(), fn ($tab) => ! in_array($tab, [SettingsTabsEnum::STUDY, SettingsTabsEnum::NOTIFICATIONS, SettingsTabsEnum::TURNSTILE], true) || $canStudySettings),
+            'tabs' => array_filter(SettingsTabsEnum::cases(), fn ($tab) => ($tab !== SettingsTabsEnum::FILES || PanelGuide::visibleTo(auth()->user())) && (! in_array($tab, [SettingsTabsEnum::STUDY, SettingsTabsEnum::NOTIFICATIONS, SettingsTabsEnum::TURNSTILE], true) || $canStudySettings)),
         ]);
     }
 

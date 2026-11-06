@@ -14,6 +14,7 @@ Usage: bash backup-to-r2.sh db|project --project-dir /absolute/laravel/root [--c
 
 --check validates local configuration and tools only; no files, dump or R2 requests.
 Configuration comes from PROJECT/.env. No Laravel boot, Composer or Artisan.
+APP_PUBLIC_PATH selects the public directory relative to PROJECT (default: public).
 Required: BACKUP_WORK_DIR (outside project; parent must exist), BACKUP_R2_BUCKET,
 BACKUP_R2_PREFIX, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ENDPOINT.
 DB mode additionally requires DB_CONNECTION=mysql, DB_HOST, DB_PORT, DB_DATABASE,
@@ -35,7 +36,7 @@ done
 [[ "$mode" == db || "$mode" == project ]] || fail 'Select db or project mode.'
 [[ "$project_dir" == /* && -d "$project_dir" ]] || fail 'Project directory must be an existing absolute path.'
 project_dir=$(cd -P -- "$project_dir" && pwd)
-[[ -f "$project_dir/artisan" && -d "$project_dir/public" && -r "$project_dir/.env" ]] || fail 'Expected a Laravel root with artisan, public and readable .env.'
+[[ -f "$project_dir/artisan" && -r "$project_dir/.env" ]] || fail 'Expected a Laravel root with artisan and readable .env.'
 
 trim() {
     local value="$1"
@@ -53,7 +54,7 @@ load_env() {
         [[ "$line" =~ ^[[:space:]]*(export[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=(.*)$ ]] || continue
         key="${BASH_REMATCH[2]}"; value="${BASH_REMATCH[3]}"
         case "$key" in
-            DB_CONNECTION|DB_HOST|DB_PORT|DB_DATABASE|DB_USERNAME|DB_PASSWORD|DB_URL|DB_SOCKET|AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_ENDPOINT|BACKUP_WORK_DIR|BACKUP_R2_BUCKET|BACKUP_R2_PREFIX) ;;
+            APP_PUBLIC_PATH|DB_CONNECTION|DB_HOST|DB_PORT|DB_DATABASE|DB_USERNAME|DB_PASSWORD|DB_URL|DB_SOCKET|AWS_ACCESS_KEY_ID|AWS_SECRET_ACCESS_KEY|AWS_SESSION_TOKEN|AWS_ENDPOINT|BACKUP_WORK_DIR|BACKUP_R2_BUCKET|BACKUP_R2_PREFIX) ;;
             *) continue ;;
         esac
         value=$(trim "$value"); quote=''
@@ -92,7 +93,9 @@ load_env() {
 unset DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD DB_URL DB_SOCKET
 unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_ENDPOINT
 unset BACKUP_WORK_DIR BACKUP_R2_BUCKET BACKUP_R2_PREFIX
+unset APP_PUBLIC_PATH
 load_env
+[[ -d "$project_dir/${APP_PUBLIC_PATH:-public}" ]] || fail 'Expected the public directory configured by APP_PUBLIC_PATH (default: public).'
 for required in BACKUP_WORK_DIR BACKUP_R2_BUCKET BACKUP_R2_PREFIX AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_ENDPOINT; do
     [[ -n "${!required:-}" ]] || fail "Missing $required in project .env."
 done

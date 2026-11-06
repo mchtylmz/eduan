@@ -1,6 +1,6 @@
 # 62 — Laravel bağımsız Bash yedeği ve R2
 
-**Güncel durum:** Kullanıcının SSH çıktısıyla DB ve proje ZIP aktarımı/doğrulaması başarılı; günlük saatler DB **02:00 UTC**, proje **03:00 UTC** olarak kesinleşti. SiteGround `crontab` komutu bulunmadığı için Site Tools kurulumu aşağıdaki bölüm12'de hazırlanmıştır. Cron henüz kurulmuş/çalışmış veya restore denenmiş kabul edilmez. Önceki bölümlerdeki bekleyen durumlar ilgili aşamanın tarihsel kaydıdır.
+**Güncel durum:** 3 Kasım yol uyumu bölüm13: `APP_PUBLIC_PATH` ile `public_html` desteklenir; boş/eksik ayarda `public` korunur. 19 fixture test ve Bash syntax başarılı; yeni script canlıya aktarılmadı. Önceki kullanıcı SSH çıktısıyla DB ve proje ZIP aktarımı/doğrulaması başarılı; günlük saatler DB **02:00 UTC**, proje **03:00 UTC** olarak kesinleşti. SiteGround `crontab` komutu bulunmadığı için Site Tools kurulumu aşağıdaki bölüm12'de hazırlanmıştır. Cron henüz kurulmuş/çalışmış veya restore denenmiş kabul edilmez. Önceki bölümlerdeki bekleyen durumlar ilgili aşamanın tarihsel kaydıdır.
 
 ## 1. Onay ve kapsam
 
@@ -23,6 +23,7 @@ Faz3 geliştirmesi yerelde hazırlandı. Sunucuya SSH bağlantısı, dosya gönd
 
 | Alan | Kaynak / anlamı |
 |---|---|
+| APP_PUBLIC_PATH | Proje köküne göre web dizini; boş/eksikse `public`, canlı kurulumda `public_html` |
 | DB_CONNECTION | `mysql`; DB modu için |
 | DB_HOST / DB_PORT / DB_DATABASE / DB_USERNAME | Laravel'in açık DB bağlantı değerleri; DB modu için |
 | DB_PASSWORD | Açık anahtar zorunlu; boş olabilir |
@@ -159,3 +160,13 @@ PATH=/home/u2930-h840qws8g2us/.local/bin:/usr/local/bin:/usr/bin:/bin /bin/bash 
 ```
 
 İlk planlı çalıştırma sonrası iki log `tail -n 20` ile okunur. Kurulu diğer queue/scheduler görevlerine müdahale yoktur. Bu revizyonda yalnız rapor62 ve AGENTS güncellendi; Bash kodu değişmedi, testler yeniden koşulmadı. Canlı cron kurulum/ilk çalışma ve restore kanıtı beklenir.
+
+## 13. APP_PUBLIC_PATH / public_html uyumu — 3 Kasım 2026
+
+Kullanıcı yalnız bu yol uyumunu onayladı. Başlangıçtaki sabit `public/` kontrolü dotenv okumasının sonrasına taşındı. `APP_PUBLIC_PATH` mevcut güvenli allowlist parser ile okunur; shell ortamından miras alınmaz. Eksik/boş değer `public` kullanır; `APP_PUBLIC_PATH=public_html` varsa yalnız o dizin kontrol edilir. Seçilen dizin yoksa mevcut `public/` klasörüne sessiz dönüş yapılmaz; çalışma dizini, dump, ZIP veya R2 isteği oluşturulmadan hata verilir. Shell source/eval veya Laravel boot eklenmedi.
+
+DB içeriği, logs satır dışlaması, tam proje arşivi, kilit, R2 doğrulama ve temizleme davranışı değişmedi. ZIP bütün proje kökünü aldığı için `public_html/uploads` dosyaları da özgün yollarıyla arşivlenir.
+
+Doğrulama: `bash -n scripts/backup-to-r2.sh` ve `python3 -m unittest discover -s tests/Backup -p 'test_*.py'`: **19 test başarılı**. Üç yeni test; yalnız `public_html` bulunan projede iki modun check/gerçek fixture akışı ve ZIP upload içeriği, dotenv/default ve miras shell ayrımı, eksik seçili dizinde erken durma. Önceki 16 senaryo da aynı koşuda geçti. Sahte MySQL/AWS, gerçek geçici ZIP/gzip/hash; gerçek DB, uzak R2, cron veya canlı dosya işlemi yok.
+
+Değişen kaynaklar: script, backup testi, bu rehber, AGENTS ve rehber index özeti. Yayın ZIP, manifest ve SHA256 dosyaları yenilendi; checklist'teki yol engeli kapatıldı. Sunucuda cron home altındaki ayrı script kopyasını çağırıyorsa yayın sırasında o kopya da yenilenmeli ve iki modda `--check` çalıştırılmalı. Rutin DB yedeğinin logs satırlarını dışlaması devam eder; yayın öncesi tam DB yedeğinin yerine geçmez. Migration, Composer, asset veya sürüm değişikliği yok.

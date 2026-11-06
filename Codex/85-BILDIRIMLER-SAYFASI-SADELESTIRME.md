@@ -45,7 +45,7 @@ Geçici kanıtlar: `/tmp/eduan-notifications-browser-results.json`, `/tmp/eduan-
 
 ## Kontrol etme
 
-Giriş yaptıktan sonra `/account/notifications` adresini açın. Ayarlar kapalıyken son bildirimler ve cihazlar görünür; cihazları mobilde üstteki kısa bağlantıyla bulun. Bildirim izni doğrulanmış bir cihazda sayfayı yenilediğinizde onay formu yeniden açılmaz. İzin yoksa Ayarlar bölümünden açık onay ve izin düğmesiyle ilerlenir.
+Panelde global bildirim ayarı açıkken giriş yapıp `/account/notifications` adresini açın. Cihaz bildirim izni kapalıyken son bildirimler ve cihazlar görünür; cihazları mobilde üstteki kısa bağlantıyla bulun. Bildirim izni doğrulanmış bir cihazda sayfayı yenilediğinizde onay formu yeniden açılmaz. İzin yoksa sayfadaki Ayarlar bölümünden açık onay ve izin düğmesiyle ilerlenir. Global bildirim ayarı kapalıysa aşağıdaki 4 Kasım revizyonu uygulanır.
 
 ## Sınırlar
 
@@ -78,3 +78,16 @@ Bu revizyonda `resources/views/frontend/notifications/index.blade.php`, `resourc
 - Geçici kanıt: `/tmp/eduan-notifications-v2-browser-results.json`; masaüstü `/tmp/eduan-notifications-v2-1440-tr-off.png`, mobil `/tmp/eduan-notifications-v2-390-tr-off.png`; `-on.png` dosyaları izin sonrası görünümü gösterir.
 
 Ana yerel DB/migration/gerçek API-push/SMTP/canlı aktarım yok. Fiziksel Safari/telefon izin veya teslim kabulü yapılmadı. Önceki konsol ağ/PWA test kısıtları geçerlidir; ortak PWA/asset akışı değişmedi.
+
+## Global bildirim ayarı kapalıyken erişim — 4 Kasım 2026
+
+- `notificationsEnabled` kapalıysa sol alttaki bildirim ikonu, mevcut cihazı olan kullanıcıların hesap menüsündeki bildirim bağlantısı ve `web-push.js` başlangıç ayarları üretilmez.
+- `/account/notifications` doğrudan açıldığında, açıklama/cihaz/mesaj sorgularından önce 404 döner. Global ayar kapalıyken cihaz aboneliğinin bulunması erişimi açmaz.
+- Kontroller mevcut `WebPushSettings::enabled()` üzerinden yapılır. Ayar açık fakat sağlayıcı anahtarları eksikse mevcut yapılandırılamadı görünümü korunur. Tarayıcı izniyle global panel ayarı birbirinden ayrıdır.
+- Ayar yeniden açıldığında mevcut cihazlara göre bağlantı görünürlüğü geri gelir. Cihaz kayıtları veya bildirim geçmişi silinmez. WhatsApp düğmesi, hesap geçişinde SDK engeli ve mevcut context/kayıt/cihaz kapatma işlemleri değiştirilmedi.
+
+Değişen uygulama dosyaları: `NotificationController.php`, `frontend/account/tab.blade.php`, `frontend/layouts/section/floating-button.blade.php` ve `notification-script.blade.php`. İlgili HTTP regresyonları `WebNotificationsTest` içinde güncellendi; hesap geçişi ön izleme testinde bildirim özelliği açık olacak şekilde fixture netleştirildi.
+
+Dar kanıt: `NotificationVisibilityTest` **12 test / 56 doğrulama** başarılı. Gerçek Blade parçaları ve controller; kapalı/eksik/boş/false ayar, eski cihaz, açık fakat eksik anahtar, misafir, hesap geçişi ve aç-kapat-aç senaryoları. Ayrı SQLite bellek deposu kullanıldı; kapalı sayfada ve kapalı hesap bağlantısında veri sorgusu yapılmadığı da doğrulandı. İlk denemelerde yalnız izole test düzeneğinin auth sözleşmesi/ortam ve WhatsApp metni eksikleri giderildi; uygulama davranışı bu nedenle gevşetilmedi.
+
+Eduan servisleri çalışmadığı için tam uygulama HTTP/DB testleri ve tarayıcı testi bu tur çalıştırılmadı; başka projenin çalışan servisleri değiştirilmedi. Yeni feature regresyonları henüz çalıştırılmadı. Migration, veri/ayar yazımı, gerçek sağlayıcı isteği ve canlı aktarım yok. CSS/JS veya sürüm değişmedi.

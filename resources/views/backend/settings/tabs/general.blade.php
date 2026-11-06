@@ -184,6 +184,8 @@
     </div>
     <!-- row -->
 
+    @include('backend.settings.partials.panel-guide')
+
     @can('settings:update')
         <div class="mb-3 text-center py-2 mt-3">
             <button type="submit" class="btn btn-alt-primary px-4">

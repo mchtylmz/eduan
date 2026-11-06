@@ -9,7 +9,7 @@
     if ($accountUser->can('study:access')) {
         $accountLinks[] = ['route' => 'frontend.study', 'key' => 'study', 'label' => __('study.my_study'), 'icon' => 'fa-calendar-check'];
     }
-    if (\App\Models\WebPushSubscription::where('user_id', $accountUser->id)->whereNull('revoked_at')->exists()) {
+    if (\App\Helpers\WebPushSettings::enabled() && \App\Models\WebPushSubscription::where('user_id', $accountUser->id)->whereNull('revoked_at')->exists()) {
         $accountLinks[] = ['route' => 'frontend.notifications', 'key' => 'notifications', 'label' => __('notifications.title'), 'icon' => 'fa-bell'];
     }
     if (settings()->leagueStatus === 'active') {

@@ -3,9 +3,11 @@
         <div class="mb-4">
             <label class="form-label" for="league-mode">{{ __('leagues.mode') }}</label>
             <select id="league-mode" class="form-select" wire:model="is_live">
+                <option value="" disabled hidden @selected($is_live === '')>{{ __('leagues.mode_placeholder') }}</option>
                 <option value="0">{{ __('leagues.status_single') }}</option>
                 <option value="1">{{ __('leagues.status_live') }}</option>
             </select>
+            <x-badge.error field="is_live" />
             <p class="form-text mb-0">{{ __('leagues.mode_help') }}</p>
         </div>
         <div class="row">

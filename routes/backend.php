@@ -98,3 +98,13 @@ Route::get('study/students/{user}/data', [\App\Http\Controllers\Backend\StudyCon
 Route::get('communications', [\App\Http\Controllers\Backend\CommunicationController::class, 'index'])->name('communications.index');
 Route::get('communications/recipients', [\App\Http\Controllers\Backend\CommunicationController::class, 'recipients'])->name('communications.recipients');
 Route::get('communications/history', [\App\Http\Controllers\Backend\CommunicationController::class, 'history'])->name('communications.history');
+
+
+Route::prefix('files')->name('files.')->middleware('can:files:view')
+    ->controller(\App\Http\Controllers\Backend\SourceFileController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/data', 'data')->name('data');
+        Route::post('/prepare', 'prepare')->middleware('throttle:20,1')->name('prepare');
+        Route::post('/{code}/finish', 'finish')->whereUuid('code')->middleware('throttle:20,1')->name('finish');
+        Route::delete('/{code}', 'delete')->whereUuid('code')->name('delete');
+    });

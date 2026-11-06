@@ -32,6 +32,7 @@
         'tests' => __('Sınavlar'),
         'stats' => __('İstatistikler'),
         'study' => __('study.title'),
+        'files' => __('sources.title'),
         'communications' => __('notifications.communications'),
         'ai' => __('Yapay Zeka'),
         'leagues' => __('Ligler'),

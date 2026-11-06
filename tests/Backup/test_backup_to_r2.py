@@ -179,6 +179,47 @@ class BackupTest(unittest.TestCase):
         self.assertEqual(len(calls), 3)  # upload, head, full readback
         self.assertNotIn("literal #", (self.remote / "dump_args").read_text())
 
+    def test_configured_public_html_supports_both_modes_and_preserves_uploads(self):
+        (self.project / "public").rename(self.project / "public_html")
+        self.write_env(extra='APP_PUBLIC_PATH="public_html"\n')
+        for mode in ("db", "project"):
+            with self.subTest(mode=mode):
+                result = self.run_script(mode, check=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.work.exists())
+        self.assertFalse((self.remote / "calls").exists())
+        for mode in ("db", "project"):
+            with self.subTest(mode=mode):
+                result = self.run_script(mode)
+                self.assertEqual(result.returncode, 0, result.stderr)
+        with zipfile.ZipFile(self.remote / "object") as archive:
+            self.assertEqual(archive.read("public_html/uploads/photo.txt"), b"upload fixture")
+            self.assertEqual(archive.read(".env").decode(), self.env_text)
+            self.assertFalse(any(name.startswith("public/") for name in archive.namelist()))
+
+    def test_public_path_uses_project_dotenv_or_public_default(self):
+        self.env["APP_PUBLIC_PATH"] = "inherited-missing-directory"
+        for extra in ("", "APP_PUBLIC_PATH=public\n", "APP_PUBLIC_PATH=\n"):
+            with self.subTest(extra=extra):
+                self.write_env(extra=extra)
+                for mode in ("db", "project"):
+                    result = self.run_script(mode, check=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.work.exists())
+        self.assertFalse((self.remote / "calls").exists())
+
+    def test_missing_configured_public_directory_cannot_start_backup(self):
+        self.write_env(extra="APP_PUBLIC_PATH=public_html\n")
+        for mode in ("db", "project"):
+            for check in (False, True):
+                with self.subTest(mode=mode, check=check):
+                    result = self.run_script(mode, check=check)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("APP_PUBLIC_PATH", result.stderr)
+        self.assertFalse(self.work.exists())
+        self.assertFalse((self.remote / "dump_args").exists())
+        self.assertFalse((self.remote / "calls").exists())
+
     def test_project_zip_contains_hidden_files_uploads_and_symlinks(self):
         result = self.run_script("project")
         self.assertEqual(result.returncode, 0, result.stderr)

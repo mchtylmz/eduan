@@ -39,7 +39,8 @@
             <div class="col-lg-12 mb-3">
                 <div class="bg-body-light p-2 px-3">
                     {{ __('Gönderilen Yanıt') }}: <br>
-                    {!! html_entity_decode($contact->reply) !!}
+                    <iframe class="w-100 border-0" height="300" sandbox referrerpolicy="no-referrer"
+                            title="{{ __('Gönderilen Yanıt') }}" srcdoc="{{ html_entity_decode($contact->reply) }}"></iframe>
                 </div>
             </div>
         @endif

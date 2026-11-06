@@ -77,6 +77,8 @@ class UserImpersonationTest extends TestCase
 
     public function test_teacher_target_cannot_enter_dashboard_or_rebind_the_administrators_push_device(): void
     {
+        settings()->set('notificationsEnabled', '1');
+        settings()->save();
         $this->withSession(['webPushSubscriptionRecordId' => 1234]);
         $this->start($this->teacher)->assertRedirect();
         $this->assertNull(session('webPushSubscriptionRecordId'));

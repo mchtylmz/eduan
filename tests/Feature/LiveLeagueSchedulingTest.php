@@ -95,7 +95,7 @@ class LiveLeagueSchedulingTest extends TestCase
         return $actor;
     }
 
-    public function test_registered_schedule_uses_six_local_slots_and_overlap_protection(): void
+    public function test_registered_schedule_uses_eight_local_slots_and_overlap_protection(): void
     {
         $this->app->forgetInstance(Kernel::class);
         $this->app->make(Kernel::class)->all();
@@ -103,7 +103,7 @@ class LiveLeagueSchedulingTest extends TestCase
         $event = $events->firstWhere('description', 'refresh_live_leagues');
         $this->assertNotNull($event);
         $this->assertStringContainsString('leagues:refresh-live', $event->command);
-        $this->assertSame('0 */4 * * *', $event->expression);
+        $this->assertSame('0 */3 * * *', $event->expression);
         $this->assertSame('Europe/Brussels', $event->timezone);
         $this->assertTrue($event->withoutOverlapping);
         $this->assertSame(240, $event->expiresAt);
@@ -111,7 +111,7 @@ class LiveLeagueSchedulingTest extends TestCase
         foreach (range(0, 23) as $hour) {
             foreach ([0, 1] as $minute) {
                 $date = Carbon::parse('2026-10-25', 'Europe/Brussels')->setTime($hour, $minute);
-                $this->assertSame($minute === 0 && $hour % 4 === 0, $cron->isDue($date, 'Europe/Brussels'));
+                $this->assertSame($minute === 0 && $hour % 3 === 0, $cron->isDue($date, 'Europe/Brussels'));
             }
         }
         $weekly = $events->firstWhere('description', 'run_league_result');
