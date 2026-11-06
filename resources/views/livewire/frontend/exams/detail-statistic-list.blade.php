@@ -60,7 +60,7 @@
                     @endauth
                 @else
                     <button type="button" class="course-btn theme-btn theme-btn-big bg-dark" disabled>
-                        <i class="fa fa-hourglass-1 fa-pulse me-2"></i> {{ __('Yakında Başlayacak') }}
+                        <i class="fa fa-hourglass-1 fa-pulse me-2"></i> {{ __('learning.coming_soon') }}
                     </button>
                 @endif
             </div>

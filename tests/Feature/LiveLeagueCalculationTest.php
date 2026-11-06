@@ -52,7 +52,7 @@ class LiveLeagueCalculationTest extends TestCase
         return CalculateLeague::run('2026-10-24 00:00', '2026-10-30 23:59', live: true);
     }
 
-    public function test_repeated_live_creation_keeps_one_identity_and_frozen_rules(): void
+    public function test_repeated_live_creation_keeps_identity_and_scoring_but_refreshes_capacity(): void
     {
         $user = User::factory()->create(['league_approval' => 1]);
         $this->answer($user);
@@ -64,7 +64,7 @@ class LiveLeagueCalculationTest extends TestCase
         $this->assertSame($league->code, $again->code);
         $snapshot = $again->calculation_settings;
         ksort($snapshot);
-        $this->assertSame(['correct_point' => 3, 'incorrect_point' => -1, 'user_count' => 1], $snapshot);
+        $this->assertSame(['correct_point' => 3, 'incorrect_point' => -1, 'user_count' => 20], $snapshot);
         $this->assertSame(3, $again->results()->firstOrFail()->total_score);
         $this->assertSame('2026-10-30 23:59:59', $again->end_at->format('Y-m-d H:i:s'));
         $this->assertNull($again->closed_at);
@@ -83,6 +83,51 @@ class LiveLeagueCalculationTest extends TestCase
         $this->assertSame($league->id, $again->id);
         $this->assertSame(6, $again->results()->firstOrFail()->total_score);
         $this->assertSame(1, League::where('code', $league->code)->count());
+    }
+
+    public function test_single_calculations_store_capacity_and_existing_single_uses_its_snapshot(): void
+    {
+        $first = User::factory()->create(['league_approval' => 1]);
+        $second = User::factory()->create(['league_approval' => 1]);
+        $this->answer($first);
+        $this->answer($second)->update(['correct' => YesNoEnum::NO]);
+        $league = CalculateLeague::run('2026-10-24 00:00', '2026-10-30 23:59');
+        $this->assertSame(1, $league->calculation_settings['user_count']);
+        settings()->set(['leagueUserCount' => 14, 'leagueCorrectPoint' => 9]);
+        settings()->save();
+        $again = CalculateLeague::run('', '', leagueId: $league->id);
+        $this->assertSame(1, $again->calculation_settings['user_count']);
+        $this->assertSame(3, $again->results()->where('user_id', $first->id)->value('total_score'));
+        $this->assertSame(2, $again->results()->where('user_id', $second->id)->value('league_number'));
+        $next = CalculateLeague::run('2026-10-25 00:00', '2026-10-30 23:59');
+        $this->assertSame(14, $next->calculation_settings['user_count']);
+        $this->assertSame(1, $next->results()->where('user_id', $second->id)->value('league_number'));
+        $this->assertSame(2, $next->results()->where('user_id', $second->id)->value('position'));
+    }
+
+    public function test_setting_change_waits_for_calculation_and_expired_or_closed_league_keeps_capacity(): void
+    {
+        $first = User::factory()->create(['league_approval' => 1]);
+        $second = User::factory()->create(['league_approval' => 1]);
+        $this->answer($first);
+        $this->answer($second)->update(['correct' => YesNoEnum::NO]);
+        $league = $this->live();
+        settings()->set('leagueUserCount', 14);
+        settings()->save();
+        $this->assertSame(1, $league->fresh()->calculation_settings['user_count']);
+        $this->assertSame(2, $league->results()->where('user_id', $second->id)->value('league_number'));
+        $again = CalculateLeague::run('', '', leagueId: $league->id, scheduled: true);
+        $this->assertSame(14, $again->calculation_settings['user_count']);
+        $this->assertSame(1, $again->results()->where('user_id', $second->id)->value('league_number'));
+        $this->assertSame(2, $again->results()->where('user_id', $second->id)->value('position'));
+        settings()->set('leagueUserCount', 5);
+        settings()->save();
+        $this->travelTo($league->end_at->copy()->addSecond());
+        $closed = CalculateLeague::run('', '', leagueId: $league->id, scheduled: true);
+        $this->assertNotNull($closed->closed_at);
+        $this->assertSame(14, $closed->calculation_settings['user_count']);
+        $again = CalculateLeague::run('', '', leagueId: $league->id);
+        $this->assertSame(14, $again->calculation_settings['user_count']);
     }
 
     public function test_id_based_recalculation_uses_the_frozen_source_after_global_source_changes(): void
@@ -172,7 +217,7 @@ class LiveLeagueCalculationTest extends TestCase
             $this->fail('Historical single calculation was converted.');
         } catch (InvalidArgumentException) {
             $this->assertFalse($single->fresh()->is_live);
-            $this->assertNull($single->fresh()->calculation_settings);
+            $this->assertSame(1, $single->fresh()->calculation_settings['user_count']);
         }
     }
 
@@ -197,6 +242,8 @@ class LiveLeagueCalculationTest extends TestCase
         $league = $this->live();
         $this->answer($user, 2);
         $interrupt = true;
+        settings()->set('leagueUserCount', 14);
+        settings()->save();
         DB::listen(function (QueryExecuted $query) use (&$interrupt) {
             if ($interrupt && str_starts_with(strtolower($query->sql), 'delete from `league_results`')) {
                 $interrupt = false;
@@ -209,11 +256,13 @@ class LiveLeagueCalculationTest extends TestCase
         } catch (RuntimeException $e) {
             $this->assertSame('Synthetic write failure', $e->getMessage());
             $this->assertSame(3, $league->results()->firstOrFail()->total_score);
+            $this->assertSame(1, $league->fresh()->calculation_settings['user_count']);
             $this->assertEquals($league->calculated_at, $league->fresh()->calculated_at);
         } finally {
             $interrupt = false;
         }
         $this->assertSame(6, $this->live()->results()->firstOrFail()->total_score);
+        $this->assertSame(14, $league->fresh()->calculation_settings['user_count']);
     }
 
     public function test_another_connection_cannot_calculate_the_same_period_concurrently(): void
@@ -247,7 +296,7 @@ class LiveLeagueCalculationTest extends TestCase
         CalculateLeague::run('', '', leagueId: $league->id);
     }
 
-    public function test_signed_wrong_points_and_league_capacity_stay_frozen_after_settings_change(): void
+    public function test_signed_wrong_points_stay_frozen_while_current_capacity_changes_on_calculation(): void
     {
         $first = User::factory()->create(['league_approval' => 1]);
         $second = User::factory()->create(['league_approval' => 1]);
@@ -263,8 +312,8 @@ class LiveLeagueCalculationTest extends TestCase
         $this->assertSame(3, $winner->total_score);
         $this->assertSame(-1, $runner->total_score);
         $this->assertSame(2, $runner->rank_position);
-        $this->assertSame(2, $runner->league_number);
-        $this->assertSame(1, $runner->position);
+        $this->assertSame(1, $runner->league_number);
+        $this->assertSame(2, $runner->position);
     }
 
     public function test_database_interval_includes_both_boundary_seconds_and_excludes_adjacent_seconds(): void

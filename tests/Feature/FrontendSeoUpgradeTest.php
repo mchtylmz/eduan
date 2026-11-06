@@ -124,9 +124,10 @@ class FrontendSeoUpgradeTest extends TestCase
         $lesson = Lesson::create(['code' => 'seo-disabled-lesson', 'name' => ['nl' => 'Hidden'], 'status' => StatusEnum::PASSIVE]);
         $exam = Exam::create(['locale' => 'nl', 'code' => 'seo-disabled-test', 'name' => 'Hidden', 'status' => StatusEnum::PASSIVE]);
         $test = Test::create(['locale' => 'nl', 'code' => 'seo-disabled-exam', 'name' => 'Hidden', 'status' => StatusEnum::PASSIVE, 'created_by' => 1]);
-        foreach ([['blog.detail', $blog->slug], ['lesson', $lesson->code], ['test.detail', $exam->code], ['exam.detail', $test->code]] as [$route, $code]) {
+        foreach ([['blog.detail', $blog->slug], ['lesson', $lesson->code], ['test.detail', $exam->code]] as [$route, $code]) {
             $this->get(route('frontend.'.$route, $code))->assertNotFound();
         }
+        $this->get(route('frontend.exam.detail', $test->code))->assertOk()->assertSee(__('learning.coming_soon'));
     }
 
     public function test_auth_search_and_personal_pages_remain_noindex_and_search_has_no_graph(): void

@@ -62,11 +62,16 @@ class CalculateLeague
                     throw new InvalidArgumentException('A single calculation already exists for this period.');
                 }
                 $isLive = $live || (bool) $league?->is_live;
-                $rules = $league?->is_live
+                $through = $isLive ? $period->cutoff(CarbonImmutable::now()) : $period->end;
+                $rules = $league && ($league->is_live || $league->calculation_settings !== null)
                     ? LeagueRules::fromSnapshot($source, $league->calculation_settings ?? [])
                     : new LeagueRules($source, (int) (settings()->leagueCorrectPoint ?? 3),
                         (int) (settings()->leagueIncorrectPoint ?? -1), (int) (settings()->leagueUserCount ?? 10));
-                $through = $isLive ? $period->cutoff(CarbonImmutable::now()) : $period->end;
+                if ($league?->is_live && $league->closed_at === null && $through !== null && ! $period->end->isPast()) {
+                    // Refresh capacity only when calculating an open current league; scoring/source stay frozen.
+                    $rules = new LeagueRules($rules->source, $rules->correctPoint, $rules->incorrectPoint,
+                        (int) (settings()->leagueUserCount ?? 10));
+                }
                 $results = $through ? $this->results($rules, $period, $through) : collect();
                 // Preserve the established no-data behavior for single calculations.
                 if (! $isLive && $results->isEmpty()) {
@@ -75,8 +80,10 @@ class CalculateLeague
                 $league ??= new League(['code' => 'hyp', 'label' => $source,
                     'start_at' => $period->start, 'end_at' => $period->end]);
                 if ($isLive && ! $league->exists) {
-                    $league->fill(['is_live' => true, 'calculation_settings' => $rules->snapshot()]);
+                    $league->is_live = true;
                 }
+                // Persist the capacity used by both single and live calculations with their result rows.
+                $league->calculation_settings = $rules->snapshot();
                 if ($isLive) {
                     // Avoid broad legacy cache flushing for recurring live calculations.
                     if ($league->exists) {

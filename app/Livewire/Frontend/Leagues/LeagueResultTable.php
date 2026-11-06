@@ -23,9 +23,9 @@ class LeagueResultTable extends Component
         $this->league = $league;
         $this->name = $name;
         $this->ranking = $ranking;
-        $this->userCount = $league->is_live
+        $this->userCount = $league->is_live || $league->calculation_settings !== null
             ? LeagueRules::fromSnapshot($league->label, $league->calculation_settings ?? [])->userCount
-            : intval($userCount ?? (settings()->leagueUserCount ?? 10));
+            : intval($userCount ?? 0);
     }
 
     #[Computed]
@@ -37,30 +37,9 @@ class LeagueResultTable extends Component
             function () {
                 return $this->league->results()
                     ->with('user')
-                    ->when(
-                        $this->ranking == 1,
-                        function ($query) {
-                            return $query->whereBetween('position', [1, $this->userCount])
-                                ->where('rank_position', '>', 0)
-                                ->where('rank_position', '<=', $this->userCount);
-                        }
-                    )
-                    ->when(
-                        $this->ranking == 2,
-                        function ($query) {
-                            return $query->whereBetween('position', [1, $this->userCount])
-                                ->where('rank_position', '>', $this->userCount)
-                                ->where('rank_position', '<=', $this->userCount * 2);
-                        }
-                    )
-                    ->when(
-                        $this->ranking == 3,
-                        function ($query) {
-                            return $query->whereBetween('position', [1, $this->userCount])
-                                ->where('rank_position', '>', $this->userCount * 2)
-                                ->where('rank_position', '<=', $this->userCount * 3);
-                        }
-                    )
+                    ->where('league_number', $this->ranking)
+                    ->where('position', '>', 0)
+                    ->where('rank_position', '>', 0)
                     ->orderBy('rank_position')
                     ->orderBy('position')
                     ->get();

@@ -8,7 +8,7 @@ use Symfony\Component\Process\Process;
 
 class LeagueModeAndCadenceTest extends TestCase
 {
-    public function test_real_form_requires_explicit_mode_and_registered_schedule_uses_three_hour_slots(): void
+    public function test_real_form_requires_explicit_mode_and_schedule_obeys_amsterdam_day_and_night(): void
     {
         $root = sys_get_temp_dir().'/eduan-league-mode-'.bin2hex(random_bytes(8));
         $source = dirname(__DIR__, 2);
@@ -92,13 +92,17 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->all();
 $events = collect($app->make(Illuminate\Console\Scheduling\Schedule::class)->events());
 $event = $events->firstWhere('description', 'refresh_live_leagues');
 $results['schedule'] = [$event->expression, $event->timezone, $event->withoutOverlapping, $event->expiresAt];
-$cron = new Cron\CronExpression($event->expression);
-foreach (range(0, 23) as $hour) {
-    foreach ([0, 1] as $minute) {
-        $date = Carbon\Carbon::parse('2026-10-25', 'Europe/Brussels')->setTime($hour, $minute);
-        $results['slots'][] = $cron->isDue($date, 'Europe/Brussels');
+foreach (['2026-01-15', '2026-07-15', '2026-03-29', '2026-10-25'] as $day) {
+    $start = Carbon\CarbonImmutable::parse($day, 'Europe/Amsterdam')->startOfDay();
+    $end = $start->addDay()->utc();
+    for ($time = $start->utc(); $time->lessThan($end); $time = $time->addMinute()) {
+        Carbon\Carbon::setTestNow($time);
+        $local = $time->setTimezone('Europe/Amsterdam');
+        $expected = $local->hour >= 9 ? $local->minute % 15 === 0 : $local->minute === 0;
+        $results['slots'][] = [$local->format('c'), $expected, $event->isDue($app) && $event->filtersPass($app)];
     }
 }
+Carbon\Carbon::setTestNow();
 $results['legacy_schedule'] = $events->firstWhere('description', 'run_league_result')->expression;
 echo json_encode($results, JSON_THROW_ON_ERROR);
 SCRIPT;
@@ -114,9 +118,11 @@ SCRIPT;
                 ], $result['locales'][$locale]);
             }
             $this->assertSame(5, $result['form_cases']);
-            $this->assertSame(['0 */3 * * *', 'Europe/Brussels', true, 240], $result['schedule']);
-            foreach ($result['slots'] as $index => $due) {
-                $this->assertSame($index % 6 === 0, $due);
+            $this->assertSame(['*/15 * * * *', 'Europe/Amsterdam', true, 240], $result['schedule']);
+            $this->assertCount(5760, $result['slots']);
+            $this->assertSame(276, count(array_filter($result['slots'], fn ($slot) => $slot[2])));
+            foreach ($result['slots'] as [$time, $expected, $due]) {
+                $this->assertSame($expected, $due, $time);
             }
             $this->assertSame('0 * * * *', $result['legacy_schedule']);
         } finally {

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'coming_soon' => 'Binnenkort van start',
     'my_results' => 'Mijn resultaten',
     'all_attempts' => 'Totaal van alle pogingen',
     'attempt' => 'Poging',

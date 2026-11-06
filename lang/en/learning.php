@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'coming_soon' => 'Starting soon',
     'my_results' => 'My results',
     'all_attempts' => 'Total across all attempts',
     'attempt' => 'Attempt',

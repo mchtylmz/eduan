@@ -184,3 +184,11 @@ Panelde Dosyalar, isteğe bağlı R2/yerel depolama ve herkese açık `/sources`
 ### 6 Kasım log düzeltmesi ve güncel yayın hazırlığı
 
 [98 — İki canlı log hatası](Codex/98-CANLI-LOG-SITEMAP-VE-BOS-ARAMA-DUZELTMESI.md): sitemap kısa PHP etiketi uyumu ve dört sekmede boş arama string'i;18darPHP/58assert/Pint geçti. Eduan kapalı olduğu için bu tur gerçek DB/HTTP kabulü yok. [99 — Tam komutlu v3 yayın sırası](Codex/99-20261106-YAYIN-PAKETI-VE-UYGULAMA-SIRASI.md): anahtarlı bakım, tam DB+dosya yedeği, committed kaynak ZIP/hash, public_html/no-dev, yalnız kaynak migration'ı, korunan runtime dosyaları, cache/OPcache, eski hataları silmeden log kabulü ve up. Canlı .env korunur, yalnız APP_VERSION1.1.43 değişir; R2 medya ayarları paneldedir.
+
+### Pasif sınavlar ve lig kapasitesi/zamanlaması
+
+[100 — Kapsam ve dar test durumu](Codex/100-PASIF-SINAVLAR-VE-LIG-KAPASITE-ZAMANLAMA.md): bölümü ve sorusu olan aktif/pasif sınavlar görünür; pasif sınav başlatılamaz. Geçmiş lig grupları korunur; güncel canlı lig kapasiteyi sonraki hesaplamada alır. Amsterdam gündüz15dk/gece saatlik hesaplama kullanılır.32izolePHP/5841doğrulama ve lig JS8doğrulama ardından129gerçek DBtest/968doğrulama başarılı. Chrome dört dil/masaüstü-mobil10akışta JS/5xx/taşma yok; testing rollback, ana veriler korunur. Üretim deploy/cron/proxy kabulü bu tur yapılmadı. Yeni migration yok; bu düzenlemeler önceki v3 yayın arşivinde bulunmaz.
+
+### Birleşik v4 yayın paketi — 6 Kasım
+
+[101 — Güncel tam komutlu checklist](Codex/101-20261106-V4-YAYIN-PAKETI-VE-KABUL.md): henüz uygulanmayan v3 yerine Dosyalar/güvenlik/log ve yeni sınav/lig değişikliklerini tek pakette içerir.129/968 ve351/1264 iki ayrı dar koşu başarılı; ayrıca gerçek HTTP’de bulunan konu araması500kullanıcı onayıyla düzeltildi, ilgili28/89 ve21HTTP200/XML geçti. Üretim audit0/platform uygun. Uygulama1.1.43; public_html/no-dev/tek source migration adayı, env ve upload koruma, Amsterdam15dk/gece60dk cron açıklamaları güncel. Canlıya bu tur işlem uygulanmadı.

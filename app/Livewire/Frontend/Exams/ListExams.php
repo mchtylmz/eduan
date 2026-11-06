@@ -45,7 +45,7 @@ class ListExams extends Component
     {
         return FrontendCache::paginate(
             'exams',
-            ['search' => $this->search ? $this->word : '', 'hits' => $this->showHits, 'limit' => $this->paginate, 'page' => $this->getPage()],
+            ['include_passive' => true, 'search' => $this->search ? $this->word : '', 'hits' => $this->showHits, 'limit' => $this->paginate, 'page' => $this->getPage()],
             function () {
                 return Test::select(['id', 'code', 'name', 'locale', 'duration', 'hits', 'status'])->withCount(['sections_with_no_parent', 'questions'])
                     ->with('language:code,name')
@@ -63,7 +63,6 @@ class ListExams extends Component
                     ->when(! $this->showHits, function ($query) {
                         $query->orderByDesc('hits');
                     })
-                    ->active()
                     ->having('sections_with_no_parent_count', '>', 0)
                     ->having('questions_count', '>', 0)
                     ->paginate($this->paginate);

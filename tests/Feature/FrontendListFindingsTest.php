@@ -58,7 +58,7 @@ class FrontendListFindingsTest extends TestCase
         $this->assertSame(1, $list->topics()->currentPage());
     }
 
-    public function test_public_timed_exam_list_excludes_inactive_exams(): void
+    public function test_public_timed_exam_list_includes_active_and_passive_exams_with_content(): void
     {
         $testIds = [];
         foreach ([StatusEnum::ACTIVE, StatusEnum::PASSIVE] as $status) {
@@ -68,7 +68,7 @@ class FrontendListFindingsTest extends TestCase
             $test->questions()->create(['section_id' => $section->id, 'question_id' => 1, 'lesson_id' => 1, 'topic_id' => 1]);
         }
         $list = new ListExams;
-        $this->assertSame(['listed-active'], collect($list->exams()->items())->whereIn('id', $testIds)->pluck('code')->all());
+        $this->assertEqualsCanonicalizing(['listed-active', 'listed-passive'], collect($list->exams()->items())->whereIn('id', $testIds)->pluck('code')->all());
     }
 
     public function test_question_add_permission_displays_the_question_create_button(): void

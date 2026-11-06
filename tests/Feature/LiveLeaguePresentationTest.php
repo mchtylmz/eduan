@@ -217,7 +217,7 @@ class LiveLeaguePresentationTest extends TestCase
         $this->getJson(route('admin.leagues.getData', ['search' => $league->code]))->assertJsonPath('rows.0.can_recalculate', false);
     }
 
-    public function test_same_second_calculation_invalidates_public_caches_and_keeps_frozen_capacity(): void
+    public function test_same_second_calculation_invalidates_public_caches_and_applies_new_capacity(): void
     {
         $first = User::factory()->create(['league_approval' => 1, 'name' => 'CacheFirst']);
         $second = User::factory()->create(['league_approval' => 1, 'name' => 'CacheSecond']);
@@ -234,7 +234,7 @@ class LiveLeaguePresentationTest extends TestCase
         $this->assertSame('preserved', Cache::get('unrelated-public-key'));
         $this->assertFalse(Cache::has('leagues_first'));
         $this->assertFalse(Cache::has('leagues_all'));
-        Livewire::test(LeagueResultTable::class, ['league' => $league->fresh(), 'name' => 'First', 'ranking' => 1])->assertSet('userCount', 1)->assertSee('CacheSecond');
+        Livewire::test(LeagueResultTable::class, ['league' => $league->fresh(), 'name' => 'First', 'ranking' => 1])->assertSet('userCount', 10)->assertSee('CacheSecond');
         $this->get(route('frontend.leagues'))->assertOk()->assertSee('CacheSecond');
     }
 
@@ -270,6 +270,31 @@ class LiveLeaguePresentationTest extends TestCase
             ->assertSee('FrozenFirst')->assertDontSee('FrozenSecond');
         Livewire::test(LeagueResultTable::class, ['league' => $league, 'name' => 'Second', 'ranking' => 2])
             ->assertSee('FrozenSecond')->assertDontSee('FrozenFirst');
+    }
+
+    public function test_legacy_single_results_use_stored_groups_instead_of_current_global_capacity(): void
+    {
+        $league = League::create(['code' => 'legacy-stored-groups', 'label' => 'exam_result_details',
+            'start_at' => '2025-01-01', 'end_at' => '2025-01-07']);
+        $ids = [];
+        foreach (range(1, 23) as $rank) {
+            $user = User::factory()->create();
+            $league->results()->create(['user_id' => $user->id, 'rank_position' => $rank,
+                'league_number' => (int) ceil($rank / 10), 'position' => (($rank - 1) % 10) + 1,
+                'total_score' => 1000 - $rank, 'total_correct' => 1, 'total_incorrect' => 0, 'total_duration' => 10]);
+            $ids[] = $user->id;
+        }
+        foreach ([14, 4] as $count) {
+            settings()->set('leagueUserCount', $count);
+            settings()->save();
+            foreach ([1, 2, 3] as $ranking) {
+                $component = new LeagueResultTable;
+                $component->mount($league, 'League '.$ranking, $ranking);
+                $this->assertSame(array_slice($ids, ($ranking - 1) * 10, 10), $component->results()->pluck('user_id')->all());
+                $this->assertSame(1, $component->results()->first()->position);
+            }
+        }
+        $this->assertNull($league->fresh()->calculation_settings);
     }
 
     public function test_busy_form_gives_retry_message_without_redirecting(): void

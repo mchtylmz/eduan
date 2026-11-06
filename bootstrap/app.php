@@ -60,8 +60,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         Schedule::command('leagues:refresh-live')
             ->name('refresh_live_leagues')
-            ->timezone(config('app.timezone'))
-            ->everyThreeHours()
+            ->timezone('Europe/Amsterdam')
+            ->everyFifteenMinutes()
+            ->when(function () {
+                $time = now('Europe/Amsterdam');
+
+                return $time->hour >= 9 || $time->minute === 0;
+            })
             ->withoutOverlapping(240);
     })
     ->withExceptions()

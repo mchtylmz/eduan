@@ -13,7 +13,6 @@ use App\Models\ExamResult;
 use App\Models\League;
 use App\Models\User;
 use Carbon\Carbon;
-use Cron\CronExpression;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Events\QueryExecuted;
@@ -95,7 +94,7 @@ class LiveLeagueSchedulingTest extends TestCase
         return $actor;
     }
 
-    public function test_registered_schedule_uses_eight_local_slots_and_overlap_protection(): void
+    public function test_registered_schedule_uses_amsterdam_day_and_night_slots_and_overlap_protection(): void
     {
         $this->app->forgetInstance(Kernel::class);
         $this->app->make(Kernel::class)->all();
@@ -103,16 +102,14 @@ class LiveLeagueSchedulingTest extends TestCase
         $event = $events->firstWhere('description', 'refresh_live_leagues');
         $this->assertNotNull($event);
         $this->assertStringContainsString('leagues:refresh-live', $event->command);
-        $this->assertSame('0 */3 * * *', $event->expression);
-        $this->assertSame('Europe/Brussels', $event->timezone);
+        $this->assertSame('*/15 * * * *', $event->expression);
+        $this->assertSame('Europe/Amsterdam', $event->timezone);
         $this->assertTrue($event->withoutOverlapping);
         $this->assertSame(240, $event->expiresAt);
-        $cron = new CronExpression($event->expression);
-        foreach (range(0, 23) as $hour) {
-            foreach ([0, 1] as $minute) {
-                $date = Carbon::parse('2026-10-25', 'Europe/Brussels')->setTime($hour, $minute);
-                $this->assertSame($minute === 0 && $hour % 3 === 0, $cron->isDue($date, 'Europe/Brussels'));
-            }
+        foreach (['00:00' => true, '00:15' => false, '08:00' => true, '08:45' => false,
+            '09:00' => true, '09:15' => true, '23:45' => true, '23:59' => false] as $clock => $expected) {
+            $this->clock('2026-11-06 '.$clock);
+            $this->assertSame($expected, $event->isDue($this->app) && $event->filtersPass($this->app), $clock);
         }
         $weekly = $events->firstWhere('description', 'run_league_result');
         $this->assertSame('0 * * * *', $weekly->expression);

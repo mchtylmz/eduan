@@ -60,6 +60,7 @@
             <input type="number" min="1" max="50" class="form-control" id="leagueUserCount"
                    name="settings[leagueUserCount]" placeholder="{{ __('Puan') }}.."
                    value="{{ settings()->leagueUserCount ?? 10 }}" required>
+            <div class="form-text">{{ __('leagues.capacity_help') }}</div>
         </div>
         <div class="col-lg-4 mb-3">
             <label class="form-label" for="leagueDay">{{ __('Lig sonucu hesaplama (Gün)?') }}</label>

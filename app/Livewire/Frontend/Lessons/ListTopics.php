@@ -16,7 +16,7 @@ class ListTopics extends Component
 
     protected string $paginationTheme = 'bootstrap';
 
-    public Lesson $lesson;
+    public ?Lesson $lesson = null;
 
     public bool $visibilityLite = false;
 
@@ -42,9 +42,9 @@ class ListTopics extends Component
     {
         return FrontendCache::paginate(
             'topics',
-            ['lesson' => $this->lesson->id, 'search' => $this->search ? $this->word : '', 'page' => $this->getPage()],
+            ['lesson' => $this->lesson?->id, 'search' => $this->search ? $this->word : '', 'page' => $this->getPage()],
             function () {
-                return Topic::select(['id', 'code', 'lesson_id', 'title', 'description', 'sort', 'hits', 'status'])->when(! empty($this->lesson->id), fn ($query) => $query->where('lesson_id', $this->lesson->id))
+                return Topic::select(['id', 'code', 'lesson_id', 'title', 'description', 'sort', 'hits', 'status'])->when($this->lesson?->id, fn ($query) => $query->where('lesson_id', $this->lesson->id))
                     ->when($this->search, function ($query) {
                         $query->where(function ($query) {
                             $query->where('code', 'like', "%{$this->word}%")

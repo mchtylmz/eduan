@@ -17,7 +17,6 @@ class ExamController extends Controller
 
     public function detail(Test $test)
     {
-        abort_unless(StatusEnum::ACTIVE->is($test->status), 404);
         incrementIf(true, $test);
 
         return view('frontend.exams.detail', [

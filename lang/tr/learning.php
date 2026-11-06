@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'coming_soon' => 'Yakında başlayacak',
     'my_results' => 'Sonuçlarım',
     'all_attempts' => 'Tüm denemelerin toplamı',
     'attempt' => 'Deneme',
