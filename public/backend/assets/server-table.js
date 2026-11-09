@@ -87,7 +87,12 @@
                 field.value = url.searchParams.get(key);
             }
         });
-        jQuery(form).find('.selectpicker').selectpicker('refresh');
+        const syncPickers = () => jQuery(form).find('.selectpicker').each(function () {
+            // Static single-select options need only a selection update, not another option fetch.
+            if (this.multiple) jQuery(this).selectpicker('refresh');
+            else jQuery(this).selectpicker('val', this.value);
+        });
+        syncPickers();
         fields.forEach(field => {
             if (field._flatpickr && field.value) field._flatpickr.setDate(field.value, false);
         });
@@ -208,7 +213,7 @@
         root.querySelector('[data-table-reset]')?.addEventListener('click', () => {
             form.reset();
             fields.forEach(field => { if (field._flatpickr) field._flatpickr.clear(); });
-            jQuery(form).find('.selectpicker').selectpicker('refresh');
+            syncPickers();
             if (sortField) { table.bootstrapTable('sortBy', {field: sortField.value, sortOrder: orderField.value}); }
             else table.bootstrapTable('refresh', {pageNumber: 1});
         });

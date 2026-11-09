@@ -48,3 +48,12 @@ Eşit değerler “altında/üzerinde” filtrelerine dahil edilmez; hedefi olma
 ## 5. Yayın sınırı
 
 Yerel dar kabul başarılıdır. Bu değişiklikler önceki v4ZIP’ine eklenmedi ve arşivler değiştirilmedi. Yeni yayın paketi ayrı hazırlanmalı; mevcut canlı `.env`, uploads, storage ve diğer kalıcı dosyalar korunmalı. Yeni ENV anahtarı/izin/migration/cron değişikliği yok; yalnız sürüm1.1.44, yeni/değişen asset ve normal cache/OPcache yenilemesi ile canlı giriş/öğretmen/panel/dosya kabulü gerekir. Bu çalışma canlıya aktarım değildir.
+
+
+## 6. Öğretmen ve Durum için aramalı tek seçim — 9 Kasım
+
+Kullanıcı son tarifinde her iki alanı tek seçimli, arama kutulu selectpicker istedi; toplu seçim/kaldırma düğmeleri olmayacak. Ortak `x-admin.filter-select` bileşenine varsayılanı false olan `searchable` seçeneği eklendi; yalnız çalışma listesindeki Öğretmen ve Durum için açıldı. Öğrenci durumu native select kalır; mevcut çoklu Yetkiler filtresi değişmez. Tümü boş değer seçeneği, öğretmen için yönetici sınırı ve scalar teacher_id/state URL/JSON/Excel/iletişim kapsamı korunur.
+
+Yeni tek seçimli listelerin URL’den geri yükleme ve sıfırlamasında `selectpicker('val', value)` kullanılır. Mevcut plugin’in refresh sırasında aynı seçenekleri yeniden eklemesi ve render’ın önbellekteki eski etiketi göstermesi böylece bu alanlarda önlenir. Çoklu listelerin mevcut refresh yolu korunur; vendor değiştirilmedi. Butonlar diğer alanlarla44px/16px’tir. Asset/PWA sürümü1.1.45; canlı yayın sırasında APP_VERSION buna eşitlenmelidir.
+
+Dar kabul:3PHP/54assert; aynı senaryolarda scope/Excel/alıcı eşliği, searchable-single DOM, toplu seçim kapalı, native öğrenci durumu ve array parametre reddi geçti.17Node (hafta/format/PWA), JSsyntax ve değişen testin Pint kontrolü başarılı. Browser plugin olmadığından gerçek Chrome/Playwright + testing transaction HTTP köprüsü kullanıldı.36 geçici öğretmenle TR/NL/EN/FR ×1440/390: arama/tek seçim, aynı seçili etiket, filtreli tablo/Excel URL, refresh ve sıfırlama geçti; ayrıca kullanıcı Yetkiler çoklu seçim/arama/actions-box korunur.8ekran+1komşu kabulde JS0/5xx0/yatay taşma0. Ekranlar görsel incelendi. Ana veriler/dış servisler/canlıya işlem yok; test verileri geri alındı. İlk tarayıcı kabulünde görülen çift seçenek ve eski buton etiketi dar olarak giderildi; son sekizli kabul temizdir.

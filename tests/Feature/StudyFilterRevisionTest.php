@@ -109,7 +109,19 @@ class StudyFilterRevisionTest extends TestCase
         $teacher->students()->attach($chosen);
         $filters = ['teacher_id' => $teacher->id, 'state' => 'above_70'];
         $this->assertSame([$chosen->id], $this->ids($filters));
-        $this->get(route('admin.study.index'))->assertOk()->assertSee('id="study-teacher"', false)->assertSee('Chosen teacher');
+        $page = $this->get(route('admin.study.index'))->assertOk()->assertSee('id="study-teacher"', false)->assertSee('Chosen teacher');
+        $dom = new \DOMDocument;
+        @$dom->loadHTML($page->getContent());
+        foreach (['study-teacher', 'study-state'] as $id) {
+            $select = $dom->getElementById($id);
+            $this->assertFalse($select->hasAttribute('multiple'));
+            $this->assertSame('selectpicker', $select->getAttribute('class'));
+            $this->assertSame('true', $select->getAttribute('data-live-search'));
+            $this->assertSame('false', $select->getAttribute('data-actions-box'));
+        }
+        $this->assertSame('form-select', $dom->getElementById('study-status')->getAttribute('class'));
+        $this->getJson(route('admin.study.data', ['teacher_id' => [$teacher->id]]))->assertUnprocessable();
+        $this->getJson(route('admin.study.data', ['state' => ['low']]))->assertUnprocessable();
         $this->getJson(route('admin.study.data', ['teacher_id' => $other->id]))->assertUnprocessable();
         $this->getJson(route('admin.study.data', ['teacher_id' => '1 OR 1=1']))->assertUnprocessable();
         $export = $this->get(route('admin.study.export', ['week' => '2026-11-07'] + $filters))->assertOk();

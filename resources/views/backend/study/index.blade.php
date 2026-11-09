@@ -26,9 +26,9 @@
                         <div id="study-week-help" class="visually-hidden">{{ __('study.choose_week_help') }}</div>
                     </div>
                     @can('user-type:admin')
-                        <x-admin.filter-select id="study-teacher" name="teacher_id" :label="__('study.teacher')" :options="$teachers" />
+                        <x-admin.filter-select id="study-teacher" name="teacher_id" :searchable="true" :label="__('study.teacher')" :options="$teachers" />
                     @endcan
-                    <x-admin.filter-select id="study-state" name="state" :label="__('study.state')" :options="\App\Helpers\StudyPanelQuery::states()" />
+                    <x-admin.filter-select id="study-state" name="state" :searchable="true" :label="__('study.state')" :options="\App\Helpers\StudyPanelQuery::states()" />
                     <x-admin.filter-select id="study-status" name="status" :label="__('study.student_status')" :options="['active' => __('study.student_active'), 'passive' => __('study.student_passive')]" />
                 </x-admin.filter-bar>
                 <x-admin.server-table id="study-table" :url="route('admin.study.data')" sort-name="name" min-width="1000px">
