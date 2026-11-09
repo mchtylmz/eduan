@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'teacher' => 'Öğretmen',
+    'filter_has_target' => 'Hedef girenler',
+    'filter_target_questions' => 'Soru hedefi girenler',
+    'filter_target_pages' => 'Okuma hedefi girenler',
+    'filter_target_minutes' => 'Çalışma saati hedefi girenler',
+    'filter_below_25' => 'Gerçekleşme %25’in altında',
+    'filter_below_75' => 'Gerçekleşme %75’in altında',
+    'filter_above_50' => 'Gerçekleşme %50’nin üzerinde',
+    'filter_above_70' => 'Gerçekleşme %70’in üzerinde',
+    'filter_above_100' => 'Gerçekleşme %100’ün üzerinde',
     'title' => 'Çalışma Takibi',
     'enabled' => 'Çalışma takibi etkin',
     'started_on' => 'Çalışma takibi başlangıç tarihi',

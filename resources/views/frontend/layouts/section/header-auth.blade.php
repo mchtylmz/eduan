@@ -16,7 +16,7 @@
         $headerLinks[] = ['frontend.my.leagues', __('account.leagues'), 'fa-trophy'];
     }
     $headerLinks[] = ['frontend.stats', __('account.stats'), 'fa-chart-line'];
-    if ($headerUser->can('dashboard:access') && ! session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY)) {
+    if ($headerUser->can('dashboard:access')) {
         $headerLinks[] = ['admin.home.index', __('account.admin'), 'fa-cogs'];
     }
 @endphp

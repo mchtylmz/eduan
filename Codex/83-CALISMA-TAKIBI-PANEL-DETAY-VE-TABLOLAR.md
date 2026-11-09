@@ -75,3 +75,8 @@ Seçilen sekme `?tab=overview|history|activity|analysis|notes` ile açılır. Ö
 5. Öğretmen hesabıyla yalnız bağlı öğrencileri, diğer öğretmenin notunda yalnız okuma hakkını kontrol edin.
 
 Önceden değişik `.DS_Store`, silinmiş `Codex/Doge.html`, yeni `Codex/docs.html` ve yüklenmiş OneSignal klasörü bu geliştirme/commit kapsamına alınmaz.
+
+
+## 9 Kasım güncel revizyon
+
+Yalnız yöneticiye öğretmen grubu filtresi, pozitif hedef/ilave yüzde filtreleri ve eşit44px hafta/select alanları eklendi. Liste/Excel/iletişim aynı kapsamı kullanır; öğretmen kendi öğrenci sınırı ve eski Çalışma mevcut anlamı korunur. Backend sağ paneller artık max1200px’tir. [Kapsam ve dar kabul kaydı](102-PANEL-OGRETMEN-FILTRELERI-VE-DOSYA-KARTLARI.md).

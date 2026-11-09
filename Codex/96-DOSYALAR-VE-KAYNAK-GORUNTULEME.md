@@ -8,7 +8,7 @@
 - Sağ üstten yükle; başlık ve dosya seç; ilerleme ve sunucu doğrulaması tamamlanınca görüntüleme bağlantısı verilir. Görüntüle, bağlantıyı kopyala ve onaylı silme bulunur. Düzenle/aynı bağlantıyla değiştirme yoktur.
 - `files:view`, `files:add`, `files:delete` işlem izinleri bağımsız denetlenir. Migration yalnız mevcut web `Yönetici` rolüne başlangıç izinlerini verir; Gent ve öğretmenlere vermez. Sonradan yetki atanabilir.
 - PDF, HTML, JPG/JPEG, PNG ve WebP desteklenir. Varsayılan üst sınır 100 MiB; desteklenen uzantıların alt kümesi ve 1–100 MB sınırı ayarlanabilir. İçerik MIME, boyut, PDF imzası ve görsel yapısı sunucuda doğrulanır.
-- Dosya listesinde yükleyen, tarih, boyut, tür ve hazır/yükleniyor/başarısız durumu gösterilir. Yarım yükleme görüntüleyicide açılmaz.
+- 9 Kasım güncellemesiyle liste varsayılan karttır; tabloya geçiş korunur. Başlık/tür/tarih/durum/işlemler görünür; özgün ad/boyut/yükleyen yalnız metadata olarak saklanır. Yarım yükleme görüntüleyicide açılmaz. Ayrıntı ve kabul: [102](102-PANEL-OGRETMEN-FILTRELERI-VE-DOSYA-KARTLARI.md).
 
 ## Ayarlar → Dosyalar
 

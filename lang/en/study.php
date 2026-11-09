@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'teacher' => 'Teacher',
+    'filter_has_target' => 'With a goal',
+    'filter_target_questions' => 'With a question goal',
+    'filter_target_pages' => 'With a reading goal',
+    'filter_target_minutes' => 'With a study time goal',
+    'filter_below_25' => 'Achievement below 25%',
+    'filter_below_75' => 'Achievement below 75%',
+    'filter_above_50' => 'Achievement above 50%',
+    'filter_above_70' => 'Achievement above 70%',
+    'filter_above_100' => 'Achievement above 100%',
     'title' => 'Study tracking',
     'enabled' => 'Enable study tracking',
     'started_on' => 'Study tracking start date',

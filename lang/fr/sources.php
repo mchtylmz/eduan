@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'upload_intro' => 'Donnez un titre clair au fichier, choisissez-le et importez-le. Le lien de partage sera prêt une fois terminé.',
+    'title_placeholder' => 'Ex. Résumé de la structure cellulaire',
+    'choose_file' => 'Choisir un fichier',
+    'no_file_selected' => 'Aucun fichier sélectionné',
     'title' => 'Fichiers',
     'settings' => 'Paramètres des fichiers',
     'upload' => 'Importer un fichier',

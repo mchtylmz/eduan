@@ -200,7 +200,7 @@ Kaynak ve dosya listesi: [40-AYARLAR-YETKILER-MENU-GECISI.md](40-AYARLAR-YETKILE
 
 ## 14. Sağ panel ve kart görünümü standardı — 6 Ekim
 
-- **P50 — Sağ offcanvas.** Panelde bütün offcanvas-end width100% ve max-width840px; büyük ekranda840px, dar ekranda viewport genişliği. Eski760px override kaldırılır; panel CSS sağ w-sm-75/w-sm-50 utility'lerini geçersiz kılar. Ortak Livewire Blade ön yüzü etkilememek için korunur. Sol/üst/alt yön bu standart değildir.
+- **P50 — Sağ offcanvas.** 9 Kasım güncellemesiyle yalnız panelde bütün offcanvas-end width100% ve max-width1200px; büyük ekranda1200px, dar ekranda viewport genişliği. Ön yüzün640px hedef/çalışma panelleri korunur. Eski760px override kaldırılır; panel CSS sağ w-sm-75/w-sm-50 utility'lerini geçersiz kılar. Ortak Livewire Blade ön yüzü etkilememek için korunur. Sol/üst/alt yön bu standart değildir.
 - **P51 — Dönem kartları.** Toplu Kaydet korunur; masaüstü iki, mobil tek bağımsız kart. Ad/durum/tarih bindingleri ve geçerli ID/Flatpickr başlangıcı korunur.
 - **P52 — Rol türü.** Üç mevcut radio değerini koru; seçilebilir label en az58px yüksek olsun. İşlem izin matrisi ayrı kalır.
 - **P53 — Log detay.** Metadata bilgi kartları, hizalı alan/eski/güncel değerler; mevcut mavi diff vurgusu, isteğe bağlı yalnız değişen alanlar. Son42 onayıyla hassas alan değerleri *** gösterilir; alan adı ve değişiklik işareti korunur.
@@ -250,7 +250,7 @@ Analiz, dosya listesi, korunan iş kuralları ve test ortamı sınırları: [44-
 - **P72 — İki custom view.** AI ve Soru Havuzu varsayılan kart; Yenile yanında tablo/kart düğmesi. Aynı sayfalı JSON ve filtre/arama/sort/pagination; ayrı tüm-kayıt API'si yok. Kullanıcı kartı çalışmaya devam eder; başka listeye otomatik kart eklenmez.
 - **P73 — Korunan bilgiler.** Soru görsel/kod/ders/konu/süre/sıra/durum; AI oy adedi/ortalama, usage kayıt adedi, rapor ve oluşturma. usage toplamı dashboard'a ait ayrı tanımdır. Değerlendirme yoksa ortalama0 uydurma; null/“—”.
 - **P74 — Server cache/kapsam.**60sn JSON/1saat seçenek; normalize çoklu topics, ilgili model revision ve pivot sonrası açık invalidate. Öğretmen sonuç/favori ve filtre seçenekleri güncel öğrenci ID kapsamındadır; cache'den önce erişim/parent sahipliği. Direkt DB/pivot işlemi observer üretmez.
-- **P75 — Bağlı listeler.** Test soruları, favoriler ve sonuç detayları readonly JSON5-row paneldir; kendi URL state'i parent listeyi değiştirmez. Dinamik morph yeni tabloyu bir kez başlatır. Soru/sonuç detail ayrı düzenleme formu değildir; sağ panel840px/mobil100% devam eder.
+- **P75 — Bağlı listeler.** Test soruları, favoriler ve sonuç detayları readonly JSON5-row paneldir; kendi URL state'i parent listeyi değiştirmez. Dinamik morph yeni tabloyu bir kez başlatır. Soru/sonuç detail ayrı düzenleme formu değildir; sağ panel9Kasım standardıyla1200px/mobil100% kullanır.
 - **P76 — Livewire event sözleşmesi.** Livewire4 component/ref/el/self parametreleri hedefleme içindir; payload component adı olarak kullanma. Yeni bağlı learning paneli open-learning-table(view,recordId), server view allowlist ve erişim denetimi, sonra learning-table-opened kullanır. Eski genel modal/offcanvas protokolü bu aşamada topluca düzeltilmiş sayılmaz.
 - **T15 — Tablo kanıtı.**13 test/110 doğrulama, son2 görsel/AI sınır testi13 doğrulama; önce iki eski CRUD dahil15/125. Chrome dört liste/kart toggle/arama ve üç panel;390px mobil AI/soru ve mevcut user kartı. Diğer12 tablo/genel suite ve canlı performans kabulü değildir.
 

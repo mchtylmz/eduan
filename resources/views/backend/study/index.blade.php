@@ -18,14 +18,17 @@
                 <div class="alert alert-info">{{ __('study.disabled') }}</div>
             @endunless
             <div>
-                <x-admin.filter-bar>
+                <x-admin.filter-bar :class="'study-list-filters'.(auth()->user()->can('user-type:admin') ? ' has-teacher' : '')">
                     <input type="hidden" data-table-filter name="lang" value="{{ app()->getLocale() }}">
-                    <div class="col-12 col-md-5 col-xl-4">
+                    <div class="col-12 col-md-3">
                         <label class="form-label" for="study-week">{{ __('study.choose_week') }}</label>
                         <input type="text" id="study-week" name="week" value="{{ $week }}" class="form-control" data-table-filter data-study-week data-locale="{{ app()->getLocale() }}" aria-describedby="study-week-help" autocomplete="off">
                         <div id="study-week-help" class="visually-hidden">{{ __('study.choose_week_help') }}</div>
                     </div>
-                    <x-admin.filter-select id="study-state" name="state" :label="__('study.state')" :options="collect(['no_target', 'no_activity', 'zero_activity', 'low', 'on_track'])->mapWithKeys(fn($key) => [$key => __('study.state_'.$key)])->all()" />
+                    @can('user-type:admin')
+                        <x-admin.filter-select id="study-teacher" name="teacher_id" :label="__('study.teacher')" :options="$teachers" />
+                    @endcan
+                    <x-admin.filter-select id="study-state" name="state" :label="__('study.state')" :options="\App\Helpers\StudyPanelQuery::states()" />
                     <x-admin.filter-select id="study-status" name="status" :label="__('study.student_status')" :options="['active' => __('study.student_active'), 'passive' => __('study.student_passive')]" />
                 </x-admin.filter-bar>
                 <x-admin.server-table id="study-table" :url="route('admin.study.data')" sort-name="name" min-width="1000px">

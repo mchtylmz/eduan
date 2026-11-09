@@ -9,6 +9,7 @@ use App\Helpers\StudyTrackingSettings;
 use App\Livewire\Backend\Communications\CommunicationForm;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -31,6 +32,11 @@ class StudyCommunication extends CommunicationForm
         AuthorizeStudyCommunication::run($this->studentId ? User::findOrFail($this->studentId) : null);
         if ($write && $this->recipients !== []) {
             abort_unless(StudyPanelQuery::students()->whereIn('users.id', $this->recipients)->count() === count($this->recipients), 403);
+            if (! empty($this->filters['teacher_id'])) {
+                abort_unless(auth()->user()->can('user-type:admin') && StudyPanelQuery::teachers()->whereKey($this->filters['teacher_id'])->exists(), 403);
+                abort_unless(DB::table('teacher_student')->where('teacher_id', $this->filters['teacher_id'])
+                    ->whereIn('user_id', $this->recipients)->distinct()->count('user_id') === count($this->recipients), 403);
+            }
         }
     }
 
@@ -77,7 +83,7 @@ class StudyCommunication extends CommunicationForm
     {
         $this->authorizeComposition();
         $names = User::whereIn('id', array_slice($this->recipients, 0, 5))->get(['name', 'surname'])->map(fn ($user) => $user->display_name)->all();
-        $returnUrl = $this->studentId ? route('admin.study.show', ['user' => $this->studentId, 'week' => $this->weekStart, 'lang' => app()->getLocale()]) : route('admin.study.index', ['week' => $this->weekStart, 'lang' => app()->getLocale()] + array_intersect_key($this->filters, array_flip(['state', 'status', 'search', 'sort', 'order'])));
+        $returnUrl = $this->studentId ? route('admin.study.show', ['user' => $this->studentId, 'week' => $this->weekStart, 'lang' => app()->getLocale()]) : route('admin.study.index', ['week' => $this->weekStart, 'lang' => app()->getLocale()] + array_intersect_key($this->filters, array_flip(['teacher_id', 'state', 'status', 'search', 'sort', 'order'])));
 
         return parent::render()->with(['studyCompose' => true, 'studyNames' => $names, 'studyReturnUrl' => $returnUrl]);
     }

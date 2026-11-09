@@ -116,7 +116,7 @@
             };
             const renderCards = rows => {
                 placeCards();
-                cards.innerHTML = rows.length ? rows.map(row => ['questions', 'ai'].includes(row.table) ? learningCard(row, messages) : `<article class="admin-user-card">
+                cards.innerHTML = rows.length ? rows.map(row => row.table === 'files' && typeof window.eduanSourceCardFormatter === 'function' ? window.eduanSourceCardFormatter(row) : ['questions', 'ai'].includes(row.table) ? learningCard(row, messages) : `<article class="admin-user-card">
                     <div class="admin-user-card-heading"><span class="admin-user-card-icon bg-primary-lighter text-primary"><i class="fa fa-user" aria-hidden="true"></i></span>
                         <div><h3>${escapeHtml([row.name, row.surname].filter(Boolean).join(' ') || row.username)}</h3><p>${escapeHtml(row.username)}</p></div></div>
                     ${window.eduanTableRolesFormatter(row.roles)}

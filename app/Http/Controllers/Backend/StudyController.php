@@ -32,7 +32,11 @@ class StudyController extends Controller
         $week = $this->week($request);
         $title = __('study.title');
 
-        return response()->view('backend.study.index', compact('title', 'week'))->header('Cache-Control', 'private, no-store');
+        $teachers = auth()->user()->can('user-type:admin')
+            ? StudyPanelQuery::teachers()->orderBy('name')->orderBy('surname')->get(['id', 'name', 'surname'])->mapWithKeys(fn ($teacher) => [$teacher->id => $teacher->display_name])->all()
+            : [];
+
+        return response()->view('backend.study.index', compact('title', 'week', 'teachers'))->header('Cache-Control', 'private, no-store');
     }
 
     public function show(Request $request, User $user)

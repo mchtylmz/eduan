@@ -48,6 +48,21 @@ class SourceFilesIntegrationTest extends TestCase
         return UploadedFile::fake()->createWithContent('sample.pdf', "%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF");
     }
 
+    public function test_files_default_to_compact_cards_and_upload_progress_is_initially_hidden(): void
+    {
+        $this->get(route('admin.files.index'))->assertOk()
+            ->assertSee('class="is-card-view" data-user-card-view', false)
+            ->assertSee('data-user-cards', false)
+            ->assertSee('data-field="title"', false)
+            ->assertDontSee('data-field="name"', false)
+            ->assertDontSee('data-field="size"', false)
+            ->assertDontSee('data-field="uploader"', false)
+            ->assertDontSee('max-width:640px', false)
+            ->assertSee('source-upload-progress d-none', false)
+            ->assertSee('placeholder="'.__('sources.title_placeholder').'"', false)
+            ->assertSee('source-selected-file', false);
+    }
+
     private function prepare(UploadedFile $file, string $title = 'Demo source'): SourceFile
     {
         $code = $this->postJson(route('admin.files.prepare'), ['title' => $title, 'name' => $file->getClientOriginalName(), 'size' => $file->getSize()])

@@ -293,7 +293,7 @@ th.created_at {
 .offcanvas.offcanvas-end {
     --bs-offcanvas-width: 100%;
     width: 100% !important;
-    max-width: 840px;
+    max-width: 1200px;
 }
 
 .communication-step-actions {position: sticky; top: 64px; z-index: 9;}

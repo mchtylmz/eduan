@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'upload_intro' => 'Give your file a clear title, choose the file and upload it. Your sharing link will be ready when the upload finishes.',
+    'title_placeholder' => 'E.g. Cell structure summary',
+    'choose_file' => 'Choose file',
+    'no_file_selected' => 'No file selected yet',
     'title' => 'Files',
     'settings' => 'File settings',
     'upload' => 'Upload file',

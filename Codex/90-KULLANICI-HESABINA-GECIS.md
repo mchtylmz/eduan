@@ -55,3 +55,8 @@ Genel proje suite/build tekrarlanmadı. Ana DB'de gerçek kullanıcı hesabına 
 - `public/backend/assets/user-impersonation.js`, `public/assets/app.css`, `public/pwa-sw.js`: onay, dönüş düğmesi ve sürüm.
 - `tests/Feature/UserImpersonationTest.php`, `tests/Frontend/UserImpersonationConfirmTest.cjs`: hata, yetki, oturum ve onay testleri.
 - Bu rapor, AGENTS.md, README.md, Codex/index.html ve 16 standartları: kalıcı özellik/kabul kaydı.
+
+
+## 9 Kasım güncel revizyon
+
+Geçilen öğretmenin kendi dashboard:access izniyle panele girmesi ve panelden turuncu POST düğmesiyle dönüş artık desteklenir. Eski genel panel engeli notları tarihseldir; cihaz bağlama ve iç içe geçiş engelleri korunur. [Kapsam ve dar kabul kaydı](102-PANEL-OGRETMEN-FILTRELERI-VE-DOSYA-KARTLARI.md).

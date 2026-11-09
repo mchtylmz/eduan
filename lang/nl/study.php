@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'teacher' => 'Leerkracht',
+    'filter_has_target' => 'Met een doel',
+    'filter_target_questions' => 'Met een vragendoel',
+    'filter_target_pages' => 'Met een leesdoel',
+    'filter_target_minutes' => 'Met een studiedoel in uren',
+    'filter_below_25' => 'Voortgang onder 25%',
+    'filter_below_75' => 'Voortgang onder 75%',
+    'filter_above_50' => 'Voortgang boven 50%',
+    'filter_above_70' => 'Voortgang boven 70%',
+    'filter_above_100' => 'Voortgang boven 100%',
     'title' => 'Studieopvolging',
     'enabled' => 'Studieopvolging inschakelen',
     'started_on' => 'Startdatum studieopvolging',

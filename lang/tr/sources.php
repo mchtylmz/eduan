@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'upload_intro' => 'Dosyana anlaşılır bir başlık ver, dosyayı seç ve yükle. Tamamlandığında paylaşım bağlantın hazır olacak.',
+    'title_placeholder' => 'Örn. Hücre yapısı konu özeti',
+    'choose_file' => 'Dosya seç',
+    'no_file_selected' => 'Henüz dosya seçilmedi',
     'title' => 'Dosyalar',
     'settings' => 'Dosya ayarları',
     'upload' => 'Dosya yükle',

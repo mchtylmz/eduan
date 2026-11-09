@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'teacher' => 'Enseignant',
+    'filter_has_target' => 'Avec un objectif',
+    'filter_target_questions' => 'Avec un objectif de questions',
+    'filter_target_pages' => 'Avec un objectif de lecture',
+    'filter_target_minutes' => 'Avec un objectif de temps d’étude',
+    'filter_below_25' => 'Progression inférieure à 25 %',
+    'filter_below_75' => 'Progression inférieure à 75 %',
+    'filter_above_50' => 'Progression supérieure à 50 %',
+    'filter_above_70' => 'Progression supérieure à 70 %',
+    'filter_above_100' => 'Progression supérieure à 100 %',
     'title' => 'Suivi des études',
     'enabled' => 'Activer le suivi des études',
     'started_on' => 'Date de début du suivi des études',

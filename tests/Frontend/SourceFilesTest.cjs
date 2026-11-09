@@ -26,3 +26,19 @@ test('file action formatter escapes titles and URLs, never emits stored markup',
     assert.ok(html.includes('&quot;'));assert.ok(!html.includes(' onclick="bad'));assert.ok(!html.includes(' onmouseover="bad'));
     assert.ok(html.includes('target="_blank"'));assert.ok(html.includes('rel="noopener"'));
 });
+
+test('file cards show compact safe metadata and keep ready or failed actions',()=>{
+    const root={dataset:{messages:JSON.stringify({view:'View',copy:'Copy',remove:'Delete',created_at:'Uploaded'})},addEventListener(){},querySelector:()=>null};
+    const window={};
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../../public/backend/assets/source-files.js'),'utf8'),{window,document:{querySelector:selector=>selector==='[data-source-manager]'?root:{content:'csrf-test'}}});
+    const row={title:'<img src=x onerror=bad()>',type:'PDF',status:'Ready',status_key:'ready',created_at:'09/11/2026 12:00',name:'Hidden original name',uploader:'Hidden uploader',size:'99 MB',view_url:'/sources/demo',delete_url:'/admin/files/demo'};
+    const html=window.eduanSourceCardFormatter(row);
+    assert.ok(html.includes('&lt;img'));assert.ok(!html.includes('<img'));
+    assert.ok(html.includes('fa-file-pdf'));assert.ok(html.includes('text-success'));
+    assert.ok(html.includes('data-source-copy-url'));assert.ok(html.includes('data-source-delete'));
+    assert.ok(!html.includes(row.name));assert.ok(!html.includes(row.uploader));assert.ok(!html.includes(row.size));
+    const failed=window.eduanSourceCardFormatter({...row,status_key:'failed',status:'Failed',view_url:null});
+    assert.ok(failed.includes('text-danger'));assert.ok(!failed.includes('data-source-copy-url'));assert.ok(failed.includes('data-source-delete'));
+    const unknown=window.eduanSourceCardFormatter({...row,status_key:'" onclick="bad',type:'" onerror="bad'});
+    assert.ok(unknown.includes('text-secondary'));assert.ok(!unknown.includes(' onclick="bad'));assert.ok(!unknown.includes(' onerror="bad'));
+});

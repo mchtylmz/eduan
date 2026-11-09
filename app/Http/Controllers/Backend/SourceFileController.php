@@ -33,7 +33,7 @@ class SourceFileController extends Controller
             'id' => $source->code, 'title' => $source->title, 'name' => $source->original_name,
             'type' => strtoupper($source->extension), 'size' => $this->formatSize($source->size),
             'uploader' => $source->uploader?->display_name ?? '—', 'created_at' => dateFormat($source->created_at, 'd/m/Y H:i'),
-            'status' => __('sources.status_'.$source->status), 'view_url' => $source->status === 'ready' ? $source->viewerUrl() : null,
+            'status' => __('sources.status_'.$source->status), 'status_key' => $source->status, 'view_url' => $source->status === 'ready' ? $source->viewerUrl() : null,
             'raw_url' => $source->status === 'ready' ? $source->rawUrl() : null,
             'delete_url' => auth()->user()->can('files:delete') ? route('admin.files.delete', $source->code) : null,
         ], cache: false);

@@ -1,4 +1,16 @@
 /* Study detail uses the existing OneUI palette and shared panel table components. */
+.study-list-filters > .row {display:grid;grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(0,1fr)) auto;align-items:end;}
+.study-list-filters.has-teacher > .row {grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr)) auto;}
+.study-list-filters > .row > div {width:auto;min-width:0;}
+.study-list-filters .form-control,.study-list-filters .form-select {height:44px;min-height:44px;font-size:1rem;line-height:1.5;}
+.study-list-filters .btn {min-height:44px;}
+@media(max-width:991.98px) {
+ .study-list-filters > .row,.study-list-filters.has-teacher > .row {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .study-list-filters > .row > div:last-child {grid-column:1/-1;justify-content:flex-end;}
+}
+@media(max-width:575.98px) {
+ .study-list-filters > .row,.study-list-filters.has-teacher > .row {grid-template-columns:minmax(0,1fr);}
+}
 .study-panel {min-width:0;}
 .study-panel .block-title {overflow-wrap:anywhere;}
 .study-panel-week {display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;padding:8px 0 24px;}
@@ -15,7 +27,7 @@
 .study-panel .member-form-heading h2 {font-size:18px;margin-bottom:6px;}
 .study-panel .member-form-heading p {font-size:14px;color:var(--bs-secondary-color,#6c757d);margin:0;}
 .study-panel .member-form-body {padding:24px;}
-.study-panel .offcanvas.offcanvas-end {width:100%!important;max-width:640px;}
+.study-panel .offcanvas.offcanvas-end {width:100%!important;max-width:1200px;}
 .study-panel .offcanvas-header {padding:20px 24px;background:var(--bs-body-bg);border-bottom:1px solid var(--bs-border-color,#ddd);}
 .study-panel .offcanvas-body {padding:24px;}
 .study-panel .study-editor-form .form-control {min-height:44px;}
@@ -125,5 +137,4 @@
 .study-panel-metric small {font-size:17px;font-weight:400;}
 .study-panel-week {background:var(--bs-body-bg);border-radius:6px;padding:20px;margin-bottom:16px;}
 .study-panel-tabs .btn {padding:14px 12px;}
-#study-week + input {font-size:13px;}
 @media(max-width:575.98px) {.study-panel-week {padding:14px;}.study-panel-actions > span {flex-basis:100%;}.study-panel-summary {--bs-gutter-y:10px;}.study-panel-summary .block-content {padding-top:14px;}.study-panel-metric {font-size:24px;}}

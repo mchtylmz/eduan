@@ -1,3 +1,10 @@
+@if(session()->has(\App\Actions\Auth\ImpersonateUser::SESSION_KEY))
+<form action="{{ route('frontend.impersonation.return') }}" method="post" class="d-inline-flex">
+    @csrf
+    <input type="hidden" name="return_token" value="{{ session(\App\Actions\Auth\ImpersonateUser::SESSION_KEY.'.token') }}">
+    <button type="submit" class="btn btn-sm btn-alt-warning" data-account-return title="{{ __('impersonation.return') }}" aria-label="{{ __('impersonation.return') }}"><i class="fa fa-undo" aria-hidden="true"></i></button>
+</form>
+@endif
 <a target="_blank" class="btn btn-sm btn-alt-success d-flex align-items-center mx-2" href="/" style="z-index:99999999">
     <i class="fa fa-fw fa-external-link me-1"></i>
     <span class="ms-1 d-none d-sm-block">{{ __('Siteyi Görüntüle') }}</span>

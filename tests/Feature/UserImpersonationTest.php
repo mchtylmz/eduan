@@ -75,21 +75,35 @@ class UserImpersonationTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_teacher_target_cannot_enter_dashboard_or_rebind_the_administrators_push_device(): void
+    public function test_teacher_target_can_enter_own_panel_without_rebinding_the_administrators_push_device(): void
     {
         settings()->set('notificationsEnabled', '1');
         settings()->save();
         $this->withSession(['webPushSubscriptionRecordId' => 1234]);
+        $this->teacher->students()->attach($this->student);
         $this->start($this->teacher)->assertRedirect();
         $this->assertNull(session('webPushSubscriptionRecordId'));
-        $this->get(route('admin.users.index'))->assertForbidden();
-        $this->get(route('frontend.profile'))->assertOk()->assertDontSee(route('admin.home.index'), false);
+        $this->get(route('admin.users.index'))->assertOk()->assertSee('data-account-return', false);
+        $this->getJson(route('admin.users.getData'))->assertOk()->assertJsonPath('total', 1)->assertJsonPath('rows.0.id', $this->student->id);
+        Livewire::test(UserTable::class)->call('showDetail', $this->student->id)->assertSet('detailId', $this->student->id);
+        Livewire::test(UserTable::class)->call('delete', $this->student)->assertForbidden();
+        $this->get(route('frontend.profile'))->assertOk()->assertSee(route('admin.home.index'), false);
+        $this->get(route('admin.settings.index'))->assertForbidden();
+        $this->post(route('admin.users.impersonate', $this->student))->assertForbidden();
         $this->get(route('frontend.notifications'))->assertOk()->assertSee(__('impersonation.device_preview'));
         $this->post(route('frontend.notifications.register'), [])->assertForbidden();
         $state = session(ImpersonateUser::SESSION_KEY);
         $this->post(route('frontend.impersonation.return'), ['return_token' => $state['token']])->assertRedirect();
         $this->assertSame(1234, session('webPushSubscriptionRecordId'));
         Http::assertNothingSent();
+    }
+
+    public function test_teacher_without_dashboard_permission_cannot_enter_panel_when_impersonated(): void
+    {
+        $this->teacher->revokePermissionTo('dashboard:access');
+        $this->start($this->teacher)->assertRedirect();
+        $this->get(route('frontend.profile'))->assertOk()->assertDontSee(route('admin.home.index'), false);
+        $this->get(route('admin.users.index'))->assertForbidden();
     }
 
     public static function prohibitedTargets(): array
@@ -220,7 +234,7 @@ class UserImpersonationTest extends TestCase
         $this->assertAuthenticatedAs($this->admin);
     }
 
-    public function test_cached_panel_livewire_snapshot_cannot_be_used_after_switching_to_a_teacher(): void
+    public function test_cached_panel_livewire_snapshot_cannot_read_an_unassigned_student_after_switching_to_a_teacher(): void
     {
         $html = $this->get(route('admin.users.index'))->assertOk()->getContent();
         preg_match_all('/wire:snapshot="([^"]+)"/', $html, $matches);
@@ -237,6 +251,6 @@ class UserImpersonationTest extends TestCase
         $this->postJson(Livewire::getUpdateUri(), ['components' => [[
             'snapshot' => $snapshot, 'updates' => new \stdClass,
             'calls' => [['method' => 'showDetail', 'params' => [$this->student->id]]],
-        ]]], ['X-Livewire' => 'true'])->assertForbidden();
+        ]]], ['X-Livewire' => 'true'])->assertNotFound();
     }
 }

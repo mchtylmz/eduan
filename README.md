@@ -192,3 +192,7 @@ Panelde Dosyalar, isteğe bağlı R2/yerel depolama ve herkese açık `/sources`
 ### Birleşik v4 yayın paketi — 6 Kasım
 
 [101 — Güncel tam komutlu checklist](Codex/101-20261106-V4-YAYIN-PAKETI-VE-KABUL.md): henüz uygulanmayan v3 yerine Dosyalar/güvenlik/log ve yeni sınav/lig değişikliklerini tek pakette içerir.129/968 ve351/1264 iki ayrı dar koşu başarılı; ayrıca gerçek HTTP’de bulunan konu araması500kullanıcı onayıyla düzeltildi, ilgili28/89 ve21HTTP200/XML geçti. Üretim audit0/platform uygun. Uygulama1.1.43; public_html/no-dev/tek source migration adayı, env ve upload koruma, Amsterdam15dk/gece60dk cron açıklamaları güncel. Canlıya bu tur işlem uygulanmadı.
+
+### 9 Kasım panel ve dosya kartları
+
+[102 — Öğretmen hesabı, çalışma filtreleri ve dosyalar](Codex/102-PANEL-OGRETMEN-FILTRELERI-VE-DOSYA-KARTLARI.md): geçilen öğretmen kendi yetkileriyle paneli kullanır ve turuncu düğmeyle döner; yönetici öğretmen/hedef/yüzde filtreleri, eşit hafta alanı, backend1200px sağ paneller, varsayılan dosya kartları ve yerelleştirilmiş yükleme alanı. Son96PHP/865assert ve23Node; dört dil1440/390 ile iki uçtan uca Chrome akışı geçti. Ana/testing10tablo hashleri aynı; migration/gerçek gönderim/canlı aktarım yok. Asset/PWA1.1.44, eski v4paketi değişmez.

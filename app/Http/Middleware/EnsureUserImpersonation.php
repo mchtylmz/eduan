@@ -23,7 +23,8 @@ class EnsureUserImpersonation
                 $request->session()->regenerateToken();
                 abort(403);
             }
-            abort_if($request->routeIs('admin.*', 'frontend.notifications.context', 'frontend.notifications.register', 'frontend.notifications.revoke'), 403);
+            // Panel routes still apply the target account's own permissions and student scope.
+            abort_if($request->routeIs('frontend.notifications.context', 'frontend.notifications.register', 'frontend.notifications.revoke'), 403);
         }
 
         $response = $next($request);

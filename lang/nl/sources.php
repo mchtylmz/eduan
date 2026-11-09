@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'upload_intro' => 'Geef je bestand een duidelijke titel, kies het bestand en upload het. Daarna is de deellink klaar.',
+    'title_placeholder' => 'Bijv. Samenvatting van de celstructuur',
+    'choose_file' => 'Bestand kiezen',
+    'no_file_selected' => 'Nog geen bestand gekozen',
     'title' => 'Bestanden',
     'settings' => 'Bestandsinstellingen',
     'upload' => 'Bestand uploaden',
