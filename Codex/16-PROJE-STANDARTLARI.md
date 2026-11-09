@@ -79,7 +79,7 @@
 - **P14 — Panel hızı.** İyi hız ve kararlılık gerekir; ön yüzün en yüksek önceliğiyle birlikte ele alınır. Özellikle tablo count, filtre, ilişki, gereksiz cache temizliği ve export hacmi ölçülür; büyük yeniden yazım ölçüm/karar olmadan başlamaz.
 - **P15 — OneUI.** OneUI devam eder; Vue.js eklenmez. Tablo değişimi bütün Livewire formlarını veya tema düzenini değiştirmez.
 - **P16 — Sayfa iskeleti.** Başlık/breadcrumb → block başlığı/ana işlemler → filtre bandı → tablo araçları → sonuç/pagination sırası izlenir. Veri isteği sayfa kabuğunun görünmesini geciktirmez.
-- **P17 — Filtre bandı.** Lara Football `x-admin.filter-bar` örneğinde etiketli Bootstrap grid, açık/çerçeveli alan, sağda normal genişlikte Filtrele/Temizle kullanılır. Eduan'ın ders/konu/dil/öğrenci filtreleri kendi sayfasına göre seçilir.
+- **P17 — Filtre bandı.** Lara Football `x-admin.filter-bar` örneğinde etiketli Bootstrap grid, açık/çerçeveli alan, sağda normal genişlikte Filtrele/Temizle kullanılır. Eduan'ın ders/konu/dil/öğrenci filtreleri kendi sayfasına göre seçilir. 9 Kasım standardı: paylaşılan liste filtrelerinin input/native select/selectpicker ana düğmesi ve Filtrele/Temizle yüksekliği38px, yazısı16px; ölçü/dikey padding yalnız `public/backend/assets/server-table.css` içindeki `--admin-filter-control-height` ve `--admin-filter-control-font-size` üzerinden yönetilir. Sayfa CSS'ine yükseklik/hiza override'ı eklenmez.
 - **P18 — Araç hizası.** Yenile ve ilgili tablo araçları solda; tablo araması sağda. Ekle düğmesi block başlığında doğru kaynak izniyle görünür.
 - **P19 — Başlatma.** Blade başlık/filtreleri sunar; tablo bir kez initialize edilir, izinli JSON endpoint'inden yalnız ilgili sayfayı ister. Gizli sekmede ilk açılış yüklemesi/tekrar açılış resetView ayrı yönetilir.
 - **P20 — Kolonlar.** Çevirili başlık, tutarlı metin/sayı/tarih/eylem hizası, gerektiğinde sınırlı genişlik kullanılır. Kullanıcı metni HTML kaçırılarak render edilir; ikon/görsel/badge yakın düzeni izler.
@@ -189,7 +189,7 @@ Kaynak: [33-PHP85-GECIS-KONTROLU-VE-SSH-KANITI.md](33-PHP85-GECIS-KONTROLU-VE-SS
 ## 13. Ayarlar & Yetkiler menüsünün uygulanan standardı — 6 Ekim
 
 - **P44 — Menü ailesi.** Dönemler form; Yetkiler/Loglar JSON tablo; Ayarlar13 tabdır. Formları sırf görsel standart için tabloya dönüştürme; setting alan/ad/değer/action akışını koru.
-- **P45 — Alan görünümü.** `x-admin.management-assets` ve `admin-management` kapsamı; kontrol16px/en az44px, kartlara ayrılan dönem ve yetki grupları. Global OneUI/site stilini değiştirme.
+- **P45 — Alan görünümü.** `x-admin.management-assets` ve `admin-management` kapsamı; kontrol16px/en az44px, kartlara ayrılan dönem ve yetki grupları. Liste filtre bandı P17’deki ortak38px standardını kullanır. Global OneUI/site stilini değiştirme.
 - **P46 — Ayarlar navigasyonu.** Masaüstü ikonlu275px menü/esnek içerik; mobil iki sütun ve uzun etiketlerde satır kırılması; aktif bölüm aria-current ile belirtilir. TinyMCE/Dropify/dil alanları mevcut kaynakta kalır.
 - **P47 — Yeni iki liste.** Yetkiler name ASC; Loglar id DESC. Arama/sort/pagination ve cache60sn/seçenek1saat/Yenile bypass ortak standardı sürer; Loglar kullanıcı/işlem filtrelerini korur. Form filtresi olmayan rol listesine boş filtre bandı ekleme.
 - **P48 — Detay ve invalidation.** Log izin resource settings, panel adı logs olur; ortak trait bunu destekler. Log ham data JSON listesinde bulunmaz. Role/user sync sonrası rol/kullanıcı/seçenek cache'i yenilenir; Eloquent Log değişimi logs cache'ini yeniler. Doğrudan insert observer sınırı ayrıca kaydedilir.

@@ -1,10 +1,24 @@
 .admin-filter-bar {
+    --admin-filter-control-height: 38px;
+    --admin-filter-control-font-size: 1rem;
     padding: 1rem;
     border: 1px solid #e2e5e9;
     border-radius: .25rem;
     background: #f7f8fa;
 }
 .admin-filter-bar .form-label { display: block; font-size: .875rem; overflow-wrap: anywhere; }
+/* Shared list-filter controls follow the existing Users/Tests sizing. */
+.admin-filter-bar[data-table-filters] .form-control,
+.admin-filter-bar[data-table-filters] .form-select,
+.admin-filter-bar[data-table-filters] .bootstrap-select > .dropdown-toggle,
+.admin-filter-bar[data-table-filters] > .row > div > .btn {
+    height: var(--admin-filter-control-height);
+    min-height: var(--admin-filter-control-height);
+    font-size: var(--admin-filter-control-font-size);
+    line-height: 1.5;
+    padding-block: calc((var(--admin-filter-control-height) - 1.5em - 2px) / 2);
+}
+
 .admin-filter-bar .form-control,
 .admin-filter-bar .form-select,
 .admin-filter-bar .bootstrap-select { width: 100% !important; max-width: 100%; min-width: 0; }
