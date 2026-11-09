@@ -35,6 +35,7 @@ use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\RoutingServiceProvider;
 use Illuminate\Session\ArraySessionHandler;
 use Illuminate\Session\Store;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ViewErrorBag;
@@ -386,6 +387,11 @@ class SourceFilesTest extends TestCase
             $this->assertStringContainsString(__('sources.upload'), $html);
             $settings = $this->app['view']->make('backend.settings.tabs.sources')->render();
             $this->assertStringContainsString('settings[sourceR2Secret]', $settings);
+            foreach (['max_size', 'types', 'account', 'bucket', 'access_key', 'public_url', 'secret'] as $field) {
+                $placeholder = htmlspecialchars(__('sources.'.$field.'_placeholder'), ENT_QUOTES);
+                $this->assertStringContainsString('placeholder="'.$placeholder.'"', $settings);
+            }
+            $this->assertStringContainsString(htmlspecialchars(__('sources.cloud_help'), ENT_QUOTES), $settings);
             $this->assertStringNotContainsString('private-test-key', $settings);
             $view = $this->app['view']->make('frontend.sources.show', ['source' => $source, 'label' => 'sources.return_test', 'returnPath' => '/test/abc/start'])->render();
             $this->assertStringContainsString('/test/abc/start', $view);
@@ -417,13 +423,20 @@ class SourceFilesTest extends TestCase
         $this->assertSame(['GET', 'HEAD'], $viewer->methods());
     }
 
-    public function test_cloud_settings_secret_is_encrypted_blank_preserved_and_only_superadmin_can_change(): void
+    public function test_cloud_settings_secret_is_plaintext_legacy_readable_blank_preserved_and_superadmin_only(): void
     {
         $result = (new PrepareSourceSettings)->handle(['sourceStorage' => 'local', 'sourceR2Secret' => 'private-test-key', 'sourceMaxMb' => '100', 'sourceTypes' => 'pdf,html,png']);
-        $this->assertNotSame('private-test-key', $result['sourceR2Secret']);
+        $this->assertSame('private-test-key', $result['sourceR2Secret']);
         settings()->values['sourceR2Secret'] = $result['sourceR2Secret'];
         $this->assertSame('private-test-key', SourceSettings::secret());
         $this->assertArrayNotHasKey('sourceR2Secret', (new PrepareSourceSettings)->handle(['sourceR2Secret' => '']));
+        settings()->values['sourceR2Secret'] = Crypt::encryptString('legacy-key');
+        $this->assertSame('legacy-key', SourceSettings::secret());
+        $settings = $this->app['view']->make('backend.settings.tabs.sources')->render();
+        $this->assertStringContainsString('type="text" name="settings[sourceR2Secret]" value="legacy-key"', $settings);
+        settings()->values['sourceR2Secret'] = 'key"<test>';
+        $settings = $this->app['view']->make('backend.settings.tabs.sources')->render();
+        $this->assertStringContainsString('value="key&quot;&lt;test&gt;"', $settings);
         $this->actor->super = false;
         $this->expectException(HttpException::class);
         (new PrepareSourceSettings)->handle(['sourceStorage' => 'local']);

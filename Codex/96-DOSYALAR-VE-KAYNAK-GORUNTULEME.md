@@ -12,7 +12,7 @@
 
 ## Ayarlar → Dosyalar
 
-Bu sekme ve ayar kaydı yalnız web Yönetici rolüne açıktır; kaydetmede ayrıca mevcut `settings:update` gereklidir. Yeni ENV anahtarı gerekmez; mevcut `APP_KEY`, `APP_URL` ve `APP_PUBLIC_PATH` geçerlidir. `APP_KEY` değişirse şifreli bulut ayarları çözülemez.
+Bu sekme ve ayar kaydı yalnız web Yönetici rolüne açıktır; kaydetmede ayrıca mevcut `settings:update` gereklidir. Yeni ENV anahtarı gerekmez; mevcut `APP_KEY`, `APP_URL` ve `APP_PUBLIC_PATH` geçerlidir. `APP_KEY`, mevcut dosya kayıtlarının şifreli bağlantı yapılandırması ve eski şifreli ayarların okunması için korunur.
 
 | Ayar | İşlev |
 |---|---|
@@ -21,7 +21,7 @@ Bu sekme ve ayar kaydı yalnız web Yönetici rolüne açıktır; kaydetmede ayr
 | sourceTypes | `pdf,html,jpg,jpeg,png,webp` desteklenen alt kümesi |
 | sourceR2Account | Cloudflare hesap kimliği; endpoint bu kimlikten sabit HTTPS alan adıyla üretilir |
 | sourceR2Bucket | Ayrı medya bucket adı |
-| sourceR2Key / sourceR2Secret | Medya bucket yetkileri; secret şifreli saklanır, boş gönderim eski secret'ı korur |
+| sourceR2Key / sourceR2Secret | Cloudflare R2 Access Key ID / Secret Access Key; 9 Kasım kararıyla global secret açık gösterilir ve yeni kayıtta şifresiz saklanır, boş gönderim eski değeri korur |
 | sourceR2PublicUrl | Medya bucket'ın herkese açık HTTPS dosya alan adı |
 
 **Özel yedek bucket'ını bu alan için açmayın veya kullanmayın.** Bash yedekleme ayarlarıyla yeni medya ayarları bağımsızdır. Dosyanın depolandığı konum ve şifreli bağlantı yapılandırması kayıtta korunur; sonradan varsayılan depolama değişse de eski dosya aynı yerden açılır. Eski anahtarların erişimini kaldırmak eski dosyaların silme/HTML okuma işlemini etkiler.
@@ -143,3 +143,12 @@ Browser eklentisi yok; mevcut Playwright/Chrome ile http://localhost: panelTR144
 **Canlı uygulama sınırı:** Bu tur production sunucusu değiştirilmedi. Yayında mevcut `public_html/php.ini` dosyası korunuyorsa iki upload/post satırı ona ayrıca birleştirilmeli; SiteGround web PHP etkili değerleri ve proxy gövde sınırı kontrol edilmeli. `public/php.ini` kaynak değişikliği tek başına canlı ayarın etkinleştiği kanıtı değildir. Yeni Blade/dil kaynakları yayımlandıktan sonra normal view cache adımı uygulanır. R2 gerçek denemesi ve önceki Symfony yaması bu kapsamın dışındadır.
 
 **5 Kasım güvenlik devamı:** Symfony üretim yamaları sonraki onaylı çalışmada uygulandı; altı üretim bildirimi kapandı. Güncel test ve kontrollü yayın kararı [97](97-SYMFONY-GUVENLIK-YAMALARI-VE-YAYIN-KABULU.md) içindedir. Bu rehberdeki eski Symfony bekleme kayıtları tarihseldir; gerçek R2/canlı kabulü ayrı kalır.
+
+
+## 9 Kasım — Cloudflare R2 ayar metinleri ve açık anahtar
+
+Kullanıcının açık seçimi: **anahtar formda açık görünsün ve global settings kaydında şifresiz saklansın**. Cloudflare R2 adı depolama seçeneğinde/hesap/bucket/Access Key ID/Secret Access Key/dosya adresinde açıkça yazılır. Boş placeholder’lar dört dilde tamamlandı; uzantı açıklaması ve CORS/HTTPS/bucket bağlantı açıklaması anlaşılır hale getirildi. Turnstile’a ait eski gizli anahtar yardım metni bu alandan kaldırıldı.
+
+`PrepareSourceSettings` yeni dolu secret değerini düz metin kaydeder; boş gönderim mevcut değeri korur. `SourceSettings::secret()` önceden şifrelenmiş bir global değeri okuyabilir; aksi halde düz metni kullanır. Formdaki `type=text` alanına bu değer Blade escape ile yazılır. Mevcut kayıtlar topluca dönüştürülmedi; kullanıcı formu kaydettiğinde yeni saklama davranışı uygulanır. Dosya bazlı mevcut `storage_config` encrypted cast’i ve ayrı yedek/Turnstile/OneSignal anahtarları değiştirilmedi. Ekran ve kayıt erişimi yine yalnız mevcut web Yönetici rolü ve ilgili ayar izinleri kapsamındadır.
+
+Dar kabul: iki ilgili test dosyası41PHP/399assert; dört dil gerçek Blade placeholder/metin kontrolü, düz metin global kayıt, eski encrypted okuma, boş koruma, form value escape, yetki ve mevcut yerel/bulut-fake upload akışları geçti. Ek gerçek DB ham value kontrolü aynı settings senaryosunda doğrulanır. Chrome1440/390 × TR/NL/EN/FR sekiz ekran: placeholder’lar, açık sahte kayıtlı anahtar ve Cloudflare R2 seçeneği geçti; JS0/5xx0/yatay taşma0. Testing transaction/fake disk/sahte anahtar kullanıldı; gerçek R2 çağrısı, ana DB anahtar değişikliği, migration veya canlı aktarım yok. CSS/JS değişmediğinden asset/PWA1.1.44 korunur.

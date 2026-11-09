@@ -30,10 +30,12 @@ class SourceSettings
 
     public static function secret(): string
     {
+        $secret = (string) (settings()->sourceR2Secret ?? '');
         try {
-            return settings()->sourceR2Secret ? Crypt::decryptString(settings()->sourceR2Secret) : '';
+            // Read previously encrypted settings without requiring a data migration.
+            return Crypt::decryptString($secret);
         } catch (Throwable) {
-            return '';
+            return $secret;
         }
     }
 

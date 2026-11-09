@@ -4,7 +4,6 @@ namespace App\Actions\Settings;
 
 use App\Helpers\PanelGuide;
 use App\Helpers\Sources\SourceSettings;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -38,7 +37,7 @@ class PrepareSourceSettings
         if (array_key_exists('sourceR2Secret', $values)) {
             unset($values['sourceR2Secret']);
             if ($secret !== '') {
-                $values['sourceR2Secret'] = Crypt::encryptString($secret);
+                $values['sourceR2Secret'] = $secret;
             }
         }
         if (($values['sourceStorage'] ?? settings()->sourceStorage) === 'r2') {

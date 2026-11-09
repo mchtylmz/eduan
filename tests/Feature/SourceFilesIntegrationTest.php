@@ -10,6 +10,8 @@ use App\Models\SourceFile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -173,15 +175,21 @@ class SourceFilesIntegrationTest extends TestCase
         Storage::disk('public')->assertExists($source->path);
     }
 
-    public function test_settings_save_real_action_encrypts_secret_and_preserves_blank_value(): void
+    public function test_settings_save_shows_plaintext_secret_preserves_blank_and_reads_legacy_values(): void
     {
         $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()->assertSee('settings[sourceR2Secret]', false);
-        $this->postJson(route('admin.settings.store'), ['settings' => ['sourceStorage' => 'local', 'sourceMaxMb' => '40', 'sourceTypes' => 'pdf,html,png', 'sourceR2Secret' => 'sample-never-render-secret']])->assertOk();
+        $this->postJson(route('admin.settings.store'), ['settings' => ['sourceStorage' => 'local', 'sourceMaxMb' => '40', 'sourceTypes' => 'pdf,html,png', 'sourceR2Secret' => 'sample-visible-secret']])->assertOk();
         $this->assertSame(40 * 1024 * 1024, SourceSettings::maxBytes());
-        $this->assertSame('sample-never-render-secret', SourceSettings::secret());
-        $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()->assertDontSee('sample-never-render-secret');
+        $this->assertSame('sample-visible-secret', SourceSettings::secret());
+        $this->assertSame('sample-visible-secret', DB::table('settings')->whereNull('settingable_type')->whereNull('settingable_id')->where('name', 'sourceR2Secret')->value('value'));
+        $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()
+            ->assertSee('type="text" name="settings[sourceR2Secret]" value="sample-visible-secret"', false);
+        settings()->set('sourceR2Secret', Crypt::encryptString('legacy-key'));
+        settings()->save();
+        $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()->assertSee('value="legacy-key"', false);
+        $this->postJson(route('admin.settings.store'), ['settings' => ['sourceR2Secret' => 'sample-visible-secret']])->assertOk();
         $this->postJson(route('admin.settings.store'), ['settings' => ['sourceR2Secret' => '']])->assertOk();
-        $this->assertSame('sample-never-render-secret', SourceSettings::secret());
+        $this->assertSame('sample-visible-secret', SourceSettings::secret());
         $this->postJson(route('admin.settings.store'), ['settings' => ['sourceMaxMb' => '101']])->assertUnprocessable();
         $this->postJson(route('admin.settings.store'), ['settings' => ['sourceStorage' => 'r2']])->assertUnprocessable();
         Http::assertNothingSent();
