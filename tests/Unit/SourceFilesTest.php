@@ -387,6 +387,7 @@ class SourceFilesTest extends TestCase
             $this->assertStringContainsString(__('sources.upload'), $html);
             $settings = $this->app['view']->make('backend.settings.tabs.sources')->render();
             $this->assertStringContainsString('settings[sourceR2Secret]', $settings);
+            $this->assertStringContainsString('class="js-validation"', $settings);
             foreach (['max_size', 'types', 'account', 'bucket', 'access_key', 'public_url', 'secret'] as $field) {
                 $placeholder = htmlspecialchars(__('sources.'.$field.'_placeholder'), ENT_QUOTES);
                 $this->assertStringContainsString('placeholder="'.$placeholder.'"', $settings);

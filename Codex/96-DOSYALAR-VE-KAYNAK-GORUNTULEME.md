@@ -152,3 +152,8 @@ Kullanıcının açık seçimi: **anahtar formda açık görünsün ve global se
 `PrepareSourceSettings` yeni dolu secret değerini düz metin kaydeder; boş gönderim mevcut değeri korur. `SourceSettings::secret()` önceden şifrelenmiş bir global değeri okuyabilir; aksi halde düz metni kullanır. Formdaki `type=text` alanına bu değer Blade escape ile yazılır. Mevcut kayıtlar topluca dönüştürülmedi; kullanıcı formu kaydettiğinde yeni saklama davranışı uygulanır. Dosya bazlı mevcut `storage_config` encrypted cast’i ve ayrı yedek/Turnstile/OneSignal anahtarları değiştirilmedi. Ekran ve kayıt erişimi yine yalnız mevcut web Yönetici rolü ve ilgili ayar izinleri kapsamındadır.
 
 Dar kabul: iki ilgili test dosyası41PHP/399assert; dört dil gerçek Blade placeholder/metin kontrolü, düz metin global kayıt, eski encrypted okuma, boş koruma, form value escape, yetki ve mevcut yerel/bulut-fake upload akışları geçti. Ek gerçek DB ham value kontrolü aynı settings senaryosunda doğrulanır. Chrome1440/390 × TR/NL/EN/FR sekiz ekran: placeholder’lar, açık sahte kayıtlı anahtar ve Cloudflare R2 seçeneği geçti; JS0/5xx0/yatay taşma0. Testing transaction/fake disk/sahte anahtar kullanıldı; gerçek R2 çağrısı, ana DB anahtar değişikliği, migration veya canlı aktarım yok. CSS/JS değişmediğinden asset/PWA1.1.44 korunur.
+
+
+## 9 Kasım son birleşik kabul — Kaydet akışı
+
+Gerçek submit testinde Dosya Ayarları formunun `ajaxForm` sınıfı ortak AJAX işleyicisine bağlanmadığından JSON belgeye gittiği bulundu. Kullanıcı onayıyla yalnız `js-validation` yapıldı; iki dar PHP85assert ve gerçek Chrome kayıt/boş koruma/422hata-aynı sayfa kabulü geçti. Global anahtar davranışı, izinler ve depolama değişmedi. [103 — Birleşik test ve yayın kararı](103-20261109-SON-GELISTIRMELER-YAYIN-KABULU.md).

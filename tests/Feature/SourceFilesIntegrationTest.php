@@ -177,7 +177,7 @@ class SourceFilesIntegrationTest extends TestCase
 
     public function test_settings_save_shows_plaintext_secret_preserves_blank_and_reads_legacy_values(): void
     {
-        $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()->assertSee('settings[sourceR2Secret]', false);
+        $this->get(route('admin.settings.index', ['activeTab' => 'sources']))->assertOk()->assertSee('settings[sourceR2Secret]', false)->assertSee('class="js-validation"', false);
         $this->postJson(route('admin.settings.store'), ['settings' => ['sourceStorage' => 'local', 'sourceMaxMb' => '40', 'sourceTypes' => 'pdf,html,png', 'sourceR2Secret' => 'sample-visible-secret']])->assertOk();
         $this->assertSame(40 * 1024 * 1024, SourceSettings::maxBytes());
         $this->assertSame('sample-visible-secret', SourceSettings::secret());

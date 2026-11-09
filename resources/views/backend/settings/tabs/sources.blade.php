@@ -1,4 +1,4 @@
-<form action="{{ route('admin.settings.store') }}" method="post" class="ajaxForm">
+<form action="{{ route('admin.settings.store') }}" method="post" class="js-validation">
     @csrf
     <div class="row g-3 mb-4">
         <div class="col-md-6"><label class="form-label" for="sourceStorage">{{ __('sources.storage') }}</label>

@@ -196,3 +196,7 @@ Panelde Dosyalar, isteğe bağlı R2/yerel depolama ve herkese açık `/sources`
 ### 9 Kasım panel ve dosya kartları
 
 [102 — Öğretmen hesabı, çalışma filtreleri ve dosyalar](Codex/102-PANEL-OGRETMEN-FILTRELERI-VE-DOSYA-KARTLARI.md): geçilen öğretmen kendi yetkileriyle paneli kullanır ve turuncu düğmeyle döner; yönetici öğretmen/hedef/yüzde filtreleri, eşit hafta alanı, backend1200px sağ paneller, varsayılan dosya kartları ve yerelleştirilmiş yükleme alanı. Son96PHP/865assert ve23Node; dört dil1440/390 ile iki uçtan uca Chrome akışı geçti. Ana/testing10tablo hashleri aynı; migration/gerçek gönderim/canlı aktarım yok. Asset/PWA1.1.44, eski v4paketi değişmez.
+
+### 9 Kasım son birleşik yayın kontrolü
+
+[103 — Son test raporu ve yayın kararı](Codex/103-20261109-SON-GELISTIRMELER-YAYIN-KABULU.md):405farklıPHP/1997assert iki temiz koşu,27Node ve gerçek Chrome varyasyonları. Ayarlar Kaydet’in JSON belgeye gitmesi kullanıcı onaylı tek sınıf düzeltmesiyle kapandı; iki ilgili PHP85assert ve gerçek kayıt/boş koruma/422hata kabulü geçti.50başarılı tarayıcı kontrolü, ana/testing10tablo hashleri aynı; üretim audit0/platform uygun. İncelenen kapsam kontrollü yayına uygun; gerçek R2/canlı ortam kabulü ayrı.1.1.46, yeni migration/bağımlılık/cron yok; bu tur deploy yapılmadı.
